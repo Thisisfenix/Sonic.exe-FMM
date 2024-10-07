@@ -37,7 +37,7 @@ body {
 /* Estilos para los botones del menú */
 .menu-button img {
     width: 30vw; /* Cambia este valor para hacer las imágenes más pequeñas */
-    max-width: 150px; /* Tamaño máximo de las imágenes de los botones */
+    max-width: 300px; /* Tamaño máximo de las imágenes de los botones */
     height: auto;
     border: 3px solid #fff; /* Borde blanco */
     border-radius: 10px; /* Bordes redondeados */
