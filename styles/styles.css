@@ -20,9 +20,9 @@ body {
 
 /* Título con imagen */
 .title img {
-    width: 50vw;
-    max-width: 300px;
-    height: auto;
+    width: 50vw;  /* Tamaño responsivo basado en el ancho de la ventana */
+    max-width: 300px; /* Tamaño máximo */
+    height: auto;  /* Mantener la proporción de la imagen */
 }
 
 /* Contenedor del menú */
@@ -36,9 +36,9 @@ body {
 
 /* Estilos para los botones del menú */
 .menu-button img {
-    width: 30vw; /* Cambia este valor para hacer las imágenes más pequeñas */
-    max-width: 300px; /* Tamaño máximo de las imágenes de los botones */
-    height: auto;
+    width: 80vw; /* Ajusta el ancho para que se adapte al tamaño de pantalla más pequeña */
+    max-width: 300px; /* Limita el tamaño máximo en pantallas grandes */
+    height: auto; /* Mantiene las proporciones correctas */
     border: 3px solid #fff; /* Borde blanco */
     border-radius: 10px; /* Bordes redondeados */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
