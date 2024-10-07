@@ -1,0 +1,113 @@
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: black;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #ff0000; /* Color rojo inspirado en Sonic.exe */
+    text-shadow: 2px 2px 5px black;
+}
+
+.media-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.media-display {
+    width: 100%;
+    max-width: 800px;
+    background-color: #222;
+    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.media-content img,
+.media-content video {
+    width: 100%;
+    height: auto;
+}
+
+.media-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 800px;
+}
+
+.media-controls button {
+    background-color: #ff0000;
+    color: black;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.media-controls button:hover {
+    background-color: #cc0000;
+}
+
+.back-button {
+    background-color: #444;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    transition: background-color 0.3s ease;
+    margin-top: 2rem;
+}
+
+.back-button:hover {
+    background-color: #555;
+}
+
+/* Reproductor de música */
+.music-controls {
+    margin-top: 2rem;
+    text-align: center;
+    background-color: #333;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.music-controls button {
+    background-color: #ff0000;
+    color: black;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.music-controls button:hover {
+    background-color: #cc0000;
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Test</title>
+    <link rel="stylesheet" href="styles/soundtest.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SOUND TEST</h1>
+        <div class="numbers">
+            <div class="number">
+                PGM NO. <span id="pgm-no">01</span>
+            </div>
+            <div class="number">
+                DA NO. <span id="da-no">01</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button onclick="decrement('pgm')" title="Disminuir PGM">PGM -</button>
+            <button onclick="increment('pgm')" title="Aumentar PGM">PGM +</button>
+            <button onclick="decrement('da')" title="Disminuir DA">DA -</button>
+            <button onclick="increment('da')" title="Aumentar DA">DA +</button>
+        </div>
+        <button id="play-button" onclick="playSound()">Descargar</button>
+
+        <!-- Enlace para volver al menú principal -->
+        <a href="index.html" class="back-button">Volver al Menú Principal</a>
+    </div>
+
+    <!-- Música de fondo (FnmmSonicTeamOst01.mp3) -->
+    <audio id="backgroundMusic" src="sounds/soundtest.ogg" loop autoplay></audio>
+
+    <!-- Sonido de selección (pauseScrollMenu.ogg) -->
+    <audio id="selectSound" src="sounds/pauseScrollMenu.ogg"></audio>
+
+    <!-- Sonidos correctos e incorrectos -->
+    <audio id="correct-sound" src="sounds/confirmMenu.ogg"></audio>
+    <audio id="error-sound" src="sounds/NO.ogg"></audio>
+
+    <script src="js/soundtest.js"></script>
+</body>
+</html>

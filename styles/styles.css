@@ -1,0 +1,57 @@
+/* Estilo global del cuerpo */
+body {
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+    background: url('BG/0241006_190119.png') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+}
+
+/* Contenedor principal de la página */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* Título con imagen */
+.title img {
+    width: 50vw;
+    max-width: 300px;
+    height: auto;
+}
+
+/* Contenedor del menú */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Estilos para los botones del menú */
+.menu-button {
+    font-size: 2rem; /* Tamaño de la letra */
+    color: white; /* Color del texto */
+    text-shadow: 2px 2px 0 red,   /* Sombra roja a la derecha e inferior */
+                 -2px -2px 0 red, /* Sombra roja a la izquierda y superior */
+                 2px -2px 0 red,  /* Sombra roja a la derecha y superior */
+                 -2px 2px 0 red;  /* Sombra roja a la izquierda e inferior */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.menu-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Sombra al pasar el ratón */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+}
+
+/* Accesibilidad */
+img {
+    alt: "Descripción de la imagen"; /* Mejora de accesibilidad */
+}

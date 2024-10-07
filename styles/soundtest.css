@@ -1,0 +1,193 @@
+/* Estilos generales */
+body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    text-transform: uppercase;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    width: 90%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Números PGM y DA */
+.numbers {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.number {
+    font-size: 1.5rem;
+    color: #00ccff;
+    background: #333;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+span {
+    font-weight: bold;
+}
+
+/* Botones de control */
+.controls button {
+    background-color: #ffcc00;
+    border: none;
+    color: #121212;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none; /* Mejora de accesibilidad */
+}
+
+.controls button:hover {
+    background-color: #ffa500;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Botón de Reproducir */
+#play-button {
+    background-color: #00ccff;
+    color: #fff;
+    padding: 12px 30px;
+    margin-top: 20px;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#play-button:hover {
+    background-color: #00aaff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos del HUD */
+#hud-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    z-index: 100;
+}
+
+.hud-item {
+    font-size: 1.2rem;
+    padding: 10px;
+}
+
+#menu-button {
+    background-color: #ff5733;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#menu-button:hover {
+    background-color: #ff451a;
+}
+
+/* Estilos del botón Volver al Menú */
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #ff5733;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #ff451a;
+}
+
+/* Estilos responsivos */
+@media (max-width: 600px) {
+    body {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .number {
+        font-size: 1.2rem;
+        padding: 8px 16px;
+    }
+
+    .controls button {
+        padding: 8px 12px;
+        font-size: 1rem;
+        margin: 5px;
+    }
+
+    #play-button {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        margin-top: 10px;
+    }
+
+    #hud-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    #menu-button {
+        margin-top: 10px;
+        padding: 8px 16px;
+    }
+
+    .back-button {
+        padding: 8px 16px;
+        font-size: 1rem;
+    }
+}

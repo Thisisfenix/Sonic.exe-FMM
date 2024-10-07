@@ -1,0 +1,101 @@
+/* Importando la fuente pixelada */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Fuente pixelada y fondo negro */
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: black;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Contenedor centrado */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+/* Cajas de canciones con bordes amarillos */
+.song-box {
+    display: inline-block;
+    border: 4px solid yellow;
+    padding: 20px;
+    width: 300px; /* Ancho fijo */
+    height: 200px; /* Altura fija */
+    background-color: black;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    text-align: center; /* Alinear el contenido al centro */
+}
+
+/* Efecto hover en la caja */
+.song-box:hover {
+    transform: scale(1.05);
+}
+
+/* Imagen del mod */
+.mod-image {
+    width: 80%; /* Ajustar el tamaño de la imagen al 80% del contenedor */
+    height: auto; /* Mantener la relación de aspecto */
+    margin: 0 auto; /* Centrar la imagen */
+}
+
+/* Cambio de color en el título del mod al hacer hover */
+.mod-title {
+    color: white;
+    margin-top: 10px;
+    transition: color 0.3s ease-in-out;
+}
+
+/* Cambia a rojo al hacer hover */
+.song-box:hover .mod-title {
+    color: red;
+}
+
+/* Flechas de navegación */
+.arrow {
+    font-size: 3em;
+    cursor: pointer;
+    color: white;
+    margin: 0 20px;
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.arrow:hover {
+    transform: scale(1.2);
+    color: yellow;
+}
+
+/* Botón de regreso al menú principal */
+.back-button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    background-color: darkblue;
+    transform: scale(1.1);
+    text-decoration: underline;
+}
+
+/* Estilo para el título del mod */
+.mod-title {
+    font-family: 'Press Start 2P', cursive; /* Fuente pixelada */
+    color: yellow; /* Color por defecto del título */
+    margin: 10px 0; /* Margen alrededor del título */
+}

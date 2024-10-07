@@ -1,0 +1,113 @@
+/* Reseteo y optimización de espacio */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos del body */
+body {
+    font-family: Arial, sans-serif;
+    background: url('ruta/a-tu-imagen.jpg') no-repeat center center fixed; /* Imagen de fondo */
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+}
+
+/* Título con sombra para mejorar legibilidad */
+h1 {
+    margin-bottom: 20px;
+    font-size: 36px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Sombra en el texto */
+}
+
+/* Imagen del mod con sombra suave */
+.mod-image {
+    display: block;
+    margin: 10px auto;
+    max-width: 300px; /* Tamaño máximo de la imagen del mod */
+    border: 3px solid yellow;
+    border-radius: 8px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Sombra alrededor de la imagen */
+}
+
+/* GIF con sombra suave */
+.bf-gif {
+    display: block;
+    margin: 10px auto;
+    width: 200px;  /* Ajusta el ancho deseado para el GIF */
+    height: auto;  /* Mantiene la proporción */
+    border: 3px solid yellow;
+    border-radius: 8px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Sombra alrededor del GIF */
+}
+
+/* Estilo para los botones de descarga y retroceso */
+.download-btn, .back-btn {
+    display: inline-block;
+    margin: 15px 10px;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out; /* Transición suave en hover */
+}
+
+/* Hover para botones */
+.download-btn:hover, .back-btn:hover {
+    background-color: darkred;
+}
+
+/* Navegación con botones */
+.navigation {
+    margin-bottom: 10px; /* Espacio entre los botones y el GIF */
+}
+
+/* Botones de navegación */
+.nav-btn {
+    margin: 0 5px; /* Espacio entre las flechas */
+    padding: 10px;
+    background-color: yellow;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 24px; /* Aumenta el tamaño de los emojis */
+    transition: background-color 0.3s ease-in-out; /* Transición suave en hover */
+}
+
+/* Hover para los botones de navegación */
+.nav-btn:hover {
+    background-color: orange;
+}
+
+/* Media queries para optimización en dispositivos móviles */
+@media (max-width: 768px) {
+    .download-btn, .back-btn {
+        padding: 15px 25px; /* Botones más grandes para pantallas táctiles */
+    }
+
+    h1 {
+        font-size: 28px; /* Título más pequeño en pantallas pequeñas */
+    }
+
+    .mod-image {
+        max-width: 80vw; /* Ajuste la imagen para pantallas móviles */
+    }
+
+    .bf-gif {
+        width: 50vw; /* Ajuste la imagen GIF para pantallas móviles */
+    }
+}

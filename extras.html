@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extras - Sonic.exe</title>
+    <link rel="stylesheet" href="styles/extras.css">
+</head>
+<body>
+    <div class="page-container">
+        <h1 class="title">
+            Extras - Sonic.exe
+        </h1>
+        <div class="media-container">
+            <div class="media-display">
+                <!-- El contenido de medios se cargará dinámicamente aquí -->
+                <div id="media" class="media-content"></div>
+            </div>
+            <div class="media-controls">
+                <button id="prevBtn">◀</button>
+                <button id="nextBtn">▶</button>
+            </div>
+        </div>
+        <a href="index.html" class="back-button">Regresar al Menú Principal</a>
+    </div>
+    <audio id="extraMusic" src="sounds\Radio_Static_-_Sound_Effect.ogg" loop autoplay></audio>
+    <div class="music-controls">
+        <button id="playPauseBtn">Pause</button>
+        <button id="volumeUpBtn">Vol +</button>
+        <button id="volumeDownBtn">Vol -</button>
+    </div>
+    <script src="js/extras.js"></script>
+</body>
+</html>
