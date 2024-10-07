@@ -35,13 +35,29 @@ body {
 }
 
 /* Estilos para los botones del menú */
+.menu-button img {
+    width: 30vw; /* Cambia este valor para hacer las imágenes más pequeñas */
+    max-width: 150px; /* Tamaño máximo de las imágenes de los botones */
+    height: auto;
+    border: 3px solid #fff; /* Borde blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.menu-button img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Sombra al pasar el ratón */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+}
+
+/* Texto de los botones con borde rojo */
 .menu-button {
     font-size: 2rem; /* Tamaño de la letra */
     color: white; /* Color del texto */
-    text-shadow: 2px 2px 0 red,   /* Sombra roja a la derecha e inferior */
-                 -2px -2px 0 red, /* Sombra roja a la izquierda y superior */
-                 2px -2px 0 red,  /* Sombra roja a la derecha y superior */
-                 -2px 2px 0 red;  /* Sombra roja a la izquierda e inferior */
+    text-shadow: 2px 2px 0 red,
+                 -2px -2px 0 red,
+                 2px -2px 0 red,
+                 -2px 2px 0 red;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
