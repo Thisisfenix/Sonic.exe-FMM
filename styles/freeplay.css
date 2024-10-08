@@ -23,17 +23,17 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* Cajas de canciones con bordes amarillos */
+/* Cajas de canciones sin bordes amarillos */
 .song-box {
     display: inline-block;
-    border: 4px solid yellow;
-    padding: 20px;
-    width: 300px; /* Ancho fijo */
-    height: 200px; /* Altura fija */
-    background-color: black;
+    padding: 0; /* Sin padding para eliminar el cuadro */
+    width: 350px; /* Ancho aumentado para la imagen */
+    height: 250px; /* Altura aumentada para la imagen */
+    background-color: black; /* Fondo negro */
     transition: transform 0.3s ease-in-out; /* Efecto de transición en transformaciones */
     cursor: pointer;
     text-align: center; /* Alinear el contenido al centro */
+    position: relative; /* Para el posicionamiento de la imagen */
 }
 
 /* Efecto hover en la caja */
@@ -42,10 +42,10 @@ h1 {
 }
 
 /* Imagen del mod */
-.mod-image {
-    width: 80%; /* Ajustar el tamaño de la imagen al 80% del contenedor */
+.mod-image, .next {
+    width: 100%; /* Ajustar el tamaño de la imagen al 100% del contenedor */
     height: auto; /* Mantener la relación de aspecto */
-    margin: 0 auto; /* Centrar la imagen */
+    margin: 0; /* Sin margen */
     transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
 }
 
@@ -68,6 +68,7 @@ h1 {
     color: white;
     margin: 0 20px;
     transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+    flex-shrink: 0; /* Previene que las flechas se reduzcan en tamaño */
 }
 
 .arrow:hover {
@@ -107,11 +108,9 @@ h1 {
     overflow: hidden; /* Asegúrate de que el contenido no sobresalga */
 }
 
-.slide-left {
-    transform: translateX(-100%); /* Desliza a la izquierda */
+.next {
+    position: absolute;
+    top: 0; /* Asegura que esté en la misma posición vertical */
+    left: 100%; /* Inicialmente fuera de vista a la derecha */
+    transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
 }
-
-.slide-right {
-    transform: translateX(100%); /* Desliza a la derecha */
-}
-

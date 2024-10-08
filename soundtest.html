@@ -7,25 +7,33 @@
     <link rel="stylesheet" href="styles/soundtest.css">
 </head>
 <body>
-    <div id="loading" style="display: none; color: white; font-size: 1.5em;">Cargando...</div>
-    <h1>SOUND TEST</h1>
-    <div class="numbers">
-        <div class="number">
-            PGM NO. <span id="pgm-no">01</span>
+    <div class="container">
+        <h1>SOUND TEST</h1>
+        <div class="numbers">
+            <div class="number">
+                PGM NO. <span id="pgm-no">01</span>
+            </div>
+            <div class="number">
+                DA NO. <span id="da-no">01</span>
+            </div>
         </div>
-        <div class="number">
-            DA NO. <span id="da-no">01</span>
+        <div class="controls">
+            <button onclick="decrement('pgm')" title="Disminuir PGM">PGM -</button>
+            <button onclick="increment('pgm')" title="Aumentar PGM">PGM +</button>
+            <button onclick="decrement('da')" title="Disminuir DA">DA -</button>
+            <button onclick="increment('da')" title="Aumentar DA">DA +</button>
         </div>
-    </div>
-    <div class="controls">
-        <button onclick="decrement('pgm')" title="Disminuir PGM">PGM -</button>
-        <button onclick="increment('pgm')" title="Aumentar PGM">PGM +</button>
-        <button onclick="decrement('da')" title="Disminuir DA">DA -</button>
-        <button onclick="increment('da')" title="Aumentar DA">DA +</button>
-    </div>
-    <button id="play-button" onclick="playSound()">Descargar</button>
+        <button id="play-button" onclick="playSound()">Descargar</button>
 
-    <a href="index.html" class="back-button">Volver al Menú Principal</a>
+        <!-- Enlace para volver al menú principal -->
+        <a href="index.html" class="back-button">Volver al Menú Principal</a>
+    </div>
+
+    <!-- Sonidos -->
+    <audio id="backgroundMusic" src="sounds/soundtest.ogg" loop autoplay></audio>
+    <audio id="selectSound" src="sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="correct-sound" src="sounds/confirmMenu.ogg"></audio>
+    <audio id="error-sound" src="sounds/NO.ogg"></audio>
 
     <script src="js/soundtest.js"></script>
 </body>
