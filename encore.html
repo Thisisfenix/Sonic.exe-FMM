@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encore - Descarga de Canciones</title>
-    <link rel="stylesheet" href="styles/encore.css"> <!-- Enlace a encore.css -->
+    <title>Encore - Sonic.exe</title>
+    <link rel="stylesheet" href="styles/encore.css">
 </head>
-<body>
+<body style="background-image: url('BG/BackGROUND.png'); background-size: cover; margin: 0; padding: 0;">
     <div class="container">
-        <h1>Descarga de Canciones - Encore</h1>
+        <h1 class="title">Encore</h1>
 
-        <div class="carousel">
-            <div class="song">
-                <img src="assets/images/song1.png" alt="Canción 1">
-                <h2>Canción 1: Encore Theme</h2>
-                <a href="https://ejemplo.com/descargas/encore-theme.mp3" download="Encore-Theme.mp3" class="download-btn">Descargar</a>
-            </div>
-
-            <div class="song">
-                <img src="assets/images/song2.png" alt="Canción 2">
-                <h2>Canción 2: Sonic EXE Remix</h2>
-                <a href="https://ejemplo.com/descargas/sonic-exe-remix.mp3" download="Sonic-EXE-Remix.mp3" class="download-btn">Descargar</a>
-            </div>
+        <!-- Caja de borde con imagen de la canción -->
+        <div class="box" style="background-image: url('images/FreeBox.png');">
+            <img id="songImage" src="" alt="Imagen de la canción" class="song-image">
         </div>
 
-        <div class="arrows">
-            <span class="arrow left-arrow">⮜</span>
-            <span class="arrow right-arrow">⮞</span>
+        <!-- Botones de navegación -->
+        <div class="navigation">
+            <button id="prevButton" class="nav-btn">⬅️</button>
+            <button id="nextButton" class="nav-btn">➡️</button>
         </div>
+
+        <!-- Título de la canción -->
+        <p id="songTitle" class="song-title"></p>
+
+        <!-- Botón para descargar la canción -->
+        <a id="downloadButton" href="" class="download-button">Descargar Canción</a>
+
+        <!-- Botón para volver al menú principal -->
+        <a href="index.html" class="back-button">Volver al Menú Principal</a>
     </div>
 
-    <script src="js/encore.js"></script> <!-- Enlace a encore.js -->
+    <script src="js/encore.js"></script>
 </body>
 </html>

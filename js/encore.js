@@ -1,43 +1,45 @@
-// encore.js
+document.addEventListener("DOMContentLoaded", function() {
+    const songs = [
+        {
+            title: "Canción 1",
+            image: "images/cancion1.png", // Cambia esto a la ruta de tu imagen
+            link: "mod1.html" // Cambia esto a tu enlace de descarga
+        },
+        {
+            title: "Canción 2",
+            image: "images/cancion2.png", // Cambia esto a la ruta de tu imagen
+            link: "mod2.html" // Cambia esto a tu enlace de descarga
+        },
+        {
+            title: "Canción 3",
+            image: "images/cancion3.png", // Cambia esto a la ruta de tu imagen
+            link: "mod3.html" // Cambia esto a tu enlace de descarga
+        }
+    ];
 
-// Seleccionamos los elementos necesarios
-const songs = document.querySelectorAll('.song');
-const leftArrow = document.querySelector('.left-arrow');
-const rightArrow = document.querySelector('.right-arrow');
+    let currentSongIndex = 0;
 
-let currentIndex = 0;
+    const songDisplay = document.getElementById("songImage");
+    const modLink = document.getElementById("downloadButton");
+    const modTitle = document.getElementById("songTitle");
+    const prevButton = document.getElementById("prevButton");
+    const nextButton = document.getElementById("nextButton");
 
-// Función para mostrar la canción actual
-function showSong(index) {
-    songs.forEach((song, i) => {
-        song.style.display = i === index ? 'block' : 'none';
-    });
-}
-
-// Mover hacia la izquierda
-function prevSong() {
-    currentIndex = (currentIndex === 0) ? songs.length - 1 : currentIndex - 1;
-    showSong(currentIndex);
-}
-
-// Mover hacia la derecha
-function nextSong() {
-    currentIndex = (currentIndex === songs.length - 1) ? 0 : currentIndex + 1;
-    showSong(currentIndex);
-}
-
-// Asignamos eventos a las flechas para móviles
-leftArrow.addEventListener('click', prevSong);
-rightArrow.addEventListener('click', nextSong);
-
-// Asignamos eventos a las teclas de flecha en PC
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowLeft') {
-        prevSong();
-    } else if (event.key === 'ArrowRight') {
-        nextSong();
+    function updateSong() {
+        modTitle.textContent = songs[currentSongIndex].title;
+        songDisplay.src = songs[currentSongIndex].image;
+        modLink.href = songs[currentSongIndex].link; // Actualiza el enlace de descarga
     }
-});
 
-// Mostrar la primera canción al cargar la página
-showSong(currentIndex);
+    prevButton.addEventListener("click", () => {
+        currentSongIndex = (currentSongIndex === 0) ? songs.length - 1 : currentSongIndex - 1;
+        updateSong();
+    });
+
+    nextButton.addEventListener("click", () => {
+        currentSongIndex = (currentSongIndex === songs.length - 1) ? 0 : currentSongIndex + 1;
+        updateSong();
+    });
+
+    updateSong(); // Inicializa la primera canción
+});

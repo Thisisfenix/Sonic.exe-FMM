@@ -1,100 +1,85 @@
-/* encore.css */
-
+/* Estilos generales */
 body {
-    background: url('assets/images/background.png') no-repeat center center fixed;
-    background-size: cover;
+    font-family: 'Press Start 2P', cursive;
     color: white;
-    font-family: Arial, sans-serif;
     text-align: center;
+    margin: 0;
     padding: 20px;
-}
-
-h1 {
-    color: #ff4500;
-    font-size: 36px;
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+/* Estilos de la caja */
+.box {
+    width: 400px; /* Ajusta según el tamaño deseado */
+    height: 300px; /* Ajusta según el tamaño deseado */
     position: relative;
-    width: 80%;
-    margin: 0 auto;
+    background-size: cover; /* Asegúrate de que la imagen de fondo cubra toda la caja */
+    margin-bottom: 20px; /* Espaciado debajo de la caja */
 }
 
-.song {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: rgba(42, 42, 42, 0.8);
-    border-radius: 10px;
-    display: none; /* Solo una canción se mostrará a la vez */
+/* Imagen de la canción */
+.song-image {
+    width: 100%; /* Ajustar al 100% del contenedor */
+    height: auto; /* Mantener la relación de aspecto */
+    position: absolute; /* Para que la imagen esté sobre la caja */
+    top: 50%; /* Centrar verticalmente */
+    left: 50%; /* Centrar horizontalmente */
+    transform: translate(-50%, -50%); /* Para centrar completamente */
 }
 
-.song img {
-    width: 100%;
-    border-radius: 10px;
+/* Botones de navegación */
+.nav-btn {
+    font-size: 2em;
+    cursor: pointer;
+    color: white;
+    margin: 0 20px; /* Espaciado entre los botones */
 }
 
-h2 {
-    color: #ffd700;
-    font-size: 24px;
+/* Título de la canción */
+.song-title {
+    color: yellow;
     margin: 10px 0;
 }
 
-.download-btn {
+/* Botón de descarga */
+.download-button {
     display: inline-block;
+    margin-top: 20px;
     padding: 10px 20px;
-    background-color: #ff4500;
+    background-color: blue;
     color: white;
-    text-decoration: none;
-    font-size: 18px;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease-in-out;
 }
 
-.download-btn:hover {
-    background-color: #e63900;
+.download-button:hover {
+    background-color: darkblue;
 }
 
-/* Flechas para pantallas móviles */
-.arrows {
-    display: none; /* Solo se muestran en móviles */
-}
-
-.arrow {
-    font-size: 40px;
+/* Botón de regreso */
+.back-button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: red;
     color: white;
-    position: absolute;
-    top: 50%;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.3s;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease-in-out;
 }
 
-.left-arrow {
-    left: 10px;
-}
-
-.right-arrow {
-    right: 10px;
-}
-
-/* Mostrar flechas en pantallas más pequeñas */
-@media screen and (max-width: 768px) {
-    .arrows {
-        display: block;
-    }
-}
-
-/* Estilos para pantalla de escritorio */
-@media screen and (min-width: 769px) {
-    body {
-        padding-top: 50px;
-    }
-
-    .song {
-        display: block; /* Mostrar todas las canciones en PC */
-    }
-
-    .container {
-        max-width: 1200px;
-    }
+.back-button:hover {
+    background-color: darkred;
 }

@@ -9,7 +9,7 @@ body {
     text-align: center;
     margin: 0;
     padding: 20px;
-    background-image: url('BG/backgroundST.png'); /* Cambia 'tu-imagen-de-fondo.jpg' a la ruta de tu imagen */
+    background-image: url('BG/backgroundlool.png'); /* Cambia 'tu-imagen-de-fondo.jpg' a la ruta de tu imagen */
     background-size: cover; /* Asegura que la imagen cubra todo el fondo */
 }
 
@@ -52,10 +52,19 @@ h1 {
     transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
 }
 
+/* Clases para deslizamiento de imágenes */
+.slide-left {
+    transform: translateX(-100%); /* Desliza hacia la izquierda */
+}
+
+.slide-right {
+    transform: translateX(100%); /* Desliza desde la derecha */
+}
+
 /* Cambio de color en el título del mod al hacer hover */
 .mod-title {
-    color: white;
-    margin-top: 10px;
+    color: yellow; /* Color por defecto del título */
+    margin: 10px 0; /* Margen alrededor del título */
     transition: color 0.5s ease-in-out; /* Cambiado a 0.5s */
 }
 
@@ -96,19 +105,6 @@ h1 {
     background-color: darkblue;
     transform: scale(1.1);
     text-decoration: underline;
-}
-
-/* Estilo para el título del mod */
-.mod-title {
-    font-family: 'Press Start 2P', cursive; /* Fuente pixelada */
-    color: yellow; /* Color por defecto del título */
-    margin: 10px 0; /* Margen alrededor del título */
-}
-
-/* Clases para deslizamiento de imágenes */
-.song-box {
-    position: relative;
-    overflow: hidden; /* Asegúrate de que el contenido no sobresalga */
 }
 
 /* Animación de entrada al cargar la página */

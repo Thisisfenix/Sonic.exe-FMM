@@ -27,10 +27,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateSong() {
         modTitle.textContent = songs[currentSongIndex].title;
-        
-        // Añadir clase de deslizamiento
+        modLink.href = songs[currentSongIndex].link;
+
+        // Añadir clase de deslizamiento a la imagen actual
         songDisplay.classList.add('slide-left');
-        
+
         // Cambiar imagen después de un breve retraso
         setTimeout(() => {
             songDisplay.src = songs[currentSongIndex].image;
