@@ -31,7 +31,7 @@ h1 {
     width: 300px; /* Ancho fijo */
     height: 200px; /* Altura fija */
     background-color: black;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out; /* Efecto de transición en transformaciones */
     cursor: pointer;
     text-align: center; /* Alinear el contenido al centro */
 }
@@ -46,6 +46,7 @@ h1 {
     width: 80%; /* Ajustar el tamaño de la imagen al 80% del contenedor */
     height: auto; /* Mantener la relación de aspecto */
     margin: 0 auto; /* Centrar la imagen */
+    transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
 }
 
 /* Cambio de color en el título del mod al hacer hover */
@@ -99,3 +100,18 @@ h1 {
     color: yellow; /* Color por defecto del título */
     margin: 10px 0; /* Margen alrededor del título */
 }
+
+/* Clases para deslizamiento de imágenes */
+.song-box {
+    position: relative;
+    overflow: hidden; /* Asegúrate de que el contenido no sobresalga */
+}
+
+.slide-left {
+    transform: translateX(-100%); /* Desliza a la izquierda */
+}
+
+.slide-right {
+    transform: translateX(100%); /* Desliza a la derecha */
+}
+

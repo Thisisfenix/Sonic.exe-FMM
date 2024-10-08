@@ -26,13 +26,28 @@ document.addEventListener("DOMContentLoaded", function() {
     const nextButton = document.getElementById("next");
 
     function updateSong() {
+        const previousIndex = currentSongIndex; // Guarda el índice anterior
+
+        // Cambiar la canción
         modTitle.textContent = songs[currentSongIndex].title;
         songDisplay.src = songs[currentSongIndex].image;
+
+        // Agrega una clase de deslizamiento a la imagen
+        if (currentSongIndex > previousIndex) {
+            songDisplay.classList.add('slide-right'); // Deslizar a la derecha si es siguiente
+        } else {
+            songDisplay.classList.add('slide-left'); // Deslizar a la izquierda si es anterior
+        }
 
         // Actualiza el evento de clic para el enlace
         modLink.onclick = () => {
             window.location.href = songs[currentSongIndex].link;
         };
+
+        // Espera a que termine la animación y quita las clases de deslizamiento
+        setTimeout(() => {
+            songDisplay.classList.remove('slide-left', 'slide-right');
+        }, 300); // Duración de la animación
     }
 
     prevButton.addEventListener("click", () => {

@@ -8,7 +8,7 @@
 /* Estilos del body */
 body {
     font-family: Arial, sans-serif;
-    background: url('ruta/a-tu-imagen.jpg') no-repeat center center fixed; /* Imagen de fondo */
+    background: url('BG/indexBG.png') no-repeat center center fixed; /* Imagen de fondo */
     background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
     color: white;
     display: flex;

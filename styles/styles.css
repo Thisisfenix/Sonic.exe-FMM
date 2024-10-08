@@ -3,7 +3,7 @@ body {
     font-family: 'Press Start 2P', cursive;
     margin: 0;
     padding: 0;
-    background: url('BG/0241006_190119.png') no-repeat center center fixed;
+    background: url('BG/indexBG.png') no-repeat center center fixed;
     background-size: cover;
     color: white;
 }
