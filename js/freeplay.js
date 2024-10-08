@@ -26,28 +26,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const nextButton = document.getElementById("next");
 
     function updateSong() {
-        const previousIndex = currentSongIndex; // Guarda el índice anterior
-
-        // Cambiar la canción
         modTitle.textContent = songs[currentSongIndex].title;
-        songDisplay.src = songs[currentSongIndex].image;
-
-        // Agrega una clase de deslizamiento a la imagen
-        if (currentSongIndex > previousIndex) {
-            songDisplay.classList.add('slide-right'); // Deslizar a la derecha si es siguiente
-        } else {
-            songDisplay.classList.add('slide-left'); // Deslizar a la izquierda si es anterior
-        }
-
-        // Actualiza el evento de clic para el enlace
-        modLink.onclick = () => {
-            window.location.href = songs[currentSongIndex].link;
-        };
-
-        // Espera a que termine la animación y quita las clases de deslizamiento
+        
+        // Añadir clase de deslizamiento
+        songDisplay.classList.add('slide-left');
+        
+        // Cambiar imagen después de un breve retraso
         setTimeout(() => {
-            songDisplay.classList.remove('slide-left', 'slide-right');
-        }, 300); // Duración de la animación
+            songDisplay.src = songs[currentSongIndex].image;
+            songDisplay.classList.remove('slide-left');
+            songDisplay.classList.remove('slide-right');
+        }, 300); // Ajusta el tiempo según sea necesario
     }
 
     prevButton.addEventListener("click", () => {
@@ -60,5 +49,5 @@ document.addEventListener("DOMContentLoaded", function() {
         updateSong();
     });
 
-    updateSong();
+    updateSong(); // Inicializa la primera canción
 });

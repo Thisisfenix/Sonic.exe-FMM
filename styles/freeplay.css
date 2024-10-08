@@ -9,6 +9,8 @@ body {
     text-align: center;
     margin: 0;
     padding: 20px;
+    background-image: url('BG/backgroundST.png'); /* Cambia 'tu-imagen-de-fondo.jpg' a la ruta de tu imagen */
+    background-size: cover; /* Asegura que la imagen cubra todo el fondo */
 }
 
 h1 {
@@ -34,6 +36,7 @@ h1 {
     cursor: pointer;
     text-align: center; /* Alinear el contenido al centro */
     position: relative; /* Para el posicionamiento de la imagen */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra */
 }
 
 /* Efecto hover en la caja */
@@ -53,7 +56,7 @@ h1 {
 .mod-title {
     color: white;
     margin-top: 10px;
-    transition: color 0.3s ease-in-out;
+    transition: color 0.5s ease-in-out; /* Cambiado a 0.5s */
 }
 
 /* Cambia a rojo al hacer hover */
@@ -108,9 +111,16 @@ h1 {
     overflow: hidden; /* Asegúrate de que el contenido no sobresalga */
 }
 
-.next {
-    position: absolute;
-    top: 0; /* Asegura que esté en la misma posición vertical */
-    left: 100%; /* Inicialmente fuera de vista a la derecha */
-    transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
+/* Animación de entrada al cargar la página */
+.container {
+    animation: fadeIn 1s; /* Añadir esta línea */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* Comienza invisible */
+    }
+    to {
+        opacity: 1; /* Termina visible */
+    }
 }

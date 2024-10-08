@@ -4,19 +4,19 @@ const mods = [
         modImage: 'images/Too_Slow_Artwork.png',     // URL de la imagen del mod
         bfGif: 'images/Boyfriend.gif',                // URL del GIF de BF para este mod
         mod: 'https://drive.usercontent.google.com/u/0/uc?id=1uPdwR8h8TxqN2JaNqncGaVdTFIeScHPg&export=download', // URL del archivo del mod
-        alt: 'Mod 1 Image'
+        alt: 'Imagen del Mod 1'
     },
     {
         modImage: 'images/You-cant-runfp.png',
         bfGif: 'images/Boyfriend.gif',
         mod: 'https://drive.usercontent.google.com/u/0/uc?id=1uSSMIWrP0vI-ASWAZ1eW6029jy0OBYEb&export=download',
-        alt: 'Mod 2 Image'
+        alt: 'Imagen del Mod 2'
     },
     {
         modImage: 'images/Triple-troublefp.png',
         bfGif: 'images/Boyfriend.gif',
         mod: 'https://drive.usercontent.google.com/u/0/id=1v2rb7sUDRCcpMVRjPM-khs7gqZNN3-GN&export=download',
-        alt: 'Mod 3 Image'
+        alt: 'Imagen del Mod 3'
     }
 ];
 
@@ -29,15 +29,17 @@ const downloadModButton = document.getElementById('downloadModButton');
 
 // Función para actualizar la imagen, el GIF y el enlace de descarga del mod
 function updateModContent() {
+    const mod = mods[currentModIndex];
+    
     // Actualizar la imagen del mod
-    selectedImage.src = mods[currentModIndex].modImage;
-    selectedImage.alt = mods[currentModIndex].alt;
+    selectedImage.src = mod.modImage;
+    selectedImage.alt = mod.alt;
 
     // Actualizar el GIF de BF
-    bfGif.src = mods[currentModIndex].bfGif;
+    bfGif.src = mod.bfGif;
 
     // Establecer el enlace de descarga del mod
-    downloadModButton.setAttribute('href', mods[currentModIndex].mod);
+    downloadModButton.setAttribute('href', mod.mod);
     downloadModButton.setAttribute('download', `mod${currentModIndex + 1}.zip`);
 }
 

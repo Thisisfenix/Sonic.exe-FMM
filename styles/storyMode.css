@@ -8,8 +8,8 @@
 /* Estilos del body */
 body {
     font-family: Arial, sans-serif;
-    background: url('BG/indexBG.png') no-repeat center center fixed; /* Imagen de fondo */
-    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    background: url('BG/storymodeBG.gif') no-repeat center center fixed; /* Cambia 'tu-gif-de-fondo.gif' por la ruta de tu GIF */
+    background-size: cover; /* Asegura que el GIF cubra toda la pantalla */
     color: white;
     display: flex;
     justify-content: center;
