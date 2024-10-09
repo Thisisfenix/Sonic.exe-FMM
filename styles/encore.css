@@ -22,18 +22,19 @@ body {
     width: 400px; /* Ajusta según el tamaño deseado */
     height: 300px; /* Ajusta según el tamaño deseado */
     position: relative;
+    background-image: url('images/FreeBox.png'); /* Imagen de fondo para el borde */
     background-size: cover; /* Asegúrate de que la imagen de fondo cubra toda la caja */
     margin-bottom: 20px; /* Espaciado debajo de la caja */
+    display: flex; /* Flexbox para centrar contenido */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
 }
 
 /* Imagen de la canción */
 .song-image {
-    width: 100%; /* Ajustar al 100% del contenedor */
+    max-width: 90%; /* Limita el ancho al 90% del contenedor */
+    max-height: 90%; /* Limita la altura al 90% del contenedor */
     height: auto; /* Mantener la relación de aspecto */
-    position: absolute; /* Para que la imagen esté sobre la caja */
-    top: 50%; /* Centrar verticalmente */
-    left: 50%; /* Centrar horizontalmente */
-    transform: translate(-50%, -50%); /* Para centrar completamente */
 }
 
 /* Botones de navegación */
