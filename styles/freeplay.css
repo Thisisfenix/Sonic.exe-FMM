@@ -49,7 +49,7 @@ h1 {
     width: 100%; /* Ajustar el tamaño de la imagen al 100% del contenedor */
     height: auto; /* Mantener la relación de aspecto */
     margin: 0; /* Sin margen */
-    transition: transform 0.5s ease; /* Suaviza el efecto de transformación */
+    transition: opacity 0.5s ease; /* Suaviza el efecto de desvanecimiento */
 }
 
 /* Clases para deslizamiento de imágenes */

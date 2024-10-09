@@ -10,17 +10,13 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-
-.title {
-    margin-bottom: 20px;
+    align-items: center; /* Centrar contenido */
 }
 
 /* Estilos de la caja */
 .box {
-    width: 400px; /* Ajusta según el tamaño deseado */
-    height: 300px; /* Ajusta según el tamaño deseado */
+    width: 400px; /* Ancho de la caja */
+    height: 300px; /* Altura de la caja */
     position: relative;
     background-image: url('images/FreeBox.png'); /* Imagen de fondo para el borde */
     background-size: cover; /* Asegúrate de que la imagen de fondo cubra toda la caja */
@@ -37,18 +33,18 @@ body {
     height: auto; /* Mantener la relación de aspecto */
 }
 
+/* Título de la canción */
+.song-title {
+    color: yellow;
+    margin: 10px 0;
+}
+
 /* Botones de navegación */
 .nav-btn {
     font-size: 2em;
     cursor: pointer;
     color: white;
     margin: 0 20px; /* Espaciado entre los botones */
-}
-
-/* Título de la canción */
-.song-title {
-    color: yellow;
-    margin: 10px 0;
 }
 
 /* Botón de descarga */

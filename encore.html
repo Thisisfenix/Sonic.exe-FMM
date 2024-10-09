@@ -4,30 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encore - Sonic.exe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/encore.css">
 </head>
-<body style="background-image: url('BG/BackGROUND.png'); background-size: cover; margin: 0; padding: 0;">
+<body style="background: url('BG/menuBG.png') no-repeat center center fixed; background-size: cover;">
     <div class="container">
         <h1 class="title">Encore</h1>
 
-        <!-- Caja de borde con imagen de la canción -->
-        <div class="box" style="background-image: url('images/FreeBox.png');">
-            <img id="songImage" src="" alt="Imagen de la canción" class="song-image">
+        <!-- Contenedor centrado para la caja -->
+        <div class="box">
+            <img src="images/LogoV2.png" alt="Imagen de la Canción" class="song-image" id="songImage">
         </div>
 
-        <!-- Botones de navegación -->
+        <p class="song-title" id="songTitle">Título de la Canción</p>
+
         <div class="navigation">
-            <button id="prevButton" class="nav-btn">⬅️</button>
-            <button id="nextButton" class="nav-btn">➡️</button>
+            <button class="nav-btn" id="prevButton">⬅️</button>
+            <button class="nav-btn" id="nextButton">➡️</button>
         </div>
 
-        <!-- Título de la canción -->
-        <p id="songTitle" class="song-title"></p>
-
-        <!-- Botón para descargar la canción -->
-        <a id="downloadButton" href="" class="download-button">Descargar Canción</a>
-
-        <!-- Botón para volver al menú principal -->
+        <a id="downloadButton" href="link_to_download" class="download-button">Descargar</a>
         <a href="index.html" class="back-button">Volver al Menú Principal</a>
     </div>
 

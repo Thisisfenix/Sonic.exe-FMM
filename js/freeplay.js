@@ -25,29 +25,42 @@ document.addEventListener("DOMContentLoaded", function() {
     const prevButton = document.getElementById("prev");
     const nextButton = document.getElementById("next");
 
-    function updateSong() {
+    function updateSong(direction) {
         modTitle.textContent = songs[currentSongIndex].title;
         modLink.href = songs[currentSongIndex].link;
 
-        // Añadir clase de deslizamiento a la imagen actual
-        songDisplay.classList.add('slide-left');
+        // Cambia la imagen dependiendo de la dirección
+        if (direction === 'next') {
+            songDisplay.classList.add('slide-left'); // Desliza hacia la izquierda
+        } else {
+            songDisplay.classList.add('slide-right'); // Desliza hacia la derecha
+        }
 
         // Cambiar imagen después de un breve retraso
         setTimeout(() => {
+            songDisplay.style.opacity = '0'; // Desvanecer la imagen
             songDisplay.src = songs[currentSongIndex].image;
-            songDisplay.classList.remove('slide-left');
-            songDisplay.classList.remove('slide-right');
-        }, 300); // Ajusta el tiempo según sea necesario
+
+            // Manejo de errores si la imagen no se carga
+            songDisplay.onerror = () => {
+                songDisplay.src = 'path/to/default-image.png'; // Ruta de una imagen por defecto
+            };
+
+            setTimeout(() => {
+                songDisplay.style.opacity = '1'; // Mostrar la nueva imagen
+                songDisplay.classList.remove('slide-left', 'slide-right'); // Elimina las clases de deslizamiento
+            }, 300); // Tiempo para mostrar la nueva imagen
+        }, 300); // Tiempo para deslizamiento
     }
 
     prevButton.addEventListener("click", () => {
         currentSongIndex = (currentSongIndex === 0) ? songs.length - 1 : currentSongIndex - 1;
-        updateSong();
+        updateSong('prev');
     });
 
     nextButton.addEventListener("click", () => {
         currentSongIndex = (currentSongIndex === songs.length - 1) ? 0 : currentSongIndex + 1;
-        updateSong();
+        updateSong('next');
     });
 
     updateSong(); // Inicializa la primera canción
