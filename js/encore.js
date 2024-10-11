@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const songs = [
         {
             title: "Canción 1",
-            image: "images/cancion1.png", // Cambia esto a la ruta de tu imagen
+            image: "images/Too_Slow_Artwork.png", // Cambia esto a la ruta de tu imagen
             link: "mod1.html" // Cambia esto a tu enlace de descarga
         },
         {

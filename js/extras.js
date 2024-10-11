@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const extraMusic = document.getElementById('extraMusic');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const volumeUpBtn = document.getElementById('volumeUpBtn');
-    const volumeDownBtn = document.getElementById('volumeDownBtn');
-
     const mediaContent = document.getElementById('media');
     const mediaList = [
         { type: 'image', src: 'media/20240917_205432.jpg' },
@@ -71,31 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('nextBtn').addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % mediaList.length;
         updateMedia();
-    });
-
-    // Función para alternar entre reproducir y pausar la música
-    playPauseBtn.addEventListener('click', () => {
-        if (extraMusic.paused) {
-            extraMusic.play();
-            playPauseBtn.textContent = 'Pause';
-        } else {
-            extraMusic.pause();
-            playPauseBtn.textContent = 'Play';
-        }
-    });
-
-    // Función para aumentar el volumen
-    volumeUpBtn.addEventListener('click', () => {
-        if (extraMusic.volume < 1) {
-            extraMusic.volume = Math.min(extraMusic.volume + 0.1, 1);
-        }
-    });
-
-    // Función para disminuir el volumen
-    volumeDownBtn.addEventListener('click', () => {
-        if (extraMusic.volume > 0) {
-            extraMusic.volume = Math.max(extraMusic.volume - 0.1, 0);
-        }
     });
 
     // Cargar el primer medio

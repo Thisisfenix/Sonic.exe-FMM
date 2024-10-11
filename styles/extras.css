@@ -9,7 +9,7 @@ body {
 .page-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center;  /* Centrar el título y el contenido */
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -20,38 +20,49 @@ body {
     margin-bottom: 2rem;
     color: #ff0000; /* Color rojo inspirado en Sonic.exe */
     text-shadow: 2px 2px 5px black;
+    text-align: center; /* Centrar el título */
 }
 
 .media-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Centrar las imágenes/videos */
     margin-bottom: 2rem;
+    position: relative;  /* Relativo para posicionar botones de navegación */
 }
 
 .media-display {
     width: 100%;
     max-width: 800px;
     background-color: #222;
-    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    border: 2px solid #ff0000; /* Borde rojo */
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 1rem;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.media-content img,
+.media-content img, 
 .media-content video {
-    width: 100%;
-    height: auto;
+    width: 100%;       /* Se ajusta al ancho del contenedor */
+    height: auto;      /* Mantiene proporción */
+    max-height: 500px; /* Limitar la altura máxima */
+    display: block;
+    border-radius: 5px;
 }
 
 .media-controls {
-    display: flex;
-    justify-content: space-between;
-    width: 80%;
+    width: 100%;
     max-width: 800px;
+    display: flex;
+    justify-content: space-between; /* Los botones estarán a la izquierda y derecha */
+    position: absolute;
+    top: 50%;           /* Posicionar botones verticalmente al centro del contenedor */
+    transform: translateY(-50%);
 }
 
 .media-controls button {
@@ -62,12 +73,21 @@ body {
     border-radius: 8px;
     font-size: 1.5rem;
     cursor: pointer;
-    margin: 0 0.5rem;
     transition: background-color 0.3s ease;
 }
 
 .media-controls button:hover {
     background-color: #cc0000;
+}
+
+.media-controls #prevBtn {
+    position: absolute;
+    left: -60px;  /* Asegura que el botón permanezca a la izquierda */
+}
+
+.media-controls #nextBtn {
+    position: absolute;
+    right: -60px;  /* Asegura que el botón permanezca a la derecha */
 }
 
 .back-button {
@@ -76,23 +96,26 @@ body {
     padding: 0.5rem 1rem;
     text-decoration: none;
     border-radius: 8px;
-    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    border: 2px solid #ff0000; /* Borde rojo */
     transition: background-color 0.3s ease;
     margin-top: 2rem;
+    position: fixed;
+    bottom: 20px;
+    left: 20px; /* Posicionar el botón en la esquina inferior izquierda */
 }
 
 .back-button:hover {
     background-color: #555;
 }
 
-/* Reproductor de música */
+/* Sección de controles de música */
 .music-controls {
     margin-top: 2rem;
     text-align: center;
     background-color: #333;
     padding: 1rem;
     border-radius: 8px;
-    border: 2px solid #ff0000; /* Color rojo para resaltar */
+    border: 2px solid #ff0000; /* Borde rojo */
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 

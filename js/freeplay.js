@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     let currentSongIndex = 0;
-
     const songDisplay = document.getElementById("modImage");
     const modLink = document.getElementById("modLink");
     const modTitle = document.getElementById("modTitle");
@@ -26,42 +25,32 @@ document.addEventListener("DOMContentLoaded", function() {
     const nextButton = document.getElementById("next");
 
     function updateSong(direction) {
+        // Ocultar la imagen actual
+        songDisplay.style.display = 'none';
+
+        // Actualizar el índice de la canción
+        currentSongIndex = (direction === 'left') 
+            ? (currentSongIndex === songs.length - 1 ? 0 : currentSongIndex + 1)
+            : (currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1);
+
+        // Actualizar los datos de la canción
         modTitle.textContent = songs[currentSongIndex].title;
         modLink.href = songs[currentSongIndex].link;
+        songDisplay.src = songs[currentSongIndex].image;
 
-        // Cambia la imagen dependiendo de la dirección
-        if (direction === 'next') {
-            songDisplay.classList.add('slide-left'); // Desliza hacia la izquierda
-        } else {
-            songDisplay.classList.add('slide-right'); // Desliza hacia la derecha
-        }
-
-        // Cambiar imagen después de un breve retraso
-        setTimeout(() => {
-            songDisplay.style.opacity = '0'; // Desvanecer la imagen
-            songDisplay.src = songs[currentSongIndex].image;
-
-            // Manejo de errores si la imagen no se carga
-            songDisplay.onerror = () => {
-                songDisplay.src = 'path/to/default-image.png'; // Ruta de una imagen por defecto
-            };
-
-            setTimeout(() => {
-                songDisplay.style.opacity = '1'; // Mostrar la nueva imagen
-                songDisplay.classList.remove('slide-left', 'slide-right'); // Elimina las clases de deslizamiento
-            }, 300); // Tiempo para mostrar la nueva imagen
-        }, 300); // Tiempo para deslizamiento
+        // Mostrar la nueva imagen
+        songDisplay.style.display = 'block'; // Hacer visible la nueva imagen
     }
 
     prevButton.addEventListener("click", () => {
-        currentSongIndex = (currentSongIndex === 0) ? songs.length - 1 : currentSongIndex - 1;
-        updateSong('prev');
+        updateSong('left'); // Mover imagen hacia la izquierda
     });
 
     nextButton.addEventListener("click", () => {
-        currentSongIndex = (currentSongIndex === songs.length - 1) ? 0 : currentSongIndex + 1;
-        updateSong('next');
+        updateSong('right'); // Mover imagen hacia la derecha
     });
 
-    updateSong(); // Inicializa la primera canción
+    // Inicializar la primera canción
+    songDisplay.src = songs[currentSongIndex].image;
+    songDisplay.style.display = 'block'; // Asegurarse de que la primera imagen sea visible
 });
