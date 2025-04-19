@@ -4,69 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créditos - Sonic.exe</title>
-    <link rel="stylesheet" href="styles/credits.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/credits.css">
 </head>
-<body style="background: url('BG/menuBG.png') no-repeat center center fixed; background-size: cover; margin: 0; padding: 0; height: 100vh;">
-    <div class="credits-container">
-        <div class="background">
-            <audio id="backgroundMusic" src="sounds/Credits.ogg" loop hidden></audio>
-        </div>
+<body>
+    <audio id="backgroundMusic" src="sounds/Credits.ogg" loop hidden></audio>
 
-        <div class="credits-content">
-            <h1>Créditos</h1>
-            <div class="credit-list">
-                <div class="credit-item">
-                    <img src="icons/20240928_015106.png" alt="Icono de Just Fenix" class="credit-icon">
-                    <span class="credit-name">Director 1 y creador del sitio web - Just Fenix</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/20240928_015544.png" alt="Icono de Josias782" class="credit-icon">
-                    <span class="credit-name">Director 2 - Josias782</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/Photoroom-20240920_221620.png" alt="Icono de Metal Sonic" class="credit-icon">
-                    <span class="credit-name">Colaborador 1 y subdirector - Metal Sonic (Carreo medio foro)</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/291_sin_titulo_20240921014905.png" alt="Icono de j1a2g3r4tu" class="credit-icon">
-                    <span class="credit-name">Colaborador 2 - j1a2g3r4tu</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/352_sin_titulo_20240917214204.png" alt="Icono de dani_a.y.t" class="credit-icon">
-                    <span class="credit-name">Colaborador 3 - dani_a.y.t</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/103_sin_titulo_20240928004155.png" alt="Icono de Tails" class="credit-icon">
-                    <span class="credit-name">Colaborador 4 - Tails</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/iconos_FNF_20240928015602.png" alt="Icono de Samylol" class="credit-icon">
-                    <span class="credit-name">Colaborador 5 - Samylol</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/346_sin_titulo_20240930232516.png" alt="Icono de Mart" class="credit-icon">
-                    <span class="credit-name">Colaborador 6 - Mart</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/Project_Capture_141.png" alt="Icono de Luis Leyends" class="credit-icon">
-                    <span class="credit-name">Colaborador 7 - Luis Leyends</span>
-                </div>
-                <div class="credit-item">
-                    <img src="icons/215_sin_titulo_20240928080723.png" alt="Icono de Nogales" class="credit-icon">
-                    <span class="credit-name">Colaborador 8 - Nogales</span>
-                </div>
+    <div class="credits-wrapper">
+        <h1 class="text-center credits-title">CRÉDITOS</h1>
+        
+        <div class="credits-carousel">
+            <div class="carousel-container">
+                <div class="credit-item" id="prevCredit"></div>
+                <div class="credit-item active" id="currentCredit"></div>
+                <div class="credit-item" id="nextCredit"></div>
+            </div>
+            
+            <div class="navigation-controls">
+                <button id="prevButton" class="nav-btn"><i class="bi bi-arrow-left"></i></button>
+                <span class="position-indicator">1/10</span>
+                <button id="nextButton" class="nav-btn"><i class="bi bi-arrow-right"></i></button>
             </div>
         </div>
-
-        <div class="navigation-buttons">
-            <span class="arrow" id="prevButton">⬅️</span>
-            <span class="arrow" id="nextButton">➡️</span>
-        </div>
-
-        <a href="index.html" class="back-button">Volver al Menú</a>
+        
+        <a href="index.html" class="back-button"><i class="bi bi-house-door"></i> Volver al Menú</a>
     </div>
 
+    <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/credits.js"></script>
 </body>
 </html>

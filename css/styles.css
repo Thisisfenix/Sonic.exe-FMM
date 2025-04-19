@@ -1,0 +1,214 @@
+/* ===== ESTILOS GENERALES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: #000 url('../BG/indexBG.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    cursor: url('images/cursor.png'), auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== CONTENEDOR VERTICAL ===== */
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== LOGO PRINCIPAL ===== */
+.sonic-logo {
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    width: 650px;
+    max-width: 90%;
+    height: auto;
+    filter: drop-shadow(0 0 15px #00ffff);
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ===== MENÚ VERTICAL ===== */
+.menu-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-btn {
+    position: relative;
+    display: block;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-img {
+    width: 350px;
+    height: auto;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.7));
+}
+
+/* ===== EFECTOS HOVER ===== */
+.menu-btn:hover {
+    transform: scale(1.1);
+}
+
+.menu-btn:hover .btn-img {
+    filter: drop-shadow(0 0 20px #00ffff) brightness(1.3);
+    animation: btn-glitch 0.3s linear;
+}
+
+/* ===== CLICK TO START ===== */
+.start-prompt {
+    margin-top: 40px;
+    animation: pulse 2s infinite;
+}
+
+.start-img {
+    width: 300px;
+    max-width: 90%;
+    opacity: 0.8;
+}
+
+/* ===== EFECTOS VISUALES ===== */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.glitch-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../images/glitch-noise.gif');
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+    animation: glitch 5s infinite linear;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 0.6; transform: scale(0.98); }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); opacity: 0.03; }
+    20% { transform: translate(-5px, 5px); opacity: 0.05; }
+    40% { transform: translate(-5px, -5px); opacity: 0.07; }
+    60% { transform: translate(5px, 5px); opacity: 0.05; }
+    80% { transform: translate(5px, -5px); opacity: 0.03; }
+    100% { transform: translate(0); opacity: 0.05; }
+}
+
+@keyframes btn-glitch {
+    0% { transform: translate(0); filter: drop-shadow(0 0 15px #00ffff); }
+    25% { transform: translate(-3px, 3px); filter: drop-shadow(0 0 20px #ff00ff); }
+    50% { transform: translate(3px, -3px); filter: drop-shadow(0 0 15px #00ffff); }
+    75% { transform: translate(-3px, -3px); filter: drop-shadow(0 0 20px #ff00ff); }
+    100% { transform: translate(0); filter: drop-shadow(0 0 15px #00ffff); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .logo-img {
+        width: 400px;
+    }
+    
+    .btn-img {
+        width: 280px;
+    }
+    
+    .start-img {
+        width: 250px;
+    }
+    
+    .menu-vertical {
+        gap: 20px;
+    }
+    /* ===== BOTÓN DE VERSIÓN ===== */
+.version-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001; /* Por encima del panel */
+}
+
+.version-btn .btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    border-width: 2px;
+    text-shadow: 0 0 5px #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 0, 10, 0.8);
+    padding: 5px 10px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.version-btn .btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ffff, 0 0 30px rgba(0, 255, 255, 0.3);
+    background: rgba(0, 0, 20, 0.9);
+    color: #fff !important;
+}
+
+.version-btn .bi {
+    margin-right: 5px;
+    animation: pulse-icon 2s infinite;
+}
+
+@keyframes pulse-icon {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+}

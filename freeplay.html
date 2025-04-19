@@ -4,27 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freeplay - Sonic.exe</title>
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/freeplay.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/freeplay.css">
 </head>
 <body style="background: url('BG/backgroundlool.png') no-repeat center center fixed; background-size: cover; margin: 0; padding: 0;">
 
-    <h1 class="title">Freeplay</h1>
+    <div class="container-fluid text-center py-5">
+        <h1 class="title display-4 mb-5">Freeplay</h1>
 
-    <div class="container">
-        <span class="arrow" id="prev">&#9664;</span>
-        <div class="song-box">
-            <img src="images/LogoV2.png" alt="Logo de Sonic.exe" class="mod-image" id="modImage">
-            <img src="images/LogoV2.png" alt="Logo de Sonic.exe Next" class="mod-image next" id="nextImage" style="display: none;">
+        <div class="row justify-content-center align-items-center mb-4">
+            <div class="col-auto">
+                <button class="arrow btn btn-lg p-0" id="prev">&#9664;</button>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="song-box position-relative mx-auto">
+                    <img src="images/LogoV2.png" alt="Logo de Sonic.exe" class="mod-image img-fluid" id="modImage">
+                    <img src="images/LogoV2.png" alt="Logo de Sonic.exe Next" class="mod-image next img-fluid position-absolute top-0 start-0" id="nextImage" style="display: none;">
+                </div>
+            </div>
+            
+            <div class="col-auto">
+                <button class="arrow btn btn-lg p-0" id="next">&#9654;</button>
+            </div>
         </div>
-        <span class="arrow" id="next">&#9654;</span>
+
+        <p class="mod-title h3 mb-4" id="modTitle">Sonic.exe 3.0 songs</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a id="modLink" class="mod-link btn btn-primary btn-lg px-4" href="mods/sonic.exe.html">Ir al Mod</a>
+            <a href="index.html" class="back-button btn btn-secondary btn-lg px-4">Volver al Menú Principal</a>
+        </div>
     </div>
 
-    <p class="mod-title" id="modTitle">Sonic.exe 3.0 songs</p>
-
-    <a id="modLink" class="mod-link" href="mods/sonic.exe.html">Ir al Mod</a>
-    <a href="index.html" class="back-button">Volver al Menú Principal</a>
-
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
     <script src="js/freeplay.js"></script>
 </body>
 </html>

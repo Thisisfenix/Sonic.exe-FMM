@@ -4,26 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extras - Sonic.exe</title>
-    <link rel="stylesheet" href="styles/extras.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* Estilos temporales para visualización */
+        body {
+            background-color: #000 !important;
+            background-image: url('https://via.placeholder.com/1920x1080/000000/222222?text=Sonic.EXE');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .sonic-title {
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 3px;
+        }
+        
+        .media-content {
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px dashed #ff0000;
+        }
+        
+        .card {
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+        }
+        
+        .btn-outline-danger {
+            border-width: 2px;
+            font-weight: bold;
+        }
+    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="page-container">
-        <h1 class="title">
-            Extras - Sonic.exe
-        </h1>
-        <div class="media-container">
-            <div class="media-display">
-                <!-- El contenido de medios se cargará dinámicamente aquí -->
-                <div id="media" class="media-content"></div>
-            </div>
-            <div class="media-controls">
-                <button id="prevBtn">◀</button>
-                <button id="nextBtn">▶</button>
+<body class="bg-dark text-light">
+    <!-- Audio element -->
+    <audio id="extraMusic" src="sounds/Radio_Static_-_Sound_Effect.ogg" loop></audio>
+
+    <!-- Main Container -->
+    <div class="container py-4">
+        <!-- Header -->
+        <header class="text-center mb-5">
+            <h1 class="display-3 fw-bold text-danger sonic-title">EXTRAS</h1>
+            <p class="lead text-muted">Unlock the hidden secrets...</p>
+        </header>
+
+        <!-- Media Gallery Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card bg-black border-danger mb-4">
+                    <div class="card-header bg-danger text-dark">
+                        <h3 class="card-title mb-0"><i class="fas fa-photo-film me-2"></i>Media Gallery</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Media Display -->
+                        <div id="media" class="media-content">
+                            <p class="text-muted mb-0">Select media to view</p>
+                        </div>
+                        
+                        <!-- Media Controls -->
+                        <div class="card-footer bg-dark d-flex justify-content-between align-items-center media-controls">
+                            <button id="prevBtn" class="btn btn-outline-danger">
+                                <i class="fas fa-backward me-1"></i> Previous
+                            </button>
+                            <div id="mediaCounter" class="media-counter">0/0</div>
+                            <button id="nextBtn" class="btn btn-outline-danger">
+                                Next <i class="fas fa-forward ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <a href="index.html" class="back-button">Regresar al Menú Principal</a>
+
+        <!-- Additional Sections -->
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 bg-black border-danger">
+                    <div class="card-header bg-danger text-dark">
+                        <h4 class="card-title mb-0"><i class="fas fa-paintbrush me-2"></i>Concept Art</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Unseen drawings and early designs.</p>
+                        <div class="d-grid">
+                            <button class="btn btn-outline-danger">View Gallery</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 bg-black border-danger">
+                    <div class="card-header bg-danger text-dark">
+                        <h4 class="card-title mb-0"><i class="fas fa-scroll me-2"></i>Developer Notes</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Behind-the-scenes information.</p>
+                        <div class="d-grid">
+                            <button class="btn btn-outline-danger">Read Notes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center mt-5">
+            <a href="index.html" class="btn btn-lg btn-danger px-4">
+                <i class="fas fa-arrow-left me-2"></i> Return to Main Menu
+            </a>
+        </div>
     </div>
-    <audio id="extraMusic" src="sounds\Radio_Static_-_Sound_Effect.ogg" loop autoplay></audio>
-    <script src="js/extras.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Media array - ejemplo con 3 elementos
+        const mediaItems = [
+            { type: 'image', src: 'https://via.placeholder.com/800x450/ff0000/000000?text=Image+1' },
+            { type: 'image', src: 'https://via.placeholder.com/800x450/00ff00/000000?text=Image+2' },
+            { type: 'video', src: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4' }
+        ];
+        
+        const mediaElement = document.getElementById('media');
+        const mediaCounter = document.getElementById('mediaCounter');
+        let currentIndex = 0;
+        
+        // Cargar medio actual
+        function loadMedia(index) {
+            const item = mediaItems[index];
+            mediaElement.innerHTML = '';
+            
+            if (item.type === 'image') {
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = 'Media ' + (index + 1);
+                img.className = 'img-fluid';
+                mediaElement.appendChild(img);
+            } 
+            else if (item.type === 'video') {
+                const video = document.createElement('video');
+                video.src = item.src;
+                video.controls = true;
+                video.className = 'img-fluid';
+                mediaElement.appendChild(video);
+            }
+            
+            mediaCounter.textContent = (index + 1) + '/' + mediaItems.length;
+        }
+        
+        // Event listeners
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            currentIndex = (currentIndex - 1 + mediaItems.length) % mediaItems.length;
+            loadMedia(currentIndex);
+        });
+        
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentIndex = (currentIndex + 1) % mediaItems.length;
+            loadMedia(currentIndex);
+        });
+        
+        // Iniciar con el primer elemento
+        loadMedia(currentIndex);
+        
+        // Audio - activar con interacción del usuario
+        const audio = document.getElementById('extraMusic');
+        document.body.addEventListener('click', function() {
+            audio.play().catch(e => console.log('Audio error:', e));
+        }, { once: true });
+    });
+    </script>
 </body>
 </html>

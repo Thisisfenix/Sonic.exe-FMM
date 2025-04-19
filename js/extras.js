@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Configuración del audio de fondo
     const extraMusic = document.getElementById('extraMusic');
+    extraMusic.volume = 0.3; // Volumen reducido al 30%
+    
+    // 2. Elementos del DOM
     const mediaContent = document.getElementById('media');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const mediaCounter = document.getElementById('mediaCounter');
+
+    // Media list (your original list)
     const mediaList = [
         { type: 'image', src: 'media/20240917_205432.jpg' },
         { type: 'video', src: 'media/extra1.mp4' },
@@ -33,42 +42,125 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'image', src: 'media/Untitled204_20240919205703.jpg' },
         { type: 'image', src: 'media/Untitled203_20240919211434.jpg' },
         { type: 'image', src: 'media/descarga_27.png' }
-    ];
-    let currentIndex = 0;
-
-    function loadMedia(index) {
-        mediaContent.innerHTML = ''; // Limpiar contenido actual
-
-        const media = mediaList[index];
-
-        if (media.type === 'image') {
-            const img = document.createElement('img');
-            img.src = media.src;
-            img.alt = `Extra ${index + 1}`;
-            mediaContent.appendChild(img);
-        } else if (media.type === 'video') {
-            const video = document.createElement('video');
-            video.src = media.src;
-            video.controls = true;
-            video.autoplay = true; // Auto reproducir el video cuando se carga
-            mediaContent.appendChild(video);
-        }
-    }
-
-    function updateMedia() {
-        loadMedia(currentIndex);
-    }
-
-    document.getElementById('prevBtn').addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + mediaList.length) % mediaList.length;
-        updateMedia();
+    ].filter(media => {
+        // Filtramos medios con rutas válidas (opcional)
+        return media.src && media.src.trim() !== '';
     });
-
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % mediaList.length;
-        updateMedia();
-    });
-
-    // Cargar el primer medio
-    updateMedia();
-});
+    
+     // 4. Variables de estado
+     let currentIndex = 0;
+     let isFirstInteraction = true;
+ 
+     // 5. Función principal para cargar medios
+     const loadMedia = (index) => {
+         // Validación de índice
+         if (index < 0 || index >= mediaList.length) return;
+         
+         mediaContent.innerHTML = '';
+         const media = mediaList[index];
+ 
+         try {
+             let mediaElement;
+             const isVideo = media.type === 'video';
+             
+             // Crear elemento adecuado
+             mediaElement = document.createElement(isVideo ? 'video' : 'img');
+             mediaElement.src = media.src;
+             mediaElement.alt = `Media ${index + 1}`;
+             mediaElement.className = 'media-item';
+             
+             // Configuración específica para videos
+             if (isVideo) {
+                 mediaElement.controls = true;
+                 mediaElement.autoplay = true;
+                 mediaElement.muted = true; // Necesario para autoplay
+                 mediaElement.playsInline = true; // Para iOS
+             }
+             
+             // Manejo de errores
+             mediaElement.onerror = () => handleMediaError(index, media.src);
+             mediaElement.onload = () => updateMediaCounter(index);
+             
+             mediaContent.appendChild(mediaElement);
+             
+         } catch (error) {
+             console.error('Error loading media:', error);
+             handleMediaError(index, media.src);
+         }
+     };
+ 
+     // 6. Manejo de errores mejorado
+     const handleMediaError = (index, src) => {
+         mediaContent.innerHTML = `
+             <div class="media-error text-center p-4">
+                 <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                 <h5 class="text-danger">Error loading media</h5>
+                 <p class="text-muted">Position: ${index + 1}/${mediaList.length}</p>
+                 <small class="text-truncate d-block">${src || 'Unknown source'}</small>
+             </div>
+         `;
+         updateMediaCounter(index);
+     };
+ 
+     // 7. Actualización del contador
+     const updateMediaCounter = (index) => {
+         mediaCounter.textContent = `${index + 1}/${mediaList.length}`;
+         mediaCounter.title = `Current: ${mediaList[index].src}`;
+     };
+ 
+     // 8. Navegación
+     const showPrev = () => {
+         currentIndex = (currentIndex - 1 + mediaList.length) % mediaList.length;
+         loadMedia(currentIndex);
+     };
+ 
+     const showNext = () => {
+         currentIndex = (currentIndex + 1) % mediaList.length;
+         loadMedia(currentIndex);
+     };
+ 
+     // 9. Configuración de eventos
+     const setupEventListeners = () => {
+         // Botones de navegación
+         prevBtn.addEventListener('click', showPrev);
+         nextBtn.addEventListener('click', showNext);
+         
+         // Navegación por teclado
+         document.addEventListener('keydown', (e) => {
+             if (e.key === 'ArrowLeft') showPrev();
+             if (e.key === 'ArrowRight') showNext();
+         });
+         
+         // Audio (requiere interacción del usuario)
+         const handleFirstInteraction = () => {
+             if (isFirstInteraction) {
+                 extraMusic.play().catch(e => console.warn('Audio playback prevented:', e));
+                 isFirstInteraction = false;
+             }
+         };
+         
+         document.addEventListener('click', handleFirstInteraction, { once: true });
+         document.addEventListener('keydown', handleFirstInteraction, { once: true });
+     };
+ 
+     // 10. Inicialización
+     const init = () => {
+         if (mediaList.length === 0) {
+             mediaContent.innerHTML = `
+                 <div class="alert alert-warning text-center">
+                     No media files found. Please check your media directory.
+                 </div>
+             `;
+             prevBtn.disabled = true;
+             nextBtn.disabled = true;
+             mediaCounter.textContent = '0/0';
+             return;
+         }
+         
+         setupEventListeners();
+         loadMedia(0);
+     };
+ 
+     // Iniciar la aplicación
+     init();
+ });

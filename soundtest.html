@@ -1,40 +1,72 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Test</title>
-    <link rel="stylesheet" href="styles/soundtest.css">
+    <title>Sonic.exe v3 | Story Mode</title>
+    <!-- Bootstrap CSS local -->
+    <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <!-- Fuente terrorífica -->
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <!-- Tu CSS personalizado -->
+    <link rel="stylesheet" href="styles/storyMode.css">
 </head>
-<body style="background: url('BG/backgroundST.png') no-repeat center center fixed; background-size: cover; margin: 0; padding: 0; height: 100vh;">
-    <div class="container">
-        <h1>SOUND TEST</h1>
-        <div class="numbers">
-            <div class="number">
-                PGM NO. <span id="pgm-no">01</span>
-            </div>
-            <div class="number">
-                DA NO. <span id="da-no">01</span>
-            </div>
-        </div>
-        <div class="controls">
-            <button onclick="decrement('pgm')" title="Disminuir PGM">PGM -</button>
-            <button onclick="increment('pgm')" title="Aumentar PGM">PGM +</button>
-            <button onclick="decrement('da')" title="Disminuir DA">DA -</button>
-            <button onclick="increment('da')" title="Aumentar DA">DA +</button>
-        </div>
-        <button id="play-button" onclick="playSound()">Descargar</button>
 
-        <!-- Enlace para volver al menú principal -->
-        <a href="index.html" class="back-button">Volver al Menú Principal</a>
+<body class="sonic-bg">
+    <!-- Contenedor principal con Bootstrap -->
+    <div class="container-fluid d-flex flex-column justify-content-center align-items-center min-vh-100 p-4">
+        <!-- Cabecera con efecto glitch -->
+        <header class="text-center mb-5">
+            <h1 class="glitch-text display-1 mb-3">STORY MODE</h1>
+            <p class="subtitle h4 text-white">CHOOSE YOUR NIGHTMARE</p>
+        </header>
+
+        <!-- Contenido principal en card -->
+        <main class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card sonic-card bg-dark border-danger mb-4">
+                    <div class="card-body text-center">
+                        <!-- Imagen del mod -->
+                        <img id="selectedImage" class="img-fluid mod-image mb-3 rounded border border-warning" alt="Mod preview">
+                        
+                        <!-- Contador -->
+                        <div class="badge bg-danger mb-3 fs-5" id="modCounter">1/5</div>
+                        
+                        <!-- Navegación -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <button id="prevButton" class="btn btn-outline-warning btn-lg rounded-circle">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                            <button id="nextButton" class="btn btn-outline-warning btn-lg rounded-circle">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- GIF de BF -->
+                        <img class="bf-gif img-fluid rounded border border-warning" alt="Boyfriend animation">
+                    </div>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="d-grid gap-3 d-md-block text-center">
+                    <a id="downloadButton" class="btn btn-danger btn-lg px-4 me-md-3 sonic-btn">
+                        <i class="bi bi-download me-2"></i>DOWNLOAD MOD
+                    </a>
+                    <a href="index.html" class="btn btn-outline-light btn-lg px-4 sonic-btn">
+                        <i class="bi bi-arrow-left-circle me-2"></i>BACK TO MENU
+                    </a>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Sonidos -->
-    <audio id="backgroundMusic" src="sounds/soundtest.ogg" loop autoplay></audio>
-    <audio id="selectSound" src="sounds/pauseScrollMenu.ogg"></audio>
-    <audio id="correct-sound" src="sounds/confirmMenu.ogg"></audio>
-    <audio id="error-sound" src="sounds/NO.ogg"></audio>
-
-    <script src="js/soundtest.js"></script>
+    <!-- Bootstrap JS local + Popper -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bootstrap Icons (opcional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    
+    <!-- Tu JS personalizado -->
+    <script src="js/storyMode.js"></script>
 </body>
 </html>

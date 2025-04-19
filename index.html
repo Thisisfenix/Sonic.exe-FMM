@@ -1,46 +1,220 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal - Sonic.exe</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <title>SONIC.EXE MENU</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Fuente pixelada -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Estilos para el panel de actualización */
+        .update-panel {
+            position: fixed;
+            top: -500px;
+            /* Más negativo para asegurar que se oculte */
+            right: 20px;
+            width: 320px;
+            background: rgba(0, 0, 20, 0.95);
+            border: 3px solid #00ffff;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.5);
+            z-index: 1000;
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .update-panel.show {
+            top: 0;
+        }
+
+        .update-header {
+            color: #00ffff;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .update-content {
+            color: #fff;
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .update-content ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .update-content li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .update-content li:before {
+            content: ">";
+            color: #00ffff;
+            position: absolute;
+            left: -15px;
+        }
+
+        .close-update {
+            background: none;
+            border: none;
+            color: #00ffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 5px;
+            transition: all 0.2s;
+        }
+
+        .close-update:hover {
+            transform: scale(1.2);
+            color: #ff00ff;
+        }
+    </style>
 </head>
-<body style="background: url('BG/indexBG.png') no-repeat center center fixed; background-size: cover; margin: 0; padding: 0; height: 100vh;">
-    <div class="page-container">
-        <div class="page-background">
-            <h1 class="title">
-                <img src="images/350_sin_titulo_20240917203045 (1).png" alt="Sonic.exe">
-            </h1>
-            <div class="menu-container">
-                <a href="storyMode.html" class="menu-button" id="storyMode">
-                    <img src="images/350_sin_titulo_20240927230657.png" alt="Modo Historia">
-                </a>
-                <a href="encore.html" class="menu-button" id="encore">
-                    <img src="images/350_sin_titulo_20241001112058-1.png" alt="Encore">
-                </a>
-                <a href="freeplay.html" class="menu-button" id="freeplay">
-                    <img src="images/350_sin_titulo_20240927230709.png" alt="Freeplay">
-                </a>
-                <a href="extras.html" class="menu-button" id="extras">
-                    <img src="images/350_sin_titulo_20240927230742.png" alt="Extras">
-                </a>
-                <a href="soundtest.html" class="menu-button" id="soundTest">
-                    <img src="images/350_sin_titulo_20241001112127-1.png" alt="Sound Test">
-                </a>
-                <a href="credits.html" class="menu-button" id="credits">
-                    <img src="images/350_sin_titulo_20240927230724.png" alt="Créditos">
-                </a>
+
+<body>
+    <!-- Contenedor principal vertical -->
+    <div class="vertical-container">
+        <!-- Botón de versión -->
+        <div class="version-btn">
+            <button id="updateBtn" class="btn btn-outline-info">
+                <i class="bi bi-stars"></i> v1.5 Rework
+            </button>
+        </div>
+
+        <!-- Panel de actualización (oculto inicialmente) -->
+        <div class="update-panel" id="updatePanel">
+            <div class="update-header">
+                <h5><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5</h5>
+                <button class="close-update" id="closeUpdate">&times;</button>
             </div>
+            <div class="update-content">
+                <p><strong>Novedades del Rework:</strong></p>
+                <ul>
+                    <li>Diseño vertical completamente nuevo</li>
+                    <li>Sistema de audio mejorado</li>
+                    <li>Efectos visuales de glitch</li>
+                    <li>Navegación con teclado</li>
+                    <li>Optimización para móviles</li>
+                    <li>Nuevas animaciones</li>
+                    <li>Interfaz rediseñada</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Logo grande -->
+        <div class="sonic-logo">
+            <img src="images/350_sin_titulo_20240917203045 (1).png" alt="SONIC.EXE" class="logo-img">
+        </div>
+
+        <!-- Menú vertical -->
+        <div class="menu-vertical">
+            <a href="storyMode.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20240927230657.png" alt="STORY MODE" class="btn-img">
+            </a>
+            <!-- Encore -->
+            <a href="encore.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20241001112058-1.png" alt="ENCORE" class="btn-img">
+            </a>
+
+            <a href="freeplay.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20240927230709.png" alt="FREEPLAY" class="btn-img">
+            </a>
+            <!-- Extras -->
+            <a href="extras.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20240927230742.png" alt="EXTRAS" class="btn-img">
+            </a>
+
+            <!-- Sound Test -->
+            <a href="soundtest.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20241001112127-1.png" alt="SOUND TEST" class="btn-img">
+            </a>
+
+            <!-- Credits -->
+            <a href="credits.html" class="menu-btn">
+                <img src="images/350_sin_titulo_20240927230724.png" alt="CREDITS" class="btn-img">
+            </a>
+
+        </div>
+
+        <!-- Click to Start -->
+        <div class="start-prompt">
+            <img src="images/click_to_start.png" alt="CLICK ANYWHERE TO START" class="start-img">
         </div>
     </div>
 
-    <!-- Música de fondo (FnmmSonicTeamOst01.mp3) -->
-    <audio id="backgroundMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop autoplay></audio>
-    <!-- Sonido de selección (pauseScrollMenu.ogg) -->
+    <!-- Audio -->
+    <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
     <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio>
 
+    <!-- Scripts -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Control del panel de actualización MEJORADO
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateBtn = document.getElementById('updateBtn');
+            const updatePanel = document.getElementById('updatePanel');
+            const closeUpdate = document.getElementById('closeUpdate');
+            let panelVisible = false;
+
+            // Función para alternar el panel
+            const togglePanel = () => {
+                panelVisible = !panelVisible;
+                updatePanel.classList.toggle('show', panelVisible);
+
+                // Reproducir sonido diferente al abrir/cerrar
+                const sound = panelVisible ? selectSound : hoverSound;
+                playSound(sound);
+            };
+
+            // Eventos
+            updateBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que se cierre inmediatamente
+                togglePanel();
+            });
+
+            closeUpdate.addEventListener('click', togglePanel);
+
+            // Cerrar al hacer click fuera
+            document.addEventListener('click', (e) => {
+                if (panelVisible && !updatePanel.contains(e.target) && e.target !== updateBtn) {
+                    togglePanel();
+                }
+            });
+
+            // Cerrar con ESC
+            document.addEventListener('keydown', (e) => {
+                if (panelVisible && e.key === 'Escape') {
+                    togglePanel();
+                }
+            });
+        });
+
+        function playSound(sound) {
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Error de audio:", e));
+            }
+        }
+    </script>
     <script src="js/index.js"></script>
 </body>
+
 </html>

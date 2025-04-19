@@ -1,0 +1,272 @@
+/* Importando la fuente pixelada */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Estilos generales - Complementando Bootstrap */
+body {
+    font-family: 'Press Start 2P', cursive;
+    min-height: 100vh;
+    background-image: url('../BG/backgroundlool.png') !important;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    color: #fff;
+}
+
+/* Título principal */
+.title {
+    color: #fff;
+    text-shadow: 
+        3px 3px 0 #000,
+        -3px -3px 0 #000,
+        3px -3px 0 #000,
+        -3px 3px 0 #000,
+        0 3px 0 #000,
+        3px 0 0 #000,
+        0 -3px 0 #000,
+        -3px 0 0 #000;
+    letter-spacing: 2px;
+    margin-bottom: 2rem !important;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    display: inline-block;
+    border: 3px solid #fff;
+}
+
+/* Contenedor del carrusel */
+.song-box {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border: 4px solid #ffffff !important;
+    border-radius: 10px !important;
+    padding: 1.5rem !important;
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+/* Imágenes del mod */
+.mod-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.mod-image:not(.active) {
+    display: none !important;
+}
+
+/* Info de canción */
+.song-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-top: 3px solid #fff;
+    color: #fff;
+    text-shadow: 
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
+    font-size: 0.8rem;
+}
+
+/* Flechas de navegación */
+.arrow {
+    font-size: 3rem !important;
+    color: white !important;
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s !important;
+    width: auto !important;
+    text-shadow: 
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
+}
+
+.arrow:hover {
+    color: yellow !important;
+    transform: scale(1.2) !important;
+}
+
+.arrow:focus {
+    box-shadow: none !important;
+}
+
+/* Título del mod */
+.mod-title {
+    color: #fff;
+    text-shadow: 
+        3px 3px 0 #000,
+        -3px -3px 0 #000,
+        3px -3px 0 #000,
+        -3px 3px 0 #000;
+    margin: 1.5rem 0;
+    font-size: 1.5rem;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    border: 2px solid #fff;
+}
+
+/* Botones personalizados */
+.mod-link,
+.back-button {
+    font-family: 'Press Start 2P', cursive !important;
+    border-radius: 0 !important;
+    border: 3px solid #fff !important;
+    text-shadow: 
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
+    letter-spacing: 1px;
+    padding: 0.75rem 1.5rem !important;
+    transition: all 0.3s !important;
+    margin: 0 0.5rem !important;
+    box-shadow: 
+        0 0 0 2px #000,
+        0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.mod-link {
+    background-color: #ff0000 !important;
+}
+
+.mod-link:hover {
+    background-color: #cc0000 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 
+        0 0 0 2px #000,
+        0 0 15px rgba(255, 0, 0, 0.7) !important;
+}
+
+.back-button {
+    background-color: #0000ff !important;
+}
+
+.back-button:hover {
+    background-color: #0000cc !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 
+        0 0 0 2px #000,
+        0 0 15px rgba(0, 0, 255, 0.7) !important;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 1s;
+}
+
+/* Transiciones de canciones */
+.slide-in-right {
+    animation: slideInRight 0.5s forwards;
+}
+
+.slide-out-left {
+    animation: slideOutLeft 0.5s forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s forwards;
+}
+
+.slide-out-right {
+    animation: slideOutRight 0.5s forwards;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutLeft {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.8rem;
+        padding: 10px;
+    }
+    
+    .mod-title {
+        font-size: 1.2rem;
+        padding: 8px;
+    }
+    
+    .arrow {
+        font-size: 2.5rem !important;
+    }
+    
+    .song-box {
+        height: 250px;
+        max-width: 350px;
+    }
+    
+    .mod-link,
+    .back-button {
+        padding: 0.6rem 1.2rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .title {
+        font-size: 1.4rem;
+        padding: 8px;
+    }
+    
+    .mod-title {
+        font-size: 1rem;
+        padding: 6px;
+    }
+    
+    .arrow {
+        font-size: 2rem !important;
+    }
+    
+    .song-box {
+        height: 200px;
+        max-width: 300px;
+    }
+    
+    .mod-link,
+    .back-button {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.8rem;
+        margin: 0 0.3rem !important;
+    }
+    
+    .song-info {
+        font-size: 0.7rem;
+        padding: 5px;
+    }
+}
