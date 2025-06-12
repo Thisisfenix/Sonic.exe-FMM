@@ -4,35 +4,407 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créditos - Sonic.exe</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/credits.css">
+    <style>
+        /* Estilo base */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+            height: 100vh;
+            background: url('BG/menuBG.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Contenedor principal */
+        .credits-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Título estilizado */
+        .credits-title {
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff, 
+                         0 0 20px #00ffff, 
+                         0 0 30px #ff00ff;
+            font-size: 3.5rem;
+            margin: 1.5rem 0;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 10;
+            animation: titleGlow 2s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { opacity: 0.8; text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+            100% { opacity: 1; text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff; }
+        }
+
+        /* Contenedor de créditos */
+        .credits-viewport {
+            width: 80%;
+            height: 60vh;
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* Lista de créditos */
+        .credits-list {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* Items de crédito */
+        .credit-item {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            transition: all 0.5s ease;
+            transform-origin: center;
+            box-sizing: border-box;
+        }
+
+        /* Estados de los créditos */
+        .credit-item.center {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            z-index: 3;
+        }
+
+        .credit-item.prev {
+            opacity: 0.6;
+            transform: translateY(-100%) scale(0.9);
+            z-index: 2;
+            filter: blur(1px);
+        }
+
+        .credit-item.next {
+            opacity: 0.6;
+            transform: translateY(100%) scale(0.9);
+            z-index: 2;
+            filter: blur(1px);
+        }
+
+        .credit-item.far {
+            opacity: 0.3;
+            transform: scale(0.8);
+            z-index: 1;
+            filter: blur(2px);
+        }
+
+        .credit-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #00ffff;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7),
+                        0 0 40px rgba(255, 0, 255, 0.5);
+        }
+
+        .credit-name {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px #00ffff;
+            text-align: center;
+        }
+
+        .credit-role {
+            font-size: 1rem;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        /* Botones de navegación */
+        .navigation-buttons {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2rem;
+            z-index: 20;
+        }
+
+        .arrow {
+            font-size: 2.5rem;
+            cursor: pointer;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+            transition: all 0.3s ease;
+            user-select: none;
+            background: rgba(0, 0, 30, 0.5);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 3px solid #00ffff;
+        }
+
+        .arrow:hover {
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+            transform: scale(1.1);
+            border-color: #ff00ff;
+        }
+
+        /* Botón de volver */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            background: rgba(0, 0, 30, 0.7);
+            color: #00ffff;
+            border: 3px solid #00ffff;
+            border-radius: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            text-shadow: 0 0 10px #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            z-index: 20;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 100, 255, 0.3);
+            color: #ff00ff;
+            border-color: #ff00ff;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.7);
+            transform: translate(-50%, -5px);
+        }
+
+        /* Efectos de brillo */
+        .glow-effect {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, 
+                                      rgba(0, 255, 255, 0.1) 0%, 
+                                      rgba(0, 0, 0, 0) 70%);
+            animation: pulseGlow 3s infinite alternate;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+    </style>
 </head>
 <body>
-    <audio id="backgroundMusic" src="sounds/Credits.ogg" loop hidden></audio>
+    <div class="credits-container">
+        <!-- Efecto de brillo -->
+        <div class="glow-effect"></div>
 
-    <div class="credits-wrapper">
-        <h1 class="text-center credits-title">CRÉDITOS</h1>
-        
-        <div class="credits-carousel">
-            <div class="carousel-container">
-                <div class="credit-item" id="prevCredit"></div>
-                <div class="credit-item active" id="currentCredit"></div>
-                <div class="credit-item" id="nextCredit"></div>
-            </div>
-            
-            <div class="navigation-controls">
-                <button id="prevButton" class="nav-btn"><i class="bi bi-arrow-left"></i></button>
-                <span class="position-indicator">1/10</span>
-                <button id="nextButton" class="nav-btn"><i class="bi bi-arrow-right"></i></button>
+        <!-- Música de fondo -->
+        <audio id="backgroundMusic" src="sounds/Credits.ogg" loop autoplay></audio>
+
+        <h1 class="credits-title">CRÉDITOS</h1>
+
+        <div class="credits-viewport">
+            <div class="credits-list" id="creditsList">
+                <!-- Créditos individuales -->
+                <div class="credit-item" data-index="0">
+                    <img src="icons/20240928_015106.png" alt="Just Fenix" class="credit-icon">
+                    <span class="credit-name">JUST FENIX</span>
+                    <span class="credit-role">Director 1 y creador del sitio web</span>
+                </div>
+                
+                <div class="credit-item" data-index="1">
+                    <img src="icons/20240928_015544.png" alt="Josias782" class="credit-icon">
+                    <span class="credit-name">JOSIAS782</span>
+                    <span class="credit-role">Director 2</span>
+                </div>
+                
+                <div class="credit-item" data-index="2">
+                    <img src="icons/Photoroom-20240920_221620.png" alt="Metal Sonic" class="credit-icon">
+                    <span class="credit-name">METAL SONIC</span>
+                    <span class="credit-role">Colaborador 1 y subdirector</span>
+                    <span class="credit-role">(Carreo medio foro)</span>
+                </div>
+                
+                <div class="credit-item" data-index="3">
+                    <img src="icons/291_sin_titulo_20240921014905.png" alt="j1a2g3r4tu" class="credit-icon">
+                    <span class="credit-name">J1A2G3R4TU</span>
+                    <span class="credit-role">Colaborador 2</span>
+                </div>
+                
+                <div class="credit-item" data-index="4">
+                    <img src="icons/352_sin_titulo_20240917214204.png" alt="dani_a.y.t" class="credit-icon">
+                    <span class="credit-name">DANI_A.Y.T</span>
+                    <span class="credit-role">Colaborador 3</span>
+                </div>
+                
+                <div class="credit-item" data-index="5">
+                    <img src="icons/103_sin_titulo_20240928004155.png" alt="Tails" class="credit-icon">
+                    <span class="credit-name">TAILS</span>
+                    <span class="credit-role">Colaborador 4</span>
+                </div>
+                
+                <div class="credit-item" data-index="6">
+                    <img src="icons/iconos_FNF_20240928015602.png" alt="Samylol" class="credit-icon">
+                    <span class="credit-name">SAMYLOL</span>
+                    <span class="credit-role">Colaborador 5</span>
+                </div>
+                
+                <div class="credit-item" data-index="7">
+                    <img src="icons/346_sin_titulo_20240930232516.png" alt="Mart" class="credit-icon">
+                    <span class="credit-name">MART</span>
+                    <span class="credit-role">Colaborador 6</span>
+                </div>
+                
+                <div class="credit-item" data-index="8">
+                    <img src="icons/Project_Capture_141.png" alt="Luis Leyends" class="credit-icon">
+                    <span class="credit-name">LUIS LEYENDS</span>
+                    <span class="credit-role">Colaborador 7</span>
+                </div>
+                
+                <div class="credit-item" data-index="9">
+                    <img src="icons/215_sin_titulo_20240928080723.png" alt="Nogales" class="credit-icon">
+                    <span class="credit-name">NOGALES</span>
+                    <span class="credit-role">Colaborador 8</span>
+                </div>
             </div>
         </div>
-        
-        <a href="index.html" class="back-button"><i class="bi bi-house-door"></i> Volver al Menú</a>
+
+        <div class="navigation-buttons">
+            <span class="arrow" id="prevButton">▲</span>
+            <span class="arrow" id="nextButton">▼</span>
+        </div>
+
+        <a href="index.html" class="back-button">VOLVER AL MENÚ</a>
     </div>
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/credits.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bgMusic = document.getElementById('backgroundMusic');
+            bgMusic.volume = 0.5;
+            
+            const creditsList = document.getElementById('creditsList');
+            const creditItems = Array.from(document.querySelectorAll('.credit-item'));
+            const prevBtn = document.getElementById('prevButton');
+            const nextBtn = document.getElementById('nextButton');
+            const backBtn = document.querySelector('.back-button');
+            
+            // Efectos de sonido
+            const hoverSound = new Audio('sounds/hoverMenu.ogg');
+            const selectSound = new Audio('sounds/confirmMenu.ogg');
+            
+            function playSound(sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Error de audio:", e));
+            }
+
+            // Configurar posición inicial de los créditos
+            function setupCredits() {
+                creditItems.forEach((item, index) => {
+                    item.style.transform = `translateY(${(index - currentIndex) * 100}%)`;
+                });
+                updateCreditStates();
+            }
+
+            // Actualizar estados de los créditos
+            function updateCreditStates() {
+                creditItems.forEach((item, index) => {
+                    // Reset classes
+                    item.className = 'credit-item';
+                    
+                    const position = index - currentIndex;
+                    
+                    if (position === 0) {
+                        item.classList.add('center');
+                    } else if (position === -1) {
+                        item.classList.add('prev');
+                    } else if (position === 1) {
+                        item.classList.add('next');
+                    } else {
+                        item.classList.add('far');
+                    }
+                });
+            }
+
+            // Mover lista al crédito seleccionado
+            function moveToCredit(newIndex) {
+                if (newIndex < 0 || newIndex >= creditItems.length) return;
+                
+                currentIndex = newIndex;
+                creditsList.style.transform = `translateY(${-currentIndex * 100}%)`;
+                updateCreditStates();
+                playSound(hoverSound);
+            }
+
+            let currentIndex = 0;
+            
+            // Navegación
+            prevBtn.addEventListener('click', () => {
+                moveToCredit(currentIndex - 1);
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                moveToCredit(currentIndex + 1);
+            });
+
+            // Efectos hover
+            [prevBtn, nextBtn, backBtn].forEach(btn => {
+                btn.addEventListener('mouseenter', () => playSound(hoverSound));
+            });
+
+            backBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                playSound(selectSound);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 300);
+            });
+
+            // Inicializar
+            setupCredits();
+            
+            // Configurar autoplay de música
+            document.body.addEventListener('click', () => {
+                bgMusic.play().catch(e => console.log("Error de audio:", e));
+            }, { once: true });
+
+            // Manejar rueda del mouse
+            document.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY > 0) {
+                    moveToCredit(currentIndex + 1);
+                } else {
+                    moveToCredit(currentIndex - 1);
+                }
+            }, { passive: false });
+        });
+    </script>
 </body>
 </html>
