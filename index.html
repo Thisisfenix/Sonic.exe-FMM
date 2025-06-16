@@ -7,7 +7,6 @@
     <title>SONIC.EXE MENU</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Fuente pixelada -->
@@ -18,9 +17,66 @@
             margin: 0;
             padding: 0;
             background-color: #000;
+            background-image: url('BG/indexBG.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             overflow: hidden;
             font-family: 'Press Start 2P', cursive;
             height: 100vh;
+            touch-action: manipulation;
+        }
+
+        /* Fondo animado transparente */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: gridMove 60s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+
+        .bg-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
 
         /* Contenedor principal */
@@ -28,36 +84,47 @@
             width: 100%;
             height: 100vh;
             position: relative;
+            overflow: hidden;
         }
 
         /* Logo grande */
         .sonic-logo {
             position: absolute;
-            top: 10%;
-            right: 5%;
+            top: 5%;
+            right: 50%;
+            transform: translateX(50%) scale(0.8) translateY(-50px);
             z-index: 10;
-            transform: scale(0.8) translateY(-50px);
             opacity: 0;
             transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.3s;
         }
 
         .sonic-logo.show {
-            transform: scale(1) translateY(0);
+            transform: translateX(50%) scale(0.7) translateY(0);
             opacity: 1;
+            animation: logoGlow 3s infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.7)); }
+            100% { filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.9)) brightness(1.1); }
         }
 
         .sonic-logo img {
-            max-width: 350px;
+            max-width: 280px;
             height: auto;
-            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.7));
         }
 
-        /* Menú en escalera diagonal */
+        /* Menú - Versión Móvil (lineal vertical) */
         .menu-staircase {
             position: absolute;
-            top: 20%;
-            left: 5%;
+            top: 25%; /* Posición original para móvil */
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 5;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .menu-btn {
@@ -65,50 +132,20 @@
             position: relative;
             left: -500px;
             opacity: 0;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            transform: rotate(-5deg);
+            width: 100%;
+            max-width: 220px;
+            text-align: center;
         }
 
         .menu-btn.visible {
             left: 0;
             opacity: 1;
-            transform: rotate(0deg);
-        }
-
-        /* Posicionamiento en escalera */
-        .menu-btn:nth-child(1) {
-            transition-delay: 0.3s;
-            margin-left: 0px;
-        }
-
-        .menu-btn:nth-child(2) {
-            transition-delay: 0.4s;
-            margin-left: 50px;
-        }
-
-        .menu-btn:nth-child(3) {
-            transition-delay: 0.5s;
-            margin-left: 100px;
-        }
-
-        .menu-btn:nth-child(4) {
-            transition-delay: 0.6s;
-            margin-left: 150px;
-        }
-
-        .menu-btn:nth-child(5) {
-            transition-delay: 0.7s;
-            margin-left: 200px;
-        }
-
-        .menu-btn:nth-child(6) {
-            transition-delay: 0.8s;
-            margin-left: 250px;
         }
 
         .btn-img {
-            max-width: 220px;
+            max-width: 100%;
             height: auto;
             filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
             transition: all 0.3s ease;
@@ -116,10 +153,16 @@
 
         .menu-btn:hover .btn-img {
             filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.9));
-            transform: scale(1.1) translateX(15px);
+            transform: scale(1.05);
+            animation: btnPulse 1.5s infinite alternate;
         }
 
-        /* Botón de versión */
+        @keyframes btnPulse {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7)); }
+            100% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
+        }
+
+        /* Botón de versión con efectos mejorados */
         .version-btn {
             position: absolute;
             top: 20px;
@@ -135,6 +178,33 @@
             opacity: 1;
         }
 
+        .version-btn.falling {
+            animation: fallDown 0.5s forwards;
+        }
+
+        .version-btn.reappear {
+            animation: reappear 0.5s forwards;
+        }
+
+        @keyframes fallDown {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(100px) rotate(10deg); opacity: 0; }
+        }
+
+        @keyframes reappear {
+            0% { 
+                opacity: 0; 
+                transform: translateY(-50px) scale(0.5); 
+            }
+            70% { 
+                transform: translateY(10px) scale(1.1); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
         #updateBtn {
             font-size: 0.8rem;
             padding: 5px 10px;
@@ -144,6 +214,7 @@
             text-shadow: 0 0 5px #00ffff;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         #updateBtn:hover {
@@ -224,12 +295,13 @@
             color: #ff00ff;
         }
 
-        /* Sección de News en la derecha inferior */
+        /* Sección de News */
         .news-section {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
+            bottom: 10px;
+            right: 10px;
+            width: 90%;
+            max-width: 300px;
             background: rgba(0, 0, 20, 0.8);
             border: 3px solid #00ffff;
             border-radius: 10px;
@@ -237,7 +309,7 @@
             z-index: 10;
             transform: translateY(100px);
             opacity: 0;
-            transition: all 0.5s ease 1s;
+            transition: all 0.5s ease 1.5s;
         }
 
         .news-section.show {
@@ -268,6 +340,7 @@
             border: none;
             font-size: 1.2rem;
             cursor: pointer;
+            transition: transform 0.3s;
         }
 
         .news-content {
@@ -301,6 +374,7 @@
         .mod-item:hover {
             background: rgba(0, 100, 255, 0.2);
             transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
         }
 
         .mod-thumbnail {
@@ -309,6 +383,11 @@
             border-radius: 5px;
             object-fit: cover;
             border: 1px solid #00ffff;
+            transition: transform 0.3s;
+        }
+
+        .mod-item:hover .mod-thumbnail {
+            transform: scale(1.1);
         }
 
         .mod-info {
@@ -319,6 +398,12 @@
             color: #fff;
             font-size: 0.7rem;
             margin: 0;
+            transition: color 0.3s;
+        }
+
+        .mod-item:hover .mod-name {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
         }
 
         .mod-date {
@@ -326,10 +411,120 @@
             font-size: 0.6rem;
             margin: 3px 0 0 0;
         }
+
+        /* Media queries para PC (≥768px) */
+        @media (min-width: 768px) {
+            /* Logo */
+            .sonic-logo {
+                top: 10%;
+                right: 5%;
+                transform: scale(0.8) translateY(-50px);
+            }
+            
+            .sonic-logo.show {
+                transform: scale(1) translateY(0);
+            }
+            
+            .sonic-logo img {
+                max-width: 350px;
+            }
+            
+            /* Menú en escalera diagonal para PC - Ajustado para bajar los botones */
+            .menu-staircase {
+                position: absolute;
+                top: 55%; /* Ajustado para bajar los botones en desktop */
+                left: 5%;
+                transform: translateY(-50%);
+                width: auto;
+                display: block;
+            }
+            
+            .menu-btn {
+                display: block;
+                margin-bottom: 25px;
+                width: auto;
+                max-width: 220px;
+                text-align: left;
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transform: none !important;
+            }
+            
+            /* Efecto escalera con márgenes */
+            .menu-btn:nth-child(1) {
+                transition-delay: 0.3s;
+                margin-left: 0px;
+            }
+            
+            .menu-btn:nth-child(2) {
+                transition-delay: 0.4s;
+                margin-left: 50px;
+            }
+            
+            .menu-btn:nth-child(3) {
+                transition-delay: 0.5s;
+                margin-left: 100px;
+            }
+            
+            .menu-btn:nth-child(4) {
+                transition-delay: 0.6s;
+                margin-left: 150px;
+            }
+            
+            .menu-btn:nth-child(5) {
+                transition-delay: 0.7s;
+                margin-left: 200px;
+            }
+            
+            .menu-btn:nth-child(6) {
+                transition-delay: 0.8s;
+                margin-left: 250px;
+            }
+            
+            .menu-btn.visible:nth-child(n) {
+                opacity: 1;
+                left: 0;
+            }
+            
+            .menu-btn:hover {
+                transform: translateX(30px) scale(1.1) !important;
+                z-index: 10;
+            }
+            
+            .menu-btn:hover .btn-img {
+                transform: scale(1.1) translateX(15px);
+                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.9));
+            }
+            
+            .news-section {
+                width: 300px;
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+
+        /* Ocultar elementos en móvil */
+        @media (max-width: 767px) {
+            .version-btn,
+            .update-panel {
+                display: none;
+            }
+            
+            /* Todos los botones iguales en móvil */
+            .menu-btn:nth-child(n) {
+                transition-delay: 0.3s;
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Fondo animado transparente -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <div class="bg-particles" id="particles"></div>
+    </div>
+
     <div class="main-container">
         <!-- Botón de versión -->
         <div class="version-btn">
@@ -343,76 +538,55 @@
             <img src="images/350_sin_titulo_20240917203045 (1).png" alt="SONIC.EXE" class="logo-img">
         </div>
 
-        <!-- Menú en escalera diagonal -->
+        <!-- Menú en escalera diagonal (PC) o lineal vertical (móvil) -->
         <div class="menu-staircase">
             <a href="storyMode.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20240927230657.png" alt="STORY MODE" class="btn-img">
             </a>
-            <!-- Encore -->
             <a href="encore.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20241001112058-1.png" alt="ENCORE" class="btn-img">
             </a>
-
             <a href="freeplay.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20240927230709.png" alt="FREEPLAY" class="btn-img">
             </a>
-            <!-- Extras -->
             <a href="extras.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20240927230742.png" alt="EXTRAS" class="btn-img">
             </a>
-
-            <!-- Sound Test -->
             <a href="soundtest.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20241001112127-1.png" alt="SOUND TEST" class="btn-img">
             </a>
-
-            <!-- Credits -->
             <a href="credits.html" class="menu-btn">
                 <img src="images/350_sin_titulo_20240927230724.png" alt="CREDITS" class="btn-img">
             </a>
         </div>
 
-        <!-- Sección de News compacta en la derecha inferior -->
+        <!-- Sección de News -->
         <div class="news-section">
             <div class="news-header" id="newsToggle">
                 <h3 class="news-title">Noticias</h3>
-                <button class="news-toggle">+</button>
+                <button class="news-toggle" id="newsToggleBtn">+</button>
             </div>
             <div class="news-content" id="newsContent">
                 <div class="mods-carousel">
-                    <a href="https://mod1-link.com" class="mod-item">
+                    <a href="https://abelitogamer.github.io/" class="mod-item">
                         <img src="images/mod1-thumbnail.png" alt="FNF vs Sonic.Exe V2" class="mod-thumbnail">
                         <div class="mod-info">
-                            <p class="mod-name">FNF vs Sonic.Exe V2</p>
-                            <p class="mod-date">Actualizado: 15/10/2023</p>
+                            <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
+                            <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
                         </div>
                     </a>
-                    <a href="https://mod2-link.com" class="mod-item">
+                    <a href="#" class="mod-item">
                         <img src="images/mod2-thumbnail.png" alt="Sonic.Exe Corruption" class="mod-thumbnail">
                         <div class="mod-info">
-                            <p class="mod-name">Sonic.Exe Corruption</p>
-                            <p class="mod-date">Nuevo: 05/11/2023</p>
-                        </div>
-                    </a>
-                    <a href="https://mod3-link.com" class="mod-item">
-                        <img src="images/mod3-thumbnail.png" alt="Tails Gets Trolled" class="mod-thumbnail">
-                        <div class="mod-info">
-                            <p class="mod-name">Tails Gets Trolled</p>
-                            <p class="mod-date">Popular</p>
-                        </div>
-                    </a>
-                    <a href="https://mod4-link.com" class="mod-item">
-                        <img src="images/mod4-thumbnail.png" alt="VS Whitty Exe" class="mod-thumbnail">
-                        <div class="mod-info">
-                            <p class="mod-name">VS Whitty Exe</p>
-                            <p class="mod-date">Actualizado: 22/10/2023</p>
+                            <p class="mod-name">Vs rewrite Coming Soom</p>
+                            <p class="mod-date">fecha: Siendo Determinado</p>
                         </div>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Panel de actualización (oculto inicialmente) -->
+        <!-- Panel de actualización -->
         <div class="update-panel" id="updatePanel">
             <div class="update-header">
                 <h5><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5.2</h5>
@@ -451,49 +625,121 @@
             const sonicLogo = document.querySelector('.sonic-logo');
             const newsSection = document.querySelector('.news-section');
             const newsToggle = document.getElementById('newsToggle');
+            const newsToggleBtn = document.getElementById('newsToggleBtn');
             const newsContent = document.getElementById('newsContent');
+            const particlesContainer = document.getElementById('particles');
             let panelVisible = false;
             let newsExpanded = false;
 
+            // Crear partículas para el fondo
+            function createParticles() {
+                const particleCount = window.innerWidth < 768 ? 30 : 50;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random() * 5 + 1;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Posición inicial aleatoria
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100 + 100}%`;
+                    
+                    // Opacidad aleatoria
+                    particle.style.opacity = Math.random() * 0.5 + 0.1;
+                    
+                    // Duración de animación aleatoria
+                    const duration = Math.random() * 10 + 10;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    // Retraso aleatorio
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
             // Mostrar elementos con animación
-            setTimeout(() => {
-                versionBtn.classList.add('show');
+            function initAnimations() {
+                // Mostrar versionBtn solo en desktop
+                if (window.innerWidth >= 768) {
+                    versionBtn.classList.add('show');
+                }
+                
                 sonicLogo.classList.add('show');
                 newsSection.classList.add('show');
 
+                // Animación de entrada de los botones del menú
                 menuButtons.forEach((btn, index) => {
                     setTimeout(() => {
                         btn.classList.add('visible');
-                    }, index * 100 + 300);
+                    }, window.innerWidth >= 768 ? index * 100 + 300 : 300);
                 });
-            }, 200);
+            }
 
             // Función para alternar el panel de actualización
             const togglePanel = () => {
                 panelVisible = !panelVisible;
                 updatePanel.classList.toggle('show', panelVisible);
                 playSound(panelVisible ? selectSound : hoverSound);
+                
+                if (panelVisible) {
+                    // Efecto de caída del botón
+                    versionBtn.classList.add('falling');
+                    
+                    // Restaurar el estado después de la animación
+                    setTimeout(() => {
+                        versionBtn.classList.remove('falling');
+                        versionBtn.style.opacity = '0';
+                    }, 500);
+                } else {
+                    // Efecto de reaparecer por arte de magia
+                    versionBtn.classList.add('reappear');
+                    
+                    // Restaurar el estado después de la animación
+                    setTimeout(() => {
+                        versionBtn.classList.remove('reappear');
+                        versionBtn.style.opacity = '1';
+                    }, 500);
+                }
             };
 
             // Función para alternar la sección de news
             const toggleNews = () => {
                 newsExpanded = !newsExpanded;
                 newsContent.classList.toggle('expanded');
-                newsToggle.querySelector('.news-toggle').textContent = newsExpanded ? '-' : '+';
+                newsToggleBtn.textContent = newsExpanded ? '-' : '+';
+                newsToggleBtn.style.transform = newsExpanded ? 'rotate(90deg)' : 'rotate(0)';
                 playSound(selectSound);
             };
 
-            // Event listeners
-            updateBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePanel();
-            });
+            // Inicialmente cerrado
+            setTimeout(() => {
+                newsContent.classList.remove('expanded');
+                newsToggleBtn.textContent = '+';
+            }, 100);
 
-            closeUpdate.addEventListener('click', togglePanel);
+            // Event listeners
+            if (updateBtn) {
+                updateBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth >= 768) {
+                        togglePanel();
+                    }
+                });
+            }
+
+            if (closeUpdate) {
+                closeUpdate.addEventListener('click', togglePanel);
+            }
+            
             newsToggle.addEventListener('click', toggleNews);
 
             document.addEventListener('click', (e) => {
-                if (panelVisible && !updatePanel.contains(e.target)) {
+                if (panelVisible && !updatePanel.contains(e.target) && !updateBtn.contains(e.target)) {
                     togglePanel();
                 }
             });
@@ -504,19 +750,28 @@
                 }
             });
 
-            // Efecto hover para los botones del menú
+            // Efectos de interacción
             menuButtons.forEach(btn => {
                 btn.addEventListener('mouseenter', () => {
                     playSound(hoverSound);
                 });
+                
+                // Para móviles
+                btn.addEventListener('touchstart', () => {
+                    playSound(hoverSound);
+                }, { passive: true });
             });
 
-            // Efecto hover para los mods
             const modItems = document.querySelectorAll('.mod-item');
             modItems.forEach(item => {
                 item.addEventListener('mouseenter', () => {
                     playSound(hoverSound);
                 });
+                
+                item.addEventListener('touchstart', () => {
+                    playSound(hoverSound);
+                }, { passive: true });
+                
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     playSound(selectSound);
@@ -526,12 +781,21 @@
                 });
             });
 
-            // Reproducir música de fondo al hacer clic
-            document.addEventListener('click', () => {
+            // Reproducir música de fondo
+            const playBgMusic = () => {
                 const bgMusic = document.getElementById('bgMusic');
                 bgMusic.volume = 0.3;
                 bgMusic.play().catch(e => console.log("Error de audio:", e));
-            }, { once: true });
+                document.removeEventListener('click', playBgMusic);
+                document.removeEventListener('touchstart', playBgMusic);
+            };
+            
+            document.addEventListener('click', playBgMusic, { once: true });
+            document.addEventListener('touchstart', playBgMusic, { once: true, passive: true });
+
+            // Inicializar
+            createParticles();
+            initAnimations();
         });
 
         function playSound(sound) {
