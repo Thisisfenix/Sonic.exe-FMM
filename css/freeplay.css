@@ -1,116 +1,174 @@
 /* Importando la fuente pixelada */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* Estilos generales - Complementando Bootstrap */
+/* Estilos generales */
 body {
     font-family: 'Press Start 2P', cursive;
     min-height: 100vh;
-    background-image: url('../BG/backgroundlool.png') !important;
+    color: white;
+    text-align: center;
+    background: url('BG/backgroundlool.png') no-repeat center center fixed;
     background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    color: #fff;
+    margin: 0;
+    padding: 20px;
 }
 
 /* Título principal */
 .title {
     color: #fff;
-    text-shadow: 
+    text-shadow:
         3px 3px 0 #000,
         -3px -3px 0 #000,
         3px -3px 0 #000,
-        -3px 3px 0 #000,
-        0 3px 0 #000,
-        3px 0 0 #000,
-        0 -3px 0 #000,
-        -3px 0 0 #000;
+        -3px 3px 0 #000;
     letter-spacing: 2px;
-    margin-bottom: 2rem !important;
-    padding: 15px;
+    margin-bottom: 2rem;
     background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
     border-radius: 10px;
     display: inline-block;
     border: 3px solid #fff;
 }
 
-/* Contenedor del carrusel */
-.song-box {
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    border: 4px solid #ffffff !important;
-    border-radius: 10px !important;
-    padding: 1.5rem !important;
+/* Contenedor principal del reproductor */
+.song-display-container {
     width: 100%;
-    max-width: 400px;
-    height: 300px;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Caja de la canción */
+.song-box {
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 4px solid #fff;
+    border-radius: 10px;
+    width: 100%;
+    aspect-ratio: 4/3; /* Mantener relación de aspecto 4:3 */
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    margin: 0 auto;
 }
 
-/* Imágenes del mod */
-.mod-image {
+/* Contenedor de imágenes */
+.image-container {
+    position: relative;
     width: 100%;
     height: 100%;
+}
+
+/* Estilos para las imágenes */
+.mod-image {
+    position: absolute;
+    width: 90%;
+    height: 90%;
     object-fit: contain;
-    position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.5s ease;
+    opacity: 0;
 }
 
-.mod-image:not(.active) {
-    display: none !important;
+.mod-image.active {
+    opacity: 1;
+    z-index: 2;
 }
 
-/* Info de canción */
-.song-info {
+.mod-image.next {
+    z-index: 1;
+}
+
+/* Animaciones suavizadas */
+.slide-out-left {
+    animation: smoothSlideOutLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-in-right {
+    animation: smoothSlideInRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-out-right {
+    animation: smoothSlideOutRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-in-left {
+    animation: smoothSlideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes smoothSlideInRight {
+    from {
+        transform: translateX(30%) translateY(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(-50%);
+        opacity: 1;
+    }
+}
+
+@keyframes smoothSlideOutLeft {
+    to {
+        transform: translateX(-30%) translateY(-50%);
+        opacity: 0;
+    }
+}
+
+@keyframes smoothSlideInLeft {
+    from {
+        transform: translateX(-30%) translateY(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(-50%);
+        opacity: 1;
+    }
+}
+
+@keyframes smoothSlideOutRight {
+    to {
+        transform: translateX(30%) translateY(-50%);
+        opacity: 0;
+    }
+}
+
+/* Contenedor de flechas */
+.arrow-container {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 10px;
-    border-top: 3px solid #fff;
-    color: #fff;
-    text-shadow: 
-        2px 2px 0 #000,
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000;
-    font-size: 0.8rem;
+    width: calc(100% + 100px);
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
 }
 
 /* Flechas de navegación */
 .arrow {
-    font-size: 3rem !important;
-    color: white !important;
-    background: transparent !important;
-    border: none !important;
-    transition: all 0.3s !important;
-    width: auto !important;
-    text-shadow: 
-        2px 2px 0 #000,
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000;
+    font-size: 3rem;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-shadow: 2px 2px 0 #000;
+    transition: all 0.2s;
+    padding: 10px;
 }
 
 .arrow:hover {
-    color: yellow !important;
-    transform: scale(1.2) !important;
-}
-
-.arrow:focus {
-    box-shadow: none !important;
+    color: yellow;
+    transform: scale(1.2);
 }
 
 /* Título del mod */
 .mod-title {
     color: #fff;
-    text-shadow: 
-        3px 3px 0 #000,
-        -3px -3px 0 #000,
-        3px -3px 0 #000,
-        -3px 3px 0 #000;
+    text-shadow:
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
     margin: 1.5rem 0;
     font-size: 1.5rem;
     padding: 10px;
@@ -120,94 +178,38 @@ body {
 }
 
 /* Botones personalizados */
-.mod-link,
-.back-button {
-    font-family: 'Press Start 2P', cursive !important;
-    border-radius: 0 !important;
-    border: 3px solid #fff !important;
-    text-shadow: 
-        2px 2px 0 #000,
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000;
+.mod-link, .back-button {
+    font-family: 'Press Start 2P', cursive;
+    border-radius: 0;
+    border: 3px solid #fff;
+    text-shadow: 2px 2px 0 #000;
     letter-spacing: 1px;
-    padding: 0.75rem 1.5rem !important;
-    transition: all 0.3s !important;
-    margin: 0 0.5rem !important;
-    box-shadow: 
-        0 0 0 2px #000,
-        0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s;
+    margin: 0 0.5rem;
+    box-shadow: 0 0 0 2px #000;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .mod-link {
-    background-color: #ff0000 !important;
+    background-color: #ff0000;
+    color: white;
 }
 
 .mod-link:hover {
-    background-color: #cc0000 !important;
-    transform: translateY(-3px) !important;
-    box-shadow: 
-        0 0 0 2px #000,
-        0 0 15px rgba(255, 0, 0, 0.7) !important;
+    background-color: #cc0000;
+    transform: translateY(-3px);
 }
 
 .back-button {
-    background-color: #0000ff !important;
+    background-color: #0000ff;
+    color: white;
 }
 
 .back-button:hover {
-    background-color: #0000cc !important;
-    transform: translateY(-3px) !important;
-    box-shadow: 
-        0 0 0 2px #000,
-        0 0 15px rgba(0, 0, 255, 0.7) !important;
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.fade-in {
-    animation: fadeIn 1s;
-}
-
-/* Transiciones de canciones */
-.slide-in-right {
-    animation: slideInRight 0.5s forwards;
-}
-
-.slide-out-left {
-    animation: slideOutLeft 0.5s forwards;
-}
-
-.slide-in-left {
-    animation: slideInLeft 0.5s forwards;
-}
-
-.slide-out-right {
-    animation: slideOutRight 0.5s forwards;
-}
-
-@keyframes slideInRight {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slideOutLeft {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(-100%); opacity: 0; }
-}
-
-@keyframes slideInLeft {
-    from { transform: translateX(-100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slideOutRight {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(100%); opacity: 0; }
+    background-color: #0000cc;
+    transform: translateY(-3px);
 }
 
 /* Responsive adjustments */
@@ -219,54 +221,41 @@ body {
     
     .mod-title {
         font-size: 1.2rem;
-        padding: 8px;
     }
     
     .arrow {
-        font-size: 2.5rem !important;
+        font-size: 2.5rem;
     }
     
     .song-box {
-        height: 250px;
-        max-width: 350px;
-    }
-    
-    .mod-link,
-    .back-button {
-        padding: 0.6rem 1.2rem !important;
-        font-size: 0.9rem;
+        max-width: 400px;
     }
 }
 
 @media (max-width: 576px) {
     .title {
-        font-size: 1.4rem;
-        padding: 8px;
+        font-size: 1.5rem;
     }
     
     .mod-title {
         font-size: 1rem;
-        padding: 6px;
+    }
+    
+    .mod-link, .back-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .arrow-container {
+        width: calc(100% + 80px);
+        left: -40px;
     }
     
     .arrow {
-        font-size: 2rem !important;
+        font-size: 2rem;
     }
     
     .song-box {
-        height: 200px;
         max-width: 300px;
-    }
-    
-    .mod-link,
-    .back-button {
-        padding: 0.5rem 1rem !important;
-        font-size: 0.8rem;
-        margin: 0 0.3rem !important;
-    }
-    
-    .song-info {
-        font-size: 0.7rem;
-        padding: 5px;
     }
 }
