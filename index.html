@@ -27,116 +27,153 @@
             touch-action: manipulation;
         }
 
-        /* Fondo animado transparente */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .bg-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            animation: gridMove 60s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 1000px 1000px; }
-        }
-
-        .bg-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(0, 255, 255, 0.5);
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: float 15s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
-        }
-
-        /* Contenedor principal */
         .main-container {
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             position: relative;
             overflow: hidden;
         }
 
-        /* Logo grande */
-        .sonic-logo {
+        /* HUD superior */
+        .hud-top {
             position: absolute;
-            top: 5%;
-            right: 50%;
-            transform: translateX(50%) scale(0.8) translateY(-50px);
-            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 32px 0 32px;
+            z-index: 30;
+            pointer-events: none;
+            flex-wrap: wrap;
+        }
+
+        .hud-top>* {
+            pointer-events: auto;
+        }
+
+        .version-btn {
+            position: static;
+            margin-right: 18px;
+            margin-left: 0;
+            box-shadow: 0 0 10px #0ff;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            padding: 10px 22px;
+            transition: box-shadow 0.3s, opacity 0.4s;
+            opacity: 1;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .version-btn button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #0ff;
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .version-btn button:active {
             opacity: 0;
-            transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.3s;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .version-btn button[hidden] {
+            display: none !important;
+        }
+
+        .sonic-logo {
+            position: static;
+            max-width: 320px;
+            max-height: 80px;
+            margin: 0 auto;
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.7s;
+            opacity: 1;
+            will-change: transform, opacity;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sonic-logo.hide {
+            opacity: 0;
+            transform: scale(0.7) translateY(-40px);
         }
 
         .sonic-logo.show {
-            transform: translateX(50%) scale(0.7) translateY(0);
             opacity: 1;
-            animation: logoGlow 3s infinite alternate;
-        }
-
-        @keyframes logoGlow {
-            0% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.7)); }
-            100% { filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.9)) brightness(1.1); }
+            transform: scale(1) translateY(0);
         }
 
         .sonic-logo img {
-            max-width: 280px;
+            width: 100%;
             height: auto;
+            max-width: 320px;
+            max-height: 80px;
+            filter: drop-shadow(0 0 18px #0ff);
+            object-fit: contain;
         }
 
-        /* Menú - Versión Móvil (lineal vertical) */
+        /* PC: agranda el logo */
+        .sonic-logo,
+        .sonic-logo img {
+            max-width: 420px;
+            max-height: 120px;
+        }
+
+        /* Solo en PC: agranda y ajusta el logo a la derecha */
+        @media (min-width: 601px) {
+            .sonic-logo {
+                position: absolute;
+                top: 32px;
+                right: 48px;
+                max-width: 420px;
+                max-height: 120px;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+
+            .sonic-logo img {
+                max-width: 420px;
+                max-height: 120px;
+            }
+        }
+
+        /* Menú escalera PC */
         .menu-staircase {
             position: absolute;
-            top: 25%; /* Posición original para móvil */
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5;
-            width: 90%;
+            bottom: 40px;
+            left: 40px;
+            z-index: 15;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .menu-btn {
             display: block;
             position: relative;
-            left: -500px;
+            left: -80px;
             opacity: 0;
-            margin-bottom: 15px;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            width: 100%;
-            max-width: 220px;
-            text-align: center;
+            margin-bottom: 18px;
+            transition: left 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                opacity 0.6s;
+            width: 220px;
+            height: 60px;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
         }
 
         .menu-btn.visible {
@@ -144,250 +181,127 @@
             opacity: 1;
         }
 
-        .btn-img {
-            max-width: 100%;
-            height: auto;
-            filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
-            transition: all 0.3s ease;
+        .menu-btn .btn-img {
+            width: 220px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px #0ff);
+            transition: transform 0.2s, filter 0.2s;
         }
 
         .menu-btn:hover .btn-img {
-            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.9));
-            transform: scale(1.05);
-            animation: btnPulse 1.5s infinite alternate;
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 18px #0ff);
         }
 
-        @keyframes btnPulse {
-            0% { filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7)); }
-            100% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
+        .menu-btn:nth-child(2) {
+            margin-left: 30px;
         }
 
-        /* Botón de versión con efectos mejorados */
-        .version-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 20;
-            transform: translateY(-50px);
-            opacity: 0;
-            transition: all 0.8s ease 0.2s;
+        .menu-btn:nth-child(3) {
+            margin-left: 60px;
         }
 
-        .version-btn.show {
-            transform: translateY(0);
-            opacity: 1;
+        .menu-btn:nth-child(4) {
+            margin-left: 90px;
         }
 
-        .version-btn.falling {
-            animation: fallDown 0.5s forwards;
+        .menu-btn:nth-child(5) {
+            margin-left: 120px;
         }
 
-        .version-btn.reappear {
-            animation: reappear 0.5s forwards;
+        .menu-btn:nth-child(6) {
+            margin-left: 150px;
         }
 
-        @keyframes fallDown {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(100px) rotate(10deg); opacity: 0; }
-        }
-
-        @keyframes reappear {
-            0% { 
-                opacity: 0; 
-                transform: translateY(-50px) scale(0.5); 
-            }
-            70% { 
-                transform: translateY(10px) scale(1.1); 
-            }
-            100% { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
-        }
-
-        #updateBtn {
-            font-size: 0.8rem;
-            padding: 5px 10px;
-            border: 2px solid #00ffff;
-            background: rgba(0, 0, 20, 0.7);
-            color: #00ffff;
-            text-shadow: 0 0 5px #00ffff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        #updateBtn:hover {
-            background: rgba(0, 100, 255, 0.3);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-        }
-
-        /* Panel de actualización */
-        .update-panel {
-            position: fixed;
-            top: -500px;
-            right: 20px;
-            width: 320px;
-            background: rgba(0, 0, 20, 0.95);
-            border: 3px solid #00ffff;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            padding: 15px;
-            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.5);
-            z-index: 1000;
-            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .update-panel.show {
-            top: 0;
-        }
-
-        .update-header {
-            color: #00ffff;
-            border-bottom: 2px solid #00ffff;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .update-content {
-            color: #fff;
-            font-size: 0.75rem;
-            line-height: 1.5;
-        }
-
-        .update-content ul {
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-
-        .update-content li {
-            margin-bottom: 8px;
-            position: relative;
-        }
-
-        .update-content li:before {
-            content: ">";
-            color: #00ffff;
-            position: absolute;
-            left: -15px;
-        }
-
-        .close-update {
-            background: none;
-            border: none;
-            color: #00ffff;
-            font-size: 1.5rem;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0 5px;
-            transition: all 0.2s;
-        }
-
-        .close-update:hover {
-            transform: scale(1.2);
-            color: #ff00ff;
-        }
-
-        /* Sección de News */
+        /* Noticias PC */
         .news-section {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 90%;
-            max-width: 300px;
-            background: rgba(0, 0, 20, 0.8);
-            border: 3px solid #00ffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            z-index: 10;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.5s ease 1.5s;
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 340px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 0 10px #0ff;
+            z-index: 15;
+            padding: 18px 16px 10px 16px;
+            transition: max-height 0.4s, opacity 0.4s;
+            max-height: 220px;
+            opacity: 1;
+            overflow: hidden;
         }
 
-        .news-section.show {
-            transform: translateY(0);
-            opacity: 1;
+        .news-section.closed {
+            max-height: 48px;
+            opacity: 0.7;
         }
 
         .news-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: rgba(0, 0, 30, 0.9);
-            border-bottom: 2px solid #00ffff;
-            cursor: pointer;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
         }
 
         .news-title {
-            color: #00ffff;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            color: #0ff;
             margin: 0;
-            text-shadow: 0 0 5px #00ffff;
+            font-family: 'Press Start 2P', cursive;
+            word-break: break-word;
+            max-width: 70%;
         }
 
         .news-toggle {
-            color: #00ffff;
             background: none;
             border: none;
+            color: #0ff;
             font-size: 1.2rem;
             cursor: pointer;
+            outline: none;
             transition: transform 0.3s;
         }
 
+        .news-toggle.opened {
+            transform: rotate(90deg);
+        }
+
         .news-content {
+            max-height: 160px;
+            overflow-y: auto;
+            transition: max-height 0.4s;
+        }
+
+        .news-section.closed .news-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .news-content.expanded {
-            max-height: 400px;
-        }
-
-        .mods-carousel {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
+            padding: 0;
         }
 
         .mod-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: rgba(0, 0, 30, 0.5);
-            border-radius: 5px;
-            transition: all 0.2s ease;
+            margin-bottom: 12px;
             text-decoration: none;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 6px;
+            transition: background 0.2s;
         }
 
         .mod-item:hover {
-            background: rgba(0, 100, 255, 0.2);
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+            background: rgba(0, 255, 255, 0.1);
         }
 
         .mod-thumbnail {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
+            width: 48px;
+            height: 48px;
             object-fit: cover;
-            border: 1px solid #00ffff;
-            transition: transform 0.3s;
-        }
-
-        .mod-item:hover .mod-thumbnail {
-            transform: scale(1.1);
+            border-radius: 6px;
+            margin-right: 10px;
+            filter: drop-shadow(0 0 6px #0ff);
         }
 
         .mod-info {
@@ -395,190 +309,249 @@
         }
 
         .mod-name {
-            color: #fff;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             margin: 0;
-            transition: color 0.3s;
-        }
-
-        .mod-item:hover .mod-name {
-            color: #00ffff;
-            text-shadow: 0 0 5px #00ffff;
+            color: #0ff;
+            font-family: 'Press Start 2P', cursive;
         }
 
         .mod-date {
-            color: #aaa;
-            font-size: 0.6rem;
-            margin: 3px 0 0 0;
+            font-size: 0.7rem;
+            margin: 0;
+            color: #fff;
         }
 
-        /* Media queries para PC (≥768px) */
-        @media (min-width: 768px) {
-            /* Logo */
-            .sonic-logo {
-                top: 10%;
-                right: 5%;
-                transform: scale(0.8) translateY(-50px);
+        /* Panel de actualización centrado */
+        .update-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #111;
+            border-radius: 16px;
+            box-shadow: 0 0 30px #0ff;
+            z-index: 100;
+            padding: 32px 28px 18px 28px;
+            min-width: 320px;
+            max-width: 90vw;
+            color: #fff;
+            opacity: 1;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .update-panel.show {
+            display: block;
+            animation: panelIn 0.4s;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .update-panel.hide {
+            opacity: 0;
+            transform: translate(-50%, -40%) scale(0.95);
+            pointer-events: none;
+        }
+
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%) scale(0.9);
             }
-            
-            .sonic-logo.show {
-                transform: scale(1) translateY(0);
-            }
-            
-            .sonic-logo img {
-                max-width: 350px;
-            }
-            
-            /* Menú en escalera diagonal para PC - Ajustado para bajar los botones */
-            .menu-staircase {
-                position: absolute;
-                top: 55%; /* Ajustado para bajar los botones en desktop */
-                left: 5%;
-                transform: translateY(-50%);
-                width: auto;
-                display: block;
-            }
-            
-            .menu-btn {
-                display: block;
-                margin-bottom: 25px;
-                width: auto;
-                max-width: 220px;
-                text-align: left;
-                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                transform: none !important;
-            }
-            
-            /* Efecto escalera con márgenes */
-            .menu-btn:nth-child(1) {
-                transition-delay: 0.3s;
-                margin-left: 0px;
-            }
-            
-            .menu-btn:nth-child(2) {
-                transition-delay: 0.4s;
-                margin-left: 50px;
-            }
-            
-            .menu-btn:nth-child(3) {
-                transition-delay: 0.5s;
-                margin-left: 100px;
-            }
-            
-            .menu-btn:nth-child(4) {
-                transition-delay: 0.6s;
-                margin-left: 150px;
-            }
-            
-            .menu-btn:nth-child(5) {
-                transition-delay: 0.7s;
-                margin-left: 200px;
-            }
-            
-            .menu-btn:nth-child(6) {
-                transition-delay: 0.8s;
-                margin-left: 250px;
-            }
-            
-            .menu-btn.visible:nth-child(n) {
+
+            to {
                 opacity: 1;
-                left: 0;
-            }
-            
-            .menu-btn:hover {
-                transform: translateX(30px) scale(1.1) !important;
-                z-index: 10;
-            }
-            
-            .menu-btn:hover .btn-img {
-                transform: scale(1.1) translateX(15px);
-                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.9));
-            }
-            
-            .news-section {
-                width: 300px;
-                right: 20px;
-                bottom: 20px;
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
-        /* Ocultar elementos en móvil */
-        @media (max-width: 767px) {
-            .version-btn,
-            .update-panel {
-                display: none;
+        /* Responsive tablet/móvil */
+        @media (max-width: 900px) {
+            .hud-top {
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 10vw 0 10vw;
             }
-            
-            /* Todos los botones iguales en móvil */
-            .menu-btn:nth-child(n) {
-                transition-delay: 0.3s;
+
+            .sonic-logo,
+            .sonic-logo img {
+                max-width: 180px;
+                max-height: 44px;
+            }
+
+            .version-btn {
+                padding: 8px 12px;
+                margin-bottom: 6px;
+            }
+
+            .news-section {
+                width: 90vw;
+                right: 5vw;
+                bottom: 20px;
+                padding: 10px 8px 8px 8px;
+            }
+
+            .news-title {
+                font-size: 0.9rem;
+                max-width: 60%;
+            }
+
+            .update-panel {
+                min-width: 90vw;
+                max-width: 98vw;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @media (max-width: 763px) {
+            .hud-top {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+                padding: 6px 2vw 0 2vw;
+            }
+
+            .version-btn {
+                margin-bottom: 6px;
+            }
+
+            .sonic-logo {
+                margin-bottom: 6px;
+            }
+
+            .news-title {
+                font-size: 0.8rem;
+                max-width: 100%;
+                margin-top: 4px;
+            }
+
+            .update-panel {
+                min-width: 98vw;
+                max-width: 99vw;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                min-width: 100vw;
+                min-height: 100vh;
+            }
+
+            .menu-staircase {
+                left: 1vw;
+                bottom: 10px;
+            }
+
+            .menu-btn {
+                width: 160px;
+                height: 48px;
+                margin-bottom: 12px;
                 margin-left: 0 !important;
+            }
+
+            .menu-btn .btn-img {
+                width: 160px;
+                height: 48px;
+            }
+
+            .sonic-logo,
+            .sonic-logo img {
+                max-width: 180px;
+                max-height: 54px;
+            }
+
+            .news-section {
+                width: 98vw;
+                right: 1vw;
+                bottom: 10px;
+                padding: 8px 4px 4px 4px;
+            }
+
+            .news-title {
+                font-size: 0.8rem;
+                max-width: 100%;
+                margin-top: 4px;
+            }
+
+            .update-panel {
+                min-width: 99vw;
+                max-width: 99vw;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Fondo animado transparente -->
-    <div class="bg-animation">
-        <div class="bg-grid"></div>
-        <div class="bg-particles" id="particles"></div>
-    </div>
-
     <div class="main-container">
-        <!-- Botón de versión -->
-        <div class="version-btn">
-            <button id="updateBtn" class="btn btn-outline-info">
-                <i class="bi bi-stars"></i> v1.5.2 Rework
-            </button>
+        <!-- HUD superior con logo y botón de rework -->
+        <div class="hud-top">
+            <div class="version-btn" id="versionBtnContainer">
+                <button id="updateBtn" aria-label="Mostrar panel de actualización">
+                    <i class="bi bi-stars"></i> v1.5.3 Rework
+                </button>
+            </div>
+            <div class="sonic-logo show" id="sonicLogo">
+                <img src="images/350_sin_titulo_20240917203045 (1).png" alt="SONIC.EXE" class="logo-img">
+            </div>
         </div>
 
-        <!-- Logo grande -->
-        <div class="sonic-logo">
-            <img src="images/350_sin_titulo_20240917203045 (1).png" alt="SONIC.EXE" class="logo-img">
-        </div>
-
-        <!-- Menú en escalera diagonal (PC) o lineal vertical (móvil) -->
-        <div class="menu-staircase">
-            <a href="storyMode.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20240927230657.png" alt="STORY MODE" class="btn-img">
+        <!-- Menú escalera en esquina inferior izquierda -->
+        <div class="menu-staircase show" id="menuStaircase">
+            <a href="storyMode.html" class="menu-btn" aria-label="Ir a Story Mode">
+                <img src="images/350_sin_titulo_20240927230657.png" alt="Ir a Story Mode" class="btn-img">
             </a>
-            <a href="encore.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20241001112058-1.png" alt="ENCORE" class="btn-img">
+            <a href="encore.html" class="menu-btn" aria-label="Ir a Encore">
+                <img src="images/350_sin_titulo_20241001112058-1.png" alt="Ir a Encore" class="btn-img">
             </a>
-            <a href="freeplay.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20240927230709.png" alt="FREEPLAY" class="btn-img">
+            <a href="freeplay.html" class="menu-btn" aria-label="Ir a Freeplay">
+                <img src="images/350_sin_titulo_20240927230709.png" alt="Ir a Freeplay" class="btn-img">
             </a>
-            <a href="extras.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20240927230742.png" alt="EXTRAS" class="btn-img">
+            <a href="extras.html" class="menu-btn" aria-label="Ir a Extras">
+                <img src="images/350_sin_titulo_20240927230742.png" alt="Ir a Extras" class="btn-img">
             </a>
-            <a href="soundtest.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20241001112127-1.png" alt="SOUND TEST" class="btn-img">
+            <a href="soundtest.html" class="menu-btn" aria-label="Ir a Sound Test">
+                <img src="images/350_sin_titulo_20241001112127-1.png" alt="Ir a Sound Test" class="btn-img">
             </a>
-            <a href="credits.html" class="menu-btn">
-                <img src="images/350_sin_titulo_20240927230724.png" alt="CREDITS" class="btn-img">
+            <a href="credits.html" class="menu-btn" aria-label="Ir a Credits">
+                <img src="images/350_sin_titulo_20240927230724.png" alt="Ir a Credits" class="btn-img">
             </a>
         </div>
 
-        <!-- Sección de News -->
-        <div class="news-section">
+        <!-- Noticias en esquina inferior derecha, botón abre/cierra -->
+        <div class="news-section closed show" id="newsSection">
             <div class="news-header" id="newsToggle">
                 <h3 class="news-title">Noticias</h3>
-                <button class="news-toggle" id="newsToggleBtn">+</button>
+                <button class="news-toggle" id="newsToggleBtn" aria-label="Mostrar/ocultar noticias">+</button>
             </div>
             <div class="news-content" id="newsContent">
                 <div class="mods-carousel">
-                    <a href="https://abelitogamer.github.io/" class="mod-item">
-                        <img src="images/abelitoworksho.png" alt="FNF vs Sonic.Exe V2" class="mod-thumbnail">
+                    <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
+                        <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail">
                         <div class="mod-info">
                             <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
                             <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
                         </div>
                     </a>
-                    <a href="#" class="mod-item">
-                        <img src="images/rewrite.jpg" alt="Sonic.Exe Corruption" class="mod-thumbnail">
+                    <a href="javascript:void(0)" class="mod-item">
+                        <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail">
                         <div class="mod-info">
-                            <p class="mod-name">Vs rewrite Coming Soom</p>
+                            <p class="mod-name">Thriller gen out now!!!</p>
+                            <p class="mod-date">juegalo en freeplay ahora!!!</p>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" class="mod-item">
+                        <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail">
+                        <div class="mod-info">
+                            <p class="mod-name">Trinity encore Coming Soon</p>
                             <p class="mod-date">fecha: Siendo Determinado</p>
                         </div>
                     </a>
@@ -586,224 +559,140 @@
             </div>
         </div>
 
-        <!-- Panel de actualización -->
-        <div class="update-panel" id="updatePanel">
+        <!-- Panel de actualización centrado -->
+        <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5.2</h5>
-                <button class="close-update" id="closeUpdate">&times;</button>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5.3</h5>
+                <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <p><strong>Novedades de la actualización v1.5.2:</strong></p>
+                <p><strong>Novedades de la actualización v1.5.3:</strong></p>
                 <ul>
-                    <li>Se implementó el nuevo sistema de créditos estilo Psych Engine</li>
-                    <li>Se corrigió el bug de navegación en los créditos que causaba desplazamientos incorrectos</li>
-                    <li>Se optimizó el rendimiento del menú principal</li>
-                    <li>Se añadió soporte para más mods en la sección de News</li>
-                    <li>Se mejoraron las transiciones entre pantallas</li>
-                    <li>Se actualizaron los efectos de sonido para mayor inmersión</li>
-                    <li>Se corrigieron errores menores de ortografía en los textos</li>
+                    <li>Rework visual y funcional del menú Freeplay.</li>
+                    <li>Catálogo de niveles mejorado y más accesible.</li>
+                    <li>Botones de layouts ahora muestran nombres personalizados.</li>
+                    <li>Animaciones y transiciones optimizadas en Freeplay.</li>
+                    <li>Corrección de bugs en la navegación de mods y layouts.</li>
+                    <li>Mejoras en la accesibilidad y experiencia de usuario.</li>
+                    <li>Actualización de imágenes y estilos en el menú principal.</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Audio -->
-    <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
-    <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio>
-    <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio>
+
+   <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
+     <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio> 
+     <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio> 
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Elementos del DOM
             const updateBtn = document.getElementById('updateBtn');
             const updatePanel = document.getElementById('updatePanel');
             const closeUpdate = document.getElementById('closeUpdate');
-            const menuButtons = document.querySelectorAll('.menu-btn');
-            const versionBtn = document.querySelector('.version-btn');
-            const sonicLogo = document.querySelector('.sonic-logo');
-            const newsSection = document.querySelector('.news-section');
-            const newsToggle = document.getElementById('newsToggle');
+            const menuStaircase = document.getElementById('menuStaircase');
+            const sonicLogo = document.getElementById('sonicLogo');
+            const newsSection = document.getElementById('newsSection');
             const newsToggleBtn = document.getElementById('newsToggleBtn');
-            const newsContent = document.getElementById('newsContent');
-            const particlesContainer = document.getElementById('particles');
-            let panelVisible = false;
-            let newsExpanded = false;
+            const bgMusic = document.getElementById('bgMusic');
 
-            // Crear partículas para el fondo
-            function createParticles() {
-                const particleCount = window.innerWidth < 768 ? 30 : 50;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Tamaño aleatorio
-                    const size = Math.random() * 5 + 1;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    
-                    // Posición inicial aleatoria
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100 + 100}%`;
-                    
-                    // Opacidad aleatoria
-                    particle.style.opacity = Math.random() * 0.5 + 0.1;
-                    
-                    // Duración de animación aleatoria
-                    const duration = Math.random() * 10 + 10;
-                    particle.style.animationDuration = `${duration}s`;
-                    
-                    // Retraso aleatorio
-                    particle.style.animationDelay = `${Math.random() * 5}s`;
-                    
-                    particlesContainer.appendChild(particle);
-                }
+            // Animación de transición entre paneles
+            function showPanel(panel) {
+                panel.classList.remove('hide');
+                panel.classList.add('show');
+                panel.style.display = 'block';
+            }
+            function hidePanel(panel) {
+                panel.classList.remove('show');
+                panel.classList.add('hide');
+                setTimeout(() => {
+                    panel.style.display = 'none';
+                }, 400);
             }
 
-            // Mostrar elementos con animación
-            function initAnimations() {
-                // Mostrar versionBtn solo en desktop
-                if (window.innerWidth >= 768) {
-                    versionBtn.classList.add('show');
-                }
-                
-                sonicLogo.classList.add('show');
-                newsSection.classList.add('show');
-
-                // Animación de entrada de los botones del menú
+            // Oculta todos los botones del menú al abrir el dashboard
+            function hideMenuButtons() {
+                const menuButtons = document.querySelectorAll('.menu-btn');
+                menuButtons.forEach(btn => {
+                    btn.classList.remove('visible');
+                    btn.style.opacity = '0';
+                    btn.style.pointerEvents = 'none';
+                });
+            }
+            // Muestra los botones del menú
+            function showMenuButtons() {
+                const menuButtons = document.querySelectorAll('.menu-btn');
                 menuButtons.forEach((btn, index) => {
                     setTimeout(() => {
                         btn.classList.add('visible');
-                    }, window.innerWidth >= 768 ? index * 100 + 300 : 300);
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                    }, index * 120 + 400);
                 });
             }
 
-            // Función para alternar el panel de actualización
-            const togglePanel = () => {
-                panelVisible = !panelVisible;
-                updatePanel.classList.toggle('show', panelVisible);
-                playSound(panelVisible ? selectSound : hoverSound);
-                
-                if (panelVisible) {
-                    // Efecto de caída del botón
-                    versionBtn.classList.add('falling');
-                    
-                    // Restaurar el estado después de la animación
-                    setTimeout(() => {
-                        versionBtn.classList.remove('falling');
-                        versionBtn.style.opacity = '0';
-                    }, 500);
-                } else {
-                    // Efecto de reaparecer por arte de magia
-                    versionBtn.classList.add('reappear');
-                    
-                    // Restaurar el estado después de la animación
-                    setTimeout(() => {
-                        versionBtn.classList.remove('reappear');
-                        versionBtn.style.opacity = '1';
-                    }, 500);
-                }
-            };
-
-            // Función para alternar la sección de news
-            const toggleNews = () => {
-                newsExpanded = !newsExpanded;
-                newsContent.classList.toggle('expanded');
-                newsToggleBtn.textContent = newsExpanded ? '-' : '+';
-                newsToggleBtn.style.transform = newsExpanded ? 'rotate(90deg)' : 'rotate(0)';
-                playSound(selectSound);
-            };
-
-            // Inicialmente cerrado
-            setTimeout(() => {
-                newsContent.classList.remove('expanded');
-                newsToggleBtn.textContent = '+';
-            }, 100);
-
-            // Event listeners
+            // Botón de rework
             if (updateBtn) {
-                updateBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (window.innerWidth >= 768) {
-                        togglePanel();
-                    }
-                });
-            }
-
-            if (closeUpdate) {
-                closeUpdate.addEventListener('click', togglePanel);
-            }
-            
-            newsToggle.addEventListener('click', toggleNews);
-
-            document.addEventListener('click', (e) => {
-                if (panelVisible && !updatePanel.contains(e.target) && !updateBtn.contains(e.target)) {
-                    togglePanel();
-                }
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (panelVisible && e.key === 'Escape') {
-                    togglePanel();
-                }
-            });
-
-            // Efectos de interacción
-            menuButtons.forEach(btn => {
-                btn.addEventListener('mouseenter', () => {
-                    playSound(hoverSound);
-                });
-                
-                // Para móviles
-                btn.addEventListener('touchstart', () => {
-                    playSound(hoverSound);
-                }, { passive: true });
-            });
-
-            const modItems = document.querySelectorAll('.mod-item');
-            modItems.forEach(item => {
-                item.addEventListener('mouseenter', () => {
-                    playSound(hoverSound);
-                });
-                
-                item.addEventListener('touchstart', () => {
-                    playSound(hoverSound);
-                }, { passive: true });
-                
-                item.addEventListener('click', (e) => {
+                updateBtn.addEventListener('mousedown', (e) => {
                     e.preventDefault();
-                    playSound(selectSound);
-                    setTimeout(() => {
-                        window.location.href = item.getAttribute('href');
-                    }, 300);
+                    showPanel(updatePanel);
+                    hidePanel(menuStaircase);
+                    hidePanel(newsSection);
+                    hideMenuButtons(); // Oculta todos los botones del menú
+                    sonicLogo.classList.remove('show');
+                    sonicLogo.classList.add('hide');
+                    updateBtn.disabled = true;
+                    updateBtn.style.pointerEvents = 'none';
+                    updateBtn.style.opacity = '0.5';
+                    updateBtn.style.display = 'inline-block';
                 });
-            });
+            }
 
-            // Reproducir música de fondo
-            const playBgMusic = () => {
-                const bgMusic = document.getElementById('bgMusic');
-                bgMusic.volume = 0.3;
-                bgMusic.play().catch(e => console.log("Error de audio:", e));
-                document.removeEventListener('click', playBgMusic);
-                document.removeEventListener('touchstart', playBgMusic);
-            };
-            
+            // Cerrar panel de actualización
+            if (closeUpdate) {
+                closeUpdate.addEventListener('click', () => {
+                    hidePanel(updatePanel);
+                    showPanel(menuStaircase);
+                    showPanel(newsSection);
+                    showMenuButtons(); // Vuelve a mostrar los botones del menú
+                    sonicLogo.classList.remove('hide');
+                    sonicLogo.classList.add('show');
+                    updateBtn.disabled = false;
+                    updateBtn.style.pointerEvents = 'auto';
+                    updateBtn.style.opacity = '1';
+                    updateBtn.style.display = 'inline-block';
+                });
+            }
+
+            // Noticias animadas
+            if (newsToggleBtn) {
+                newsToggleBtn.addEventListener('click', () => {
+                    newsSection.classList.toggle('closed');
+                    newsSection.classList.toggle('show');
+                });
+            }
+
+            // Inicializar animaciones menú y botones
+            function initAnimations() {
+                showPanel(menuStaircase);
+                showPanel(newsSection);
+                sonicLogo.classList.add('show');
+                showMenuButtons();
+            }
+            initAnimations();
+
+            // Reproducir música de fondo (autoplay requiere interacción del usuario)
+            function playBgMusic() {
+                if (bgMusic) {
+                    bgMusic.volume = 0.4;
+                    bgMusic.play().catch(() => {});
+                }
+            }
             document.addEventListener('click', playBgMusic, { once: true });
             document.addEventListener('touchstart', playBgMusic, { once: true, passive: true });
-
-            // Inicializar
-            createParticles();
-            initAnimations();
         });
-
-        function playSound(sound) {
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Error de audio:", e));
-            }
-        }
     </script>
 </body>
 

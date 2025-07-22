@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,42 +8,774 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/freeplay.css">
+    <style>
+        :root {
+            --main-red: #ff0000;
+            --main-bg: #000;
+            --glow-effect: 0 0 10px var(--main-red);
+        }
+        
+        body {
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: var(--glow-effect), 0 0 20px var(--main-red);
+            background: url('BG/backgroundlool.png') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container-fluid.text-center {
+            padding-top: 2rem;
+            padding-bottom: 1rem !important;
+            flex: 1;
+            transition: all 0.5s ease;
+        }
+        
+        .title {
+            color: var(--main-red);
+            text-shadow: 0 0 15px var(--main-red);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem !important;
+            transition: all 0.5s ease;
+        }
+        
+        .mod-display-container {
+            background: rgba(0, 0, 0, 0.7);
+            border: 4px solid var(--main-red);
+            border-radius: 0;
+            box-shadow: var(--glow-effect);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto 1rem;
+            transition: all 0.5s ease;
+        }
+        
+        .mod-box {
+            border: 3px solid var(--main-red);
+            background: var(--main-bg);
+            position: relative;
+            overflow: hidden;
+            height: auto;
+            min-height: 250px;
+            max-height: 50vh;
+            aspect-ratio: 16/9;
+            transition: all 0.5s ease;
+        }
+        
+        #levelCatalogContainer {
+            margin-bottom: 0;
+        }
+        
+        .level-catalog:not(.showing) {
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            display: none !important;
+        }
+        
+        .mod-title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+            transition: all 0.5s ease;
+        }
+        
+        .mod-title {
+            color: var(--main-red);
+            text-shadow: var(--glow-effect);
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: all 0.5s ease;
+        }
+        
+        .btn {
+            background: var(--main-bg);
+            color: var(--main-red);
+            border: 3px solid var(--main-red);
+            border-radius: 0;
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 25px;
+            margin: 10px;
+            transition: all 0.3s;
+            text-shadow: var(--glow-effect);
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: var(--main-red);
+            color: var(--main-bg);
+            box-shadow: 0 0 20px var(--main-red);
+        }
+        
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .arrow-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            transition: all 0.5s ease;
+        }
+        
+        .arrow {
+            font-size: 1.8rem;
+            background: rgba(0, 0, 0, 0.7);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--main-red);
+            margin: 0 10px;
+            transition: all 0.5s ease;
+        }
+        
+        .arrow:hover {
+            background: var(--main-red);
+            color: var(--main-bg);
+        }
+        
+        .level-catalog {
+            background: rgba(0, 0, 0, 0.9);
+            border: 4px solid var(--main-red);
+            padding: 20px;
+            box-shadow: 0 0 30px var(--main-red);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.5s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .level-catalog.showing {
+            max-height: 70vh;
+            opacity: 1;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transform: translateY(0);
+            overflow-y: auto;
+            display: block;
+        }
+        
+        .level-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .level-item {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid var(--main-red);
+            transition: all 0.3s ease;
+            min-height: 120px;
+        }
+        
+        .level-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .level-item small {
+            color: #ccc;
+            font-size: 0.7rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .layout-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .layout-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--main-red);
+            border: 2px solid var(--main-red);
+            border-radius: 0;
+            font-family: 'Press Start 2P', cursive;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .level-catalog::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        .level-catalog::-webkit-scrollbar-track {
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .level-catalog::-webkit-scrollbar-thumb {
+            background: var(--main-red);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            25% { text-shadow: -2px 0 red, 2px 0 cyan; }
+            50% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            75% { text-shadow: -2px 0 red, 2px 0 cyan; }
+            100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
+        
+        .glitch-effect {
+            animation: glitch 0.5s linear infinite;
+        }
+        
+        .mod-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .mod-image.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--main-red);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-20px);
+            display: none;
+        }
+    </style>
 </head>
-<body style="background: url('BG/backgroundlool.png') no-repeat center center fixed; background-size: cover; margin: 0; padding: 0;">
+<body>
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
 
-    <div class="container-fluid text-center py-5">
-        <h1 class="title display-4 mb-5">Freeplay</h1>
+    <div class="container-fluid text-center py-3">
+        <h1 class="title display-4 mb-4 glitch-effect">Freeplay</h1>
 
-        <div class="row justify-content-center align-items-center mb-4">
-            <div class="col-auto">
-                <button class="arrow btn btn-lg p-0" id="prev">&#9664;</button>
-            </div>
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="song-box position-relative mx-auto">
-                    <img src="images/LogoV2.png" alt="Logo de Sonic.exe" class="mod-image img-fluid" id="modImage">
-                    <img src="images/LogoV2.png" alt="Logo de Sonic.exe Next" class="mod-image next img-fluid position-absolute top-0 start-0" id="nextImage" style="display: none;">
+        <div class="mod-display-container" id="modDisplayContainer">
+            <div class="mod-box mx-auto">
+                <div class="image-container h-100 w-100">
+                    <img src="images/LogoV2.png" alt="Sonic.exe" loading="lazy" class="mod-image active" id="sonicExeImg">
+                    <img src="images/rerun_logo.png" alt="Sonic.exe Rerun" loading="lazy" class="mod-image" id="sonicRerunImg">
+                    <img src="images/soniclegacy.gif" alt="Sonic Legacy" loading="lazy" class="mod-image" id="sonicLegacyImg">
+                    <img src="images/NewIIUSTLogo.png" alt="Illegal Instruction" loading="lazy" class="mod-image" id="illegalInstructionImg">
+                    <img src="images/HitSingleTitle.png" alt="Hit Single" loading="lazy" class="mod-image" id="hitSingleImg">
+                    <img src="images/VOBGameIcon.png" alt="Fanon V1.5: Horrors Unknown" loading="lazy" class="mod-image" id="fanonHorrorsImg">
+                    <img src="images/VsRewriteLogo.png" alt="Rewrite" loading="lazy" class="mod-image" id="rewriteImg">
+                    <img src="" alt="Extras" loading="lazy" class="mod-image" id="ExtrasImg">
                 </div>
             </div>
             
-            <div class="col-auto">
-                <button class="arrow btn btn-lg p-0" id="next">&#9654;</button>
+            <div class="mod-title-container" id="modTitleContainer">
+                <button class="arrow btn p-0" id="prev" aria-label="Previous mod">&#9664;</button>
+                <p class="mod-title h3" id="modTitle">SONIC.EXE</p>
+                <button class="arrow btn p-0" id="next" aria-label="Next mod">&#9654;</button>
             </div>
+            
+            <div class="mod-counter" id="modCounter">1 of 8</div>
         </div>
 
-        <p class="mod-title h3 mb-4" id="modTitle">Sonic.exe 3.0 songs</p>
-
-        <div class="d-flex justify-content-center gap-3">
-            <a id="modLink" class="mod-link btn btn-primary btn-lg px-4" href="mods/sonic.exe.html">Ir al Mod</a>
-            <a href="index.html" class="back-button btn btn-secondary btn-lg px-4">Volver al Menú Principal</a>
+        <div class="d-flex justify-content-center gap-3 flex-wrap mb-3" id="mainButtons">
+            <button id="showCatalog" class="mod-link btn btn-lg px-4" aria-expanded="false" aria-controls="levelCatalog">SHOW LEVELS</button>
+            <a href="index.html" class="back-button btn btn-lg px-4">Volver al menu</a>
         </div>
+
+        <div id="levelCatalogContainer"></div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
     <script src="js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="js/freeplay.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'flex';
+
+            const modsData = {
+                "mods": [
+                    { 
+                        "id": "sonicExeImg", 
+                        "image": "images/LogoV2.png",
+                        "title": "SONIC.EXE",
+                        "levels": [
+                            { 
+                                "name": "Milk", 
+                                "title": "sunky",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jsdf2p7ve5nwjekbxx4mc7be/releases/01jsdf2p7ymhte7r81vqcgttrk"
+                                }
+                            },
+                            { 
+                                "name": "Fatality", 
+                                "title": "Fatal Error",
+                                "layouts": {
+                                    "Jugar/Play": "https://www.dropbox.com/scl/fi/afssdxee8fvkfhp4kxn0p/Fatality.FNMM?rlkey=tv56dae5rp9arv83qt6fgv3z5&st=9okgbqlc&dl=0"
+                                }
+                            },
+                            { 
+                                "name": "Cycles Encore", 
+                                "title": "LordX",
+                                "layouts": {
+                                    "Jugar/Play": "https://drive.google.com/file/d/1VwACThhkjt6mKqB8Nru2IMda6bTi5yxG/view?usp=drivesdk"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "sonicRerunImg", 
+                        "image": "images/rerun_logo.png",
+                        "title": "SONIC.EXE RERUN",
+                        "levels": [
+                            { 
+                                "name": "Redolled", 
+                                "title": "Tails doll",
+                                "layouts": {
+                                    "old": "https://funkymaker.kingamescreator.com/_app/levels/01jn7e311yce4gtwt87yk0en8k/releases/01jn7e3121wn0fk0jhhe6bk3cv",
+                                    "new": "https://funkymaker.kingamescreator.com/_app/levels/01jn9ph56pwf4kq7cxf22dayt7/releases/01jn9ph56s2bhyfgmdpknqr78j"
+                                }
+                            },
+                            { 
+                                "name": "Too Slow Scrimbo mix", 
+                                "title": "Scrimbo",
+                                "layouts": {
+                                    "jugar/Play": "https://drive.google.com/file/d/1-UBQRPKiKtQH2hvYp8Lpg_E7SpxFYmn0/view?usp=drivesdk"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "sonicLegacyImg", 
+                        "image": "images/soniclegacy.gif",
+                        "title": "SONIC LEGACY",
+                        "levels": [
+                            { 
+                                "name": "2torial", 
+                                "title": "Sonic The Hedgehog",
+                                "layouts": {
+                                    "vertical": "https://www.mediafire.com/file/wlzdh0jrrculjmr/2torial.FNMM/file",
+                                    "horizontal (coming soon)": ""
+                                }
+                            },
+                            { 
+                                "name": "FREE 4 ME", 
+                                "title": "Sonic the Hedgehog(2011X)",
+                                "layouts": {
+                                    "vertical": "https://drive.google.com/file/d/1FqsNAbV1d9T4oK_9uob2PjwqMvKfQBli/view?usp=drivesdk",
+                                    "horizontal": "https://funkymaker.kingamescreator.com/_app/levels/01jvgkrxhn0awxka17y2sh2wp8/releases/01jvgkrxhrb8k0zhvjzcmsrr5h"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "illegalInstructionImg", 
+                        "image": "images/NewIIUSTLogo.png",
+                        "title": "ILLEGAL INSTRUCTION",
+                        "levels": [
+                            { 
+                                "name": "Malediction", 
+                                "title": "Curse",
+                                "layouts": {
+                                    "vertical": "https://funkymaker.kingamescreator.com/_app/levels/01jecvthk74c9mvaj1xqrneasz/releases/01k0qy6cnbetmegkg6rm7t97ys",
+                                    "horizontal": "https://funkymaker.kingamescreator.com/_app/levels/01k0qyrc1qv92d9452yvx09arr/releases/01k0qyrc1tqzjkmtr0rmzftj9v"
+                                }
+                            },
+                            { 
+                                "name": "BLUE SCREEN", 
+                                "title": "Blue Screen of Death",
+                                "layouts": {
+                                    "Jugar/Play": "https://drive.google.com/file/d/1XMrxKECNjApYtW_eMDVs_F5FSo4X1G0p/view?usp=drivesdk"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "hitSingleImg", 
+                        "image": "images/HitSingleTitle.png",
+                        "title": "HIT SINGLE",
+                        "levels": [
+                            { 
+                                "name": "Silly Billy", 
+                                "title": "Yourself",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jpn9qrxpfgpnerzbef8qypap/releases/01jpn9qrzbmgmfgkjs0kqzaaps"
+                                }
+                            },
+                            { 
+                                "name": "Ursed", 
+                                "title": "TBOI",
+                                "layouts": {
+                                    "Jugar/Play": "https://drive.google.com/file/d/1dRw4RAD61UL5_9ax3Duavpm-O9g_5gb1/view?usp=drivesdk"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "fanonHorrorsImg", 
+                        "image": "images/VOBGameIcon.png",
+                        "title": "HORRORS UNKNOWN",
+                        "levels": [
+                            { 
+                                "name": "Scratchin", 
+                                "title": "MDP",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jed34xgsfnqeh8xsrwn7jtzr/releases/01jfbb8nx9g1zpqyn86j9vse0n"
+                                }
+                            },
+                            { 
+                                "name": "Spirit Dance", 
+                                "title": "Nantelle",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jecxydk6r9ccdr1w7bfm1w4p/releases/01jecxyek2z3bht0hcgpr20rdy"
+                                }
+                            },
+                            { 
+                                "name": "Toying around ", 
+                                "title": "Fanon",
+                                "layouts": {
+                                    "Jugar/Play": "https://drive.google.com/file/d/1Eukl3xrwIAEvmHSvJ2qIitJZuPMJTMoI/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "Fanominal", 
+                                "title": "Fanon",
+                                "layouts": {
+                                    "Jugar/Play": "https://drive.google.com/file/d/1ExEG_AfFNZ4M72Sw6p3AlqAVWbW1YJfj/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "Blood lust", 
+                                "title": "Fanon",
+                                "layouts": {
+                                    "Jugar/Play":"https://drive.google.com/file/d/1voq-ifWFXQaLTBGiQIgmdFTVKkLm1JyA/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "Twisted Puppetry", 
+                                "title": "Zoyo-sha",
+                                "layouts": {
+                                    "Jugar/Play":"https://drive.google.com/file/d/1TlLlAJLDPUyBAdelxR-ZBCqDCwrMDOJg/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "sacrifice", 
+                                "title": "Possessed Amy",
+                                "layouts": {
+                                    "Jugar/Play":"https://drive.google.com/file/d/1T1V50197M8CLQUbaBNEakT0mODLuHH5m/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "Dance to sunset", 
+                                "title": "Wacky",
+                                "layouts": {
+                                    "Jugar/Play":"https://drive.google.com/file/d/1T1V50197M8CLQUbaBNEakT0mODLuHH5m/view?usp=drivesdk"
+                                }
+                            },
+                            { 
+                                "name": "Get Sonked", 
+                                "title": "Sonk",
+                                "layouts": {
+                                    "Jugar/Play":"https://www.mediafire.com/file/122gkcv8g0szm8f/Get+sonked+(1).FNMM/file"
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "rewriteImg", 
+                        "image": "images/VsRewriteLogo.png",
+                        "title": "Vs Sonic",
+                        "levels": [
+                            { 
+                                "name": "Thriller gen", 
+                                "title": "Rewrite",
+                                "layouts": {
+                                    "Funky maker": "https://funkymaker.kingamescreator.com/_app/levels/01jy7bd5qw01v6zt1f6pxqr99f/releases/01jy9qbg75hynk62gfjw66jzft",
+                                    "OG": "https://funkymaker.kingamescreator.com/_app/levels/01jycj26vnxgz332bkbpe14vx0/releases/01jycj26vrh7gm0n6ynnwz9rqe"
+                                }
+                            },
+                            { 
+                                "name": "Trinity Encore", 
+                                "title": "majin/2011X/lordX/Rewrite (coming soon)",
+                                "layouts": {
+                                    "coming soon (no presionar no te lleva a ningun lado)": ""
+                                }
+                            }
+                        ]
+                    },
+                    { 
+                        "id": "ExtrasImg", 
+                        "image": "",
+                        "title": "Extras Songs",
+                        "levels": [
+                            { 
+                                "name": "Coming Soon", 
+                                "title": "Coming Soon",
+                                "layouts": {
+                                    "COMING SOON":""
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+            
+            let currentModIndex = 0;
+            const modImages = document.querySelectorAll('.mod-image');
+            const modTitle = document.getElementById('modTitle');
+            const showCatalogBtn = document.getElementById('showCatalog');
+            const modCounter = document.getElementById('modCounter');
+            const levelCatalogContainer = document.getElementById('levelCatalogContainer');
+            const modDisplayContainer = document.getElementById('modDisplayContainer');
+            const modTitleContainer = document.getElementById('modTitleContainer');
+            const titleElement = document.querySelector('.title');
+            const mainButtons = document.getElementById('mainButtons');
+            const prevBtn = document.getElementById('prev');
+            const nextBtn = document.getElementById('next');
+            let catalogOpen = false;
+
+            function preloadImages() {
+                modsData.mods.forEach(mod => {
+                    const img = new Image();
+                    img.src = mod.image;
+                    img.onerror = () => {
+                        const domImg = document.getElementById(mod.id);
+                        if (domImg) domImg.src = 'images/placeholder.png';
+                    };
+                });
+
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'none';
+                }, 500);
+            }
+
+            function createLevelItem(level) {
+                const levelItem = document.createElement('div');
+                levelItem.className = 'level-item';
+
+                const levelName = document.createElement('div');
+                levelName.className = 'level-link';
+                levelName.textContent = level.name;
+
+                const levelTitle = document.createElement('small');
+                levelTitle.textContent = level.title;
+                levelTitle.style.display = 'block';
+                levelTitle.style.marginBottom = '10px';
+                levelTitle.style.color = '#aaa';
+
+                const layoutContainer = document.createElement('div');
+                layoutContainer.className = 'layout-options';
+
+                for (const [layoutType, layoutUrl] of Object.entries(level.layouts)) {
+                    const layoutBtn = document.createElement('button');
+                    layoutBtn.className = 'layout-btn';
+                    layoutBtn.textContent = layoutType.toUpperCase();
+                    layoutBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if (layoutUrl) window.open(layoutUrl, '_blank');
+                    };
+                    if (!layoutUrl) layoutBtn.disabled = true;
+                    layoutContainer.appendChild(layoutBtn);
+                }
+
+                levelItem.appendChild(levelName);
+                levelItem.appendChild(levelTitle);
+                levelItem.appendChild(layoutContainer);
+
+                return levelItem;
+            }
+
+            function generateLevelCatalogs() {
+                levelCatalogContainer.innerHTML = '';
+                
+                modsData.mods.forEach((mod, index) => {
+                    const catalog = document.createElement('div');
+                    catalog.className = 'level-catalog';
+                    catalog.id = `modCatalog-${index}`;
+                    
+                    const title = document.createElement('h3');
+                    title.className = 'mb-4 glitch-effect';
+                    title.textContent = `${mod.title} LEVELS`;
+                    catalog.appendChild(title);
+
+                    // Crear filas de niveles (1 izquierda, 1 derecha)
+                    for (let i = 0; i < mod.levels.length; i += 2) {
+                        const row = document.createElement('div');
+                        row.className = 'level-row';
+
+                        // Nivel izquierdo
+                        if (mod.levels[i]) {
+                            row.appendChild(createLevelItem(mod.levels[i]));
+                        }
+
+                        // Nivel derecho
+                        if (mod.levels[i + 1]) {
+                            row.appendChild(createLevelItem(mod.levels[i + 1]));
+                        }
+
+                        catalog.appendChild(row);
+                    }
+                    
+                    levelCatalogContainer.appendChild(catalog);
+                });
+            }
+
+            function updateModDisplay() {
+                modImages.forEach(img => img.classList.remove('active'));
+                document.getElementById(modsData.mods[currentModIndex].id).classList.add('active');
+                modTitle.textContent = modsData.mods[currentModIndex].title;
+                modCounter.textContent = `${currentModIndex + 1} of ${modsData.mods.length}`;
+                showCatalogBtn.setAttribute('aria-controls', `modCatalog-${currentModIndex}`);
+            }
+
+            function toggleCatalog() {
+                const currentCatalog = document.getElementById(`modCatalog-${currentModIndex}`);
+                const isShowing = currentCatalog.classList.contains('showing');
+
+                if (!isShowing) {
+                    document.querySelectorAll('.level-catalog').forEach(catalog => {
+                        catalog.classList.remove('showing');
+                    });
+                    currentCatalog.classList.add('showing');
+                    showCatalogBtn.textContent = 'CLOSE LEVELS';
+                    showCatalogBtn.classList.add('showing');
+                    showCatalogBtn.setAttribute('aria-expanded', 'true');
+
+                    modDisplayContainer.classList.add('hidden');
+                    modTitleContainer.classList.add('hidden');
+                    titleElement.classList.add('hidden');
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    catalogOpen = true;
+                } else {
+                    currentCatalog.classList.remove('showing');
+                    showCatalogBtn.textContent = 'SHOW LEVELS';
+                    showCatalogBtn.classList.remove('showing');
+                    showCatalogBtn.setAttribute('aria-expanded', 'false');
+
+                    modDisplayContainer.classList.remove('hidden');
+                    modTitleContainer.classList.remove('hidden');
+                    titleElement.classList.remove('hidden');
+                    prevBtn.disabled = false;
+                    nextBtn.disabled = false;
+                    catalogOpen = false;
+                }
+            }
+
+            function navigateMods(direction) {
+                if (catalogOpen) return;
+
+                document.querySelectorAll('.level-catalog').forEach(catalog => {
+                    catalog.classList.remove('showing');
+                });
+                showCatalogBtn.textContent = 'SHOW LEVELS';
+                showCatalogBtn.classList.remove('showing');
+                showCatalogBtn.setAttribute('aria-expanded', 'false');
+
+                modDisplayContainer.classList.remove('hidden');
+                modTitleContainer.classList.remove('hidden');
+                titleElement.classList.remove('hidden');
+                prevBtn.disabled = false;
+                nextBtn.disabled = false;
+
+                if (direction === 'prev') {
+                    currentModIndex = (currentModIndex - 1 + modsData.mods.length) % modsData.mods.length;
+                } else {
+                    currentModIndex = (currentModIndex + 1) % modsData.mods.length;
+                }
+
+                updateModDisplay();
+            }
+
+            // Event listeners
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'showCatalog') {
+                    toggleCatalog();
+                } else if (e.target.id === 'prev') {
+                    navigateMods('prev');
+                } else if (e.target.id === 'next') {
+                    navigateMods('next');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (catalogOpen) return;
+                if (e.key === 'ArrowLeft') {
+                    navigateMods('prev');
+                } else if (e.key === 'ArrowRight') {
+                    navigateMods('next');
+                } else if (e.key === 'Enter' && document.activeElement === showCatalogBtn) {
+                    toggleCatalog();
+                }
+            });
+
+            // Efecto de glitch aleatorio
+            setInterval(() => {
+                document.querySelectorAll('.glitch-effect').forEach(el => {
+                    if (Math.random() > 0.7) {
+                        el.classList.remove('glitch-effect');
+                        void el.offsetWidth;
+                        el.classList.add('glitch-effect');
+                    }
+                });
+            }, 3000);
+
+            // Inicialización
+            generateLevelCatalogs();
+            preloadImages();
+            updateModDisplay();
+        });
+    </script>
 </body>
 </html>

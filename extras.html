@@ -1,194 +1,545 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extras - Sonic.exe</title>
+    <title>Freeplay - Sonic.exe</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* Estilos temporales para visualización */
+        :root {
+            --main-red: #ff0000;
+            --main-bg: #000;
+            --glow-effect: 0 0 10px var(--main-red);
+        }
+        
+        /* Estilo Sonic.exe */
         body {
-            background-color: #000 !important;
-            background-image: url('https://via.placeholder.com/1920x1080/000000/222222?text=Sonic.EXE');
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: var(--glow-effect), 0 0 20px var(--main-red);
+            background: url('BG/backgroundlool.png') no-repeat center center fixed;
             background-size: cover;
-            background-attachment: fixed;
-            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         
-        .sonic-title {
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
-            font-family: 'Arial Black', sans-serif;
-            letter-spacing: 3px;
+        .title {
+            color: var(--main-red);
+            text-shadow: 0 0 15px var(--main-red);
+            font-size: 2.5rem;
+            margin-bottom: 2rem !important;
         }
         
-        .media-content {
-            min-height: 500px;
+        .mod-display-container {
+            background: rgba(0, 0, 0, 0.7);
+            border: 4px solid var(--main-red);
+            border-radius: 0;
+            box-shadow: var(--glow-effect);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .mod-box {
+            border: 3px solid var(--main-red);
+            background: var(--main-bg);
+            position: relative;
+            overflow: hidden;
+            height: 300px;
+            max-height: 50vh;
+        }
+        
+        .mod-title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+        
+        .mod-title {
+            color: var(--main-red);
+            text-shadow: var(--glow-effect);
+            font-size: 1.5rem;
+            margin: 0 15px;
+        }
+        
+        .btn {
+            background: var(--main-bg);
+            color: var(--main-red);
+            border: 3px solid var(--main-red);
+            border-radius: 0;
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 25px;
+            margin: 10px;
+            transition: all 0.3s;
+            text-shadow: var(--glow-effect);
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: var(--main-red);
+            color: var(--main-bg);
+            box-shadow: 0 0 20px var(--main-red);
+        }
+        
+        .arrow-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .arrow {
+            font-size: 1.8rem;
+            background: rgba(0, 0, 0, 0.7);
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 2px dashed #ff0000;
+            border: 2px solid var(--main-red);
+            margin: 0 10px;
         }
         
-        .card {
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        .arrow:hover {
+            background: var(--main-red);
+            color: var(--main-bg);
+        }
+        
+        /* Estilo del catálogo de niveles */
+        .level-catalog {
+            background: rgba(0, 0, 0, 0.9);
+            border: 4px solid var(--main-red);
+            padding: 20px;
+            box-shadow: 0 0 30px var(--main-red);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
             transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            display: block !important;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+        .level-catalog.showing {
+            max-height: 1000px;
+            opacity: 1;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         
-        .btn-outline-danger {
-            border-width: 2px;
-            font-weight: bold;
+        .level-catalog h3 {
+            color: var(--main-red);
+            text-shadow: var(--glow-effect);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .level-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid var(--main-red);
+        }
+        
+        .level-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .level-link:hover {
+            color: var(--main-red);
+        }
+        
+        .level-item small {
+            color: #ccc;
+            font-size: 0.7rem;
+            display: block;
+        }
+        
+        /* Efectos de glitch */
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            25% { text-shadow: -2px 0 red, 2px 0 cyan; }
+            50% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            75% { text-shadow: -2px 0 red, 2px 0 cyan; }
+            100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
+        
+        .glitch-effect {
+            animation: glitch 0.5s linear infinite;
+        }
+        
+        /* Mod images */
+        .mod-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .mod-image.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        /* Botón dinámico */
+        #showCatalog {
+            transition: all 0.3s;
+        }
+        
+        #showCatalog.showing {
+            background: var(--main-red);
+            color: var(--main-bg);
+        }
+        
+        /* Progress indicator */
+        .mod-counter {
+            color: #ccc;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--main-red);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-dark text-light">
-    <!-- Audio element -->
-    <audio id="extraMusic" src="sounds/Radio_Static_-_Sound_Effect.ogg" loop></audio>
-
-    <!-- Main Container -->
-    <div class="container py-4">
-        <!-- Header -->
-        <header class="text-center mb-5">
-            <h1 class="display-3 fw-bold text-danger sonic-title">EXTRAS</h1>
-            <p class="lead text-muted">Unlock the hidden secrets...</p>
-        </header>
-
-        <!-- Media Gallery Section -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="card bg-black border-danger mb-4">
-                    <div class="card-header bg-danger text-dark">
-                        <h3 class="card-title mb-0"><i class="fas fa-photo-film me-2"></i>Media Gallery</h3>
-                    </div>
-                    <div class="card-body p-0">
-                        <!-- Media Display -->
-                        <div id="media" class="media-content">
-                            <p class="text-muted mb-0">Select media to view</p>
-                        </div>
-                        
-                        <!-- Media Controls -->
-                        <div class="card-footer bg-dark d-flex justify-content-between align-items-center media-controls">
-                            <button id="prevBtn" class="btn btn-outline-danger">
-                                <i class="fas fa-backward me-1"></i> Previous
-                            </button>
-                            <div id="mediaCounter" class="media-counter">0/0</div>
-                            <button id="nextBtn" class="btn btn-outline-danger">
-                                Next <i class="fas fa-forward ms-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Additional Sections -->
-        <div class="row mt-4">
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 bg-black border-danger">
-                    <div class="card-header bg-danger text-dark">
-                        <h4 class="card-title mb-0"><i class="fas fa-paintbrush me-2"></i>Concept Art</h4>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Unseen drawings and early designs.</p>
-                        <div class="d-grid">
-                            <button class="btn btn-outline-danger">View Gallery</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 bg-black border-danger">
-                    <div class="card-header bg-danger text-dark">
-                        <h4 class="card-title mb-0"><i class="fas fa-scroll me-2"></i>Developer Notes</h4>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Behind-the-scenes information.</p>
-                        <div class="d-grid">
-                            <button class="btn btn-outline-danger">Read Notes</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Back Button -->
-        <div class="text-center mt-5">
-            <a href="index.html" class="btn btn-lg btn-danger px-4">
-                <i class="fas fa-arrow-left me-2"></i> Return to Main Menu
-            </a>
-        </div>
+<body>
+    <!-- Loading spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Media array - ejemplo con 3 elementos
-        const mediaItems = [
-            { type: 'image', src: 'https://via.placeholder.com/800x450/ff0000/000000?text=Image+1' },
-            { type: 'image', src: 'https://via.placeholder.com/800x450/00ff00/000000?text=Image+2' },
-            { type: 'video', src: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4' }
-        ];
-        
-        const mediaElement = document.getElementById('media');
-        const mediaCounter = document.getElementById('mediaCounter');
-        let currentIndex = 0;
-        
-        // Cargar medio actual
-        function loadMedia(index) {
-            const item = mediaItems[index];
-            mediaElement.innerHTML = '';
+    <div class="container-fluid text-center py-5">
+        <h1 class="title display-4 mb-5 glitch-effect">Freeplay</h1>
+
+        <div class="mod-display-container">
+            <div class="mod-box mx-auto">
+                <div class="image-container h-100 w-100">
+                    <img src="images/sonic-exe-logo.png" alt="Sonic.exe" loading="lazy" class="mod-image active" id="sonicExeImg">
+                    <img src="images/sonic-rerun-logo.png" alt="Sonic.exe Rerun" loading="lazy" class="mod-image" id="sonicRerunImg">
+                    <img src="images/sonic-legacy-logo.png" alt="Sonic Legacy" loading="lazy" class="mod-image" id="sonicLegacyImg">
+                    <img src="images/illegal-instruction-logo.png" alt="Illegal Instruction" loading="lazy" class="mod-image" id="illegalInstructionImg">
+                    <img src="images/hit-single-logo.png" alt="Hit Single" loading="lazy" class="mod-image" id="hitSingleImg">
+                    <img src="images/fanon-horrors-logo.png" alt="Fanon V1.5: Horrors Unknown" loading="lazy" class="mod-image" id="fanonHorrorsImg">
+                </div>
+            </div>
             
-            if (item.type === 'image') {
-                const img = document.createElement('img');
-                img.src = item.src;
-                img.alt = 'Media ' + (index + 1);
-                img.className = 'img-fluid';
-                mediaElement.appendChild(img);
-            } 
-            else if (item.type === 'video') {
-                const video = document.createElement('video');
-                video.src = item.src;
-                video.controls = true;
-                video.className = 'img-fluid';
-                mediaElement.appendChild(video);
+            <div class="mod-title-container">
+                <button class="arrow btn p-0" id="prev" aria-label="Previous mod">&#9664;</button>
+                <p class="mod-title h3 glitch-effect" id="modTitle">SONIC.EXE</p>
+                <button class="arrow btn p-0" id="next" aria-label="Next mod">&#9654;</button>
+            </div>
+            
+            <div class="mod-counter" id="modCounter">1 of 6</div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <button id="showCatalog" class="mod-link btn btn-lg px-4" aria-expanded="false" aria-controls="levelCatalog">SHOW LEVELS</button>
+            <a href="index.html" class="back-button btn btn-lg px-4">MAIN MENU</a>
+        </div>
+
+        <!-- Catálogos de niveles (ahora manejados dinámicamente) -->
+        <div id="levelCatalogContainer"></div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar spinner de carga
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'flex';
+            
+            // Datos de los mods y sus niveles (podría cargarse desde un JSON externo)
+            const modsData = [
+                { 
+                    id: 'sonicExeImg', 
+                    title: 'SONIC.EXE',
+                    levels: [
+                        { 
+                            name: 'GREEN HILL ZONE', 
+                            url: 'https://mediafire.com/sonic-exe-level1', 
+                            description: 'CLASSIC STAGE | BOSS: SONIC.EXE' 
+                        },
+                        { 
+                            name: 'DEATH EGG', 
+                            url: 'https://mediafire.com/sonic-exe-level2', 
+                            description: 'FINAL STAGE | BOSS: LORD X' 
+                        }
+                    ]
+                },
+                { 
+                    id: 'sonicRerunImg', 
+                    title: 'SONIC.EXE RERUN',
+                    levels: [
+                        { 
+                            name: 'CHEMICAL PLANT', 
+                            url: 'https://drive.google.com/sonic-rerun-level1', 
+                            description: 'REIMAGINED STAGE | BOSS: FLEETWAY' 
+                        },
+                        { 
+                            name: 'MYSTIC CAVE', 
+                            url: 'https://drive.google.com/sonic-rerun-level2', 
+                            description: 'HORROR STAGE | BOSS: SUNKY.MPEG' 
+                        }
+                    ]
+                },
+                { 
+                    id: 'sonicLegacyImg', 
+                    title: 'SONIC LEGACY',
+                    levels: [
+                        { 
+                            name: 'STARDUST SPEEDWAY', 
+                            url: 'https://mega.nz/sonic-legacy-level1', 
+                            description: 'RETRO STAGE | BOSS: METAL SONIC' 
+                        },
+                        { 
+                            name: 'HIDDEN PALACE', 
+                            url: 'https://mega.nz/sonic-legacy-level2', 
+                            description: 'SECRET STAGE | BOSS: SHADOW' 
+                        }
+                    ]
+                },
+                { 
+                    id: 'illegalInstructionImg', 
+                    title: 'ILLEGAL INSTRUCTION',
+                    levels: [
+                        { 
+                            name: 'ERROR ZONE', 
+                            url: 'https://dropbox.com/illegal-level1', 
+                            description: 'GLITCH STAGE | BOSS: CORRUPTED SONIC' 
+                        },
+                        { 
+                            name: 'BLUE SCREEN', 
+                            url: 'https://dropbox.com/illegal-level2', 
+                            description: 'FINAL STAGE | BOSS: SYSTEM FAILURE' 
+                        }
+                    ]
+                },
+                { 
+                    id: 'hitSingleImg', 
+                    title: 'HIT SINGLE',
+                    levels: [
+                        { 
+                            name: 'DANCEFLOOR', 
+                            url: 'https://mediafire.com/hit-single-level1', 
+                            description: 'RHYTHM STAGE | BOSS: DJ SONIC' 
+                        },
+                        { 
+                            name: 'NIGHTCLUB', 
+                            url: 'https://mediafire.com/hit-single-level2', 
+                            description: 'FINAL STAGE | BOSS: REMIX.EXE' 
+                        }
+                    ]
+                },
+                { 
+                    id: 'fanonHorrorsImg', 
+                    title: 'HORRORS UNKNOWN',
+                    levels: [
+                        { 
+                            name: 'ABANDONED CITY', 
+                            url: 'https://mega.nz/fanon-level1', 
+                            description: 'URBAN HORROR | BOSS: UNKNOWN ENTITY' 
+                        },
+                        { 
+                            name: 'DARK DIMENSION', 
+                            url: 'https://mega.nz/fanon-level2', 
+                            description: 'FINAL NIGHTMARE | BOSS: THE HORROR' 
+                        }
+                    ]
+                }
+            ];
+            
+            // Variables globales
+            let currentModIndex = 0;
+            const modImages = document.querySelectorAll('.mod-image');
+            const modTitle = document.getElementById('modTitle');
+            const showCatalogBtn = document.getElementById('showCatalog');
+            const modCounter = document.getElementById('modCounter');
+            const levelCatalogContainer = document.getElementById('levelCatalogContainer');
+            
+            // Precargar imágenes
+            function preloadImages() {
+                modsData.forEach(mod => {
+                    const img = new Image();
+                    img.src = document.getElementById(mod.id).src;
+                });
+                
+                // Ocultar spinner cuando todas las imágenes estén cargadas
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'none';
+                }, 500);
             }
             
-            mediaCounter.textContent = (index + 1) + '/' + mediaItems.length;
-        }
-        
-        // Event listeners
-        document.getElementById('prevBtn').addEventListener('click', function() {
-            currentIndex = (currentIndex - 1 + mediaItems.length) % mediaItems.length;
-            loadMedia(currentIndex);
+            // Generar catálogos de niveles dinámicamente
+            function generateLevelCatalogs() {
+                modsData.forEach((mod, index) => {
+                    const catalog = document.createElement('div');
+                    catalog.className = 'level-catalog';
+                    catalog.id = `modCatalog-${index}`;
+                    catalog.setAttribute('aria-labelledby', `modTitle-${index}`);
+                    
+                    const title = document.createElement('h3');
+                    title.className = 'mb-4 glitch-effect';
+                    title.id = `modTitle-${index}`;
+                    title.textContent = `${mod.title} LEVELS`;
+                    
+                    catalog.appendChild(title);
+                    
+                    mod.levels.forEach(level => {
+                        const levelItem = document.createElement('div');
+                        levelItem.className = 'level-item';
+                        
+                        const levelLink = document.createElement('a');
+                        levelLink.className = 'level-link';
+                        levelLink.href = level.url;
+                        levelLink.target = '_blank';
+                        levelLink.textContent = level.name;
+                        
+                        const levelDesc = document.createElement('small');
+                        levelDesc.textContent = level.description;
+                        
+                        levelItem.appendChild(levelLink);
+                        levelItem.appendChild(levelDesc);
+                        catalog.appendChild(levelItem);
+                    });
+                    
+                    levelCatalogContainer.appendChild(catalog);
+                });
+            }
+            
+            // Función para actualizar la visualización del mod actual
+            function updateModDisplay() {
+                modImages.forEach(img => img.classList.remove('active'));
+                document.getElementById(modsData[currentModIndex].id).classList.add('active');
+                modTitle.textContent = modsData[currentModIndex].title;
+                modCounter.textContent = `${currentModIndex + 1} of ${modsData.length}`;
+                
+                // Actualizar ARIA attributes
+                showCatalogBtn.setAttribute('aria-controls', `modCatalog-${currentModIndex}`);
+            }
+            
+            // Función para alternar catálogos
+            function toggleCatalog() {
+                const currentCatalog = document.getElementById(`modCatalog-${currentModIndex}`);
+                const isShowing = currentCatalog.classList.contains('showing');
+                
+                if (!isShowing) {
+                    // Muestra el catálogo del mod actual
+                    document.querySelectorAll('.level-catalog').forEach(catalog => {
+                        catalog.classList.remove('showing');
+                    });
+                    currentCatalog.classList.add('showing');
+                    showCatalogBtn.textContent = 'CLOSE LEVELS';
+                    showCatalogBtn.classList.add('showing');
+                    showCatalogBtn.setAttribute('aria-expanded', 'true');
+                } else {
+                    // Oculta el catálogo
+                    currentCatalog.classList.remove('showing');
+                    showCatalogBtn.textContent = 'SHOW LEVELS';
+                    showCatalogBtn.classList.remove('showing');
+                    showCatalogBtn.setAttribute('aria-expanded', 'false');
+                }
+            }
+            
+            // Navegación entre mods
+            function navigateMods(direction) {
+                // Oculta el catálogo actual si está visible
+                document.querySelectorAll('.level-catalog').forEach(catalog => {
+                    catalog.classList.remove('showing');
+                });
+                showCatalogBtn.textContent = 'SHOW LEVELS';
+                showCatalogBtn.classList.remove('showing');
+                showCatalogBtn.setAttribute('aria-expanded', 'false');
+                
+                if (direction === 'prev') {
+                    currentModIndex = (currentModIndex - 1 + modsData.length) % modsData.length;
+                } else {
+                    currentModIndex = (currentModIndex + 1) % modsData.length;
+                }
+                
+                updateModDisplay();
+            }
+            
+            // Event listeners usando delegación de eventos
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'showCatalog') {
+                    toggleCatalog();
+                } else if (e.target.id === 'prev' || e.target.closest('#prev')) {
+                    navigateMods('prev');
+                } else if (e.target.id === 'next' || e.target.closest('#next')) {
+                    navigateMods('next');
+                }
+            });
+            
+            // Navegación por teclado
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    navigateMods('prev');
+                } else if (e.key === 'ArrowRight') {
+                    navigateMods('next');
+                } else if (e.key === 'Enter' && document.activeElement === showCatalogBtn) {
+                    toggleCatalog();
+                }
+            });
+            
+            // Efecto de glitch aleatorio
+            const glitchElements = document.querySelectorAll('.glitch-effect');
+            
+            setInterval(() => {
+                glitchElements.forEach(el => {
+                    if(Math.random() > 0.7) {
+                        el.classList.add('glitch-effect');
+                        setTimeout(() => {
+                            el.classList.remove('glitch-effect');
+                        }, 200);
+                    }
+                });
+            }, 3000);
+            
+            // Inicialización
+            generateLevelCatalogs();
+            preloadImages();
+            updateModDisplay();
         });
-        
-        document.getElementById('nextBtn').addEventListener('click', function() {
-            currentIndex = (currentIndex + 1) % mediaItems.length;
-            loadMedia(currentIndex);
-        });
-        
-        // Iniciar con el primer elemento
-        loadMedia(currentIndex);
-        
-        // Audio - activar con interacción del usuario
-        const audio = document.getElementById('extraMusic');
-        document.body.addEventListener('click', function() {
-            audio.play().catch(e => console.log('Audio error:', e));
-        }, { once: true });
-    });
     </script>
 </body>
 </html>

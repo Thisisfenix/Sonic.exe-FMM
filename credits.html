@@ -6,405 +6,502 @@
     <title>Créditos - Sonic.exe</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* Estilo base */
         body {
             margin: 0;
             padding: 0;
-            background: #000;
-            color: #fff;
             font-family: 'Press Start 2P', cursive;
+            color: white;
             overflow: hidden;
             height: 100vh;
-            background: url('BG/menuBG.png') no-repeat center center fixed;
+            /* Eliminamos el background del body para moverlo al pseudo-elemento */
+        }
+
+        /* Fondo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%; /* Doble ancho para el efecto de desplazamiento */
+            height: 100%;
+            background: url('BG/menuBG.png') 0 0 repeat-x;
             background-size: cover;
+            z-index: -2;
+            animation: bgScroll 60s linear infinite;
         }
 
-        /* Contenedor principal */
-        .credits-container {
-            position: relative;
+        @keyframes bgScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Mueve hasta la mitad de la imagen duplicada */
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+        
+        /* Resto de tus estilos permanecen igual */
+        .credits-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            overflow: hidden;
+            justify-content: center;
         }
-
-        /* Título estilizado */
+        
         .credits-title {
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff, 
-                         0 0 20px #00ffff, 
-                         0 0 30px #ff00ff;
-            font-size: 3.5rem;
-            margin: 1.5rem 0;
-            font-weight: bold;
-            letter-spacing: 2px;
-            position: relative;
-            z-index: 10;
-            animation: titleGlow 2s infinite alternate;
+            font-size: 3rem;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
+            margin-bottom: 50px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            animation: titleGlow 2s ease-in-out infinite alternate;
         }
-
+        
         @keyframes titleGlow {
-            0% { opacity: 0.8; text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
-            100% { opacity: 1; text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff; }
+            from { text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; }
+            to { text-shadow: 0 0 15px #00FFFF, 0 0 30px #00FFFF, 0 0 40px #00FFFF; }
         }
-
-        /* Contenedor de créditos */
-        .credits-viewport {
-            width: 80%;
-            height: 60vh;
+        
+        .credits-slider {
+            width: 100%;
+            max-width: 1200px;
+            height: 400px;
             position: relative;
-            overflow: hidden;
-            perspective: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            overflow: visible;
         }
-
-        /* Lista de créditos */
-        .credits-list {
+        
+        .credit-slide {
             position: absolute;
-            width: 100%;
+            width: 300px;
             height: 100%;
-            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        /* Items de crédito */
-        .credit-item {
-            width: 100%;
-            height: 100%;
-            position: absolute;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 2rem;
+            justify-content: center;
             transition: all 0.5s ease;
-            transform-origin: center;
-            box-sizing: border-box;
-        }
-
-        /* Estados de los créditos */
-        .credit-item.center {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            z-index: 3;
-        }
-
-        .credit-item.prev {
-            opacity: 0.6;
-            transform: translateY(-100%) scale(0.9);
-            z-index: 2;
-            filter: blur(1px);
-        }
-
-        .credit-item.next {
-            opacity: 0.6;
-            transform: translateY(100%) scale(0.9);
-            z-index: 2;
-            filter: blur(1px);
-        }
-
-        .credit-item.far {
-            opacity: 0.3;
-            transform: scale(0.8);
             z-index: 1;
-            filter: blur(2px);
         }
-
+        
+        .credit-slide.left {
+            left: 25%;
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0.7;
+            filter: blur(1px);
+        }
+        
+        .credit-slide.center {
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            z-index: 2;
+            filter: none;
+        }
+        
+        .credit-slide.right {
+            left: 75%;
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0.7;
+            filter: blur(1px);
+        }
+        
+        .credit-slide.hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
         .credit-icon {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #00ffff;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7),
-                        0 0 40px rgba(255, 0, 255, 0.5);
+            border: 5px solid #00FFFF;
+            box-shadow: 0 0 20px #00FFFF;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
         }
-
+        
+        .credit-slide.center .credit-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #00FFFF;
+        }
+        
         .credit-name {
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 10px #00ffff;
+            font-size: 1.8rem;
+            color: #FFFFFF;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00FFFF;
             text-align: center;
+            transition: all 0.3s ease;
         }
-
+        
+        .credit-slide.center .credit-name {
+            font-size: 2.2rem;
+        }
+        
         .credit-role {
             font-size: 1rem;
-            color: #ff00ff;
-            text-shadow: 0 0 5px #ff00ff;
-            text-align: center;
+            color: #00FFFF;
             max-width: 80%;
-        }
-
-        /* Botones de navegación */
-        .navigation-buttons {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 2rem;
-            z-index: 20;
-        }
-
-        .arrow {
-            font-size: 2.5rem;
-            cursor: pointer;
-            color: #00ffff;
-            text-shadow: 0 0 15px #00ffff;
+            margin: 0 auto;
+            line-height: 1.5;
+            text-align: center;
             transition: all 0.3s ease;
-            user-select: none;
-            background: rgba(0, 0, 30, 0.5);
-            width: 70px;
-            height: 70px;
+        }
+        
+        .credit-slide.center .credit-role {
+            font-size: 1.2rem;
+        }
+        
+        .credits-nav {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            border: 3px solid #00ffff;
+            gap: 20px;
+            margin-top: 20px;
         }
-
-        .arrow:hover {
-            color: #ff00ff;
-            text-shadow: 0 0 20px #ff00ff;
+        
+        .credits-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #00FFFF;
+            background: transparent;
+            border: 3px solid #00FFFF;
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00FFFF;
+        }
+        
+        .credits-btn:hover {
+            background: #00FFFF;
+            color: #000000;
             transform: scale(1.1);
-            border-color: #ff00ff;
         }
-
-        /* Botón de volver */
+        
         .back-button {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 40px;
-            background: rgba(0, 0, 30, 0.7);
-            color: #00ffff;
-            border: 3px solid #00ffff;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00FFFF;
+            border: 3px solid #00FFFF;
             border-radius: 10px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.2rem;
+            font-size: 1rem;
             text-decoration: none;
-            text-shadow: 0 0 10px #00ffff;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            text-shadow: 0 0 10px #00FFFF;
+            box-shadow: 0 0 20px #00FFFF;
             transition: all 0.3s ease;
             z-index: 20;
-            text-align: center;
         }
-
+        
         .back-button:hover {
-            background: rgba(0, 100, 255, 0.3);
-            color: #ff00ff;
-            border-color: #ff00ff;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.7);
-            transform: translate(-50%, -5px);
+            background: #00FFFF;
+            color: #000000;
+            transform: scale(1.1);
         }
-
-        /* Efectos de brillo */
-        .glow-effect {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, 
-                                      rgba(0, 255, 255, 0.1) 0%, 
-                                      rgba(0, 0, 0, 0) 70%);
-            animation: pulseGlow 3s infinite alternate;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        @keyframes pulseGlow {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.7; }
+        
+        @media (max-width: 768px) {
+            .credits-title {
+                font-size: 1.5rem;
+                margin-bottom: 30px;
+            }
+            
+            .credits-slider {
+                height: 300px;
+            }
+            
+            .credit-slide {
+                width: 200px;
+            }
+            
+            .credit-slide.left {
+                left: 20%;
+            }
+            
+            .credit-slide.right {
+                left: 80%;
+            }
+            
+            .credit-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .credit-name {
+                font-size: 1rem;
+            }
+            
+            .credit-slide.center .credit-name {
+                font-size: 1.2rem;
+            }
+            
+            .credit-role {
+                font-size: 0.8rem;
+            }
+            
+            .credit-slide.center .credit-role {
+                font-size: 0.9rem;
+            }
+            
+            .credits-btn {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            
+            .back-button {
+                font-size: 0.8rem;
+                padding: 8px 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="overlay"></div>
+    
     <div class="credits-container">
-        <!-- Efecto de brillo -->
-        <div class="glow-effect"></div>
-
-        <!-- Música de fondo -->
-        <audio id="backgroundMusic" src="sounds/Credits.ogg" loop autoplay></audio>
-
         <h1 class="credits-title">CRÉDITOS</h1>
-
-        <div class="credits-viewport">
-            <div class="credits-list" id="creditsList">
-                <!-- Créditos individuales -->
-                <div class="credit-item" data-index="0">
-                    <img src="icons/20240928_015106.png" alt="Just Fenix" class="credit-icon">
-                    <span class="credit-name">JUST FENIX</span>
-                    <span class="credit-role">Director 1 y creador del sitio web</span>
-                </div>
-                
-                <div class="credit-item" data-index="1">
-                    <img src="icons/20240928_015544.png" alt="Josias782" class="credit-icon">
-                    <span class="credit-name">JOSIAS782</span>
-                    <span class="credit-role">Director 2</span>
-                </div>
-                
-                <div class="credit-item" data-index="2">
-                    <img src="icons/Photoroom-20240920_221620.png" alt="Metal Sonic" class="credit-icon">
-                    <span class="credit-name">METAL SONIC</span>
-                    <span class="credit-role">Colaborador 1 y subdirector</span>
-                    <span class="credit-role">(Carreo medio foro)</span>
-                </div>
-                
-                <div class="credit-item" data-index="3">
-                    <img src="icons/291_sin_titulo_20240921014905.png" alt="j1a2g3r4tu" class="credit-icon">
-                    <span class="credit-name">J1A2G3R4TU</span>
-                    <span class="credit-role">Colaborador 2</span>
-                </div>
-                
-                <div class="credit-item" data-index="4">
-                    <img src="icons/352_sin_titulo_20240917214204.png" alt="dani_a.y.t" class="credit-icon">
-                    <span class="credit-name">DANI_A.Y.T</span>
-                    <span class="credit-role">Colaborador 3</span>
-                </div>
-                
-                <div class="credit-item" data-index="5">
-                    <img src="icons/103_sin_titulo_20240928004155.png" alt="Tails" class="credit-icon">
-                    <span class="credit-name">TAILS</span>
-                    <span class="credit-role">Colaborador 4</span>
-                </div>
-                
-                <div class="credit-item" data-index="6">
-                    <img src="icons/iconos_FNF_20240928015602.png" alt="Samylol" class="credit-icon">
-                    <span class="credit-name">SAMYLOL</span>
-                    <span class="credit-role">Colaborador 5</span>
-                </div>
-                
-                <div class="credit-item" data-index="7">
-                    <img src="icons/346_sin_titulo_20240930232516.png" alt="Mart" class="credit-icon">
-                    <span class="credit-name">MART</span>
-                    <span class="credit-role">EX-Colaborador 6 (funado)</span>
-                </div>
-                
-                <div class="credit-item" data-index="8">
-                    <img src="icons/Project_Capture_141.png" alt="Luis Leyends" class="credit-icon">
-                    <span class="credit-name">LUIS LEYENDS</span>
-                    <span class="credit-role">Colaborador 7</span>
-                </div>
-                
-                <div class="credit-item" data-index="9">
-                    <img src="icons/215_sin_titulo_20240928080723.png" alt="Nogales" class="credit-icon">
-                    <span class="credit-name">NOGALES</span>
-                    <span class="credit-role">Colaborador 8</span>
-                </div>
-            </div>
+        
+        <div class="credits-slider" id="creditsSlider">
+            <!-- Los créditos se generarán dinámicamente con JavaScript -->
         </div>
-
-        <div class="navigation-buttons">
-            <span class="arrow" id="prevButton">▲</span>
-            <span class="arrow" id="nextButton">▼</span>
+        
+        <div class="credits-nav">
+            <button class="credits-btn" id="prevButton">← ANTERIOR</button>
+            <button class="credits-btn" id="nextButton">SIGUIENTE →</button>
         </div>
-
-        <a href="index.html" class="back-button">VOLVER AL MENÚ</a>
+        
+        <a href="index.html" class="back-button">← VOLVER</a>
     </div>
-
+    
+    <audio id="backgroundMusic" src="sounds/Credits.ogg" loop></audio>
+    <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio>
+    <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const bgMusic = document.getElementById('backgroundMusic');
-            bgMusic.volume = 0.5;
-            
-            const creditsList = document.getElementById('creditsList');
-            const creditItems = Array.from(document.querySelectorAll('.credit-item'));
-            const prevBtn = document.getElementById('prevButton');
-            const nextBtn = document.getElementById('nextButton');
-            const backBtn = document.querySelector('.back-button');
-            
-            // Efectos de sonido
-            const hoverSound = new Audio('sounds/hoverMenu.ogg');
-            const selectSound = new Audio('sounds/confirmMenu.ogg');
-            
-            function playSound(sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Error de audio:", e));
+        // Créditos
+        const credits = [
+            {
+                icon: "icons/20240928_015106.png",
+                name: "JUST FENIX",
+                role: "Director 1 y creador del sitio web"
+            },
+            {
+                icon: "icons/20240928_015544.png",
+                name: "JOSIAS782",
+                role: "Director 2"
+            },
+            {
+                icon: "icons/Photoroom-20240920_221620.png",
+                name: "METAL SONIC",
+                role: "Colaborador 1 y subdirector (Carreo medio foro)"
+            },
+            {
+                icon: "icons/493_sin_titulo_20250721190726.png",
+                name: "Berkay",
+                role: "Colaborador 2"
+            },
+            {
+                icon: "icons/291_sin_titulo_20240921014905.png",
+                name: "J1A2G3R4TU",
+                role: "Colaborador 3"
+            },
+            {
+                icon: "icons/352_sin_titulo_20240917214204.png",
+                name: "DANI_A.Y.T",
+                role: "Colaborador 4"
+            },
+            {
+                icon: "icons/103_sin_titulo_20240928004155.png",
+                name: "TAILS",
+                role: "Colaborador 5"
+            },
+            {
+                icon: "icons/iconos_FNF_20240928015602.png",
+                name: "SAMYLOL",
+                role: "Colaborador 6"
+            },
+            {
+                icon: "icons/346_sin_titulo_20240930232516.png",
+                name: "MART",
+                role: "EX-Colaborador 7 (funado)"
+            },
+            {
+                icon: "icons/Project_Capture_141.png",
+                name: "LUIS LEYENDS",
+                role: "Colaborador 8"
+            },
+            {
+                icon: "icons/215_sin_titulo_20240928080723.png",
+                name: "NOGALES",
+                role: "Colaborador 9"
+            },
+            {
+                icon: "icons/MarkLose.png",
+                name: "Takeran",
+                role: "Colaborador 10"
+            },
+            {
+                icon: "icons/gissel.png",
+                name: "Gissel",
+                role: "Colaborador 11"
+            },
+            {
+                icon: "icons/Icon-black_neutral.png",
+                name: "Berkay",
+                role: "Colaborador 12"
             }
-
-            // Configurar posición inicial de los créditos
-            function setupCredits() {
-                creditItems.forEach((item, index) => {
-                    item.style.transform = `translateY(${(index - currentIndex) * 100}%)`;
-                });
-                updateCreditStates();
-            }
-
-            // Actualizar estados de los créditos
-            function updateCreditStates() {
-                creditItems.forEach((item, index) => {
-                    // Reset classes
-                    item.className = 'credit-item';
-                    
-                    const position = index - currentIndex;
-                    
-                    if (position === 0) {
-                        item.classList.add('center');
-                    } else if (position === -1) {
-                        item.classList.add('prev');
-                    } else if (position === 1) {
-                        item.classList.add('next');
-                    } else {
-                        item.classList.add('far');
-                    }
-                });
-            }
-
-            // Mover lista al crédito seleccionado
-            function moveToCredit(newIndex) {
-                if (newIndex < 0 || newIndex >= creditItems.length) return;
+        ];
+        
+        let currentIndex = 0;
+        const creditsSlider = document.getElementById('creditsSlider');
+        const prevBtn = document.getElementById('prevButton');
+        const nextBtn = document.getElementById('nextButton');
+        const backBtn = document.querySelector('.back-button');
+        const bgMusic = document.getElementById('backgroundMusic');
+        const hoverSound = document.getElementById('hoverSound');
+        const selectSound = document.getElementById('selectSound');
+        
+        // Crear slides para cada crédito
+        function createCreditSlides() {
+            credits.forEach((credit, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'credit-slide';
+                slide.dataset.index = index;
                 
-                currentIndex = newIndex;
-                creditsList.style.transform = `translateY(${-currentIndex * 100}%)`;
-                updateCreditStates();
-                playSound(hoverSound);
+                slide.innerHTML = `
+                    <img src="${credit.icon}" alt="${credit.name}" class="credit-icon">
+                    <h2 class="credit-name">${credit.name}</h2>
+                    <p class="credit-role">${credit.role}</p>
+                `;
+                
+                creditsSlider.appendChild(slide);
+            });
+            
+            updateSlidesPosition();
+        }
+        
+        // Actualizar posición de los slides
+        function updateSlidesPosition() {
+            const slides = document.querySelectorAll('.credit-slide');
+            const totalSlides = credits.length;
+            
+            // Ocultar todos los slides primero
+            slides.forEach(slide => {
+                slide.classList.remove('left', 'center', 'right', 'hidden');
+                slide.classList.add('hidden');
+            });
+            
+            // Mostrar los 3 slides relevantes (anterior, actual, siguiente)
+            const prevIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            const nextIndex = (currentIndex + 1) % totalSlides;
+            
+            slides[prevIndex].classList.remove('hidden');
+            slides[prevIndex].classList.add('left');
+            
+            slides[currentIndex].classList.remove('hidden');
+            slides[currentIndex].classList.add('center');
+            
+            slides[nextIndex].classList.remove('hidden');
+            slides[nextIndex].classList.add('right');
+        }
+        
+        // Mostrar crédito anterior
+        function showPrevCredit() {
+            currentIndex = (currentIndex - 1 + credits.length) % credits.length;
+            updateSlidesPosition();
+            playSound(hoverSound);
+        }
+        
+        // Mostrar crédito siguiente
+        function showNextCredit() {
+            currentIndex = (currentIndex + 1) % credits.length;
+            updateSlidesPosition();
+            playSound(hoverSound);
+        }
+        
+        // Función para reproducir sonidos
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => {});
+        }
+        
+        // Event listeners para botones
+        prevBtn.addEventListener('click', showPrevCredit);
+        nextBtn.addEventListener('click', showNextCredit);
+        
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                showPrevCredit();
+            } else if (e.key === 'ArrowRight') {
+                showNextCredit();
             }
-
-            let currentIndex = 0;
-            
-            // Navegación
-            prevBtn.addEventListener('click', () => {
-                moveToCredit(currentIndex - 1);
-            });
-            
-            nextBtn.addEventListener('click', () => {
-                moveToCredit(currentIndex + 1);
-            });
-
-            // Efectos hover
-            [prevBtn, nextBtn, backBtn].forEach(btn => {
-                btn.addEventListener('mouseenter', () => playSound(hoverSound));
-            });
-
-            backBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                playSound(selectSound);
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 300);
-            });
-
-            // Inicializar
-            setupCredits();
-            
-            // Configurar autoplay de música
-            document.body.addEventListener('click', () => {
-                bgMusic.play().catch(e => console.log("Error de audio:", e));
-            }, { once: true });
-
-            // Manejar rueda del mouse
-            document.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                if (e.deltaY > 0) {
-                    moveToCredit(currentIndex + 1);
-                } else {
-                    moveToCredit(currentIndex - 1);
-                }
-            }, { passive: false });
         });
+        
+        // Navegación con rueda del mouse
+        document.addEventListener('wheel', (e) => {
+            if (e.deltaX < 0 || e.deltaY < 0) {
+                showPrevCredit();
+            } else if (e.deltaX > 0 || e.deltaY > 0) {
+                showNextCredit();
+            }
+        });
+        
+        // Navegación táctil
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (diff > 50) {
+                showNextCredit();
+            } else if (diff < -50) {
+                showPrevCredit();
+            }
+        }, { passive: true });
+        
+        // Efectos de hover en botones
+        [prevBtn, nextBtn, backBtn].forEach(btn => {
+            btn.addEventListener('mouseenter', () => playSound(hoverSound));
+        });
+        
+        // Volver al menú
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            playSound(selectSound);
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 300);
+        });
+        
+        // Iniciar música al hacer clic en cualquier parte
+        document.body.addEventListener('click', () => {
+            bgMusic.play().catch(() => {});
+        }, { once: true });
+        
+        // Inicialización
+        createCreditSlides();
     </script>
 </body>
 </html>
