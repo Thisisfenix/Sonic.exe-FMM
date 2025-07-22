@@ -225,7 +225,7 @@
             box-shadow: 0 0 10px #0ff;
             z-index: 15;
             padding: 18px 16px 10px 16px;
-            transition: max-height 0.4s, opacity 0.4s;
+            transition: all 0.4s ease;
             max-height: 220px;
             opacity: 1;
             overflow: hidden;
@@ -241,7 +241,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 8px;
-            flex-wrap: wrap;
+            cursor: pointer;
         }
 
         .news-title {
@@ -261,22 +261,22 @@
             cursor: pointer;
             outline: none;
             transition: transform 0.3s;
+            padding: 0 8px;
         }
 
         .news-toggle.opened {
-            transform: rotate(90deg);
+            transform: rotate(45deg);
         }
 
         .news-content {
             max-height: 160px;
             overflow-y: auto;
-            transition: max-height 0.4s;
+            transition: max-height 0.4s ease;
         }
 
         .news-section.closed .news-content {
             max-height: 0;
             overflow: hidden;
-            padding: 0;
         }
 
         .mod-item {
@@ -365,6 +365,17 @@
             }
         }
 
+        /* Contenedor del menú principal */
+        .menu-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
         /* Responsive tablet */
         @media (max-width: 900px) {
             .hud-top {
@@ -416,6 +427,8 @@
             .main-container {
                 min-height: 100vh;
                 overflow: auto;
+                display: flex;
+                flex-direction: column;
             }
 
             .hud-top {
@@ -448,26 +461,31 @@
                 max-height: 40px;
             }
 
-   /* Menú escalera para móvil - ahora más abajo */
-        .menu-staircase {
-            position: relative;
-            left: 0;
-            bottom: auto;
-            width: 100%;
-            margin: 80px auto 20px; /* Aumenté el margen superior a 60px */
-            padding: 0 5vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+            /* Menú para móvil - columna centrada */
+            .menu-staircase {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0 5vw;
+                position: relative;
+                left: 0;
+                bottom: auto;
+            }
 
             .menu-btn {
                 width: 90%;
                 max-width: 280px;
                 height: 54px;
                 margin-bottom: 12px;
-                margin-left: 0 !important;
+                left: -50px;
+                opacity: 0;
+                position: relative;
+            }
+
+            .menu-btn.visible {
                 left: 0;
+                opacity: 1;
             }
 
             .menu-btn .btn-img {
@@ -475,46 +493,32 @@
                 height: 100%;
             }
 
-            /* Noticias mejoradas para móvil */
+            /* Noticias para móvil */
             .news-section {
                 width: 92vw;
-                right: 4vw;
-                bottom: 10px;
-                max-height: 50vh;
+                max-width: 280px;
+                margin: 20px auto 40px;
+                position: relative;
+                bottom: auto;
+                right: auto;
                 padding: 8px;
+                max-height: 30vh;
             }
 
             .news-section.closed {
                 max-height: 40px;
+                margin: 10px auto 30px;
             }
 
             .news-title {
                 font-size: 0.7rem;
-                line-height: 1.2;
             }
 
             .news-toggle {
                 font-size: 1rem;
             }
 
-            .mod-item {
-                padding: 4px;
-            }
-
-            .mod-thumbnail {
-                width: 40px;
-                height: 40px;
-            }
-
-            .mod-name {
-                font-size: 0.7rem;
-            }
-
-            .mod-date {
-                font-size: 0.6rem;
-            }
-
-            /* Panel de actualización mejorado */
+            /* Panel de actualización */
             .update-panel {
                 padding: 20px 15px;
                 width: 95vw;
@@ -529,7 +533,7 @@
             }
         }
 
-        /* Ajustes adicionales para pantallas muy pequeñas */
+        /* Ajustes para pantallas muy pequeñas */
         @media (max-width: 400px) {
             .hud-top {
                 min-height: 70px;
@@ -549,6 +553,11 @@
 
             .news-title {
                 font-size: 0.65rem;
+            }
+
+            .news-section {
+                margin: 15px auto 30px;
+                max-height: 25vh;
             }
         }
 
@@ -583,62 +592,65 @@
             </div>
         </div>
 
-        <!-- Menú escalera en esquina inferior izquierda -->
-        <div class="menu-staircase show" id="menuStaircase">
-            <a href="storyMode.html" class="menu-btn" aria-label="Ir a Story Mode">
-                <img src="images/350_sin_titulo_20240927230657.png" alt="Ir a Story Mode" class="btn-img">
-            </a>
-            <a href="encore.html" class="menu-btn" aria-label="Ir a Encore">
-                <img src="images/350_sin_titulo_20241001112058-1.png" alt="Ir a Encore" class="btn-img">
-            </a>
-            <a href="freeplay.html" class="menu-btn" aria-label="Ir a Freeplay">
-                <img src="images/350_sin_titulo_20240927230709.png" alt="Ir a Freeplay" class="btn-img">
-            </a>
-            <a href="extras.html" class="menu-btn" aria-label="Ir a Extras">
-                <img src="images/350_sin_titulo_20240927230742.png" alt="Ir a Extras" class="btn-img">
-            </a>
-            <a href="soundtest.html" class="menu-btn" aria-label="Ir a Sound Test">
-                <img src="images/350_sin_titulo_20241001112127-1.png" alt="Ir a Sound Test" class="btn-img">
-            </a>
-            <a href="credits.html" class="menu-btn" aria-label="Ir a Credits">
-                <img src="images/350_sin_titulo_20240927230724.png" alt="Ir a Credits" class="btn-img">
-            </a>
-        </div>
-
-        <!-- Noticias en esquina inferior derecha, botón abre/cierra -->
-        <div class="news-section closed show" id="newsSection">
-            <div class="news-header" id="newsToggle">
-                <h3 class="news-title">Noticias</h3>
-                <button class="news-toggle" id="newsToggleBtn" aria-label="Mostrar/ocultar noticias">+</button>
+        <!-- Contenedor principal del menú -->
+        <div class="menu-container">
+            <!-- Menú principal -->
+            <div class="menu-staircase show" id="menuStaircase">
+                <a href="storyMode.html" class="menu-btn visible" aria-label="Ir a Story Mode">
+                    <img src="images/350_sin_titulo_20240927230657.png" alt="Ir a Story Mode" class="btn-img">
+                </a>
+                <a href="encore.html" class="menu-btn visible" aria-label="Ir a Encore">
+                    <img src="images/350_sin_titulo_20241001112058-1.png" alt="Ir a Encore" class="btn-img">
+                </a>
+                <a href="freeplay.html" class="menu-btn visible" aria-label="Ir a Freeplay">
+                    <img src="images/350_sin_titulo_20240927230709.png" alt="Ir a Freeplay" class="btn-img">
+                </a>
+                <a href="extras.html" class="menu-btn visible" aria-label="Ir a Extras">
+                    <img src="images/350_sin_titulo_20240927230742.png" alt="Ir a Extras" class="btn-img">
+                </a>
+                <a href="soundtest.html" class="menu-btn visible" aria-label="Ir a Sound Test">
+                    <img src="images/350_sin_titulo_20241001112127-1.png" alt="Ir a Sound Test" class="btn-img">
+                </a>
+                <a href="credits.html" class="menu-btn visible" aria-label="Ir a Credits">
+                    <img src="images/350_sin_titulo_20240927230724.png" alt="Ir a Credits" class="btn-img">
+                </a>
             </div>
-            <div class="news-content" id="newsContent">
-                <div class="mods-carousel">
-                    <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
-                        <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail">
-                        <div class="mod-info">
-                            <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
-                            <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
-                        </div>
-                    </a>
-                    <a href="javascript:void(0)" class="mod-item">
-                        <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail">
-                        <div class="mod-info">
-                            <p class="mod-name">Thriller gen out now!!!</p>
-                            <p class="mod-date">juegalo en freeplay ahora!!!</p>
-                        </div>
-                    </a>
-                    <a href="javascript:void(0)" class="mod-item">
-                        <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail">
-                        <div class="mod-info">
-                            <p class="mod-name">Trinity encore Coming Soon</p>
-                            <p class="mod-date">fecha: Siendo Determinado</p>
-                        </div>
-                    </a>
+
+            <!-- Noticias (aparece después del menú en móvil) -->
+            <div class="news-section closed show" id="newsSection">
+                <div class="news-header" id="newsToggle">
+                    <h3 class="news-title">Noticias</h3>
+                    <button class="news-toggle" id="newsToggleBtn" aria-label="Mostrar/ocultar noticias">+</button>
+                </div>
+                <div class="news-content" id="newsContent">
+                    <div class="mods-carousel">
+                        <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
+                            <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail">
+                            <div class="mod-info">
+                                <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
+                                <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" class="mod-item">
+                            <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail">
+                            <div class="mod-info">
+                                <p class="mod-name">Thriller gen out now!!!</p>
+                                <p class="mod-date">juegalo en freeplay ahora!!!</p>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" class="mod-item">
+                            <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail">
+                            <div class="mod-info">
+                                <p class="mod-name">Trinity encore Coming Soon</p>
+                                <p class="mod-date">fecha: Siendo Determinado</p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Panel de actualización centrado -->
+        <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
                 <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5.3</h5>
@@ -659,10 +671,9 @@
         </div>
     </div>
 
-
-   <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
-     <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio> 
-     <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio> 
+    <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
+    <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio> 
+    <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio> 
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -675,6 +686,7 @@
             const sonicLogo = document.getElementById('sonicLogo');
             const newsSection = document.getElementById('newsSection');
             const newsToggleBtn = document.getElementById('newsToggleBtn');
+            const newsHeader = document.getElementById('newsToggle');
             const bgMusic = document.getElementById('bgMusic');
 
             // Animación de transición entre paneles
@@ -683,6 +695,7 @@
                 panel.classList.add('show');
                 panel.style.display = 'block';
             }
+            
             function hidePanel(panel) {
                 panel.classList.remove('show');
                 panel.classList.add('hide');
@@ -691,24 +704,29 @@
                 }, 400);
             }
 
-            // Oculta todos los botones del menú al abrir el dashboard
-            function hideMenuButtons() {
-                const menuButtons = document.querySelectorAll('.menu-btn');
-                menuButtons.forEach(btn => {
-                    btn.classList.remove('visible');
-                    btn.style.opacity = '0';
-                    btn.style.pointerEvents = 'none';
-                });
+            // Noticias animadas - funcionalidad completa
+            function toggleNews() {
+                const isOpening = newsSection.classList.contains('closed');
+                newsSection.classList.toggle('closed');
+                newsSection.classList.toggle('show');
+                newsToggleBtn.classList.toggle('opened');
+                
+                // Reproducir sonido
+                const sound = isOpening ? document.getElementById('selectSound') : document.getElementById('hoverSound');
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
             }
-            // Muestra los botones del menú
-            function showMenuButtons() {
-                const menuButtons = document.querySelectorAll('.menu-btn');
-                menuButtons.forEach((btn, index) => {
-                    setTimeout(() => {
-                        btn.classList.add('visible');
-                        btn.style.opacity = '1';
-                        btn.style.pointerEvents = 'auto';
-                    }, index * 120 + 400);
+
+            if (newsToggleBtn && newsHeader) {
+                newsToggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleNews();
+                });
+                
+                newsHeader.addEventListener('click', (e) => {
+                    if (e.target === newsHeader) {
+                        toggleNews();
+                    }
                 });
             }
 
@@ -717,15 +735,11 @@
                 updateBtn.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     showPanel(updatePanel);
-                    hidePanel(menuStaircase);
-                    hidePanel(newsSection);
-                    hideMenuButtons(); // Oculta todos los botones del menú
                     sonicLogo.classList.remove('show');
                     sonicLogo.classList.add('hide');
                     updateBtn.disabled = true;
                     updateBtn.style.pointerEvents = 'none';
                     updateBtn.style.opacity = '0.5';
-                    updateBtn.style.display = 'inline-block';
                 });
             }
 
@@ -733,36 +747,35 @@
             if (closeUpdate) {
                 closeUpdate.addEventListener('click', () => {
                     hidePanel(updatePanel);
-                    showPanel(menuStaircase);
-                    showPanel(newsSection);
-                    showMenuButtons(); // Vuelve a mostrar los botones del menú
                     sonicLogo.classList.remove('hide');
                     sonicLogo.classList.add('show');
                     updateBtn.disabled = false;
                     updateBtn.style.pointerEvents = 'auto';
                     updateBtn.style.opacity = '1';
-                    updateBtn.style.display = 'inline-block';
                 });
             }
 
-            // Noticias animadas
-            if (newsToggleBtn) {
-                newsToggleBtn.addEventListener('click', () => {
-                    newsSection.classList.toggle('closed');
-                    newsSection.classList.toggle('show');
-                });
-            }
-
-            // Inicializar animaciones menú y botones
+            // Inicializar animaciones - Versión mejorada
             function initAnimations() {
-                showPanel(menuStaircase);
-                showPanel(newsSection);
+                // Animación del logo
                 sonicLogo.classList.add('show');
-                showMenuButtons();
+                
+                // Animación de los botones del menú
+                const menuButtons = document.querySelectorAll('.menu-btn');
+                menuButtons.forEach((btn, index) => {
+                    setTimeout(() => {
+                        btn.classList.add('visible');
+                    }, index * 120 + 300); // Retraso escalonado
+                });
+
+                // Mostrar panel de noticias después de que cargue el menú
+                setTimeout(() => {
+                    newsSection.classList.add('show');
+                }, menuButtons.length * 120 + 500);
             }
             initAnimations();
 
-            // Reproducir música de fondo (autoplay requiere interacción del usuario)
+            // Reproducir música de fondo
             function playBgMusic() {
                 if (bgMusic) {
                     bgMusic.volume = 0.4;
@@ -774,5 +787,4 @@
         });
     </script>
 </body>
-
 </html>
