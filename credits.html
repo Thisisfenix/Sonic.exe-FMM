@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créditos - Sonic.exe</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preload" href="BG/menuBG.png" as="image">
+    <link rel="preload" href="sounds/Credits.ogg" as="audio">
     <style>
+        :root {
+            --transition-time: 0.5s;
+        }
+        
         body {
             margin: 0;
             padding: 0;
@@ -13,26 +19,26 @@
             color: white;
             overflow: hidden;
             height: 100vh;
-            /* Eliminamos el background del body para moverlo al pseudo-elemento */
+            touch-action: pan-y;
         }
 
-        /* Fondo animado */
         body::before {
             content: '';
             position: fixed;
             top: 0;
             left: 0;
-            width: 200%; /* Doble ancho para el efecto de desplazamiento */
+            width: 200%;
             height: 100%;
             background: url('BG/menuBG.png') 0 0 repeat-x;
             background-size: cover;
             z-index: -2;
             animation: bgScroll 60s linear infinite;
+            transform: translate3d(0,0,0);
         }
 
         @keyframes bgScroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* Mueve hasta la mitad de la imagen duplicada */
+            100% { transform: translateX(-50%); }
         }
 
         .overlay {
@@ -45,7 +51,6 @@
             z-index: -1;
         }
         
-        /* Resto de tus estilos permanecen igual */
         .credits-container {
             position: absolute;
             top: 0;
@@ -93,8 +98,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.5s ease;
+            transition: all var(--transition-time) ease;
             z-index: 1;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
         
         .credit-slide.left {
@@ -185,6 +192,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px #00FFFF;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .credits-btn:hover {
@@ -209,6 +217,7 @@
             box-shadow: 0 0 20px #00FFFF;
             transition: all 0.3s ease;
             z-index: 20;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .back-button:hover {
@@ -218,6 +227,10 @@
         }
         
         @media (max-width: 768px) {
+            :root {
+                --transition-time: 0.3s;
+            }
+            
             .credits-title {
                 font-size: 1.5rem;
                 margin-bottom: 30px;
@@ -378,6 +391,15 @@
         const hoverSound = document.getElementById('hoverSound');
         const selectSound = document.getElementById('selectSound');
         
+        // Configuración inicial de audio
+        bgMusic.volume = 0.5;
+        hoverSound.volume = 0.3;
+        selectSound.volume = 0.3;
+        
+        // Detectar si es móvil
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        let swipeThreshold = isMobile ? 100 : 50;
+        
         // Crear slides para cada crédito
         function createCreditSlides() {
             credits.forEach((credit, index) => {
@@ -386,7 +408,7 @@
                 slide.dataset.index = index;
                 
                 slide.innerHTML = `
-                    <img src="${credit.icon}" alt="${credit.name}" class="credit-icon">
+                    <img src="${credit.icon}" alt="${credit.name}" class="credit-icon" loading="lazy">
                     <h2 class="credit-name">${credit.name}</h2>
                     <p class="credit-role">${credit.role}</p>
                 `;
@@ -439,7 +461,7 @@
         // Función para reproducir sonidos
         function playSound(sound) {
             sound.currentTime = 0;
-            sound.play().catch(e => {});
+            sound.play().catch(e => console.log('Error al reproducir sonido:', e));
         }
         
         // Event listeners para botones
@@ -455,35 +477,37 @@
             }
         });
         
-        // Navegación con rueda del mouse
-        document.addEventListener('wheel', (e) => {
-            if (e.deltaX < 0 || e.deltaY < 0) {
-                showPrevCredit();
-            } else if (e.deltaX > 0 || e.deltaY > 0) {
-                showNextCredit();
-            }
-        });
-        
-        // Navegación táctil
+        // Navegación táctil mejorada
         let touchStartX = 0;
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        }, { passive: true });
+        let touchEndX = 0;
         
-        document.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].clientX;
+        creditsSlider.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+        
+        creditsSlider.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevenir scroll horizontal
+        }, {passive: false});
+        
+        creditsSlider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+        
+        function handleSwipe() {
             const diff = touchStartX - touchEndX;
             
-            if (diff > 50) {
+            if (diff > swipeThreshold) {
                 showNextCredit();
-            } else if (diff < -50) {
+            } else if (diff < -swipeThreshold) {
                 showPrevCredit();
             }
-        }, { passive: true });
+        }
         
         // Efectos de hover en botones
         [prevBtn, nextBtn, backBtn].forEach(btn => {
             btn.addEventListener('mouseenter', () => playSound(hoverSound));
+            btn.addEventListener('touchstart', () => playSound(hoverSound), {passive: true});
         });
         
         // Volver al menú
@@ -495,10 +519,15 @@
             }, 300);
         });
         
-        // Iniciar música al hacer clic en cualquier parte
-        document.body.addEventListener('click', () => {
-            bgMusic.play().catch(() => {});
-        }, { once: true });
+        // Iniciar música al interactuar con la página
+        const startAudio = () => {
+            bgMusic.play().catch(e => console.log('Error al iniciar audio:', e));
+            document.body.removeEventListener('click', startAudio);
+            document.body.removeEventListener('touchstart', startAudio);
+        };
+        
+        document.body.addEventListener('click', startAudio, {once: true});
+        document.body.addEventListener('touchstart', startAudio, {once: true});
         
         // Inicialización
         createCreditSlides();

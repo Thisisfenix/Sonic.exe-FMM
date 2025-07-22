@@ -66,6 +66,28 @@
             transition: all 0.5s ease;
         }
         
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mod-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            position: absolute;
+        }
+        
+        .mod-image.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
         #levelCatalogContainer {
             margin-bottom: 0;
         }
@@ -248,22 +270,6 @@
             animation: glitch 0.5s linear infinite;
         }
         
-        .mod-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        
-        .mod-image.active {
-            opacity: 1;
-            z-index: 1;
-        }
-        
         .loading-spinner {
             display: none;
             position: fixed;
@@ -297,9 +303,149 @@
             transform: translateY(-20px);
             display: none;
         }
+
+        /* ========== ESTILOS PARA MÓVIL ========== */
+        @media (max-width: 768px) {
+            :root {
+                --glow-effect: 0 0 5px var(--main-red);
+            }
+
+            body {
+                background-size: auto 100%;
+                background-attachment: scroll;
+            }
+
+            .container-fluid.text-center {
+                padding: 0.5rem !important;
+            }
+
+            .title {
+                font-size: 1.2rem !important;
+                margin-bottom: 0.8rem !important;
+            }
+
+            .mod-display-container {
+                padding: 8px !important;
+                margin: 0 auto 0.5rem !important;
+                max-width: 95%;
+                border-width: 2px;
+            }
+
+            .mod-box {
+                min-height: 150px !important;
+                max-height: 25vh !important;
+                border-width: 2px;
+            }
+
+            .mod-title-container {
+                margin: 0.8rem 0 !important;
+            }
+
+            .mod-title {
+                font-size: 0.8rem !important;
+                margin: 0 5px !important;
+            }
+
+            .mod-counter {
+                font-size: 0.7rem;
+            }
+
+            .btn {
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+                margin: 5px !important;
+                border-width: 2px;
+            }
+
+            .arrow {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+                margin: 0 5px;
+            }
+
+            /* Catálogo de niveles */
+            .level-catalog {
+                max-width: 95%;
+                padding: 10px !important;
+                border-width: 2px;
+            }
+
+            .level-catalog.showing {
+                max-height: 50vh !important;
+            }
+
+            .level-catalog h3 {
+                font-size: 0.8rem;
+                margin-bottom: 0.6rem !important;
+            }
+
+            .level-row {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .level-item {
+                min-height: auto !important;
+                padding: 8px !important;
+                margin-bottom: 0;
+                border-left-width: 2px;
+            }
+
+            .level-link {
+                font-size: 0.7rem !important;
+            }
+
+            .level-item small {
+                font-size: 0.5rem !important;
+            }
+
+            .layout-options {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .layout-btn {
+                font-size: 0.5rem !important;
+                padding: 4px 6px !important;
+            }
+
+            /* Loading spinner */
+            .spinner {
+                width: 30px;
+                height: 30px;
+                border-width: 3px;
+            }
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 400px) {
+            .title {
+                font-size: 1rem !important;
+            }
+
+            .btn {
+                padding: 5px 8px !important;
+                font-size: 0.5rem !important;
+            }
+
+            .mod-title {
+                font-size: 0.7rem !important;
+            }
+
+            .level-catalog {
+                padding: 6px !important;
+            }
+
+            .mod-box {
+                min-height: 120px !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- El resto de tu código HTML permanece igual -->
     <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner"></div>
     </div>
