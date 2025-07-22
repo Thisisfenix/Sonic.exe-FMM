@@ -34,6 +34,25 @@
             overflow: hidden;
         }
 
+        /* Efecto de transición oscura */
+        .screen-darken {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0;
+            z-index: 999;
+            pointer-events: none;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .screen-darken.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         /* HUD superior */
         .hud-top {
             position: absolute;
@@ -579,6 +598,9 @@
 </head>
 
 <body>
+    <!-- Efecto de pantalla oscura para transición -->
+    <div class="screen-darken" id="screenDarken"></div>
+
     <div class="main-container">
         <!-- HUD superior con logo y botón de rework -->
         <div class="hud-top">
@@ -596,24 +618,24 @@
         <div class="menu-container">
             <!-- Menú principal -->
             <div class="menu-staircase show" id="menuStaircase">
-                <a href="storyMode.html" class="menu-btn visible" aria-label="Ir a Story Mode">
+                <button class="menu-btn visible" data-url="storyMode.html" aria-label="Ir a Story Mode">
                     <img src="images/350_sin_titulo_20240927230657.png" alt="Ir a Story Mode" class="btn-img">
-                </a>
-                <a href="encore.html" class="menu-btn visible" aria-label="Ir a Encore">
+                </button>
+                <button class="menu-btn visible" data-url="encore.html" aria-label="Ir a Encore">
                     <img src="images/350_sin_titulo_20241001112058-1.png" alt="Ir a Encore" class="btn-img">
-                </a>
-                <a href="freeplay.html" class="menu-btn visible" aria-label="Ir a Freeplay">
+                </button>
+                <button class="menu-btn visible" data-url="freeplay.html" aria-label="Ir a Freeplay">
                     <img src="images/350_sin_titulo_20240927230709.png" alt="Ir a Freeplay" class="btn-img">
-                </a>
-                <a href="extras.html" class="menu-btn visible" aria-label="Ir a Extras">
+                </button>
+                <button class="menu-btn visible" data-url="extras.html" aria-label="Ir a Extras">
                     <img src="images/350_sin_titulo_20240927230742.png" alt="Ir a Extras" class="btn-img">
-                </a>
-                <a href="soundtest.html" class="menu-btn visible" aria-label="Ir a Sound Test">
+                </button>
+                <button class="menu-btn visible" data-url="soundtest.html" aria-label="Ir a Sound Test">
                     <img src="images/350_sin_titulo_20241001112127-1.png" alt="Ir a Sound Test" class="btn-img">
-                </a>
-                <a href="credits.html" class="menu-btn visible" aria-label="Ir a Credits">
+                </button>
+                <button class="menu-btn visible" data-url="credits.html" aria-label="Ir a Credits">
                     <img src="images/350_sin_titulo_20240927230724.png" alt="Ir a Credits" class="btn-img">
-                </a>
+                </button>
             </div>
 
             <!-- Noticias (aparece después del menú en móvil) -->
@@ -671,9 +693,9 @@
         </div>
     </div>
 
-    <audio id="bgMusic" src="sounds/FnmmSonicTeamOst01.mp3" loop></audio>
-    <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio> 
-    <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio> 
+    <audio id="bgMusic" src="./sounds/FnmmSonicTeamOst01.mp3" loop></audio>
+    <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio> 
+    <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio> 
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -682,12 +704,13 @@
             const updateBtn = document.getElementById('updateBtn');
             const updatePanel = document.getElementById('updatePanel');
             const closeUpdate = document.getElementById('closeUpdate');
-            const menuStaircase = document.getElementById('menuStaircase');
             const sonicLogo = document.getElementById('sonicLogo');
             const newsSection = document.getElementById('newsSection');
             const newsToggleBtn = document.getElementById('newsToggleBtn');
             const newsHeader = document.getElementById('newsToggle');
             const bgMusic = document.getElementById('bgMusic');
+            const screenDarken = document.getElementById('screenDarken');
+            const menuButtons = document.querySelectorAll('.menu-btn[data-url]');
 
             // Animación de transición entre paneles
             function showPanel(panel) {
@@ -704,6 +727,47 @@
                 }, 400);
             }
 
+            // Efecto de transición oscura y redirección
+            function redirectWithFade(url) {
+                // Activar pantalla oscura
+                screenDarken.classList.add('active');
+                
+                // Reproducir sonido de confirmación si está disponible
+                try {
+                    const sound = document.getElementById('selectSound');
+                    if (sound) {
+                        sound.currentTime = 0;
+                        sound.play().catch(() => {});
+                    }
+                } catch (e) {
+                    console.log('Error al reproducir sonido:', e);
+                }
+                
+                // Redirigir después de la animación
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 800);
+            }
+
+            // Configurar eventos para los botones del menú
+            menuButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        redirectWithFade(url);
+                    }
+                });
+                
+                // También manejar eventos táctiles para Android
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        redirectWithFade(url);
+                    }
+                }, { passive: false });
+            });
+
             // Noticias animadas - funcionalidad completa
             function toggleNews() {
                 const isOpening = newsSection.classList.contains('closed');
@@ -711,10 +775,16 @@
                 newsSection.classList.toggle('show');
                 newsToggleBtn.classList.toggle('opened');
                 
-                // Reproducir sonido
-                const sound = isOpening ? document.getElementById('selectSound') : document.getElementById('hoverSound');
-                sound.currentTime = 0;
-                sound.play().catch(() => {});
+                // Reproducir sonido solo si está disponible
+                try {
+                    const sound = isOpening ? document.getElementById('selectSound') : document.getElementById('hoverSound');
+                    if (sound) {
+                        sound.currentTime = 0;
+                        sound.play().catch(() => {});
+                    }
+                } catch (e) {
+                    console.log('Error al reproducir sonido:', e);
+                }
             }
 
             if (newsToggleBtn && newsHeader) {
@@ -730,9 +800,9 @@
                 });
             }
 
-            // Botón de rework
+            // Botón de rework - Versión mejorada para Android
             if (updateBtn) {
-                updateBtn.addEventListener('mousedown', (e) => {
+                const handleUpdateClick = (e) => {
                     e.preventDefault();
                     showPanel(updatePanel);
                     sonicLogo.classList.remove('show');
@@ -740,7 +810,10 @@
                     updateBtn.disabled = true;
                     updateBtn.style.pointerEvents = 'none';
                     updateBtn.style.opacity = '0.5';
-                });
+                };
+                
+                updateBtn.addEventListener('mousedown', handleUpdateClick);
+                updateBtn.addEventListener('touchstart', handleUpdateClick, { passive: true });
             }
 
             // Cerrar panel de actualización
@@ -755,33 +828,67 @@
                 });
             }
 
-            // Inicializar animaciones - Versión mejorada
+            // Inicializar animaciones
             function initAnimations() {
-                // Animación del logo
                 sonicLogo.classList.add('show');
                 
-                // Animación de los botones del menú
                 const menuButtons = document.querySelectorAll('.menu-btn');
                 menuButtons.forEach((btn, index) => {
                     setTimeout(() => {
                         btn.classList.add('visible');
-                    }, index * 120 + 300); // Retraso escalonado
+                    }, index * 120 + 300);
                 });
 
-                // Mostrar panel de noticias después de que cargue el menú
                 setTimeout(() => {
                     newsSection.classList.add('show');
                 }, menuButtons.length * 120 + 500);
             }
             initAnimations();
 
-            // Reproducir música de fondo
+            // Reproducir música de fondo - Versión mejorada
             function playBgMusic() {
                 if (bgMusic) {
                     bgMusic.volume = 0.4;
-                    bgMusic.play().catch(() => {});
+                    
+                    if (window.audioPlayAttempted) return;
+                    window.audioPlayAttempted = true;
+                    
+                    const createAudioButton = () => {
+                        const audioBtn = document.createElement('button');
+                        audioBtn.textContent = 'Activar Audio';
+                        audioBtn.style.position = 'fixed';
+                        audioBtn.style.bottom = '20px';
+                        audioBtn.style.right = '20px';
+                        audioBtn.style.zIndex = '1000';
+                        audioBtn.style.padding = '10px 15px';
+                        audioBtn.style.backgroundColor = '#0ff';
+                        audioBtn.style.color = '#000';
+                        audioBtn.style.border = 'none';
+                        audioBtn.style.borderRadius = '5px';
+                        audioBtn.style.fontFamily = "'Press Start 2P', cursive";
+                        audioBtn.style.fontSize = '12px';
+                        audioBtn.style.cursor = 'pointer';
+                        
+                        audioBtn.addEventListener('click', () => {
+                            bgMusic.play().catch(e => console.error('Error al reproducir:', e));
+                            audioBtn.remove();
+                        });
+                        
+                        document.body.appendChild(audioBtn);
+                    };
+                    
+                    const playPromise = bgMusic.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log('Reproducción automática prevenida:', error);
+                            createAudioButton();
+                        });
+                    }
                 }
             }
+
+            // Activar música al primer toque o clic
             document.addEventListener('click', playBgMusic, { once: true });
             document.addEventListener('touchstart', playBgMusic, { once: true, passive: true });
         });
