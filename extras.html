@@ -2,13 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SONIC.EXE MEDIA PLAYER</title>
     <style>
         :root {
             --blood-red: #ff0000;
             --glow: 0 0 10px #ff0000, 0 0 20px #ff0000;
             --text-glow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+            --app-height: 100vh;
         }
         
         * {
@@ -16,6 +17,7 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         body {
@@ -25,10 +27,9 @@
             background-blend-mode: overlay;
             font-family: 'Courier New', monospace;
             color: white;
-            height: 100vh;
+            height: var(--app-height);
             overflow: hidden;
             text-shadow: var(--text-glow);
-            touch-action: manipulation;
         }
         
         .player-container {
@@ -178,17 +179,21 @@
         }
         
         .controls-container {
-            background: linear-gradient(to bottom, #000, #200000);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), #200000);
             padding: 12px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
             border-top: 2px solid var(--blood-red);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
         }
         
         .progress-container {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .time-display {
@@ -201,7 +206,7 @@
         
         .progress-bar {
             flex-grow: 1;
-            height: 6px;
+            height: 8px;
             background-color: #300000;
             margin: 0 8px;
             cursor: pointer;
@@ -222,6 +227,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 5px;
         }
         
         .center-controls {
@@ -234,19 +240,22 @@
             border: 1px solid var(--blood-red);
             color: white;
             font-size: 18px;
-            width: 36px;
-            height: 36px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
             cursor: pointer;
-            margin: 0 4px;
+            margin: 0 6px;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 10px;
         }
         
         .play-btn {
             font-size: 22px;
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
         }
         
         .volume-container {
@@ -256,7 +265,7 @@
         
         .volume-slider {
             width: 70px;
-            height: 4px;
+            height: 6px;
             background-color: #300000;
             cursor: pointer;
             position: relative;
@@ -287,6 +296,11 @@
         }
 
         @media (max-width: 480px) {
+            .player-container {
+                height: calc(var(--app-height) - 60px);
+                margin-bottom: 60px;
+            }
+
             .player-title {
                 font-size: 14px;
             }
@@ -298,7 +312,8 @@
             }
             
             .playlist-overlay {
-                max-width: 100%;
+                max-width: 85%;
+                padding-top: 60px;
             }
             
             .playlist-item {
@@ -312,19 +327,32 @@
             }
             
             .control-btn {
-                width: 32px;
-                height: 32px;
+                width: 38px;
+                height: 38px;
                 font-size: 16px;
+                margin: 0 5px;
             }
             
             .play-btn {
-                width: 40px;
-                height: 40px;
+                width: 46px;
+                height: 46px;
                 font-size: 20px;
             }
             
             .volume-slider {
-                width: 50px;
+                width: 60px;
+            }
+
+            .progress-bar {
+                height: 10px;
+            }
+        }
+
+        /* Ajustes para dispositivos con notch */
+        @supports(padding: max(0px)) {
+            .player-container {
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
             }
         }
     </style>
@@ -394,6 +422,13 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Ajustar altura para móviles
+            const setAppHeight = () => {
+                document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+            };
+            window.addEventListener('resize', setAppHeight);
+            setAppHeight();
+
             // Datos de medios
             const mediaItems = [
                 { src: 'media/1.png', title: 'AYOOOO', type: 'image' },
@@ -441,7 +476,6 @@
                 { src: 'media/Screenshot_20250724_213915_Discord.jpg', title: 'eh si (comentario de thejarret)', type: 'image' },
                 { src: 'media/Screenshot_20250724_213944_Discord.jpg', title: 'bwa (comentario de gissel)', type: 'image' },
             ];
-
             // Elementos del DOM
             const mediaElement = document.getElementById('mediaElement');
             const playBtn = document.getElementById('playBtn');
@@ -465,6 +499,7 @@
             let isPlaying = false;
             let isDragging = false;
             let isVolumeDragging = false;
+            let wasPlaying = false;
 
             // Inicializar playlist
             function initializePlaylist() {
@@ -494,48 +529,41 @@
                 });
             }
 
-            // Obtener miniatura para videos (simplificado)
+            // Obtener miniatura para videos
             function getVideoThumbnail(videoSrc) {
                 return videoSrc.replace('.mp4', '.jpg') || 'https://i.imgur.com/XH6y9Wq.png';
             }
 
             // Cargar medio
-        function loadMedia(index) {
-            if (index >= 0 && index < mediaItems.length) {
-                currentMediaIndex = index;
-                const media = mediaItems[index];
-                
-                // Reiniciar el elemento de medios
-                mediaElement.pause();
-                mediaElement.src = '';
-                mediaElement.load();
-                
-                // --- CAMBIO CLAVE 1: Limpiar poster siempre ---
-                mediaElement.removeAttribute('poster');
-                
-                // Configurar según el tipo de medio
-                if (media.type === 'video') {
-                    mediaElement.src = media.src;
-                    mediaElement.style.display = 'block';
-                    mediaElement.controls = false;
+            function loadMedia(index) {
+                if (index >= 0 && index < mediaItems.length) {
+                    currentMediaIndex = index;
+                    const media = mediaItems[index];
                     
-                    // --- CAMBIO CLAVE 2: Forzar carga del primer frame ---
+                    mediaElement.pause();
+                    mediaElement.src = '';
                     mediaElement.load();
-                    setTimeout(() => {
-                        mediaElement.currentTime = 0.1; // Avanzar un poco para mostrar el primer frame
-                    }, 100);
-                } else {
-                    // Para imágenes/GIFs
-                    mediaElement.poster = media.src;
-                    mediaElement.style.display = 'block';
+                    mediaElement.removeAttribute('poster');
+                    
+                    if (media.type === 'video') {
+                        mediaElement.src = media.src;
+                        mediaElement.style.display = 'block';
+                        mediaElement.controls = false;
+                        
+                        mediaElement.load();
+                        setTimeout(() => {
+                            mediaElement.currentTime = 0.1;
+                        }, 100);
+                    } else {
+                        mediaElement.poster = media.src;
+                        mediaElement.style.display = 'block';
+                    }
+                    
+                    isPlaying = false;
+                    updatePlayButton();
+                    updatePlaylistActiveItem(index);
                 }
-                
-                // Actualizar estado
-                isPlaying = false;
-                updatePlayButton();
-                updatePlaylistActiveItem(index);
             }
-        }
 
             // Actualizar ítem activo en playlist
             function updatePlaylistActiveItem(index) {
@@ -556,11 +584,9 @@
                         })
                         .catch(error => {
                             console.error("Error al reproducir:", error);
-                            // Fallback para móviles que bloquean autoplay
                             mediaElement.controls = true;
                         });
                 } else {
-                    // Para imágenes, no hacemos nada (aunque podrías añadir un slideshow)
                     isPlaying = false;
                     updatePlayButton();
                 }
@@ -568,9 +594,7 @@
 
             // Pausar medio
             function pauseMedia() {
-                const media = mediaItems[currentMediaIndex];
-                
-                if (media.type === 'video') {
+                if (mediaItems[currentMediaIndex].type === 'video') {
                     mediaElement.pause();
                 }
                 isPlaying = false;
@@ -624,7 +648,6 @@
                 const percent = mediaElement.volume * 100;
                 volumeFilled.style.width = `${percent}%`;
                 
-                // Actualizar icono
                 if (mediaElement.volume === 0) {
                     volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
                 } else if (mediaElement.volume < 0.5) {
@@ -640,6 +663,7 @@
                 
                 if (media.type === 'video') {
                     playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+                    playBtn.style.opacity = '1';
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                     playBtn.style.opacity = '0.5';
@@ -827,6 +851,11 @@
                     }, 200);
                 }
             }, 3000);
+
+            // Prevenir zoom en móviles
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
         });
     </script>
 </body>
