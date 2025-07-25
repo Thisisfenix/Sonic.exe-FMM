@@ -1,544 +1,832 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freeplay - Sonic.exe</title>
-    <!-- Bootstrap CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SONIC.EXE MEDIA PLAYER</title>
     <style>
         :root {
-            --main-red: #ff0000;
-            --main-bg: #000;
-            --glow-effect: 0 0 10px var(--main-red);
+            --blood-red: #ff0000;
+            --glow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            --text-glow: 0 0 5px #ff0000, 0 0 10px #ff0000;
         }
         
-        /* Estilo Sonic.exe */
-        body {
-            color: #fff;
-            font-family: 'Press Start 2P', cursive;
-            text-shadow: var(--glow-effect), 0 0 20px var(--main-red);
-            background: url('BG/backgroundlool.png') no-repeat center center fixed;
-            background-size: cover;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .title {
-            color: var(--main-red);
-            text-shadow: 0 0 15px var(--main-red);
-            font-size: 2.5rem;
-            margin-bottom: 2rem !important;
+        body {
+            background-image: url('BG/backgroundlool.png');
+            background-size: cover;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: overlay;
+            font-family: 'Courier New', monospace;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: var(--text-glow);
+            touch-action: manipulation;
         }
         
-        .mod-display-container {
-            background: rgba(0, 0, 0, 0.7);
-            border: 4px solid var(--main-red);
-            border-radius: 0;
-            box-shadow: var(--glow-effect);
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto 30px;
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 3px solid var(--blood-red);
+            box-shadow: var(--glow);
         }
         
-        .mod-box {
-            border: 3px solid var(--main-red);
-            background: var(--main-bg);
+        .player-header {
+            background: linear-gradient(to right, #000, #300000);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--blood-red);
+        }
+        
+        .player-title {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--blood-red);
+        }
+        
+        .player-controls {
+            display: flex;
+        }
+        
+        .player-btn {
+            width: 25px;
+            height: 25px;
+            background: #300000;
+            border: 1px solid var(--blood-red);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--glow);
+        }
+        
+        .video-container {
+            flex: 1;
+            width: 100%;
+            background-color: #000;
             position: relative;
             overflow: hidden;
-            height: 300px;
-            max-height: 50vh;
-        }
-        
-        .mod-title-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 1.5rem 0;
         }
         
-        .mod-title {
-            color: var(--main-red);
-            text-shadow: var(--glow-effect);
-            font-size: 1.5rem;
-            margin: 0 15px;
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #mediaElement {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            background-color: transparent;
         }
         
-        .btn {
-            background: var(--main-bg);
-            color: var(--main-red);
-            border: 3px solid var(--main-red);
-            border-radius: 0;
-            font-family: 'Press Start 2P', cursive;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 10px 25px;
-            margin: 10px;
-            transition: all 0.3s;
-            text-shadow: var(--glow-effect);
+        .playlist-overlay {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 300px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-left: 3px solid var(--blood-red);
+            transition: right 0.3s ease;
+            z-index: 20;
+            overflow-y: auto;
+            padding-top: 50px;
+        }
+        
+        .playlist-overlay.show {
+            right: 0;
+        }
+        
+        .playlist-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            background: #300000;
+            border-bottom: 2px solid var(--blood-red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 21;
+            color: var(--blood-red);
+            font-weight: bold;
+        }
+        
+        .playlist-close {
             cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
         }
         
-        .btn:hover {
-            background: var(--main-red);
-            color: var(--main-bg);
-            box-shadow: 0 0 20px var(--main-red);
-        }
-        
-        .arrow-nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        
-        .arrow {
-            font-size: 1.8rem;
-            background: rgba(0, 0, 0, 0.7);
-            width: 40px;
-            height: 40px;
+        .playlist-item {
+            padding: 12px;
+            border-bottom: 1px solid #300000;
+            cursor: pointer;
             display: flex;
             align-items: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .playlist-item:hover {
+            background-color: #300000;
+            color: var(--blood-red);
+        }
+        
+        .playlist-item.active {
+            background-color: #300000;
+            color: var(--blood-red);
+            font-weight: bold;
+            border-left: 3px solid var(--blood-red);
+        }
+        
+        .playlist-item img {
+            width: 50px;
+            height: 30px;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 1px solid var(--blood-red);
+        }
+        
+        .controls-container {
+            background: linear-gradient(to bottom, #000, #200000);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            border-top: 2px solid var(--blood-red);
+        }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .time-display {
+            font-size: 12px;
+            min-width: 50px;
+            text-align: center;
+            color: var(--blood-red);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 6px;
+            background-color: #300000;
+            margin: 0 8px;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--blood-red);
+        }
+        
+        .progress-filled {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--blood-red);
+        }
+        
+        .main-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .center-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .control-btn {
+            background: #300000;
+            border: 1px solid var(--blood-red);
+            color: white;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            margin: 0 4px;
+            display: flex;
             justify-content: center;
-            border: 2px solid var(--main-red);
-            margin: 0 10px;
+            align-items: center;
         }
         
-        .arrow:hover {
-            background: var(--main-red);
-            color: var(--main-bg);
+        .play-btn {
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
         }
         
-        /* Estilo del catálogo de niveles */
-        .level-catalog {
-            background: rgba(0, 0, 0, 0.9);
-            border: 4px solid var(--main-red);
-            padding: 20px;
-            box-shadow: 0 0 30px var(--main-red);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            transition: all 0.3s ease;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            display: block !important;
+        .volume-container {
+            display: flex;
+            align-items: center;
         }
         
-        .level-catalog.showing {
-            max-height: 1000px;
-            opacity: 1;
-            margin-top: 20px;
-            margin-bottom: 20px;
+        .volume-slider {
+            width: 70px;
+            height: 4px;
+            background-color: #300000;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--blood-red);
+            margin-left: 8px;
         }
         
-        .level-catalog h3 {
-            color: var(--main-red);
-            text-shadow: var(--glow-effect);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+        .volume-filled {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--blood-red);
         }
-        
-        .level-item {
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(255, 0, 0, 0.1);
-            border-left: 4px solid var(--main-red);
-        }
-        
-        .level-link {
-            color: #fff;
-            text-decoration: none;
-            font-size: 1rem;
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .level-link:hover {
-            color: var(--main-red);
-        }
-        
-        .level-item small {
-            color: #ccc;
-            font-size: 0.7rem;
-            display: block;
-        }
-        
+
         /* Efectos de glitch */
         @keyframes glitch {
-            0% { text-shadow: 2px 0 red, -2px 0 cyan; }
-            25% { text-shadow: -2px 0 red, 2px 0 cyan; }
-            50% { text-shadow: 2px 0 red, -2px 0 cyan; }
-            75% { text-shadow: -2px 0 red, 2px 0 cyan; }
-            100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            0% { filter: hue-rotate(0deg); }
+            25% { filter: hue-rotate(90deg); }
+            50% { filter: hue-rotate(180deg); }
+            75% { filter: hue-rotate(270deg); }
+            100% { filter: hue-rotate(360deg); }
         }
         
         .glitch-effect {
             animation: glitch 0.5s linear infinite;
         }
-        
-        /* Mod images */
-        .mod-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        
-        .mod-image.active {
-            opacity: 1;
-            z-index: 1;
-        }
-        
-        /* Botón dinámico */
-        #showCatalog {
-            transition: all 0.3s;
-        }
-        
-        #showCatalog.showing {
-            background: var(--main-red);
-            color: var(--main-bg);
-        }
-        
-        /* Progress indicator */
-        .mod-counter {
-            color: #ccc;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
-        
-        /* Loading spinner */
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .spinner {
-            border: 5px solid rgba(255, 0, 0, 0.3);
-            border-radius: 50%;
-            border-top: 5px solid var(--main-red);
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        @media (max-width: 480px) {
+            .player-title {
+                font-size: 14px;
+            }
+            
+            .player-btn {
+                width: 22px;
+                height: 22px;
+                font-size: 12px;
+            }
+            
+            .playlist-overlay {
+                max-width: 100%;
+            }
+            
+            .playlist-item {
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .playlist-item img {
+                width: 40px;
+                height: 25px;
+            }
+            
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            
+            .play-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .volume-slider {
+                width: 50px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Loading spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-
-    <div class="container-fluid text-center py-5">
-        <h1 class="title display-4 mb-5 glitch-effect">Freeplay</h1>
-
-        <div class="mod-display-container">
-            <div class="mod-box mx-auto">
-                <div class="image-container h-100 w-100">
-                    <img src="images/sonic-exe-logo.png" alt="Sonic.exe" loading="lazy" class="mod-image active" id="sonicExeImg">
-                    <img src="images/sonic-rerun-logo.png" alt="Sonic.exe Rerun" loading="lazy" class="mod-image" id="sonicRerunImg">
-                    <img src="images/sonic-legacy-logo.png" alt="Sonic Legacy" loading="lazy" class="mod-image" id="sonicLegacyImg">
-                    <img src="images/illegal-instruction-logo.png" alt="Illegal Instruction" loading="lazy" class="mod-image" id="illegalInstructionImg">
-                    <img src="images/hit-single-logo.png" alt="Hit Single" loading="lazy" class="mod-image" id="hitSingleImg">
-                    <img src="images/fanon-horrors-logo.png" alt="Fanon V1.5: Horrors Unknown" loading="lazy" class="mod-image" id="fanonHorrorsImg">
+    <div class="player-container">
+        <div class="player-header">
+            <div class="player-title glitch-effect">SONIC.EXE MEDIA PLAYER</div>
+            <div class="player-controls">
+                <button class="player-btn" id="closeBtn">✕</button>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <div class="media-wrapper">
+                <video id="mediaElement" preload="auto" playsinline webkit-playsinline></video>
+            </div>
+            
+            <div class="playlist-overlay" id="playlistOverlay">
+                <div class="playlist-header">
+                    <div>CREEPYPASTA VIDEOS</div>
+                    <div class="playlist-close" id="playlistClose">✕</div>
                 </div>
+                <div id="playlistItemsContainer"></div>
+            </div>
+        </div>
+        
+        <div class="controls-container">
+            <div class="progress-container">
+                <div class="time-display" id="currentTime">0:00</div>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-filled" id="progressFilled"></div>
+                </div>
+                <div class="time-display" id="durationTime">0:00</div>
             </div>
             
-            <div class="mod-title-container">
-                <button class="arrow btn p-0" id="prev" aria-label="Previous mod">&#9664;</button>
-                <p class="mod-title h3 glitch-effect" id="modTitle">SONIC.EXE</p>
-                <button class="arrow btn p-0" id="next" aria-label="Next mod">&#9654;</button>
+            <div class="main-controls">
+                <div class="volume-container">
+                    <button class="control-btn" id="volumeBtn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="volume-slider" id="volumeSlider">
+                        <div class="volume-filled" id="volumeFilled"></div>
+                    </div>
+                </div>
+                
+                <div class="center-controls">
+                    <button class="control-btn" id="prevBtn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn" id="playBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn" id="nextBtn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                
+                <button class="control-btn" id="playlistBtn">
+                    <i class="fas fa-list"></i>
+                </button>
             </div>
-            
-            <div class="mod-counter" id="modCounter">1 of 6</div>
         </div>
-
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <button id="showCatalog" class="mod-link btn btn-lg px-4" aria-expanded="false" aria-controls="levelCatalog">SHOW LEVELS</button>
-            <a href="index.html" class="back-button btn btn-lg px-4">MAIN MENU</a>
-        </div>
-
-        <!-- Catálogos de niveles (ahora manejados dinámicamente) -->
-        <div id="levelCatalogContainer"></div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar spinner de carga
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            loadingSpinner.style.display = 'flex';
-            
-            // Datos de los mods y sus niveles (podría cargarse desde un JSON externo)
-            const modsData = [
-                { 
-                    id: 'sonicExeImg', 
-                    title: 'SONIC.EXE',
-                    levels: [
-                        { 
-                            name: 'GREEN HILL ZONE', 
-                            url: 'https://mediafire.com/sonic-exe-level1', 
-                            description: 'CLASSIC STAGE | BOSS: SONIC.EXE' 
-                        },
-                        { 
-                            name: 'DEATH EGG', 
-                            url: 'https://mediafire.com/sonic-exe-level2', 
-                            description: 'FINAL STAGE | BOSS: LORD X' 
-                        }
-                    ]
-                },
-                { 
-                    id: 'sonicRerunImg', 
-                    title: 'SONIC.EXE RERUN',
-                    levels: [
-                        { 
-                            name: 'CHEMICAL PLANT', 
-                            url: 'https://drive.google.com/sonic-rerun-level1', 
-                            description: 'REIMAGINED STAGE | BOSS: FLEETWAY' 
-                        },
-                        { 
-                            name: 'MYSTIC CAVE', 
-                            url: 'https://drive.google.com/sonic-rerun-level2', 
-                            description: 'HORROR STAGE | BOSS: SUNKY.MPEG' 
-                        }
-                    ]
-                },
-                { 
-                    id: 'sonicLegacyImg', 
-                    title: 'SONIC LEGACY',
-                    levels: [
-                        { 
-                            name: 'STARDUST SPEEDWAY', 
-                            url: 'https://mega.nz/sonic-legacy-level1', 
-                            description: 'RETRO STAGE | BOSS: METAL SONIC' 
-                        },
-                        { 
-                            name: 'HIDDEN PALACE', 
-                            url: 'https://mega.nz/sonic-legacy-level2', 
-                            description: 'SECRET STAGE | BOSS: SHADOW' 
-                        }
-                    ]
-                },
-                { 
-                    id: 'illegalInstructionImg', 
-                    title: 'ILLEGAL INSTRUCTION',
-                    levels: [
-                        { 
-                            name: 'ERROR ZONE', 
-                            url: 'https://dropbox.com/illegal-level1', 
-                            description: 'GLITCH STAGE | BOSS: CORRUPTED SONIC' 
-                        },
-                        { 
-                            name: 'BLUE SCREEN', 
-                            url: 'https://dropbox.com/illegal-level2', 
-                            description: 'FINAL STAGE | BOSS: SYSTEM FAILURE' 
-                        }
-                    ]
-                },
-                { 
-                    id: 'hitSingleImg', 
-                    title: 'HIT SINGLE',
-                    levels: [
-                        { 
-                            name: 'DANCEFLOOR', 
-                            url: 'https://mediafire.com/hit-single-level1', 
-                            description: 'RHYTHM STAGE | BOSS: DJ SONIC' 
-                        },
-                        { 
-                            name: 'NIGHTCLUB', 
-                            url: 'https://mediafire.com/hit-single-level2', 
-                            description: 'FINAL STAGE | BOSS: REMIX.EXE' 
-                        }
-                    ]
-                },
-                { 
-                    id: 'fanonHorrorsImg', 
-                    title: 'HORRORS UNKNOWN',
-                    levels: [
-                        { 
-                            name: 'ABANDONED CITY', 
-                            url: 'https://mega.nz/fanon-level1', 
-                            description: 'URBAN HORROR | BOSS: UNKNOWN ENTITY' 
-                        },
-                        { 
-                            name: 'DARK DIMENSION', 
-                            url: 'https://mega.nz/fanon-level2', 
-                            description: 'FINAL NIGHTMARE | BOSS: THE HORROR' 
-                        }
-                    ]
-                }
+            // Datos de medios
+            const mediaItems = [
+                { src: 'media/1.png', title: 'AYOOOO', type: 'image' },
+                { src: 'media/2.mp4', title: 'ese bf XDDDD', type: 'video' },
+                { src: 'media/3.png', title: 'when biologia', type: 'image' },
+                { src: 'media/4.mp4', title: 'Homero Vas a recoltalte', type: 'video' },
+                { src: 'media/5.png', title: 'EYYYYY', type: 'image' },
+                { src: 'media/6.png', title: 'When AYYYY', type: 'image' },
+                { src: 'media/7.mp4', title: 'Mi impresora WEEEE', type: 'video' },
+                { src: 'media/8.mp4', title: 'Forsaken en PIllarCagada', type: 'video' },
+                { src: 'media/9.mp4', title: 'JojoMeme que', type: 'video' },
+                { src: 'media/10.png', title: 'Pero Angg', type: 'image' },
+                { src: 'media/11.mp4', title: 'Die Of Death meme', type: 'video' },
+                { src: 'media/12.mp4', title: 'Bro que esta jugando', type: 'video' },
+                { src: 'media/12+1.mp4', title: 'Another Die Of Death meme', type: 'video' },
+                { src: 'media/14.jpeg', title: 'Luigi', type: 'image' },
+                { src: 'media/16.png', title: 'Nooo mi Jugo', type: 'image' },
+                { src: 'media/17.png', title: 'King Siendo King', type: 'image' },
+                { src: 'media/18.gif', title: 'pero John Doe', type: 'image' },
+                { src: 'media/19.png', title: 'Mensaje para ti', type: 'image' },
+                { src: 'media/20.png', title: 'Pero no te habias visto bien caros', type: 'image' },
+                { src: 'media/21.mp4', title: 'Samy pendeja no chambea', type: 'video' },
+                { src: 'media/22.jpg', title: 'Un verdadero cumpleaños', type: 'image' },
+                { src: 'media/23.jpg', title: 'Domi vamo al baño', type: 'image' },
+                { src: 'media/24.jpg', title: 'Origenes Deibi vamo al baño', type: 'image' },
+                { src: 'media/25.jpg', title: 'Pero Copito', type: 'image' },
+                { src: 'media/26.png', title: 'Pero Not break heart', type: 'image' },
+                { src: 'media/27.png', title: 'Deltapadre', type: 'image' },
+                { src: 'media/28.png', title: 'ya pero como te gusta?', type: 'image' },
+                { src: 'media/29.png', title: 'MANGO MANGO', type: 'image' },
+                { src: 'media/30.jpg', title: 'El Woody', type: 'image' },
+                { src: 'media/31.mp4', title: 'Miku?', type: 'video' },
+                { src: 'media/32.mp4', title: 'top 5 me vale verga', type: 'video' },
+                { src: 'media/33.mp4', title: 'Pinche tallota alv', type: 'video' },
+                { src: 'media/34.mp4', title: 'que leyenda miedo we', type: 'video' },
+                { src: 'media/36.mp4', title: 'ridinginmycar', type: 'video' },
+                { src: 'media/37.mp4', title: 'pelea durisima', type: 'video' },
+                { src: 'media/38.png', title: 'when', type: 'image' },
+                { src: 'media/Screenshot_20250724_172547_Discord.png', title: 'ki ki ki ma ma ma (comentario de justaguy)', type: 'image' },
+                { src: 'media/Screenshot_20250724_172600_Discord.jpg', title: 'auch (comentario de abel)', type: 'image' },
+                { src: 'media/Screenshot_20250724_172610_Discord.jpg', title: 'cuidado wey (comentario de cacaran digo takeran)', type: 'image' },
+                { src: 'media/Screenshot_20250724_172621_Discord.jpg', title: 'level sent to rewiev (comentario de nowzuq)', type: 'image' },
+                { src: 'media/Screenshot_20250724_172858_Discord.jpg', title: 'que dijiste de mi mama (comentario de berkay)', type: 'image' },
+                { src: 'media/Screenshot_20250724_213901_Discord.jpg', title: 'simp de gf tenia que ser (comentario de samylol)', type: 'image' },
+                { src: 'media/Screenshot_20250724_213915_Discord.jpg', title: 'eh si (comentario de thejarret)', type: 'image' },
+                { src: 'media/Screenshot_20250724_213944_Discord.jpg', title: 'bwa (comentario de gissel)', type: 'image' },
             ];
+
+            // Elementos del DOM
+            const mediaElement = document.getElementById('mediaElement');
+            const playBtn = document.getElementById('playBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFilled = document.getElementById('progressFilled');
+            const currentTimeDisplay = document.getElementById('currentTime');
+            const durationTimeDisplay = document.getElementById('durationTime');
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeFilled = document.getElementById('volumeFilled');
+            const playlistBtn = document.getElementById('playlistBtn');
+            const playlistOverlay = document.getElementById('playlistOverlay');
+            const playlistClose = document.getElementById('playlistClose');
+            const playlistItemsContainer = document.getElementById('playlistItemsContainer');
+            const closeBtn = document.getElementById('closeBtn');
             
-            // Variables globales
-            let currentModIndex = 0;
-            const modImages = document.querySelectorAll('.mod-image');
-            const modTitle = document.getElementById('modTitle');
-            const showCatalogBtn = document.getElementById('showCatalog');
-            const modCounter = document.getElementById('modCounter');
-            const levelCatalogContainer = document.getElementById('levelCatalogContainer');
-            
-            // Precargar imágenes
-            function preloadImages() {
-                modsData.forEach(mod => {
-                    const img = new Image();
-                    img.src = document.getElementById(mod.id).src;
-                });
+            // Variables de estado
+            let currentMediaIndex = 0;
+            let isPlaying = false;
+            let isDragging = false;
+            let isVolumeDragging = false;
+
+            // Inicializar playlist
+            function initializePlaylist() {
+                playlistItemsContainer.innerHTML = '';
                 
-                // Ocultar spinner cuando todas las imágenes estén cargadas
-                setTimeout(() => {
-                    loadingSpinner.style.display = 'none';
-                }, 500);
-            }
-            
-            // Generar catálogos de niveles dinámicamente
-            function generateLevelCatalogs() {
-                modsData.forEach((mod, index) => {
-                    const catalog = document.createElement('div');
-                    catalog.className = 'level-catalog';
-                    catalog.id = `modCatalog-${index}`;
-                    catalog.setAttribute('aria-labelledby', `modTitle-${index}`);
-                    
-                    const title = document.createElement('h3');
-                    title.className = 'mb-4 glitch-effect';
-                    title.id = `modTitle-${index}`;
-                    title.textContent = `${mod.title} LEVELS`;
-                    
-                    catalog.appendChild(title);
-                    
-                    mod.levels.forEach(level => {
-                        const levelItem = document.createElement('div');
-                        levelItem.className = 'level-item';
-                        
-                        const levelLink = document.createElement('a');
-                        levelLink.className = 'level-link';
-                        levelLink.href = level.url;
-                        levelLink.target = '_blank';
-                        levelLink.textContent = level.name;
-                        
-                        const levelDesc = document.createElement('small');
-                        levelDesc.textContent = level.description;
-                        
-                        levelItem.appendChild(levelLink);
-                        levelItem.appendChild(levelDesc);
-                        catalog.appendChild(levelItem);
-                    });
-                    
-                    levelCatalogContainer.appendChild(catalog);
-                });
-            }
-            
-            // Función para actualizar la visualización del mod actual
-            function updateModDisplay() {
-                modImages.forEach(img => img.classList.remove('active'));
-                document.getElementById(modsData[currentModIndex].id).classList.add('active');
-                modTitle.textContent = modsData[currentModIndex].title;
-                modCounter.textContent = `${currentModIndex + 1} of ${modsData.length}`;
-                
-                // Actualizar ARIA attributes
-                showCatalogBtn.setAttribute('aria-controls', `modCatalog-${currentModIndex}`);
-            }
-            
-            // Función para alternar catálogos
-            function toggleCatalog() {
-                const currentCatalog = document.getElementById(`modCatalog-${currentModIndex}`);
-                const isShowing = currentCatalog.classList.contains('showing');
-                
-                if (!isShowing) {
-                    // Muestra el catálogo del mod actual
-                    document.querySelectorAll('.level-catalog').forEach(catalog => {
-                        catalog.classList.remove('showing');
-                    });
-                    currentCatalog.classList.add('showing');
-                    showCatalogBtn.textContent = 'CLOSE LEVELS';
-                    showCatalogBtn.classList.add('showing');
-                    showCatalogBtn.setAttribute('aria-expanded', 'true');
-                } else {
-                    // Oculta el catálogo
-                    currentCatalog.classList.remove('showing');
-                    showCatalogBtn.textContent = 'SHOW LEVELS';
-                    showCatalogBtn.classList.remove('showing');
-                    showCatalogBtn.setAttribute('aria-expanded', 'false');
-                }
-            }
-            
-            // Navegación entre mods
-            function navigateMods(direction) {
-                // Oculta el catálogo actual si está visible
-                document.querySelectorAll('.level-catalog').forEach(catalog => {
-                    catalog.classList.remove('showing');
-                });
-                showCatalogBtn.textContent = 'SHOW LEVELS';
-                showCatalogBtn.classList.remove('showing');
-                showCatalogBtn.setAttribute('aria-expanded', 'false');
-                
-                if (direction === 'prev') {
-                    currentModIndex = (currentModIndex - 1 + modsData.length) % modsData.length;
-                } else {
-                    currentModIndex = (currentModIndex + 1) % modsData.length;
-                }
-                
-                updateModDisplay();
-            }
-            
-            // Event listeners usando delegación de eventos
-            document.addEventListener('click', function(e) {
-                if (e.target.id === 'showCatalog') {
-                    toggleCatalog();
-                } else if (e.target.id === 'prev' || e.target.closest('#prev')) {
-                    navigateMods('prev');
-                } else if (e.target.id === 'next' || e.target.closest('#next')) {
-                    navigateMods('next');
-                }
-            });
-            
-            // Navegación por teclado
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowLeft') {
-                    navigateMods('prev');
-                } else if (e.key === 'ArrowRight') {
-                    navigateMods('next');
-                } else if (e.key === 'Enter' && document.activeElement === showCatalogBtn) {
-                    toggleCatalog();
-                }
-            });
-            
-            // Efecto de glitch aleatorio
-            const glitchElements = document.querySelectorAll('.glitch-effect');
-            
-            setInterval(() => {
-                glitchElements.forEach(el => {
-                    if(Math.random() > 0.7) {
-                        el.classList.add('glitch-effect');
-                        setTimeout(() => {
-                            el.classList.remove('glitch-effect');
-                        }, 200);
+                mediaItems.forEach((item, index) => {
+                    const playlistItem = document.createElement('div');
+                    playlistItem.className = 'playlist-item';
+                    if (index === currentMediaIndex) {
+                        playlistItem.classList.add('active');
                     }
+                    playlistItem.dataset.index = index;
+                    
+                    playlistItem.innerHTML = `
+                        <img src="${item.type === 'video' ? getVideoThumbnail(item.src) : item.src}" 
+                             alt="${item.title}" 
+                             onerror="this.src='https://i.imgur.com/XH6y9Wq.png'">
+                        <span>${item.title}</span>
+                    `;
+                    
+                    playlistItem.addEventListener('click', () => {
+                        loadMedia(index);
+                        playlistOverlay.classList.remove('show');
+                    });
+                    
+                    playlistItemsContainer.appendChild(playlistItem);
                 });
-            }, 3000);
+            }
+
+            // Obtener miniatura para videos (simplificado)
+            function getVideoThumbnail(videoSrc) {
+                return videoSrc.replace('.mp4', '.jpg') || 'https://i.imgur.com/XH6y9Wq.png';
+            }
+
+            // Cargar medio
+        function loadMedia(index) {
+            if (index >= 0 && index < mediaItems.length) {
+                currentMediaIndex = index;
+                const media = mediaItems[index];
+                
+                // Reiniciar el elemento de medios
+                mediaElement.pause();
+                mediaElement.src = '';
+                mediaElement.load();
+                
+                // --- CAMBIO CLAVE 1: Limpiar poster siempre ---
+                mediaElement.removeAttribute('poster');
+                
+                // Configurar según el tipo de medio
+                if (media.type === 'video') {
+                    mediaElement.src = media.src;
+                    mediaElement.style.display = 'block';
+                    mediaElement.controls = false;
+                    
+                    // --- CAMBIO CLAVE 2: Forzar carga del primer frame ---
+                    mediaElement.load();
+                    setTimeout(() => {
+                        mediaElement.currentTime = 0.1; // Avanzar un poco para mostrar el primer frame
+                    }, 100);
+                } else {
+                    // Para imágenes/GIFs
+                    mediaElement.poster = media.src;
+                    mediaElement.style.display = 'block';
+                }
+                
+                // Actualizar estado
+                isPlaying = false;
+                updatePlayButton();
+                updatePlaylistActiveItem(index);
+            }
+        }
+
+            // Actualizar ítem activo en playlist
+            function updatePlaylistActiveItem(index) {
+                document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+            }
+
+            // Reproducir medio
+            function playMedia() {
+                const media = mediaItems[currentMediaIndex];
+                
+                if (media.type === 'video') {
+                    mediaElement.play()
+                        .then(() => {
+                            isPlaying = true;
+                            updatePlayButton();
+                        })
+                        .catch(error => {
+                            console.error("Error al reproducir:", error);
+                            // Fallback para móviles que bloquean autoplay
+                            mediaElement.controls = true;
+                        });
+                } else {
+                    // Para imágenes, no hacemos nada (aunque podrías añadir un slideshow)
+                    isPlaying = false;
+                    updatePlayButton();
+                }
+            }
+
+            // Pausar medio
+            function pauseMedia() {
+                const media = mediaItems[currentMediaIndex];
+                
+                if (media.type === 'video') {
+                    mediaElement.pause();
+                }
+                isPlaying = false;
+                updatePlayButton();
+            }
+
+            // Alternar play/pause
+            function togglePlayPause() {
+                if (isPlaying) {
+                    pauseMedia();
+                } else {
+                    playMedia();
+                }
+            }
+
+            // Siguiente medio
+            function playNext() {
+                loadMedia((currentMediaIndex + 1) % mediaItems.length);
+            }
+
+            // Medio anterior
+            function playPrev() {
+                loadMedia((currentMediaIndex - 1 + mediaItems.length) % mediaItems.length);
+            }
+
+            // Formatear tiempo (MM:SS)
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+
+            // Actualizar barra de progreso
+            function updateProgress() {
+                const media = mediaItems[currentMediaIndex];
+                
+                if (media.type === 'video' && mediaElement.readyState > 0) {
+                    const percent = (mediaElement.currentTime / mediaElement.duration) * 100;
+                    progressFilled.style.width = `${percent}%`;
+                    currentTimeDisplay.textContent = formatTime(mediaElement.currentTime);
+                    durationTimeDisplay.textContent = formatTime(mediaElement.duration);
+                } else {
+                    progressFilled.style.width = '0%';
+                    currentTimeDisplay.textContent = '0:00';
+                    durationTimeDisplay.textContent = media.type === 'video' ? '0:00' : '--:--';
+                }
+            }
+
+            // Actualizar volumen
+            function updateVolume() {
+                const percent = mediaElement.volume * 100;
+                volumeFilled.style.width = `${percent}%`;
+                
+                // Actualizar icono
+                if (mediaElement.volume === 0) {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                } else if (mediaElement.volume < 0.5) {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+                } else {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                }
+            }
+
+            // Actualizar botón de play/pause
+            function updatePlayButton() {
+                const media = mediaItems[currentMediaIndex];
+                
+                if (media.type === 'video') {
+                    playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+                } else {
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playBtn.style.opacity = '0.5';
+                }
+            }
+
+            // Configurar controles táctiles
+            function setupTouchControls() {
+                // Barra de progreso
+                progressBar.addEventListener('touchstart', handleProgressStart);
+                progressBar.addEventListener('touchmove', handleProgressMove);
+                progressBar.addEventListener('touchend', handleProgressEnd);
+                
+                // Control de volumen
+                volumeSlider.addEventListener('touchstart', handleVolumeStart);
+                volumeSlider.addEventListener('touchmove', handleVolumeMove);
+                volumeSlider.addEventListener('touchend', handleVolumeEnd);
+            }
+
+            function handleProgressStart(e) {
+                if (mediaItems[currentMediaIndex].type !== 'video') return;
+                
+                e.preventDefault();
+                isDragging = true;
+                wasPlaying = isPlaying;
+                if (wasPlaying) pauseMedia();
+                handleProgressUpdate(e.touches[0]);
+            }
+
+            function handleProgressMove(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    handleProgressUpdate(e.touches[0]);
+                }
+            }
+
+            function handleProgressEnd() {
+                if (isDragging) {
+                    isDragging = false;
+                    if (wasPlaying) playMedia();
+                }
+            }
+
+            function handleProgressUpdate(touch) {
+                const rect = progressBar.getBoundingClientRect();
+                let percent = (touch.clientX - rect.left) / rect.width;
+                percent = Math.max(0, Math.min(1, percent));
+                
+                mediaElement.currentTime = percent * mediaElement.duration;
+                updateProgress();
+            }
+
+            function handleVolumeStart(e) {
+                e.preventDefault();
+                isVolumeDragging = true;
+                handleVolumeUpdate(e.touches[0]);
+            }
+
+            function handleVolumeMove(e) {
+                if (isVolumeDragging) {
+                    e.preventDefault();
+                    handleVolumeUpdate(e.touches[0]);
+                }
+            }
+
+            function handleVolumeEnd() {
+                isVolumeDragging = false;
+            }
+
+            function handleVolumeUpdate(touch) {
+                const rect = volumeSlider.getBoundingClientRect();
+                let percent = (touch.clientX - rect.left) / rect.width;
+                percent = Math.max(0, Math.min(1, percent));
+                
+                mediaElement.volume = percent;
+                updateVolume();
+            }
+
+            // Event listeners
+            playBtn.addEventListener('click', togglePlayPause);
+            prevBtn.addEventListener('click', playPrev);
+            nextBtn.addEventListener('click', playNext);
+            
+            mediaElement.addEventListener('timeupdate', updateProgress);
+            mediaElement.addEventListener('loadedmetadata', updateProgress);
+            mediaElement.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayButton();
+            });
+            mediaElement.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayButton();
+            });
+            mediaElement.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayButton();
+            });
+            
+            progressBar.addEventListener('click', (e) => {
+                if (mediaItems[currentMediaIndex].type !== 'video') return;
+                
+                const percent = e.offsetX / progressBar.offsetWidth;
+                mediaElement.currentTime = percent * mediaElement.duration;
+            });
+            
+            progressBar.addEventListener('mousedown', () => {
+                if (mediaItems[currentMediaIndex].type !== 'video') return;
+                
+                isDragging = true;
+                wasPlaying = isPlaying;
+                if (wasPlaying) pauseMedia();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = progressBar.getBoundingClientRect();
+                    let percent = (e.clientX - rect.left) / rect.width;
+                    percent = Math.max(0, Math.min(1, percent));
+                    
+                    mediaElement.currentTime = percent * mediaElement.duration;
+                    updateProgress();
+                }
+                
+                if (isVolumeDragging) {
+                    const rect = volumeSlider.getBoundingClientRect();
+                    let percent = (e.clientX - rect.left) / rect.width;
+                    percent = Math.max(0, Math.min(1, percent));
+                    
+                    mediaElement.volume = percent;
+                    updateVolume();
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    if (wasPlaying) playMedia();
+                }
+                
+                if (isVolumeDragging) {
+                    isVolumeDragging = false;
+                }
+            });
+            
+            volumeBtn.addEventListener('click', () => {
+                mediaElement.volume = mediaElement.volume > 0 ? 0 : 1;
+                updateVolume();
+            });
+            
+            volumeSlider.addEventListener('click', (e) => {
+                const percent = e.offsetX / volumeSlider.offsetWidth;
+                mediaElement.volume = percent;
+                updateVolume();
+            });
+            
+            volumeSlider.addEventListener('mousedown', () => {
+                isVolumeDragging = true;
+            });
+            
+            playlistBtn.addEventListener('click', () => {
+                playlistOverlay.classList.toggle('show');
+            });
+            
+            playlistClose.addEventListener('click', () => {
+                playlistOverlay.classList.remove('show');
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
             
             // Inicialización
-            generateLevelCatalogs();
-            preloadImages();
-            updateModDisplay();
+            initializePlaylist();
+            loadMedia(0);
+            mediaElement.volume = 0.7;
+            updateVolume();
+            setupTouchControls();
+            
+            // Efecto glitch aleatorio en el título
+            setInterval(() => {
+                if (Math.random() > 0.95) {
+                    document.querySelector('.player-title').classList.add('glitch-effect');
+                    setTimeout(() => {
+                        document.querySelector('.player-title').classList.remove('glitch-effect');
+                    }, 200);
+                }
+            }, 3000);
         });
     </script>
 </body>
