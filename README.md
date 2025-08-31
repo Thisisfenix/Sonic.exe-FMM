@@ -51,8 +51,8 @@ La colección incluye mods de diversas variantes de Sonic.EXE:
 
 ## 🔗 Enlaces Importantes
 
-- [Sitio Web Principal](https://tu-usuario.github.io/tu-repositorio)
-- [Freeplay Mods](https://tu-usuario.github.io/tu-repositorio/freeplay.html)
+- [Sitio Web Principal](https://thisisfenix.github.io/Vs-sonic.exe-mods/)
+- [Freeplay Mods](https://thisisfenix.github.io/Vs-sonic.exe-mods/freeplay.html)
 
 *Este proyecto es solo para fines educativos y de entretenimiento. Soporta a los creadores oficiales descargando Funky maker mobile desde Google Play Store.*
 
