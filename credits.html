@@ -5,52 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créditos - Sonic.exe</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="preload" href="BG/menuBG.png" as="image">
-    <link rel="preload" href="sounds/Credits.ogg" as="audio">
     <style>
         :root {
-            --transition-time: 0.5s;
+            --transition-time: 0.6s;
+            --main-color: #00FFFF;
+            --secondary-color: #FF00FF;
+            --text-color: #FFFFFF;
+            --bg-dark: rgba(0, 0, 0, 0.8);
+            --ex-color: #FF5555;
+            --bg-gradient: linear-gradient(45deg, #000014, #001428);
         }
-        
-        body {
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             font-family: 'Press Start 2P', cursive;
-            color: white;
+            color: var(--text-color);
             overflow: hidden;
             height: 100vh;
             touch-action: pan-y;
+            perspective: 1000px;
+            background: #1a1a2e;
+            position: relative;
         }
 
-        body::before {
-            content: '';
+        /* Fondo animado con overlay grisáceo */
+        .animated-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 200%;
             height: 100%;
-            background: url('BG/menuBG.png') 0 0 repeat-x;
-            background-size: cover;
+            background: 
+                linear-gradient(rgba(30, 30, 50, 0.7), rgba(30, 30, 50, 0.7)),
+                url('BG/menuBG.png') repeat-x;
+            background-size: auto 100%;
             z-index: -2;
-            animation: bgScroll 60s linear infinite;
-            transform: translate3d(0,0,0);
+            animation: bgScroll 30s linear infinite;
         }
 
         @keyframes bgScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
-        .overlay {
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
             z-index: -1;
+            overflow: hidden;
         }
-        
+
+        .particle {
+            position: absolute;
+            background: var(--main-color);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         .credits-container {
             position: absolute;
             top: 0;
@@ -61,471 +102,1055 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            z-index: 1;
         }
-        
+
         .credits-title {
             font-size: 3rem;
-            color: #FFFFFF;
-            text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
-            margin-bottom: 50px;
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--main-color), 0 0 20px var(--main-color);
+            margin-bottom: 30px;
             letter-spacing: 5px;
             text-transform: uppercase;
             animation: titleGlow 2s ease-in-out infinite alternate;
+            position: relative;
         }
-        
+
+        .credits-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--main-color), transparent);
+            box-shadow: 0 0 10px var(--main-color);
+        }
+
         @keyframes titleGlow {
-            from { text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; }
-            to { text-shadow: 0 0 15px #00FFFF, 0 0 30px #00FFFF, 0 0 40px #00FFFF; }
+            from {
+                text-shadow: 0 0 10px var(--main-color), 0 0 20px var(--main-color);
+            }
+            to {
+                text-shadow: 0 0 15px var(--main-color), 0 0 30px var(--main-color), 0 0 40px var(--secondary-color);
+            }
         }
-        
-        .credits-slider {
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 5px;
+        }
+
+        .category-tab {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--main-color);
+            border: 2px solid var(--main-color);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-tab.active {
+            background: var(--main-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--main-color);
+        }
+
+        .category-tab.ex-active {
+            border-color: var(--ex-color);
+            color: var(--ex-color);
+        }
+
+        .category-tab.ex-active.active {
+            background: var(--ex-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--ex-color);
+        }
+
+        .credits-slider-container {
+            position: relative;
             width: 100%;
             max-width: 1200px;
-            height: 400px;
+            height: 450px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .credits-slider {
+            width: 100%;
+            height: 100%;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
-            overflow: visible;
         }
-        
+
         .credit-slide {
             position: absolute;
-            width: 300px;
+            width: 320px;
             height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all var(--transition-time) ease;
+            transition: all var(--transition-time) cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1;
-            will-change: transform, opacity;
             backface-visibility: hidden;
-        }
-        
-        .credit-slide.left {
-            left: 25%;
-            transform: translateX(-50%) scale(0.8);
-            opacity: 0.7;
-            filter: blur(1px);
-        }
-        
-        .credit-slide.center {
-            left: 50%;
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
-            z-index: 2;
-            filter: none;
-        }
-        
-        .credit-slide.right {
-            left: 75%;
-            transform: translateX(-50%) scale(0.8);
-            opacity: 0.7;
-            filter: blur(1px);
-        }
-        
-        .credit-slide.hidden {
             opacity: 0;
             pointer-events: none;
+            transform: translateX(100%);
+        }
+
+        .credit-slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            z-index: 3;
+            pointer-events: all;
+            filter: none;
+        }
+
+        .credit-slide.prev {
+            opacity: 0.6;
+            transform: translateX(-100%) scale(0.8);
+            z-index: 2;
+            filter: blur(2px);
+        }
+
+        .credit-slide.next {
+            opacity: 0.6;
+            transform: translateX(100%) scale(0.8);
+            z-index: 2;
+            filter: blur(2px);
+        }
+
+        .credit-card {
+            background: var(--bg-dark);
+            border: 3px solid var(--main-color);
+            border-radius: 15px;
+            padding: 30px 25px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 25px var(--main-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .credit-card.ex-card {
+            border-color: var(--ex-color);
+            box-shadow: 0 0 25px var(--ex-color);
+        }
+
+        .credit-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(0, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 4s infinite;
             z-index: 0;
         }
-        
-        .credit-icon {
+
+        .credit-card.ex-card::before {
+            background: linear-gradient(transparent, rgba(255, 85, 85, 0.1), transparent);
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            20% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .credit-icon-container {
+            position: relative;
             width: 150px;
             height: 150px;
+            margin: 0 auto 25px;
+            z-index: 1;
+        }
+
+        .credit-icon {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid #00FFFF;
-            box-shadow: 0 0 20px #00FFFF;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
+            border: 4px solid var(--main-color);
+            box-shadow: 0 0 20px var(--main-color);
+            transition: all 0.4s ease;
+            background: #0a2c42;
+            position: relative;
+            z-index: 2;
         }
-        
-        .credit-slide.center .credit-icon {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px #00FFFF;
+
+        .credit-icon.ex-icon {
+            border-color: var(--ex-color);
+            box-shadow: 0 0 20px var(--ex-color);
+            filter: grayscale(0.3);
         }
-        
+
+        .credit-icon.loading {
+            animation: pulse 1.5s infinite;
+            background: #1a3c5c;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        .credit-icon-container::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary-color);
+            opacity: 0;
+            animation: pulseRing 2s infinite;
+            z-index: 1;
+        }
+
+        .credit-icon-container.ex-icon-container::after {
+            border-color: var(--ex-color);
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
         .credit-name {
             font-size: 1.8rem;
-            color: #FFFFFF;
+            color: var(--text-color);
             margin-bottom: 15px;
-            text-shadow: 0 0 10px #00FFFF;
-            text-align: center;
+            text-shadow: 0 0 10px var(--main-color);
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
-        
-        .credit-slide.center .credit-name {
-            font-size: 2.2rem;
+
+        .credit-name.ex-name {
+            text-shadow: 0 0 10px var(--ex-color);
         }
-        
+
         .credit-role {
             font-size: 1rem;
-            color: #00FFFF;
-            max-width: 80%;
-            margin: 0 auto;
-            line-height: 1.5;
-            text-align: center;
+            color: var(--main-color);
+            line-height: 1.6;
+            text-shadow: 0 0 5px var(--main-color);
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
-        
-        .credit-slide.center .credit-role {
-            font-size: 1.2rem;
+
+        .credit-role.ex-role {
+            color: var(--ex-color);
+            text-shadow: 0 0 5px var(--ex-color);
         }
-        
-        .credits-nav {
+
+        .ex-badge {
+            display: inline-block;
+            background: var(--ex-color);
+            color: #000;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .credits-controls {
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 25px;
             margin-top: 20px;
         }
-        
+
         .credits-btn {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.5rem;
-            color: #00FFFF;
+            font-size: 1.2rem;
+            color: var(--main-color);
             background: transparent;
-            border: 3px solid #00FFFF;
+            border: 3px solid var(--main-color);
             border-radius: 10px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 10px #00FFFF;
+            box-shadow: 0 0 10px var(--main-color);
             -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .credits-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .credits-btn:hover::before {
+            left: 100%;
+        }
+
         .credits-btn:hover {
-            background: #00FFFF;
-            color: #000000;
-            transform: scale(1.1);
+            background: var(--main-color);
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--main-color), 0 0 30px var(--secondary-color);
         }
-        
+
+        .credits-btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.3);
+            border: 1px solid var(--main-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--main-color);
+            box-shadow: 0 0 10px var(--main-color);
+            transform: scale(1.2);
+        }
+
+        .progress-dot.ex-dot {
+            background: rgba(255, 85, 85, 0.3);
+            border: 1px solid var(--ex-color);
+        }
+
+        .progress-dot.ex-dot.active {
+            background: var(--ex-color);
+            box-shadow: 0 0 10px var(--ex-color);
+        }
+
         .back-button {
             position: fixed;
             top: 20px;
             left: 20px;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #00FFFF;
-            border: 3px solid #00FFFF;
+            padding: 12px 22px;
+            background: var(--bg-dark);
+            color: var(--main-color);
+            border: 3px solid var(--main-color);
             border-radius: 10px;
             font-family: 'Press Start 2P', cursive;
             font-size: 1rem;
             text-decoration: none;
-            text-shadow: 0 0 10px #00FFFF;
-            box-shadow: 0 0 20px #00FFFF;
+            text-shadow: 0 0 10px var(--main-color);
+            box-shadow: 0 0 20px var(--main-color);
             transition: all 0.3s ease;
             z-index: 20;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         .back-button:hover {
-            background: #00FFFF;
-            color: #000000;
-            transform: scale(1.1);
+            background: var(--main-color);
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px var(--main-color), 0 0 35px var(--secondary-color);
         }
-        
+
+        .audio-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-dark);
+            border: 2px solid var(--main-color);
+            border-radius: 50%;
+            color: var(--main-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 0 15px var(--main-color);
+            transition: all 0.3s ease;
+        }
+
+        .audio-toggle:hover {
+            transform: scale(1.1);
+            background: var(--main-color);
+            color: #000;
+        }
+
+        .no-items-message {
+            font-size: 1.5rem;
+            color: var(--main-color);
+            text-align: center;
+            padding: 40px;
+            text-shadow: 0 0 10px var(--main-color);
+        }
+
         @media (max-width: 768px) {
             :root {
-                --transition-time: 0.3s;
+                --transition-time: 0.4s;
             }
-            
+
             .credits-title {
-                font-size: 1.5rem;
-                margin-bottom: 30px;
+                font-size: 1.8rem;
+                margin-bottom: 25px;
             }
-            
-            .credits-slider {
-                height: 300px;
+
+            .category-tab {
+                font-size: 0.7rem;
+                padding: 8px 12px;
             }
-            
-            .credit-slide {
-                width: 200px;
+
+            .credits-slider-container {
+                height: 380px;
             }
-            
-            .credit-slide.left {
-                left: 20%;
+
+            .credit-card {
+                padding: 20px 15px;
             }
-            
-            .credit-slide.right {
-                left: 80%;
+
+            .credit-icon-container {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 20px;
             }
-            
-            .credit-icon {
-                width: 80px;
-                height: 80px;
-            }
-            
+
             .credit-name {
-                font-size: 1rem;
+                font-size: 1.3rem;
             }
-            
-            .credit-slide.center .credit-name {
-                font-size: 1.2rem;
-            }
-            
+
             .credit-role {
                 font-size: 0.8rem;
             }
-            
-            .credit-slide.center .credit-role {
-                font-size: 0.9rem;
-            }
-            
+
             .credits-btn {
-                font-size: 1rem;
-                padding: 8px 15px;
+                font-size: 0.9rem;
+                padding: 10px 15px;
             }
-            
+
             .back-button {
                 font-size: 0.8rem;
-                padding: 8px 15px;
+                padding: 10px 15px;
+            }
+
+            .progress-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .credits-title {
+                font-size: 1.5rem;
+            }
+
+            .category-tabs {
+                flex-direction: column;
+                gap: 5px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .category-tab {
+                border-radius: 8px;
+                text-align: center;
+            }
+
+            .credits-slider-container {
+                height: 340px;
+            }
+
+            .credit-icon-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .credit-name {
+                font-size: 1.1rem;
+            }
+
+            .credit-role {
+                font-size: 0.7rem;
+            }
+
+            .credits-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .progress-indicator {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="overlay"></div>
-    
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+
     <div class="credits-container">
         <h1 class="credits-title">CRÉDITOS</h1>
-        
-        <div class="credits-slider" id="creditsSlider">
-            <!-- Los créditos se generarán dinámicamente con JavaScript -->
+
+        <div class="category-tabs" id="categoryTabs">
+            <button class="category-tab active" data-category="collaborators">COLABORADORES</button>
+            <button class="category-tab ex-active" data-category="exCollaborators">EX-COLABORADORES</button>
         </div>
-        
-        <div class="credits-nav">
+
+        <div class="credits-slider-container">
+            <div class="credits-slider" id="creditsSlider">
+                <!-- Los créditos se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+
+        <div class="credits-controls">
             <button class="credits-btn" id="prevButton">← ANTERIOR</button>
+
+            <div class="progress-indicator" id="progressIndicator">
+                <!-- Los indicadores de progreso se generarán dinámicamente -->
+            </div>
+
             <button class="credits-btn" id="nextButton">SIGUIENTE →</button>
         </div>
-        
+
         <a href="index.html" class="back-button">← VOLVER</a>
     </div>
-    
-    <audio id="backgroundMusic" src="sounds/Credits.ogg" loop></audio>
-    <audio id="hoverSound" src="sounds/hoverMenu.ogg"></audio>
-    <audio id="selectSound" src="sounds/confirmMenu.ogg"></audio>
-    
+
+    <div class="audio-toggle" id="audioToggle">♪</div>
+
+    <!-- Audio para la música de fondo (oculto) -->
+    <audio id="backgroundMusic" loop>
+        <source src="sounds/Credits.ogg" type="audio/ogg">
+        <source src="sounds/Credits.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
     <script>
-        // Créditos
-        const credits = [
-            {
-                icon: "icons/20240928_015106.png",
-                name: "JUST FENIX",
-                role: "Director 1 y creador del sitio web"
-            },
-            {
-                icon: "icons/20240928_015544.png",
-                name: "JOSIAS782",
-                role: "Director 2"
-            },
-            {
-                icon: "icons/Photoroom-20240920_221620.png",
-                name: "METAL SONIC",
-                role: "Colaborador 1 y subdirector (Carreo medio foro)"
-            },
-            {
-                icon: "icons/493_sin_titulo_20250721190726.png",
-                name: "Just Shadow",
-                role: "Colaborador 2"
-            },
-            {
-                icon: "icons/291_sin_titulo_20240921014905.png",
-                name: "J1A2G3R4TU",
-                role: "Colaborador 3"
-            },
-            {
-                icon: "icons/352_sin_titulo_20240917214204.png",
-                name: "DANI_A.Y.T",
-                role: "Colaborador 4"
-            },
-            {
-                icon: "icons/iconos_FNF_20240928015602.png",
-                name: "SAMYLOL",
-                role: "Colaborador 5"
-            },
-            {
-                icon: "icons/346_sin_titulo_20240930232516.png",
-                name: "MART",
-                role: "EX-Colaborador 6 (funado)"
-            },
-            {
-                icon: "icons/Project_Capture_141.png",
-                name: "LUIS LEYENDS",
-                role: "Colaborador 7"
-            },
-            {
-                icon: "icons/215_sin_titulo_20240928080723.png",
-                name: "NOGALES",
-                role: "Colaborador 8"
-            },
-            {
-                icon: "icons/MarkLose.png",
-                name: "Takeran",
-                role: "Colaborador 9"
-            },
-            {
-                icon: "icons/gissel.png",
-                name: "Gissel",
-                role: "Colaborador 10"
-            },
-            {
-                icon: "icons/Icon-black_neutral.png",
-                name: "Berkay",
-                role: "Colaborador 11"
-            }
-        ];
-        
+        // Datos de créditos organizados por categoría
+        const creditsData = {
+            collaborators: [
+                {
+                    icon: "icons/20240928_015106.png",
+                    name: "JUST FENIX",
+                    role: "Director 1 y creador del sitio web"
+                },
+                {
+                    icon: "icons/20240928_015544.png",
+                    name: "JOSIAS782",
+                    role: "Director 2"
+                },
+                {
+                    icon: "icons/Photoroom-20240920_221620.png",
+                    name: "METAL SONIC",
+                    role: "Colaborador 1 y subdirector (Carreo medio foro)"
+                },
+                {
+                    icon: "icons/493_sin_titulo_20250721190726.png",
+                    name: "Just Shadow",
+                    role: "Colaborador 2"
+                },
+                {
+                    icon: "icons/352_sin_titulo_20240917214204.png",
+                    name: "DANI_A.Y.T",
+                    role: "Colaborador 3"
+                },
+                {
+                    icon: "icons/GIF_20250728_222509_052.gif",
+                    name: "SAMYLOL",
+                    role: "Colaborador 4"
+                },
+                {
+                    icon: "icons/Project_Capture_141.png",
+                    name: "LUIS LEYENDS",
+                    role: "Colaborador 5"
+                },
+                {
+                    icon: "icons/GIF_20250809_163049_479.gif",
+                    name: "Takeran",
+                    role: "Colaborador 6"
+                },
+                {
+                    icon: "icons/GisselV2.png",
+                    name: "Gissel",
+                    role: "Colaborador 7"
+                },
+                {
+                    icon: "icons/BerkayV2.png",
+                    name: "Berkay",
+                    role: "Colaborador 8"
+                },
+                {
+                    icon: "icons/abel.gif",
+                    name: "Abel_777",
+                    role: "Colaborador 9"
+                },
+                {
+                    icon: "icons/21_sin_titulo_20250809163031.png",
+                    name: "Nowzuq",
+                    role: "Colaborador 10"
+                },
+                {
+                    icon: "icons/POM.png",
+                    name: "Pom",
+                    role: "Colaborador 10"
+                },
+                {
+                    icon: "icons/167_sin_titulo_20250809161409.png",
+                    name: "Pom",
+                    role: "Colaborador 10"
+                }
+            ],
+            exCollaborators: [
+                {
+                    icon: "icons/346_sin_titulo_20240930232516.png",
+                    name: "MART",
+                    role: "EX-Colaborador 1 (funado)"
+                },
+                {
+                    icon: "icons/215_sin_titulo_20240928080723.png",
+                    name: "NOGALES",
+                    role: "EX-Colaborador 2"
+                },
+                {
+                    icon: "icons/291_sin_titulo_20240921014905.png",
+                    name: "J1A2G3R4TU",
+                    role: "EX-Colaborador 3"
+                }
+            ]
+        };
+
         let currentIndex = 0;
+        let currentCategory = 'collaborators';
+        let isMusicPlaying = false;
+        let userInteracted = false;
+        let particles = [];
         const creditsSlider = document.getElementById('creditsSlider');
+        const progressIndicator = document.getElementById('progressIndicator');
+        const categoryTabs = document.getElementById('categoryTabs');
         const prevBtn = document.getElementById('prevButton');
         const nextBtn = document.getElementById('nextButton');
         const backBtn = document.querySelector('.back-button');
-        const bgMusic = document.getElementById('backgroundMusic');
-        const hoverSound = document.getElementById('hoverSound');
-        const selectSound = document.getElementById('selectSound');
-        
-        // Configuración inicial de audio
-        bgMusic.volume = 0.5;
-        hoverSound.volume = 0.3;
-        selectSound.volume = 0.3;
-        
-        // Detectar si es móvil
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        let swipeThreshold = isMobile ? 100 : 50;
-        
+        const audioToggle = document.getElementById('audioToggle');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // Crear partículas de fondo con gestión de memoria
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = Math.min(Math.floor(window.innerWidth / 15), 50); // Limitar cantidad
+
+            // Limpiar partículas existentes
+            particlesContainer.innerHTML = '';
+            particles = [];
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const size = Math.random() * 4 + 2;
+                const posX = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 10 + 15;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+
+                particlesContainer.appendChild(particle);
+                particles.push(particle);
+            }
+        }
+
+        // Cambiar categoría
+        function changeCategory(category) {
+            if (category === currentCategory) return;
+
+            currentCategory = category;
+            currentIndex = 0;
+
+            // Actualizar pestañas activas
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+
+            // Regenerar slides
+            clearSlides();
+            createCreditSlides();
+        }
+
+        // Limpiar slides existentes
+        function clearSlides() {
+            creditsSlider.innerHTML = '';
+            progressIndicator.innerHTML = '';
+        }
+
         // Crear slides para cada crédito
         function createCreditSlides() {
+            const credits = creditsData[currentCategory];
+            const isExCategory = currentCategory === 'exCollaborators';
+
+            // Mostrar mensaje si no hay elementos
+            if (credits.length === 0) {
+                creditsSlider.innerHTML = `<div class="no-items-message">No hay ${isExCategory ? 'ex-colaboradores' : 'colaboradores'} para mostrar</div>`;
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                progressIndicator.style.display = 'none';
+                return;
+            }
+
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            progressIndicator.style.display = 'flex';
+
             credits.forEach((credit, index) => {
                 const slide = document.createElement('div');
-                slide.className = 'credit-slide';
+                slide.className = `credit-slide ${isExCategory ? 'ex-slide' : ''}`;
                 slide.dataset.index = index;
-                
+
                 slide.innerHTML = `
-                    <img src="${credit.icon}" alt="${credit.name}" class="credit-icon" loading="lazy">
-                    <h2 class="credit-name">${credit.name}</h2>
-                    <p class="credit-role">${credit.role}</p>
+                    <div class="credit-card ${isExCategory ? 'ex-card' : ''}">
+                        <div class="credit-icon-container ${isExCategory ? 'ex-icon-container' : ''}">
+                            <img src="${credit.icon}" alt="${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} loading" loading="lazy">
+                        </div>
+                        <h2 class="credit-name ${isExCategory ? 'ex-name' : ''}">${credit.name}${isExCategory ? '<span class="ex-badge">EX</span>' : ''}</h2>
+                        <p class="credit-role ${isExCategory ? 'ex-role' : ''}">${credit.role}</p>
+                    </div>
                 `;
-                
+
+                // Manejar carga de imagen
+                const img = slide.querySelector('img');
+                img.onload = function () {
+                    this.classList.remove('loading');
+                };
+                img.onerror = function () {
+                    this.classList.remove('loading');
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
+                };
+
                 creditsSlider.appendChild(slide);
+
+                // Crear indicadores de progreso
+                const dot = document.createElement('div');
+                dot.className = `progress-dot ${isExCategory ? 'ex-dot' : ''}`;
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => goToSlide(index));
+                progressIndicator.appendChild(dot);
             });
-            
+
             updateSlidesPosition();
         }
-        
+
         // Actualizar posición de los slides
         function updateSlidesPosition() {
             const slides = document.querySelectorAll('.credit-slide');
-            const totalSlides = credits.length;
-            
-            // Ocultar todos los slides primero
+            const dots = document.querySelectorAll('.progress-dot');
+            const credits = creditsData[currentCategory];
+
+            if (credits.length === 0) return;
+
+            // Ocultar todos los slides
             slides.forEach(slide => {
-                slide.classList.remove('left', 'center', 'right', 'hidden');
-                slide.classList.add('hidden');
+                slide.classList.remove('active', 'prev', 'next');
             });
-            
-            // Mostrar los 3 slides relevantes (anterior, actual, siguiente)
-            const prevIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-            const nextIndex = (currentIndex + 1) % totalSlides;
-            
-            slides[prevIndex].classList.remove('hidden');
-            slides[prevIndex].classList.add('left');
-            
-            slides[currentIndex].classList.remove('hidden');
-            slides[currentIndex].classList.add('center');
-            
-            slides[nextIndex].classList.remove('hidden');
-            slides[nextIndex].classList.add('right');
+
+            // Manejar casos especiales con pocos elementos
+            if (credits.length === 1) {
+                // Solo un elemento - mostrar solo ese
+                if (slides[0]) slides[0].classList.add('active');
+            } else if (credits.length === 2) {
+                // Dos elementos - lógica especial
+                if (currentIndex === 0) {
+                    if (slides[0]) slides[0].classList.add('active');
+                    if (slides[1]) slides[1].classList.add('next');
+                } else {
+                    if (slides[0]) slides[0].classList.add('prev');
+                    if (slides[1]) slides[1].classList.add('active');
+                }
+            } else {
+                // Tres o más elementos - lógica normal
+                const prevIndex = (currentIndex - 1 + credits.length) % credits.length;
+                const nextIndex = (currentIndex + 1) % credits.length;
+
+                if (slides[prevIndex]) slides[prevIndex].classList.add('prev');
+                if (slides[currentIndex]) slides[currentIndex].classList.add('active');
+                if (slides[nextIndex]) slides[nextIndex].classList.add('next');
+            }
+
+            // Actualizar indicadores
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            // Actualizar estado de botones
+            updateButtonStates();
         }
-        
+
+        // Actualizar estado de los botones de navegación
+        function updateButtonStates() {
+            const credits = creditsData[currentCategory];
+
+            if (credits.length <= 1) {
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                prevBtn.style.opacity = '0.5';
+                nextBtn.style.opacity = '0.5';
+            } else {
+                prevBtn.disabled = false;
+                nextBtn.disabled = false;
+                prevBtn.style.opacity = '1';
+                nextBtn.style.opacity = '1';
+            }
+        }
+
+        // Ir a slide específico
+        function goToSlide(index) {
+            if (index === currentIndex) return;
+
+            currentIndex = index;
+            updateSlidesPosition();
+        }
+
         // Mostrar crédito anterior
         function showPrevCredit() {
+            const credits = creditsData[currentCategory];
+            if (credits.length <= 1) return;
+
             currentIndex = (currentIndex - 1 + credits.length) % credits.length;
             updateSlidesPosition();
-            playSound(hoverSound);
         }
-        
+
         // Mostrar crédito siguiente
         function showNextCredit() {
+            const credits = creditsData[currentCategory];
+            if (credits.length <= 1) return;
+
             currentIndex = (currentIndex + 1) % credits.length;
             updateSlidesPosition();
-            playSound(hoverSound);
         }
-        
-        // Función para reproducir sonidos
-        function playSound(sound) {
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log('Error al reproducir sonido:', e));
+
+        // Alternar música
+        function toggleMusic() {
+            if (!userInteracted) {
+                userInteracted = true;
+                document.body.classList.add('user-interacted');
+            }
+
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                audioToggle.textContent = '♪';
+                audioToggle.style.opacity = '0.7';
+                isMusicPlaying = false;
+            } else {
+                // Intenta reproducir la música
+                const playPromise = backgroundMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        audioToggle.textContent = '♫';
+                        audioToggle.style.opacity = '1';
+                        isMusicPlaying = true;
+                    }).catch(error => {
+                        console.log('Error al reproducir música:', error);
+                        audioToggle.textContent = '♪';
+                        audioToggle.style.opacity = '0.7';
+                        isMusicPlaying = false;
+                    });
+                }
+            }
         }
-        
+
         // Event listeners para botones
         prevBtn.addEventListener('click', showPrevCredit);
         nextBtn.addEventListener('click', showNextCredit);
-        
+        audioToggle.addEventListener('click', toggleMusic);
+
+        // Event listeners para pestañas
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', () => changeCategory(tab.dataset.category));
+        });
+
         // Navegación con teclado
         document.addEventListener('keydown', (e) => {
+            if (!userInteracted) {
+                userInteracted = true;
+                document.body.classList.add('user-interacted');
+                // Reproducir música en la primera interacción con teclado
+                if (!isMusicPlaying) {
+                    toggleMusic();
+                }
+            }
+
             if (e.key === 'ArrowLeft') {
                 showPrevCredit();
             } else if (e.key === 'ArrowRight') {
                 showNextCredit();
+            } else if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault(); // Prevenir scroll con espacio
+                toggleMusic();
+            } else if (e.key === '1') {
+                changeCategory('collaborators');
+            } else if (e.key === '2') {
+                changeCategory('exCollaborators');
+            } else if (e.key === 'Escape') {
+                window.location.href = 'index.html';
             }
         });
-        
+
         // Navegación táctil mejorada
         let touchStartX = 0;
-        let touchEndX = 0;
-        
+
         creditsSlider.addEventListener('touchstart', (e) => {
+            if (!userInteracted) {
+                userInteracted = true;
+                document.body.classList.add('user-interacted');
+                // Reproducir música en la primera interacción táctil
+                if (!isMusicPlaying) {
+                    toggleMusic();
+                }
+            }
+
             touchStartX = e.changedTouches[0].screenX;
-        }, {passive: true});
-        
-        creditsSlider.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevenir scroll horizontal
-        }, {passive: false});
-        
+        }, { passive: true });
+
         creditsSlider.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, {passive: true});
-        
-        function handleSwipe() {
+            const touchEndX = e.changedTouches[0].screenX;
             const diff = touchStartX - touchEndX;
-            
+            const swipeThreshold = 50;
+
             if (diff > swipeThreshold) {
                 showNextCredit();
             } else if (diff < -swipeThreshold) {
                 showPrevCredit();
             }
-        }
-        
-        // Efectos de hover en botones
-        [prevBtn, nextBtn, backBtn].forEach(btn => {
-            btn.addEventListener('mouseenter', () => playSound(hoverSound));
-            btn.addEventListener('touchstart', () => playSound(hoverSound), {passive: true});
-        });
-        
+        }, { passive: true });
+
         // Volver al menú
         backBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            playSound(selectSound);
+            // Detener la música al salir
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+            }
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 300);
         });
-        
-        // Iniciar música al interactuar con la página
-        const startAudio = () => {
-            bgMusic.play().catch(e => console.log('Error al iniciar audio:', e));
-            document.body.removeEventListener('click', startAudio);
-            document.body.removeEventListener('touchstart', startAudio);
-        };
-        
-        document.body.addEventListener('click', startAudio, {once: true});
-        document.body.addEventListener('touchstart', startAudio, {once: true});
-        
+
         // Inicialización
-        createCreditSlides();
+        window.addEventListener('load', function () {
+            createParticles();
+            createCreditSlides();
+
+            // Precargar imágenes de manera eficiente
+            const allCredits = [...creditsData.collaborators, ...creditsData.exCollaborators];
+            allCredits.forEach(credit => {
+                const img = new Image();
+                img.src = credit.icon;
+            });
+
+            // Configurar música
+            backgroundMusic.volume = 0.7;
+            backgroundMusic.preload = 'auto';
+
+            // Permitir que la música se reproduzca después de la interacción del usuario
+            const enableMusic = function() {
+                userInteracted = true;
+                document.body.classList.add('user-interacted');
+                
+                // Reproducir música automáticamente en la primera interacción
+                if (!isMusicPlaying) {
+                    toggleMusic();
+                }
+                
+                // Eliminar event listeners después de la primera interacción
+                document.removeEventListener('click', enableMusic);
+                document.removeEventListener('keydown', enableMusic);
+                document.removeEventListener('touchstart', enableMusic);
+            };
+
+            document.addEventListener('click', enableMusic);
+            document.addEventListener('keydown', enableMusic);
+            document.addEventListener('touchstart', enableMusic);
+        });
+
+        // Optimización para redimensionado de ventana
+        let resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                createParticles();
+                updateSlidesPosition();
+            }, 250);
+        });
+
+        // Limpiar recursos cuando la página no es visible
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Pausar música cuando la pestaña no está visible
+                if (isMusicPlaying && !backgroundMusic.paused) {
+                    backgroundMusic.pause();
+                }
+            } else {
+                // Reanudar música si estaba reproduciéndose
+                if (isMusicPlaying && backgroundMusic.paused) {
+                    backgroundMusic.play().catch(error => {
+                        console.log('Error al reanudar música:', error);
+                    });
+                }
+            }
+        });
     </script>
 </body>
+
 </html>
