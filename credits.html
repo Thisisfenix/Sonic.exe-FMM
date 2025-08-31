@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Créditos - Sonic.exe</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -14,23 +14,31 @@
             --bg-dark: rgba(0, 0, 0, 0.8);
             --ex-color: #FF5555;
             --bg-gradient: linear-gradient(45deg, #000014, #001428);
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-inset-left: env(safe-area-inset-left, 0px);
+            --safe-area-inset-right: env(safe-area-inset-right, 0px);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
-        body {
+        html, body {
             font-family: 'Press Start 2P', cursive;
             color: var(--text-color);
             overflow: hidden;
-            height: 100vh;
-            touch-action: pan-y;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            touch-action: pan-y pinch-zoom;
             perspective: 1000px;
             background: #1a1a2e;
-            position: relative;
+            overscroll-behavior: none;
         }
 
         /* Fondo animado con overlay grisáceo */
@@ -93,38 +101,42 @@
         }
 
         .credits-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            position: fixed;
+            top: var(--safe-area-inset-top);
+            left: var(--safe-area-inset-left);
+            width: calc(100vw - var(--safe-area-inset-left) - var(--safe-area-inset-right));
+            height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
             z-index: 1;
+            overflow: hidden;
         }
 
         .credits-title {
-            font-size: 3rem;
+            font-size: min(3rem, 8vw);
             color: var(--text-color);
             text-shadow: 0 0 10px var(--main-color), 0 0 20px var(--main-color);
-            margin-bottom: 30px;
-            letter-spacing: 5px;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             animation: titleGlow 2s ease-in-out infinite alternate;
             position: relative;
+            text-align: center;
+            line-height: 1.2;
+            padding: 0 10px;
         }
 
         .credits-title::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50%;
-            height: 3px;
+            width: 60%;
+            height: 2px;
             background: linear-gradient(90deg, transparent, var(--main-color), transparent);
             box-shadow: 0 0 10px var(--main-color);
         }
@@ -140,16 +152,19 @@
 
         .category-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            gap: 8px;
+            margin-bottom: 20px;
             border-bottom: 2px solid var(--main-color);
             padding-bottom: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 100%;
         }
 
         .category-tab {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.9rem;
-            padding: 10px 20px;
+            font-size: min(0.9rem, 3vw);
+            padding: 8px 16px;
             background: transparent;
             color: var(--main-color);
             border: 2px solid var(--main-color);
@@ -158,6 +173,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .category-tab.active {
@@ -180,10 +196,11 @@
         .credits-slider-container {
             position: relative;
             width: 100%;
-            max-width: 1200px;
-            height: 450px;
-            margin-bottom: 30px;
+            max-width: min(1200px, 95vw);
+            height: min(450px, 55vh);
+            margin-bottom: 20px;
             overflow: hidden;
+            touch-action: pan-y;
         }
 
         .credits-slider {
@@ -197,7 +214,7 @@
 
         .credit-slide {
             position: absolute;
-            width: 320px;
+            width: min(320px, 85vw);
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -236,11 +253,11 @@
         .credit-card {
             background: var(--bg-dark);
             border: 3px solid var(--main-color);
-            border-radius: 15px;
-            padding: 30px 25px;
+            border-radius: 12px;
+            padding: 20px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 0 25px var(--main-color);
+            box-shadow: 0 0 15px var(--main-color);
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
@@ -248,7 +265,7 @@
 
         .credit-card.ex-card {
             border-color: var(--ex-color);
-            box-shadow: 0 0 25px var(--ex-color);
+            box-shadow: 0 0 15px var(--ex-color);
         }
 
         .credit-card::before {
@@ -282,9 +299,9 @@
 
         .credit-icon-container {
             position: relative;
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 25px;
+            width: min(150px, 25vw);
+            height: min(150px, 25vw);
+            margin: 0 auto 15px;
             z-index: 1;
         }
 
@@ -293,8 +310,8 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--main-color);
-            box-shadow: 0 0 20px var(--main-color);
+            border: 3px solid var(--main-color);
+            box-shadow: 0 0 15px var(--main-color);
             transition: all 0.4s ease;
             background: #0a2c42;
             position: relative;
@@ -303,7 +320,7 @@
 
         .credit-icon.ex-icon {
             border-color: var(--ex-color);
-            box-shadow: 0 0 20px var(--ex-color);
+            box-shadow: 0 0 15px var(--ex-color);
             filter: grayscale(0.3);
         }
 
@@ -354,24 +371,25 @@
         }
 
         .credit-name {
-            font-size: 1.8rem;
+            font-size: min(1.8rem, 5.5vw);
             color: var(--text-color);
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px var(--main-color);
+            margin-bottom: 10px;
+            text-shadow: 0 0 8px var(--main-color);
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
+            line-height: 1.2;
         }
 
         .credit-name.ex-name {
-            text-shadow: 0 0 10px var(--ex-color);
+            text-shadow: 0 0 8px var(--ex-color);
         }
 
         .credit-role {
-            font-size: 1rem;
+            font-size: min(1rem, 3.2vw);
             color: var(--main-color);
-            line-height: 1.6;
-            text-shadow: 0 0 5px var(--main-color);
+            line-height: 1.4;
+            text-shadow: 0 0 4px var(--main-color);
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
@@ -379,41 +397,45 @@
 
         .credit-role.ex-role {
             color: var(--ex-color);
-            text-shadow: 0 0 5px var(--ex-color);
+            text-shadow: 0 0 4px var(--ex-color);
         }
 
         .ex-badge {
             display: inline-block;
             background: var(--ex-color);
             color: #000;
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
+            font-size: min(0.7rem, 2.5vw);
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
             vertical-align: middle;
         }
 
         .credits-controls {
             display: flex;
             align-items: center;
-            gap: 25px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
         }
 
         .credits-btn {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.2rem;
+            font-size: min(1.2rem, 3.5vw);
             color: var(--main-color);
             background: transparent;
-            border: 3px solid var(--main-color);
-            border-radius: 10px;
-            padding: 12px 20px;
+            border: 2px solid var(--main-color);
+            border-radius: 8px;
+            padding: 10px 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 10px var(--main-color);
+            box-shadow: 0 0 8px var(--main-color);
             -webkit-tap-highlight-color: transparent;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .credits-btn::before {
@@ -434,8 +456,8 @@
         .credits-btn:hover {
             background: var(--main-color);
             color: #000;
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px var(--main-color), 0 0 30px var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--main-color), 0 0 20px var(--secondary-color);
         }
 
         .credits-btn:active {
@@ -444,12 +466,15 @@
 
         .progress-indicator {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 100%;
         }
 
         .progress-dot {
-            width: 12px;
-            height: 12px;
+            width: min(12px, 3vw);
+            height: min(12px, 3vw);
             border-radius: 50%;
             background: rgba(0, 255, 255, 0.3);
             border: 1px solid var(--main-color);
@@ -459,7 +484,7 @@
 
         .progress-dot.active {
             background: var(--main-color);
-            box-shadow: 0 0 10px var(--main-color);
+            box-shadow: 0 0 8px var(--main-color);
             transform: scale(1.2);
         }
 
@@ -470,41 +495,42 @@
 
         .progress-dot.ex-dot.active {
             background: var(--ex-color);
-            box-shadow: 0 0 10px var(--ex-color);
+            box-shadow: 0 0 8px var(--ex-color);
         }
 
         .back-button {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            padding: 12px 22px;
+            top: calc(15px + var(--safe-area-inset-top));
+            left: calc(15px + var(--safe-area-inset-left));
+            padding: 10px 15px;
             background: var(--bg-dark);
             color: var(--main-color);
-            border: 3px solid var(--main-color);
-            border-radius: 10px;
+            border: 2px solid var(--main-color);
+            border-radius: 8px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 1rem;
+            font-size: min(1rem, 3vw);
             text-decoration: none;
-            text-shadow: 0 0 10px var(--main-color);
-            box-shadow: 0 0 20px var(--main-color);
+            text-shadow: 0 0 8px var(--main-color);
+            box-shadow: 0 0 15px var(--main-color);
             transition: all 0.3s ease;
             z-index: 20;
             -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
         }
 
         .back-button:hover {
             background: var(--main-color);
             color: #000;
-            transform: translateY(-3px);
-            box-shadow: 0 0 25px var(--main-color), 0 0 35px var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--main-color), 0 0 25px var(--secondary-color);
         }
 
         .audio-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+            top: calc(15px + var(--safe-area-inset-top));
+            right: calc(15px + var(--safe-area-inset-right));
+            width: min(40px, 10vw);
+            height: min(40px, 10vw);
             background: var(--bg-dark);
             border: 2px solid var(--main-color);
             border-radius: 50%;
@@ -514,8 +540,9 @@
             justify-content: center;
             cursor: pointer;
             z-index: 20;
-            box-shadow: 0 0 15px var(--main-color);
+            box-shadow: 0 0 12px var(--main-color);
             transition: all 0.3s ease;
+            font-size: min(1.2rem, 4vw);
         }
 
         .audio-toggle:hover {
@@ -525,110 +552,243 @@
         }
 
         .no-items-message {
-            font-size: 1.5rem;
+            font-size: min(1.5rem, 5vw);
             color: var(--main-color);
             text-align: center;
-            padding: 40px;
-            text-shadow: 0 0 10px var(--main-color);
+            padding: 30px 20px;
+            text-shadow: 0 0 8px var(--main-color);
+            line-height: 1.4;
         }
 
-        @media (max-width: 768px) {
-            :root {
-                --transition-time: 0.4s;
-            }
+        /* Prevención de selección de texto en dispositivos táctiles */
+        .credit-card, .credits-btn, .category-tab, .back-button, .audio-toggle {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
+        /* Estilos específicos para dispositivos muy pequeños */
+        @media (max-width: 360px) {
             .credits-title {
-                font-size: 1.8rem;
-                margin-bottom: 25px;
+                font-size: 1.2rem;
+                margin-bottom: 15px;
             }
-
+            
             .category-tab {
+                font-size: 0.6rem;
+                padding: 6px 10px;
+            }
+            
+            .credit-name {
+                font-size: 1rem;
+            }
+            
+            .credit-role {
+                font-size: 0.7rem;
+            }
+            
+            .credits-btn {
                 font-size: 0.7rem;
                 padding: 8px 12px;
             }
-
-            .credits-slider-container {
-                height: 380px;
-            }
-
-            .credit-card {
-                padding: 20px 15px;
-            }
-
-            .credit-icon-container {
-                width: 120px;
-                height: 120px;
-                margin-bottom: 20px;
-            }
-
-            .credit-name {
-                font-size: 1.3rem;
-            }
-
-            .credit-role {
-                font-size: 0.8rem;
-            }
-
-            .credits-btn {
-                font-size: 0.9rem;
-                padding: 10px 15px;
-            }
-
+            
             .back-button {
-                font-size: 0.8rem;
-                padding: 10px 15px;
-            }
-
-            .progress-dot {
-                width: 10px;
-                height: 10px;
+                font-size: 0.7rem;
+                padding: 8px 12px;
             }
         }
 
-        @media (max-width: 480px) {
+        /* Estilos para orientación horizontal en móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .credits-container {
+                justify-content: flex-start;
+                padding-top: 5px;
+                overflow-y: auto;
+            }
+            
             .credits-title {
                 font-size: 1.5rem;
+                margin: 5px 0 10px;
             }
+            
+            .category-tabs {
+                margin-bottom: 10px;
+            }
+            
+            .credits-slider-container {
+                height: 70vh;
+                margin-bottom: 10px;
+            }
+            
+            .credit-icon-container {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+            
+            .credit-name {
+                font-size: 1rem;
+                margin-bottom: 5px;
+            }
+            
+            .credit-role {
+                font-size: 0.7rem;
+            }
+            
+            .credits-controls {
+                margin-top: 10px;
+            }
+        }
 
+        /* Para dispositivos con notch o áreas seguras especiales */
+        @supports(padding: max(0px)) {
+            .credits-container {
+                padding-left: max(15px, var(--safe-area-inset-left));
+                padding-right: max(15px, var(--safe-area-inset-right));
+                padding-bottom: max(15px, var(--safe-area-inset-bottom));
+            }
+        }
+
+        /* Mejoras de rendimiento para dispositivos móviles */
+        .credit-card, .credit-icon, .credits-btn, .category-tab {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000;
+        }
+
+        /* Ajustes específicos para pantallas Android pequeñas */
+        @media (max-width: 380px) and (max-height: 700px) {
+            .credits-container {
+                justify-content: space-between;
+                padding: 10px;
+            }
+            
+            .credits-title {
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+                margin-top: 10px;
+            }
+            
+            .category-tabs {
+                margin-bottom: 15px;
+                gap: 5px;
+            }
+            
+            .category-tab {
+                font-size: 0.6rem;
+                padding: 5px 8px;
+            }
+            
+            .credits-slider-container {
+                height: min(380px, 50vh);
+                margin-bottom: 15px;
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+            }
+            
+            .credit-card {
+                padding: 15px;
+            }
+            
+            .credit-icon-container {
+                width: min(120px, 22vw);
+                height: min(120px, 22vw);
+                margin-bottom: 12px;
+            }
+            
+            .credit-name {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+            
+            .credit-role {
+                font-size: 0.7rem;
+                line-height: 1.3;
+            }
+            
+            .credits-controls {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                gap: 10px;
+            }
+            
+            .credits-btn {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+            
+            .back-button {
+                position: relative;
+                top: unset;
+                left: unset;
+                margin-top: 5px;
+                font-size: 0.7rem;
+                padding: 8px 12px;
+                order: 4;
+                width: auto;
+            }
+            
+            .progress-indicator {
+                order: 3;
+                width: 100%;
+                margin-top: 8px;
+            }
+        }
+
+        /* Ajustes para pantallas extremadamente pequeñas */
+        @media (max-width: 320px) and (max-height: 600px) {
+            .credits-title {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+            
             .category-tabs {
                 flex-direction: column;
-                gap: 5px;
                 width: 100%;
-                max-width: 300px;
+                max-width: 250px;
+                gap: 4px;
+                margin-bottom: 12px;
             }
-
+            
             .category-tab {
-                border-radius: 8px;
+                border-radius: 6px;
+                width: 100%;
                 text-align: center;
             }
-
+            
             .credits-slider-container {
-                height: 340px;
+                height: min(340px, 55vh);
             }
-
+            
             .credit-icon-container {
                 width: 100px;
                 height: 100px;
             }
-
+            
             .credit-name {
-                font-size: 1.1rem;
+                font-size: 0.9rem;
             }
-
+            
             .credit-role {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
-
+            
             .credits-controls {
-                flex-wrap: wrap;
-                justify-content: center;
+                flex-direction: column;
+                gap: 8px;
             }
-
-            .progress-indicator {
-                order: 3;
+            
+            .credits-btn {
                 width: 100%;
-                justify-content: center;
-                margin-top: 15px;
+                max-width: 200px;
+            }
+            
+            .back-button {
+                width: 100%;
+                max-width: 200px;
+                text-align: center;
             }
         }
     </style>
@@ -660,9 +820,9 @@
             </div>
 
             <button class="credits-btn" id="nextButton">SIGUIENTE →</button>
+            
+            <a href="index.html" class="back-button">← VOLVER</a>
         </div>
-
-        <a href="index.html" class="back-button">← VOLVER</a>
     </div>
 
     <div class="audio-toggle" id="audioToggle">♪</div>
@@ -675,6 +835,13 @@
     </audio>
 
     <script>
+        // Detectar si es un dispositivo móvil
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // Detectar si es una pantalla pequeña
+        const isSmallScreen = window.innerWidth <= 380 || window.innerHeight <= 700;
+        
         // Datos de créditos organizados por categoría
         const creditsData = {
             collaborators: [
@@ -782,10 +949,30 @@
         const audioToggle = document.getElementById('audioToggle');
         const backgroundMusic = document.getElementById('backgroundMusic');
 
+        // Ajustar diseño para pantallas pequeñas
+        function adjustLayoutForSmallScreens() {
+            if (isSmallScreen) {
+                // Mover el botón de volver al contenedor de controles
+                const creditsControls = document.querySelector('.credits-controls');
+                if (creditsControls && !creditsControls.contains(backBtn)) {
+                    creditsControls.appendChild(backBtn);
+                }
+                
+                // Ajustar altura del slider
+                const sliderContainer = document.querySelector('.credits-slider-container');
+                if (sliderContainer) {
+                    sliderContainer.style.height = 'min(380px, 50vh)';
+                }
+            }
+        }
+
         // Crear partículas de fondo con gestión de memoria
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = Math.min(Math.floor(window.innerWidth / 15), 50); // Limitar cantidad
+            // Reducir cantidad de partículas en móviles para mejor rendimiento
+            const particleCount = isMobile ? 
+                Math.min(Math.floor(window.innerWidth / 20), 30) : 
+                Math.min(Math.floor(window.innerWidth / 15), 50);
 
             // Limpiar partículas existentes
             particlesContainer.innerHTML = '';
@@ -795,7 +982,7 @@
                 const particle = document.createElement('div');
                 particle.className = 'particle';
 
-                const size = Math.random() * 4 + 2;
+                const size = Math.random() * (isMobile ? 3 : 4) + 2;
                 const posX = Math.random() * 100;
                 const delay = Math.random() * 15;
                 const duration = Math.random() * 10 + 15;
@@ -874,7 +1061,7 @@
                 };
                 img.onerror = function () {
                     this.classList.remove('loading');
-                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI3NSIgY3k9Ijc1IiByPSI3NSIgZmlsbD0iIzBhMmM0MiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIj4lM0Y8L3RleHQ+Cjwvc3ZnPgo=';
                 };
 
                 creditsSlider.appendChild(slide);
@@ -1019,79 +1206,60 @@
             tab.addEventListener('click', () => changeCategory(tab.dataset.category));
         });
 
-        // Navegación con teclado
-        document.addEventListener('keydown', (e) => {
-            if (!userInteracted) {
-                userInteracted = true;
-                document.body.classList.add('user-interacted');
-                // Reproducir música en la primera interacción con teclado
-                if (!isMusicPlaying) {
+        // Navegación con teclado (solo en desktop)
+        if (!isMobile) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    showPrevCredit();
+                } else if (e.key === 'ArrowRight') {
+                    showNextCredit();
+                } else if (e.key === ' ') {
+                    e.preventDefault();
                     toggleMusic();
                 }
-            }
+            });
+        }
 
-            if (e.key === 'ArrowLeft') {
-                showPrevCredit();
-            } else if (e.key === 'ArrowRight') {
-                showNextCredit();
-            } else if (e.key === ' ' || e.key === 'Spacebar') {
-                e.preventDefault(); // Prevenir scroll con espacio
-                toggleMusic();
-            } else if (e.key === '1') {
-                changeCategory('collaborators');
-            } else if (e.key === '2') {
-                changeCategory('exCollaborators');
-            } else if (e.key === 'Escape') {
-                window.location.href = 'index.html';
-            }
-        });
-
-        // Navegación táctil mejorada
+        // Navegación táctil mejorada para móviles
         let touchStartX = 0;
+        let touchStartY = 0;
 
         creditsSlider.addEventListener('touchstart', (e) => {
-            if (!userInteracted) {
-                userInteracted = true;
-                document.body.classList.add('user-interacted');
-                // Reproducir música en la primera interacción táctil
-                if (!isMusicPlaying) {
-                    toggleMusic();
-                }
-            }
-
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         }, { passive: true });
+
+        creditsSlider.addEventListener('touchmove', (e) => {
+            // Prevenir scroll vertical durante el swipe horizontal
+            if (Math.abs(e.changedTouches[0].screenX - touchStartX) > 
+                Math.abs(e.changedTouches[0].screenY - touchStartY)) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         creditsSlider.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            const swipeThreshold = 50;
-
-            if (diff > swipeThreshold) {
-                showNextCredit();
-            } else if (diff < -swipeThreshold) {
-                showPrevCredit();
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            
+            // Solo considerar como swipe si el movimiento horizontal es mayor que el vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+                if (diffX > 0) {
+                    showPrevCredit();
+                } else {
+                    showNextCredit();
+                }
             }
         }, { passive: true });
 
-        // Volver al menú
-        backBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Detener la música al salir
-            if (isMusicPlaying) {
-                backgroundMusic.pause();
-                backgroundMusic.currentTime = 0;
-            }
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 300);
-        });
-
         // Inicialización
-        window.addEventListener('load', function () {
+        function initPage() {
+            adjustLayoutForSmallScreens();
             createParticles();
             createCreditSlides();
-
+            
             // Precargar imágenes de manera eficiente
             const allCredits = [...creditsData.collaborators, ...creditsData.exCollaborators];
             allCredits.forEach(credit => {
@@ -1103,32 +1271,36 @@
             backgroundMusic.volume = 0.7;
             backgroundMusic.preload = 'auto';
 
-            // Permitir que la música se reproduzca después de la interacción del usuario
-            const enableMusic = function() {
-                userInteracted = true;
-                document.body.classList.add('user-interacted');
-                
-                // Reproducir música automáticamente en la primera interacción
-                if (!isMusicPlaying) {
-                    toggleMusic();
-                }
-                
-                // Eliminar event listeners después de la primera interacción
-                document.removeEventListener('click', enableMusic);
-                document.removeEventListener('keydown', enableMusic);
-                document.removeEventListener('touchstart', enableMusic);
-            };
+            // En móviles, no reproducir automáticamente
+            if (!isMobile) {
+                // Permitir que la música se reproduzca después de la interacción del usuario
+                const enableMusic = function() {
+                    userInteracted = true;
+                    document.body.classList.add('user-interacted');
+                    
+                    // Eliminar event listeners después de la primera interacción
+                    document.removeEventListener('click', enableMusic);
+                    document.removeEventListener('keydown', enableMusic);
+                };
 
-            document.addEventListener('click', enableMusic);
-            document.addEventListener('keydown', enableMusic);
-            document.addEventListener('touchstart', enableMusic);
-        });
+                document.addEventListener('click', enableMusic);
+                document.addEventListener('keydown', enableMusic);
+            }
+        }
+
+        // Inicializar cuando el DOM esté cargado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPage);
+        } else {
+            initPage();
+        }
 
         // Optimización para redimensionado de ventana
         let resizeTimeout;
         window.addEventListener('resize', function () {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(function () {
+                adjustLayoutForSmallScreens();
                 createParticles();
                 updateSlidesPosition();
             }, 250);
@@ -1150,7 +1322,38 @@
                 }
             }
         });
+
+        // Prevenir acciones por defecto en eventos táctiles para mejorar rendimiento
+        document.addEventListener('touchstart', function (e) {
+            if (e.target === creditsSlider || e.target.closest('.credit-card')) {
+                // Prevenir scroll en otros casos
+                if (e.touches.length > 1) {
+                    e.preventDefault(); // Prevenir zoom
+                }
+            }
+        }, { passive: false });
+
+        // Prevenir zoom con doble toque
+        document.addEventListener('dblclick', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Prevenir el pull-to-refresh en dispositivos móviles
+        let lastTouchY = 0;
+        document.addEventListener('touchstart', function (e) {
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function (e) {
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            
+            // Prevenir pull-to-refresh cuando se está en la parte superior de la página
+            if (touchY > lastTouchY && window.scrollY === 0) {
+                e.preventDefault();
+            }
+            lastTouchY = touchY;
+        }, { passive: false });
     </script>
 </body>
-
 </html>
