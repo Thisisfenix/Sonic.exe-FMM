@@ -700,6 +700,9 @@
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
+        // Variable global para controlar el estado de navegación
+        window.isNavigating = false;
+
         document.addEventListener('DOMContentLoaded', () => {
             const updateBtn = document.getElementById('updateBtn');
             const updatePanel = document.getElementById('updatePanel');
@@ -711,6 +714,25 @@
             const bgMusic = document.getElementById('bgMusic');
             const screenDarken = document.getElementById('screenDarken');
             const menuButtons = document.querySelectorAll('.menu-btn[data-url]');
+
+            // Restablecer el estado de la pantalla oscura al cargar la página
+            screenDarken.classList.remove('active');
+
+            // Manejar el evento pageshow para detectar navegación con el botón "Atrás"
+            window.addEventListener('pageshow', function(event) {
+                // Si la página se carga desde la caché (navegación hacia atrás)
+                if (event.persisted) {
+                    // Restablecer el estado de la pantalla oscura
+                    screenDarken.classList.remove('active');
+                    window.isNavigating = false;
+                }
+            });
+
+            // También restablecer al hacer carga normal
+            window.addEventListener('load', function() {
+                screenDarken.classList.remove('active');
+                window.isNavigating = false;
+            });
 
             // Animación de transición entre paneles
             function showPanel(panel) {
@@ -729,6 +751,10 @@
 
             // Efecto de transición oscura y redirección
             function redirectWithFade(url) {
+                // Prevenir múltiples clics durante la navegación
+                if (window.isNavigating) return;
+                window.isNavigating = true;
+                
                 // Activar pantalla oscura
                 screenDarken.classList.add('active');
                 
@@ -894,4 +920,4 @@
         });
     </script>
 </body>
-</html>
+</html> 
