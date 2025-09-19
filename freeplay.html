@@ -1024,7 +1024,20 @@
                 e.preventDefault();
             }, { passive: false });
 
+            // Leer parámetros de URL al cargar
+            function loadFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const modParam = urlParams.get('mod');
+                if (modParam) {
+                    const modIndex = parseInt(modParam) - 1;
+                    if (modIndex >= 0 && modIndex < modsData.mods.length) {
+                        currentModIndex = modIndex;
+                    }
+                }
+            }
+
             // Inicialización
+            loadFromURL();
             generateLevelCatalogs();
             preloadImages();
             updateModDisplay();

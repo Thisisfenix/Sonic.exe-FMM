@@ -119,6 +119,7 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
+            padding-bottom: max(15px, var(--safe-area-inset-bottom), 60px);
             z-index: 1;
             overflow: hidden;
         }
@@ -595,6 +596,40 @@
             white-space: nowrap;
         }
 
+        /* Ajustes para todos los móviles con navbar */
+        @media (max-width: 768px) {
+            .credits-container {
+                padding-bottom: max(20px, env(safe-area-inset-bottom), 80px);
+                height: calc(100vh - var(--safe-area-inset-top) - max(var(--safe-area-inset-bottom), 60px));
+                min-height: calc(100vh - 120px);
+            }
+            
+            .credits-controls {
+                margin-bottom: max(15px, env(safe-area-inset-bottom), 25px);
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+            }
+            
+            .back-button {
+                bottom: max(20px, env(safe-area-inset-bottom), 80px);
+                position: fixed;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Ajustes específicos para pantallas muy pequeñas con navbar */
+        @media (max-width: 400px) {
+            .credits-container {
+                padding-bottom: max(25px, env(safe-area-inset-bottom), 90px);
+                height: calc(100vh - max(var(--safe-area-inset-bottom), 70px));
+            }
+            
+            .credits-controls {
+                margin-bottom: max(20px, env(safe-area-inset-bottom), 30px);
+            }
+        }
+
         .back-button:hover {
             background: var(--main-color);
             color: #000;
@@ -746,6 +781,8 @@
             .credits-container {
                 justify-content: space-between;
                 padding: 10px;
+                padding-bottom: max(30px, env(safe-area-inset-bottom), 100px);
+                height: calc(100vh - max(var(--safe-area-inset-bottom), 80px));
             }
 
             .credits-title {
