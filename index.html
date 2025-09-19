@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SONIC.EXE MENU</title>
+    <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
@@ -233,19 +234,19 @@
             margin-left: 150px;
         }
 
-        /* Noticias PC */
+        /* NOTICIAS MEJORADAS - Carrusel */
         .news-section {
             position: absolute;
             bottom: 40px;
             right: 40px;
-            width: 340px;
+            width: 380px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 12px;
             box-shadow: 0 0 10px #0ff;
             z-index: 15;
             padding: 18px 16px 10px 16px;
             transition: all 0.4s ease;
-            max-height: 220px;
+            max-height: 260px;
             opacity: 1;
             overflow: hidden;
         }
@@ -288,9 +289,10 @@
         }
 
         .news-content {
-            max-height: 160px;
-            overflow-y: auto;
+            max-height: 190px;
+            overflow: hidden;
             transition: max-height 0.4s ease;
+            position: relative;
         }
 
         .news-section.closed .news-content {
@@ -298,7 +300,14 @@
             overflow: hidden;
         }
 
+        .mods-carousel {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+        }
+
         .mod-item {
+            flex: 0 0 100%;
             display: flex;
             align-items: center;
             margin-bottom: 12px;
@@ -308,6 +317,7 @@
             border-radius: 8px;
             padding: 6px;
             transition: background 0.2s;
+            min-width: 0;
         }
 
         .mod-item:hover {
@@ -321,10 +331,12 @@
             border-radius: 6px;
             margin-right: 10px;
             filter: drop-shadow(0 0 6px #0ff);
+            flex-shrink: 0;
         }
 
         .mod-info {
             flex: 1;
+            min-width: 0;
         }
 
         .mod-name {
@@ -332,12 +344,68 @@
             margin: 0;
             color: #0ff;
             font-family: 'Press Start 2P', cursive;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .mod-date {
             font-size: 0.7rem;
             margin: 0;
             color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Controles del carrusel */
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            gap: 15px;
+        }
+
+        .carousel-btn {
+            background: rgba(0, 255, 255, 0.2);
+            border: none;
+            color: #0ff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+
+        .carousel-indicators {
+            display: flex;
+            gap: 6px;
+            z-index: 20;
+        }
+
+        .carousel-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 20;
+        }
+
+        .carousel-indicator.active {
+            background: #0ff;
         }
 
         /* Panel de actualización centrado */
@@ -354,9 +422,34 @@
             padding: 32px 28px 18px 28px;
             min-width: 320px;
             max-width: 90vw;
+            max-height: 80vh;
             color: #fff;
             opacity: 1;
             transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .update-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .update-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .update-content::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .update-content::-webkit-scrollbar-thumb {
+            background: #0ff;
+            border-radius: 4px;
+        }
+
+        .update-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 255, 0.8);
         }
 
         .update-panel.show {
@@ -420,6 +513,7 @@
                 right: 5vw;
                 bottom: 20px;
                 padding: 10px 8px 8px 8px;
+                max-height: 220px;
             }
 
             .news-title {
@@ -433,6 +527,14 @@
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%);
+            }
+            
+            .mod-name {
+                font-size: 0.7rem;
+            }
+            
+            .mod-date {
+                font-size: 0.6rem;
             }
         }
 
@@ -536,6 +638,14 @@
             .news-toggle {
                 font-size: 1rem;
             }
+            
+            .mod-name {
+                font-size: 0.65rem;
+            }
+            
+            .mod-date {
+                font-size: 0.55rem;
+            }
 
             /* Panel de actualización */
             .update-panel {
@@ -578,10 +688,15 @@
                 margin: 15px auto 30px;
                 max-height: 25vh;
             }
+            
+            .mod-thumbnail {
+                width: 40px;
+                height: 40px;
+            }
         }
 
         /* Mejoras de usabilidad táctil */
-        .menu-btn, .news-toggle, .version-btn {
+        .menu-btn, .news-toggle, .version-btn, .carousel-btn {
             min-height: 44px;
             touch-action: manipulation;
         }
@@ -606,7 +721,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> v1.5.3 Rework
+                    <i class="bi bi-stars"></i> v1.6.0 Rework
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -645,7 +760,7 @@
                     <button class="news-toggle" id="newsToggleBtn" aria-label="Mostrar/ocultar noticias">+</button>
                 </div>
                 <div class="news-content" id="newsContent">
-                    <div class="mods-carousel">
+                    <div class="mods-carousel" id="newsCarousel">
                         <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
                             <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail">
                             <div class="mod-info">
@@ -663,10 +778,30 @@
                         <a href="javascript:void(0)" class="mod-item">
                             <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail">
                             <div class="mod-info">
-                                <p class="mod-name">Trinity encore Coming Soon</p>
-                                <p class="mod-date">fecha: Siendo Determinado</p>
+                                <p class="mod-name">Trinity encore ya disponible</p>
+                                <p class="mod-date">Juegalo en freeplay</p>
                             </div>
                         </a>
+                        <!-- Más noticias de ejemplo -->
+                        <a href="javascript:void(0)" class="mod-item">
+                            <img src="images/example1.jpg" alt="Nuevo nivel disponible" class="mod-thumbnail">
+                            <div class="mod-info">
+                                <p class="mod-name">Nuevo nivel: Green Hill EX</p>
+                                <p class="mod-date">Disponible ahora en Freeplay</p>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" class="mod-item">
+                            <img src="images/example2.jpg" alt="Evento especial" class="mod-thumbnail">
+                            <div class="mod-info">
+                                <p class="mod-name">Evento Halloween: Week Scary</p>
+                                <p class="mod-date">Del 25 al 31 de octubre</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevNews" aria-label="Noticia anterior">&lt;</button>
+                        <div class="carousel-indicators" id="newsIndicators"></div>
+                        <button class="carousel-btn" id="nextNews" aria-label="Siguiente noticia">&gt;</button>
                     </div>
                 </div>
             </div>
@@ -675,19 +810,24 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.5.3</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.0</h5>
                 <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <p><strong>Novedades de la actualización v1.5.3:</strong></p>
+                <p><strong>Novedades de la actualización v1.6.0:</strong></p>
                 <ul>
-                    <li>Rework visual y funcional del menú Freeplay.</li>
-                    <li>Catálogo de niveles mejorado y más accesible.</li>
-                    <li>Botones de layouts ahora muestran nombres personalizados.</li>
-                    <li>Animaciones y transiciones optimizadas en Freeplay.</li>
-                    <li>Corrección de bugs en la navegación de mods y layouts.</li>
-                    <li>Mejoras en la accesibilidad y experiencia de usuario.</li>
-                    <li>Actualización de imágenes y estilos en el menú principal.</li>
+                    <li>Navegación por teclado en Freeplay (flechas izq/der, Enter, Escape).</li>
+                    <li>Swipe gestures para Android en Freeplay.</li>
+                    <li>Flechas de navegación ahora están fijas y no se mueven con el título.</li>
+                    <li>URLs dinámicas que muestran el mod actual en la dirección.</li>
+                    <li>Numeración automática de mods en catálogos de niveles.</li>
+                    <li>Copia automática de URLs al portapapeles al hacer clic en layouts.</li>
+                    <li>Prevención de zoom accidental en dispositivos Android.</li>
+                    <li>Mejoras táctiles: área mínima de 44px en todos los botones.</li>
+                    <li>Feedback visual mejorado al presionar botones (escala 0.95).</li>
+                    <li>Colaboradores externos agregados en créditos con etiqueta dorada.</li>
+                    <li>Corrección del botón back en Sound Test para regresar al menú.</li>
+                    <li>Optimización completa para experiencia dual PC/Android.</li>
                 </ul>
             </div>
         </div>
@@ -714,6 +854,83 @@
             const bgMusic = document.getElementById('bgMusic');
             const screenDarken = document.getElementById('screenDarken');
             const menuButtons = document.querySelectorAll('.menu-btn[data-url]');
+            
+            // Elementos del carrusel de noticias
+            const newsCarousel = document.getElementById('newsCarousel');
+            const prevNewsBtn = document.getElementById('prevNews');
+            const nextNewsBtn = document.getElementById('nextNews');
+            const newsIndicators = document.getElementById('newsIndicators');
+            
+            // Variables para el carrusel
+            let currentNewsIndex = 0;
+            let newsItems = [];
+            let autoNewsInterval;
+
+            // Inicializar el carrusel de noticias
+            function initNewsCarousel() {
+                newsItems = document.querySelectorAll('.mod-item');
+                
+                // Crear indicadores
+                newsIndicators.innerHTML = '';
+                for (let i = 0; i < newsItems.length; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.classList.add('carousel-indicator');
+                    if (i === 0) indicator.classList.add('active');
+                    indicator.addEventListener('click', () => goToNews(i));
+                    newsIndicators.appendChild(indicator);
+                }
+                
+                // Iniciar auto-avance
+                startAutoNews();
+            }
+            
+            // Navegar a una noticia específica
+            function goToNews(index) {
+                if (index < 0) index = newsItems.length - 1;
+                if (index >= newsItems.length) index = 0;
+                
+                currentNewsIndex = index;
+                newsCarousel.style.transform = `translateX(-${index * 100}%)`;
+                
+                // Actualizar indicadores
+                document.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
+                    ind.classList.toggle('active', i === index);
+                });
+                
+                // Reiniciar auto-avance
+                restartAutoNews();
+            }
+            
+            // Iniciar auto-avance de noticias
+            function startAutoNews() {
+                if (autoNewsInterval) clearInterval(autoNewsInterval);
+                autoNewsInterval = setInterval(() => {
+                    goToNews(currentNewsIndex + 1);
+                }, 5000); // Cambiar cada 5 segundos
+            }
+            
+            // Reiniciar auto-avance
+            function restartAutoNews() {
+                if (autoNewsInterval) clearInterval(autoNewsInterval);
+                startAutoNews();
+            }
+            
+            // Configurar eventos para los controles del carrusel
+            if (prevNewsBtn && nextNewsBtn) {
+                prevNewsBtn.addEventListener('click', () => goToNews(currentNewsIndex - 1));
+                nextNewsBtn.addEventListener('click', () => goToNews(currentNewsIndex + 1));
+                
+                // También para eventos táctiles
+                prevNewsBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    goToNews(currentNewsIndex - 1);
+                }, { passive: false });
+                
+                nextNewsBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    goToNews(currentNewsIndex + 1);
+                }, { passive: false });
+            }
 
             // Restablecer el estado de la pantalla oscura al cargar la página
             screenDarken.classList.remove('active');
@@ -754,6 +971,9 @@
                 // Prevenir múltiples clics durante la navegación
                 if (window.isNavigating) return;
                 window.isNavigating = true;
+                
+                // Detener el carrusel de noticias
+                if (autoNewsInterval) clearInterval(autoNewsInterval);
                 
                 // Activar pantalla oscura
                 screenDarken.classList.add('active');
@@ -801,6 +1021,16 @@
                 newsSection.classList.toggle('show');
                 newsToggleBtn.classList.toggle('opened');
                 
+                // Si se está abriendo, reiniciar el carrusel
+                if (isOpening) {
+                    setTimeout(() => {
+                        restartAutoNews();
+                    }, 400);
+                } else {
+                    // Si se está cerrando, pausar el carrusel
+                    if (autoNewsInterval) clearInterval(autoNewsInterval);
+                }
+                
                 // Reproducir sonido solo si está disponible
                 try {
                     const sound = isOpening ? document.getElementById('selectSound') : document.getElementById('hoverSound');
@@ -836,6 +1066,9 @@
                     updateBtn.disabled = true;
                     updateBtn.style.pointerEvents = 'none';
                     updateBtn.style.opacity = '0.5';
+                    
+                    // Pausar el carrusel de noticias
+                    if (autoNewsInterval) clearInterval(autoNewsInterval);
                 };
                 
                 updateBtn.addEventListener('mousedown', handleUpdateClick);
@@ -851,6 +1084,9 @@
                     updateBtn.disabled = false;
                     updateBtn.style.pointerEvents = 'auto';
                     updateBtn.style.opacity = '1';
+                    
+                    // Reanudar el carrusel de noticias
+                    restartAutoNews();
                 });
             }
 
@@ -867,6 +1103,8 @@
 
                 setTimeout(() => {
                     newsSection.classList.add('show');
+                    // Inicializar el carrusel después de que se muestre la sección de noticias
+                    initNewsCarousel();
                 }, menuButtons.length * 120 + 500);
             }
             initAnimations();
@@ -891,18 +1129,21 @@
                         audioBtn.style.color = '#000';
                         audioBtn.style.border = 'none';
                         audioBtn.style.borderRadius = '5px';
-                        audioBtn.style.fontFamily = "'Press Start 2P', cursive";
-                        audioBtn.style.fontSize = '12px';
                         audioBtn.style.cursor = 'pointer';
+                        audioBtn.style.fontFamily = '"Press Start 2P", cursive';
+                        audioBtn.style.fontSize = '12px';
                         
                         audioBtn.addEventListener('click', () => {
-                            bgMusic.play().catch(e => console.error('Error al reproducir:', e));
-                            audioBtn.remove();
+                            bgMusic.play().catch(e => {
+                                console.log('No se pudo reproducir el audio:', e);
+                            });
+                            document.body.removeChild(audioBtn);
                         });
                         
                         document.body.appendChild(audioBtn);
                     };
                     
+                    // Intentar reproducir automáticamente
                     const playPromise = bgMusic.play();
                     
                     if (playPromise !== undefined) {
@@ -914,10 +1155,19 @@
                 }
             }
 
-            // Activar música al primer toque o clic
-            document.addEventListener('click', playBgMusic, { once: true });
-            document.addEventListener('touchstart', playBgMusic, { once: true, passive: true });
+            // Iniciar música cuando el usuario interactúe
+            document.body.addEventListener('click', function audioInit() {
+                playBgMusic();
+                document.body.removeEventListener('click', audioInit);
+            }, { once: true });
+            
+            // También iniciar con eventos táctiles
+            document.body.addEventListener('touchstart', function audioInitTouch() {
+                playBgMusic();
+                document.body.removeEventListener('touchstart', audioInitTouch);
+            }, { once: true });
         });
     </script>
 </body>
-</html> 
+
+</html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freeplay - Sonic.exe</title>
+    <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Font -->
@@ -101,18 +102,28 @@
         
         .mod-title-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             margin: 1.5rem 0;
             transition: all 0.5s ease;
+            position: relative;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .mod-title {
             color: var(--main-red);
             text-shadow: var(--glow-effect);
             font-size: 1.5rem;
-            margin: 0 15px;
             transition: all 0.5s ease;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
         }
         
         .btn {
@@ -128,6 +139,9 @@
             transition: all 0.3s;
             text-shadow: var(--glow-effect);
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            min-height: 44px;
         }
         
         .btn:hover {
@@ -152,14 +166,17 @@
         .arrow {
             font-size: 1.8rem;
             background: rgba(0, 0, 0, 0.7);
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2px solid var(--main-red);
             margin: 0 10px;
             transition: all 0.5s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            cursor: pointer;
         }
         
         .arrow:hover {
@@ -234,13 +251,16 @@
             border: 2px solid var(--main-red);
             border-radius: 0;
             font-family: 'Press Start 2P', cursive;
-            padding: 8px 15px;
+            padding: 12px 15px;
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
             flex: 1;
             text-align: center;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
         
         .level-catalog::-webkit-scrollbar {
@@ -302,6 +322,21 @@
             pointer-events: none;
             transform: translateY(-20px);
             display: none;
+        }
+
+        /* Mejoras táctiles y de feedback */
+        .layout-btn:active, .btn:active, .arrow:active {
+            transform: scale(0.95);
+            background: var(--main-red);
+            color: var(--main-bg);
+        }
+
+        .mod-image:not(.active) {
+            filter: blur(2px);
+        }
+
+        * {
+            touch-action: manipulation;
         }
 
         /* ========== ESTILOS PARA MÓVIL ========== */
@@ -746,13 +781,13 @@
                 }, 500);
             }
 
-            function createLevelItem(level) {
+            function createLevelItem(level, levelIndex) {
                 const levelItem = document.createElement('div');
                 levelItem.className = 'level-item';
 
                 const levelName = document.createElement('div');
                 levelName.className = 'level-link';
-                levelName.textContent = level.name;
+                levelName.textContent = `${levelIndex}. ${level.name}`;
 
                 const levelTitle = document.createElement('small');
                 levelTitle.textContent = level.title;
@@ -769,7 +804,15 @@
                     layoutBtn.textContent = layoutType.toUpperCase();
                     layoutBtn.onclick = (e) => {
                         e.preventDefault();
-                        if (layoutUrl) window.open(layoutUrl, '_blank');
+                        if (layoutUrl) {
+                            // Copiar URL al portapapeles
+                            navigator.clipboard.writeText(layoutUrl).then(() => {
+                                console.log('URL copiada:', layoutUrl);
+                            }).catch(() => {
+                                console.log('No se pudo copiar la URL');
+                            });
+                            window.open(layoutUrl, '_blank');
+                        }
                     };
                     if (!layoutUrl) layoutBtn.disabled = true;
                     layoutContainer.appendChild(layoutBtn);
@@ -792,7 +835,7 @@
                     
                     const title = document.createElement('h3');
                     title.className = 'mb-4 glitch-effect';
-                    title.textContent = `${mod.title} LEVELS`;
+                    title.textContent = `${index + 1}. ${mod.title} LEVELS`;
                     catalog.appendChild(title);
 
                     // Crear filas de niveles (1 izquierda, 1 derecha)
@@ -802,12 +845,12 @@
 
                         // Nivel izquierdo
                         if (mod.levels[i]) {
-                            row.appendChild(createLevelItem(mod.levels[i]));
+                            row.appendChild(createLevelItem(mod.levels[i], i + 1));
                         }
 
                         // Nivel derecho
                         if (mod.levels[i + 1]) {
-                            row.appendChild(createLevelItem(mod.levels[i + 1]));
+                            row.appendChild(createLevelItem(mod.levels[i + 1], i + 2));
                         }
 
                         catalog.appendChild(row);
@@ -823,6 +866,15 @@
                 modTitle.textContent = modsData.mods[currentModIndex].title;
                 modCounter.textContent = `${currentModIndex + 1} of ${modsData.mods.length}`;
                 showCatalogBtn.setAttribute('aria-controls', `modCatalog-${currentModIndex}`);
+                
+                // Actualizar título de la página
+                document.title = `${currentModIndex + 1}. ${modsData.mods[currentModIndex].title} - Freeplay`;
+                
+                // Actualizar URL con parámetros
+                const url = new URL(window.location);
+                url.searchParams.set('mod', currentModIndex + 1);
+                url.searchParams.set('name', modsData.mods[currentModIndex].title.replace(/\s+/g, '-'));
+                window.history.replaceState({}, '', url);
             }
 
             function toggleCatalog() {
@@ -895,16 +947,53 @@
                 }
             });
 
+            // Navegación por teclado (PC)
             document.addEventListener('keydown', function(e) {
                 if (catalogOpen) return;
                 if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
                     navigateMods('prev');
                 } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
                     navigateMods('next');
-                } else if (e.key === 'Enter' && document.activeElement === showCatalogBtn) {
+                } else if (e.key === 'Enter') {
+                    if (document.activeElement === showCatalogBtn) {
+                        e.preventDefault();
+                        toggleCatalog();
+                    }
+                } else if (e.key === 'Escape' && catalogOpen) {
+                    e.preventDefault();
                     toggleCatalog();
                 }
             });
+
+            // Swipe gestures (Android)
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+            
+            document.addEventListener('touchend', function(e) {
+                if (catalogOpen) return;
+                
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                const diffX = touchStartX - touchEndX;
+                const diffY = Math.abs(touchStartY - touchEndY);
+                
+                // Solo swipe horizontal si el movimiento vertical es mínimo
+                if (Math.abs(diffX) > 50 && diffY < 100) {
+                    e.preventDefault();
+                    if (diffX > 0) {
+                        navigateMods('next');
+                    } else {
+                        navigateMods('prev');
+                    }
+                }
+            }, { passive: false });
 
             // Efecto de glitch aleatorio
             setInterval(() => {
@@ -916,6 +1005,24 @@
                     }
                 });
             }, 3000);
+
+            // Prevenir doble-tap zoom (Android)
+            document.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            // Prevenir gestos de zoom con múltiples toques
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('gesturechange', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('gestureend', function(e) {
+                e.preventDefault();
+            }, { passive: false });
 
             // Inicialización
             generateLevelCatalogs();

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Créditos - Sonic.exe</title>
+    <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,6 +15,7 @@
             --text-color: #FFFFFF;
             --bg-dark: rgba(0, 0, 0, 0.8);
             --ex-color: #FF5555;
+            --external-color: #FFD700;
             --bg-gradient: linear-gradient(45deg, #000014, #001428);
             --safe-area-inset-top: env(safe-area-inset-top, 0px);
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -28,7 +31,8 @@
             touch-action: manipulation;
         }
 
-        html, body {
+        html,
+        body {
             font-family: 'Press Start 2P', cursive;
             color: var(--text-color);
             overflow: hidden;
@@ -48,7 +52,7 @@
             left: 0;
             width: 200%;
             height: 100%;
-            background: 
+            background:
                 linear-gradient(rgba(30, 30, 50, 0.7), rgba(30, 30, 50, 0.7)),
                 url('BG/menuBG.png') repeat-x;
             background-size: auto 100%;
@@ -60,6 +64,7 @@
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(-50%);
             }
@@ -88,12 +93,15 @@
                 transform: translateY(100vh) rotate(0deg);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.7;
             }
+
             90% {
                 opacity: 0.5;
             }
+
             100% {
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
@@ -145,6 +153,7 @@
             from {
                 text-shadow: 0 0 10px var(--main-color), 0 0 20px var(--main-color);
             }
+
             to {
                 text-shadow: 0 0 15px var(--main-color), 0 0 30px var(--main-color), 0 0 40px var(--secondary-color);
             }
@@ -191,6 +200,17 @@
             background: var(--ex-color);
             color: #000;
             box-shadow: 0 0 15px var(--ex-color);
+        }
+
+        .category-tab.external-active {
+            border-color: var(--external-color);
+            color: var(--external-color);
+        }
+
+        .category-tab.external-active.active {
+            background: var(--external-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--external-color);
         }
 
         .credits-slider-container {
@@ -268,6 +288,11 @@
             box-shadow: 0 0 15px var(--ex-color);
         }
 
+        .credit-card.external-card {
+            border-color: var(--external-color);
+            box-shadow: 0 0 15px var(--external-color);
+        }
+
         .credit-card::before {
             content: '';
             position: absolute;
@@ -285,13 +310,19 @@
             background: linear-gradient(transparent, rgba(255, 85, 85, 0.1), transparent);
         }
 
+        .credit-card.external-card::before {
+            background: linear-gradient(transparent, rgba(255, 215, 0, 0.1), transparent);
+        }
+
         @keyframes shine {
             0% {
                 left: -100%;
             }
+
             20% {
                 left: 100%;
             }
+
             100% {
                 left: 100%;
             }
@@ -324,6 +355,11 @@
             filter: grayscale(0.3);
         }
 
+        .credit-icon.external-icon {
+            border-color: var(--external-color);
+            box-shadow: 0 0 15px var(--external-color);
+        }
+
         .credit-icon.loading {
             animation: pulse 1.5s infinite;
             background: #1a3c5c;
@@ -333,9 +369,11 @@
             0% {
                 opacity: 0.6;
             }
+
             50% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0.6;
             }
@@ -359,11 +397,16 @@
             border-color: var(--ex-color);
         }
 
+        .credit-icon-container.external-icon-container::after {
+            border-color: var(--external-color);
+        }
+
         @keyframes pulseRing {
             0% {
                 transform: scale(0.9);
                 opacity: 0.7;
             }
+
             100% {
                 transform: scale(1.3);
                 opacity: 0;
@@ -371,7 +414,7 @@
         }
 
         .credit-name {
-            font-size: min(1.8rem, 5.5vw);
+            font-size: min(1.2rem, 4vw);
             color: var(--text-color);
             margin-bottom: 10px;
             text-shadow: 0 0 8px var(--main-color);
@@ -379,10 +422,18 @@
             position: relative;
             z-index: 1;
             line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
         }
 
         .credit-name.ex-name {
             text-shadow: 0 0 8px var(--ex-color);
+        }
+
+        .credit-name.external-name {
+            text-shadow: 0 0 8px var(--external-color);
         }
 
         .credit-role {
@@ -400,9 +451,25 @@
             text-shadow: 0 0 4px var(--ex-color);
         }
 
+        .credit-role.external-role {
+            color: var(--external-color);
+            text-shadow: 0 0 4px var(--external-color);
+        }
+
         .ex-badge {
             display: inline-block;
             background: var(--ex-color);
+            color: #000;
+            font-size: min(0.7rem, 2.5vw);
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .external-badge {
+            display: inline-block;
+            background: var(--external-color);
             color: #000;
             font-size: min(0.7rem, 2.5vw);
             padding: 2px 6px;
@@ -498,6 +565,16 @@
             box-shadow: 0 0 8px var(--ex-color);
         }
 
+        .progress-dot.external-dot {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid var(--external-color);
+        }
+
+        .progress-dot.external-dot.active {
+            background: var(--external-color);
+            box-shadow: 0 0 8px var(--external-color);
+        }
+
         .back-button {
             position: fixed;
             top: calc(15px + var(--safe-area-inset-top));
@@ -561,7 +638,11 @@
         }
 
         /* Prevención de selección de texto en dispositivos táctiles */
-        .credit-card, .credits-btn, .category-tab, .back-button, .audio-toggle {
+        .credit-card,
+        .credits-btn,
+        .category-tab,
+        .back-button,
+        .audio-toggle {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -574,25 +655,25 @@
                 font-size: 1.2rem;
                 margin-bottom: 15px;
             }
-            
+
             .category-tab {
                 font-size: 0.6rem;
                 padding: 6px 10px;
             }
-            
+
             .credit-name {
                 font-size: 1rem;
             }
-            
+
             .credit-role {
                 font-size: 0.7rem;
             }
-            
+
             .credits-btn {
                 font-size: 0.7rem;
                 padding: 8px 12px;
             }
-            
+
             .back-button {
                 font-size: 0.7rem;
                 padding: 8px 12px;
@@ -606,36 +687,36 @@
                 padding-top: 5px;
                 overflow-y: auto;
             }
-            
+
             .credits-title {
                 font-size: 1.5rem;
                 margin: 5px 0 10px;
             }
-            
+
             .category-tabs {
                 margin-bottom: 10px;
             }
-            
+
             .credits-slider-container {
                 height: 70vh;
                 margin-bottom: 10px;
             }
-            
+
             .credit-icon-container {
                 width: 80px;
                 height: 80px;
                 margin-bottom: 10px;
             }
-            
+
             .credit-name {
                 font-size: 1rem;
                 margin-bottom: 5px;
             }
-            
+
             .credit-role {
                 font-size: 0.7rem;
             }
-            
+
             .credits-controls {
                 margin-top: 10px;
             }
@@ -651,7 +732,10 @@
         }
 
         /* Mejoras de rendimiento para dispositivos móviles */
-        .credit-card, .credit-icon, .credits-btn, .category-tab {
+        .credit-card,
+        .credit-icon,
+        .credits-btn,
+        .category-tab {
             transform: translateZ(0);
             backface-visibility: hidden;
             perspective: 1000;
@@ -663,23 +747,23 @@
                 justify-content: space-between;
                 padding: 10px;
             }
-            
+
             .credits-title {
                 font-size: 1.3rem;
                 margin-bottom: 10px;
                 margin-top: 10px;
             }
-            
+
             .category-tabs {
                 margin-bottom: 15px;
                 gap: 5px;
             }
-            
+
             .category-tab {
                 font-size: 0.6rem;
                 padding: 5px 8px;
             }
-            
+
             .credits-slider-container {
                 height: min(380px, 50vh);
                 margin-bottom: 15px;
@@ -687,38 +771,38 @@
                 display: flex;
                 align-items: center;
             }
-            
+
             .credit-card {
                 padding: 15px;
             }
-            
+
             .credit-icon-container {
                 width: min(120px, 22vw);
                 height: min(120px, 22vw);
                 margin-bottom: 12px;
             }
-            
+
             .credit-name {
                 font-size: 1rem;
                 margin-bottom: 8px;
             }
-            
+
             .credit-role {
                 font-size: 0.7rem;
                 line-height: 1.3;
             }
-            
+
             .credits-controls {
                 margin-top: 10px;
                 margin-bottom: 10px;
                 gap: 10px;
             }
-            
+
             .credits-btn {
                 font-size: 0.7rem;
                 padding: 8px 12px;
             }
-            
+
             .back-button {
                 position: relative;
                 top: unset;
@@ -729,7 +813,7 @@
                 order: 4;
                 width: auto;
             }
-            
+
             .progress-indicator {
                 order: 3;
                 width: 100%;
@@ -743,7 +827,7 @@
                 font-size: 1.1rem;
                 margin-bottom: 8px;
             }
-            
+
             .category-tabs {
                 flex-direction: column;
                 width: 100%;
@@ -751,40 +835,40 @@
                 gap: 4px;
                 margin-bottom: 12px;
             }
-            
+
             .category-tab {
                 border-radius: 6px;
                 width: 100%;
                 text-align: center;
             }
-            
+
             .credits-slider-container {
                 height: min(340px, 55vh);
             }
-            
+
             .credit-icon-container {
                 width: 100px;
                 height: 100px;
             }
-            
+
             .credit-name {
                 font-size: 0.9rem;
             }
-            
+
             .credit-role {
                 font-size: 0.65rem;
             }
-            
+
             .credits-controls {
                 flex-direction: column;
                 gap: 8px;
             }
-            
+
             .credits-btn {
                 width: 100%;
                 max-width: 200px;
             }
-            
+
             .back-button {
                 width: 100%;
                 max-width: 200px;
@@ -803,6 +887,8 @@
 
         <div class="category-tabs" id="categoryTabs">
             <button class="category-tab active" data-category="collaborators">COLABORADORES</button>
+            <button class="category-tab external-active" data-category="externalCollaborators">COLABORADORES
+                EXTERNOS</button>
             <button class="category-tab ex-active" data-category="exCollaborators">EX-COLABORADORES</button>
         </div>
 
@@ -820,7 +906,7 @@
             </div>
 
             <button class="credits-btn" id="nextButton">SIGUIENTE →</button>
-            
+
             <a href="index.html" class="back-button">← VOLVER</a>
         </div>
     </div>
@@ -838,10 +924,10 @@
         // Detectar si es un dispositivo móvil
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isAndroid = /Android/i.test(navigator.userAgent);
-        
+
         // Detectar si es una pantalla pequeña
         const isSmallScreen = window.innerWidth <= 380 || window.innerHeight <= 700;
-        
+
         // Datos de créditos organizados por categoría
         const creditsData = {
             collaborators: [
@@ -916,6 +1002,13 @@
                     role: "Colaborador 12"
                 }
             ],
+            externalCollaborators: [
+                {
+                    icon: "icons/abelitogamer.png",
+                    name: "AbelitoGamer",
+                    role: "Colaborador Externo 1"
+                }
+            ],
             exCollaborators: [
                 {
                     icon: "icons/346_sin_titulo_20240930232516.png",
@@ -933,7 +1026,7 @@
                     role: "EX-Colaborador 3"
                 }
             ]
-        };
+        }
 
         let currentIndex = 0;
         let currentCategory = 'collaborators';
@@ -957,7 +1050,7 @@
                 if (creditsControls && !creditsControls.contains(backBtn)) {
                     creditsControls.appendChild(backBtn);
                 }
-                
+
                 // Ajustar altura del slider
                 const sliderContainer = document.querySelector('.credits-slider-container');
                 if (sliderContainer) {
@@ -970,8 +1063,8 @@
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             // Reducir cantidad de partículas en móviles para mejor rendimiento
-            const particleCount = isMobile ? 
-                Math.min(Math.floor(window.innerWidth / 20), 30) : 
+            const particleCount = isMobile ?
+                Math.min(Math.floor(window.innerWidth / 20), 30) :
                 Math.min(Math.floor(window.innerWidth / 15), 50);
 
             // Limpiar partículas existentes
@@ -1025,10 +1118,15 @@
         function createCreditSlides() {
             const credits = creditsData[currentCategory];
             const isExCategory = currentCategory === 'exCollaborators';
+            const isExternalCategory = currentCategory === 'externalCollaborators';
 
             // Mostrar mensaje si no hay elementos
             if (credits.length === 0) {
-                creditsSlider.innerHTML = `<div class="no-items-message">No hay ${isExCategory ? 'ex-colaboradores' : 'colaboradores'} para mostrar</div>`;
+                let categoryName = 'colaboradores';
+                if (isExCategory) categoryName = 'ex-colaboradores';
+                if (isExternalCategory) categoryName = 'colaboradores externos';
+
+                creditsSlider.innerHTML = `<div class="no-items-message">No hay ${categoryName} para mostrar</div>`;
                 prevBtn.style.display = 'none';
                 nextBtn.style.display = 'none';
                 progressIndicator.style.display = 'none';
@@ -1041,16 +1139,20 @@
 
             credits.forEach((credit, index) => {
                 const slide = document.createElement('div');
-                slide.className = `credit-slide ${isExCategory ? 'ex-slide' : ''}`;
+                slide.className = `credit-slide ${isExCategory ? 'ex-slide' : ''} ${isExternalCategory ? 'external-slide' : ''}`;
                 slide.dataset.index = index;
 
+                let badgeHtml = '';
+                if (isExCategory) badgeHtml = '<span class="ex-badge">EX</span>';
+                if (isExternalCategory) badgeHtml = '<span class="external-badge">EXTERNO</span>';
+
                 slide.innerHTML = `
-                    <div class="credit-card ${isExCategory ? 'ex-card' : ''}">
-                        <div class="credit-icon-container ${isExCategory ? 'ex-icon-container' : ''}">
-                            <img src="${credit.icon}" alt="${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} loading" loading="lazy">
+                    <div class="credit-card ${isExCategory ? 'ex-card' : ''} ${isExternalCategory ? 'external-card' : ''}">
+                        <div class="credit-icon-container ${isExCategory ? 'ex-icon-container' : ''} ${isExternalCategory ? 'external-icon-container' : ''}">
+                            <img src="${credit.icon}" alt="${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} ${isExternalCategory ? 'external-icon' : ''} loading" loading="lazy">
                         </div>
-                        <h2 class="credit-name ${isExCategory ? 'ex-name' : ''}">${credit.name}${isExCategory ? '<span class="ex-badge">EX</span>' : ''}</h2>
-                        <p class="credit-role ${isExCategory ? 'ex-role' : ''}">${credit.role}</p>
+                        <h2 class="credit-name ${isExCategory ? 'ex-name' : ''} ${isExternalCategory ? 'external-name' : ''}">${credit.name}${badgeHtml}</h2>
+                        <p class="credit-role ${isExCategory ? 'ex-role' : ''} ${isExternalCategory ? 'external-role' : ''}">${credit.role}</p>
                     </div>
                 `;
 
@@ -1068,7 +1170,7 @@
 
                 // Crear indicadores de progreso
                 const dot = document.createElement('div');
-                dot.className = `progress-dot ${isExCategory ? 'ex-dot' : ''}`;
+                dot.className = `progress-dot ${isExCategory ? 'ex-dot' : ''} ${isExternalCategory ? 'external-dot' : ''}`;
                 dot.dataset.index = index;
                 dot.addEventListener('click', () => goToSlide(index));
                 progressIndicator.appendChild(dot);
@@ -1180,7 +1282,7 @@
             } else {
                 // Intenta reproducir la música
                 const playPromise = backgroundMusic.play();
-                
+
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         audioToggle.textContent = '♫';
@@ -1231,7 +1333,7 @@
 
         creditsSlider.addEventListener('touchmove', (e) => {
             // Prevenir scroll vertical durante el swipe horizontal
-            if (Math.abs(e.changedTouches[0].screenX - touchStartX) > 
+            if (Math.abs(e.changedTouches[0].screenX - touchStartX) >
                 Math.abs(e.changedTouches[0].screenY - touchStartY)) {
                 e.preventDefault();
             }
@@ -1240,10 +1342,10 @@
         creditsSlider.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
-            
+
             const diffX = touchEndX - touchStartX;
             const diffY = touchEndY - touchStartY;
-            
+
             // Solo considerar como swipe si el movimiento horizontal es mayor que el vertical
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
                 if (diffX > 0) {
@@ -1259,9 +1361,9 @@
             adjustLayoutForSmallScreens();
             createParticles();
             createCreditSlides();
-            
+
             // Precargar imágenes de manera eficiente
-            const allCredits = [...creditsData.collaborators, ...creditsData.exCollaborators];
+            const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
             allCredits.forEach(credit => {
                 const img = new Image();
                 img.src = credit.icon;
@@ -1274,10 +1376,10 @@
             // En móviles, no reproducir automáticamente
             if (!isMobile) {
                 // Permitir que la música se reproduzca después de la interacción del usuario
-                const enableMusic = function() {
+                const enableMusic = function () {
                     userInteracted = true;
                     document.body.classList.add('user-interacted');
-                    
+
                     // Eliminar event listeners después de la primera interacción
                     document.removeEventListener('click', enableMusic);
                     document.removeEventListener('keydown', enableMusic);
@@ -1307,7 +1409,7 @@
         });
 
         // Limpiar recursos cuando la página no es visible
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
                 // Pausar música cuando la pestaña no está visible
                 if (isMusicPlaying && !backgroundMusic.paused) {
@@ -1347,7 +1449,7 @@
         document.addEventListener('touchmove', function (e) {
             const touchY = e.touches[0].clientY;
             const touchX = e.touches[0].clientX;
-            
+
             // Prevenir pull-to-refresh cuando se está en la parte superior de la página
             if (touchY > lastTouchY && window.scrollY === 0) {
                 e.preventDefault();
@@ -1356,4 +1458,5 @@
         }, { passive: false });
     </script>
 </body>
+
 </html>
