@@ -340,7 +340,7 @@
         }
 
         .mod-name {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             margin: 0;
             color: #0ff;
             font-family: 'Press Start 2P', cursive;
@@ -350,7 +350,7 @@
         }
 
         .mod-date {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             margin: 0;
             color: #fff;
             white-space: nowrap;
@@ -762,39 +762,32 @@
                 <div class="news-content" id="newsContent">
                     <div class="mods-carousel" id="newsCarousel">
                         <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
-                            <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail">
+                            <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
                                 <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
                             </div>
                         </a>
                         <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic" class="mod-item">
-                            <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail">
+                            <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Thriller gen out now!!!</p>
                                 <p class="mod-date">juegalo en freeplay ahora!!!</p>
                             </div>
                         </a>
                         <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic" class="mod-item">
-                            <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail">
+                            <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Trinity encore ya disponible</p>
                                 <p class="mod-date">Juegalo en freeplay</p>
                             </div>
                         </a>
-                        <!-- Más noticias de ejemplo -->
+                        <!-- Próximas actualizaciones -->
                         <a href="javascript:void(0)" class="mod-item">
-                            <img src="" alt="coming soon" class="mod-thumbnail">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjMDBGRkZGIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMjQgMTJWMjRMMzIgMzJIMTZMMjQgMjRWMTJaIiBmaWxsPSIjMDBGRkZGIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNzAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iOCIgZmlsbD0iIzAwRkZGRiI+Pz88L3RleHQ+Cjwvc3ZnPgo=" alt="Próximamente" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
-                                <p class="mod-name">coming soon</p>
-                                <p class="mod-date">...y</p>
-                            </div>
-                        </a>
-                        <a href="javascript:void(0)" class="mod-item">
-                            <img src="" alt="coming soon" class="mod-thumbnail">
-                            <div class="mod-info">
-                                <p class="mod-name">coming soon</p>
-                                <p class="mod-date">...y</p>
+                                <p class="mod-name">Próximas actualizaciones</p>
+                                <p class="mod-date">Mantente atento...</p>
                             </div>
                         </a>
                     </div>
@@ -843,6 +836,17 @@
         // Variable global para controlar el estado de navegación
         window.isNavigating = false;
 
+        // Detectar Android y optimizar para conexiones lentas
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        let newsIntervalTime = 5000; // Por defecto 5 segundos
+        
+        if (isAndroid && 'connection' in navigator) {
+            const connection = navigator.connection;
+            if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                newsIntervalTime = 8000; // 8 segundos para conexiones lentas
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const updateBtn = document.getElementById('updateBtn');
             const updatePanel = document.getElementById('updatePanel');
@@ -864,7 +868,6 @@
             // Variables para el carrusel
             let currentNewsIndex = 0;
             let newsItems = [];
-            let autoNewsInterval;
 
             // Inicializar el carrusel de noticias
             function initNewsCarousel() {
@@ -903,15 +906,15 @@
             
             // Iniciar auto-avance de noticias
             function startAutoNews() {
-                if (autoNewsInterval) clearInterval(autoNewsInterval);
-                autoNewsInterval = setInterval(() => {
+                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                window.autoNewsTimer = setInterval(() => {
                     goToNews(currentNewsIndex + 1);
-                }, 5000); // Cambiar cada 5 segundos
+                }, newsIntervalTime); // Usar intervalo dinámico
             }
             
             // Reiniciar auto-avance
             function restartAutoNews() {
-                if (autoNewsInterval) clearInterval(autoNewsInterval);
+                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 startAutoNews();
             }
             
@@ -973,7 +976,7 @@
                 window.isNavigating = true;
                 
                 // Detener el carrusel de noticias
-                if (autoNewsInterval) clearInterval(autoNewsInterval);
+                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 
                 // Activar pantalla oscura
                 screenDarken.classList.add('active');
@@ -1028,7 +1031,7 @@
                     }, 400);
                 } else {
                     // Si se está cerrando, pausar el carrusel
-                    if (autoNewsInterval) clearInterval(autoNewsInterval);
+                    if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 }
                 
                 // Reproducir sonido solo si está disponible
@@ -1068,7 +1071,7 @@
                     updateBtn.style.opacity = '0.5';
                     
                     // Pausar el carrusel de noticias
-                    if (autoNewsInterval) clearInterval(autoNewsInterval);
+                    if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 };
                 
                 updateBtn.addEventListener('mousedown', handleUpdateClick);

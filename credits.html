@@ -255,6 +255,18 @@
             z-index: 3;
             pointer-events: all;
             filter: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(0) translateY(20px) scale(1); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0) translateY(0) scale(1); 
+            }
         }
 
         .credit-slide.prev {
@@ -282,6 +294,17 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+        }
+
+        .credit-card:hover {
+            box-shadow: 0 0 20px var(--main-color);
+            transform: translateY(-2px);
+        }
+
+        .credit-card:active {
+            transform: scale(0.98) translateY(-2px);
+            transition: transform 0.1s;
         }
 
         .credit-card.ex-card {
@@ -610,11 +633,17 @@
             }
             
             .back-button {
-                bottom: max(20px, env(safe-area-inset-bottom), 80px);
                 position: fixed;
-                top: auto;
+                bottom: max(10px, env(safe-area-inset-bottom), 70px);
                 left: 50%;
                 transform: translateX(-50%);
+                top: auto;
+                z-index: 25;
+                margin: 0;
+            }
+            
+            .credits-controls .back-button {
+                display: none;
             }
         }
 
@@ -965,6 +994,14 @@
         // Detectar si es una pantalla pequeña
         const isSmallScreen = window.innerWidth <= 380 || window.innerHeight <= 700;
 
+        // Detectar conexión lenta en Android y ajustar animaciones
+        if (isAndroid && 'connection' in navigator) {
+            const connection = navigator.connection;
+            if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                document.documentElement.style.setProperty('--transition-time', '0.3s');
+            }
+        }
+
         // Datos de créditos organizados por categoría
         const creditsData = {
             collaborators: [
@@ -1096,13 +1133,22 @@
             }
         }
 
+        // Vibración táctil ligera (solo Android)
+        function lightVibration() {
+            if (isAndroid && navigator.vibrate) {
+                navigator.vibrate(10); // 10ms muy suave
+            }
+        }
+
         // Crear partículas de fondo con gestión de memoria
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            // Reducir cantidad de partículas en móviles para mejor rendimiento
-            const particleCount = isMobile ?
-                Math.min(Math.floor(window.innerWidth / 20), 30) :
-                Math.min(Math.floor(window.innerWidth / 15), 50);
+            // Reducir cantidad de partículas especialmente en Android
+            const particleCount = isAndroid ?
+                Math.min(Math.floor(window.innerWidth / 25), 15) :
+                isMobile ?
+                Math.min(Math.floor(window.innerWidth / 20), 25) :
+                Math.min(Math.floor(window.innerWidth / 15), 40);
 
             // Limpiar partículas existentes
             particlesContainer.innerHTML = '';
@@ -1132,6 +1178,7 @@
         function changeCategory(category) {
             if (category === currentCategory) return;
 
+            lightVibration();
             currentCategory = category;
             currentIndex = 0;
 
@@ -1291,6 +1338,7 @@
             const credits = creditsData[currentCategory];
             if (credits.length <= 1) return;
 
+            lightVibration();
             currentIndex = (currentIndex - 1 + credits.length) % credits.length;
             updateSlidesPosition();
         }
@@ -1300,6 +1348,7 @@
             const credits = creditsData[currentCategory];
             if (credits.length <= 1) return;
 
+            lightVibration();
             currentIndex = (currentIndex + 1) % credits.length;
             updateSlidesPosition();
         }
@@ -1393,18 +1442,54 @@
             }
         }, { passive: true });
 
+        // Lazy loading para móviles
+        function setupLazyLoading() {
+            if ('IntersectionObserver' in window && isMobile) {
+                const imageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                            }
+                            img.classList.remove('loading');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                }, { rootMargin: '50px' });
+                
+                document.querySelectorAll('.credit-icon').forEach(img => {
+                    if (img.src && !img.dataset.src) {
+                        img.dataset.src = img.src;
+                        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
+                        imageObserver.observe(img);
+                    }
+                });
+            }
+        }
+
         // Inicialización
         function initPage() {
             adjustLayoutForSmallScreens();
             createParticles();
             createCreditSlides();
 
-            // Precargar imágenes de manera eficiente
-            const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
-            allCredits.forEach(credit => {
-                const img = new Image();
-                img.src = credit.icon;
-            });
+            // Precargar solo imágenes críticas en móviles
+            if (isMobile) {
+                const criticalImages = creditsData.collaborators.slice(0, 3);
+                criticalImages.forEach(credit => {
+                    const img = new Image();
+                    img.src = credit.icon;
+                });
+                setTimeout(setupLazyLoading, 100);
+            } else {
+                const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
+                allCredits.forEach(credit => {
+                    const img = new Image();
+                    img.src = credit.icon;
+                });
+            }
 
             // Configurar música
             backgroundMusic.volume = 0.7;

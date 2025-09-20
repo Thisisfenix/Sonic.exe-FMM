@@ -1,75 +1,604 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic.exe v3 | Story Mode</title>
+    <title>Sonic.exe | Modo Historia</title>
+    <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <!-- Fuente personalizada -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- CSS personalizado -->
-    <link rel="stylesheet" href="css/storyMode.css">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Sonic.exe Theme */
+        :root {
+            --blood-red: #d10000;
+            --dark-red: #6a0000;
+            --neon-yellow: #f5f500;
+            --sonic-dark: #0a0a20;
+            --sonic-blue: #0066ff;
+            --glitch-purple: #b300ff;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: url('BG/storymodeBG.gif') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            min-height: 100vh;
+            text-shadow: 0 0 5px var(--blood-red);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Imagen del mod con altura controlada */
+        .mod-image-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 35%; /* Proporción más compacta */
+            position: relative;
+            border: 3px solid var(--blood-red);
+            box-shadow: 0 0 15px var(--blood-red);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .mod-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Efecto glitch */
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('BG/StaticNoise.gif') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+
+        /* Panel de información unificado */
+        .info-panel {
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid var(--blood-red);
+            box-shadow: 0 0 15px var(--blood-red);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Navegación entre mods */
+        .mod-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-yellow);
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--neon-yellow);
+            color: var(--neon-yellow);
+            font-size: 1rem;
+            transition: all 0.2s;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.1);
+            background: rgba(245, 245, 0, 0.2);
+            box-shadow: 0 0 8px var(--neon-yellow);
+        }
+
+        .mod-title {
+            color: var(--neon-yellow);
+            text-shadow: 1px 1px 0 var(--blood-red);
+            font-size: 1rem;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Contenedor unificado para personaje y botones */
+        .game-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Sección del personaje */
+        .character-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .character-label {
+            color: var(--sonic-blue);
+            font-size: 0.8rem;
+            text-shadow: 0 0 4px var(--sonic-blue);
+        }
+
+        .character-display {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--neon-yellow);
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--neon-yellow);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: 2px solid var(--neon-yellow);
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 120px;
+            flex-grow: 1;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Contador de mods */
+        .mod-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--neon-yellow);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            border: 1px solid var(--neon-yellow);
+        }
+
+
+
+        /* Animación de entrada */
+        .mod-enter {
+            animation: modEnter 0.5s ease-out;
+        }
+
+        @keyframes modEnter {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .play-btn {
+            background-color: var(--blood-red);
+            color: black;
+            text-shadow: 1px 1px 0 var(--neon-yellow);
+        }
+
+        .play-btn:hover {
+            background-color: var(--dark-red);
+            color: white;
+            box-shadow: 0 0 15px var(--blood-red);
+            transform: translateY(-2px);
+        }
+
+        .menu-btn {
+            background-color: transparent;
+            color: var(--neon-yellow);
+        }
+
+        .menu-btn:hover {
+            background-color: rgba(245, 245, 0, 0.1);
+            box-shadow: 0 0 10px var(--neon-yellow);
+            transform: translateY(-2px);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-text {
+            color: var(--blood-red);
+            text-shadow: 0 0 10px var(--neon-yellow);
+            margin-top: 15px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Efectos especiales */
+        .static-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/static-effect.gif');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Media queries para pantallas más grandes */
+        @media (min-width: 768px) {
+            .mod-image-container {
+                padding-bottom: 40%;
+            }
+            
+            .mod-title {
+                font-size: 1.2rem;
+            }
+            
+            .character-display {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .action-btn {
+                font-size: 1rem;
+                min-width: 150px;
+            }
+            
+            .game-content {
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: auto;
+            }
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 400px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body class="sonic-bg">
-    <div class="container-fluid d-flex flex-column justify-content-center min-vh-100 py-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-12">
-                <!-- Card principal -->
-                <div class="card bg-dark bg-opacity-75 border-danger border-3 mb-4">
-                    <div class="card-body text-center">
-                        <!-- Título -->
-                        <h1 class="glitch-text display-3 mb-4">STORY MODE</h1>
-                        
-                        <!-- Imagen del mod -->
-                        <div class="mb-4">
-                            <img id="selectedImage" class="img-fluid rounded border border-warning shadow-lg" style="max-height: 300px;" alt="Mod Image">
-                        </div>
-                        
-                        <!-- Navegación -->
-                        <div class="d-flex justify-content-center align-items-center mb-4 gap-3">
-                            <button id="prevButton" class="btn btn-outline-warning btn-lg rounded-circle">
-                                <i class="bi bi-arrow-left fs-4"></i>
-                            </button>
-                            <span id="modCounter" class="badge bg-danger fs-5">1/3</span>
-                            <button id="nextButton" class="btn btn-outline-warning btn-lg rounded-circle">
-                                <i class="bi bi-arrow-right fs-4"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- GIF de BF -->
-                        <div class="mb-4">
-                            <img class="bf-gif img-fluid rounded border border-warning" style="max-height: 150px;" alt="Boyfriend Animation">
-                        </div>
-                        
-                        <!-- Botones de acción -->
-                        <div class="d-grid gap-3 d-md-block">
-                            <button id="downloadButton" class="btn btn-danger btn-lg me-md-3 mb-2 mb-md-0">
-                                <i class="bi bi-download me-2"></i> DOWNLOAD MOD
-                            </button>
-                            <a href="index.html" class="btn btn-outline-light btn-lg">
-                                <i class="bi bi-arrow-left-circle me-2"></i> BACK TO MENU
-                            </a>
-                        </div>
-                    </div>
+<body>
+    <!-- Efecto de estática sutil -->
+    <div class="static-effect"></div>
+
+    <div class="main-container">
+        <!-- Imagen del mod actual -->
+        <div class="mod-image-container">
+            <img id="modImage" class="mod-image" alt="Imagen del Mod">
+            <div class="glitch-overlay" id="glitchOverlay"></div>
+        </div>
+
+        <!-- Panel de información unificado -->
+        <div class="info-panel">
+            <!-- Navegación entre mods -->
+            <div class="mod-navigation">
+                <button id="prevButton" class="nav-btn">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                
+                <div style="display: flex; align-items: center; flex-grow: 1; justify-content: center; overflow: hidden;">
+                    <div id="modTitle" class="mod-title">TOO SLOW</div>
+                </div>
+                
+                <button id="nextButton" class="nav-btn">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Contenido del juego (personaje y botones) -->
+            <div class="game-content">
+                <!-- Sección del personaje -->
+                <div class="character-section">
+                    <div class="character-label">PERSONAJE</div>
+                    <div id="characterDisplay" class="character-display"></div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="action-buttons">
+                    <button id="playButton" class="action-btn play-btn">
+                        <i class="bi bi-play-fill me-2"></i> JUGAR
+                    </button>
+                    <a href="index.html" class="action-btn menu-btn">
+                        <i class="bi bi-house-door me-2"></i> MENÚ
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex flex-column justify-content-center align-items-center d-none">
+    <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="text-danger mt-3 fs-4">PREPARING DOWNLOAD...</p>
+        <p class="loading-text">CARGANDO...</p>
     </div>
 
     <!-- Bootstrap JS Bundle con Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JS personalizado -->
-    <script src="js/storyMode.js"></script>
+    <script>
+        // Detectar móvil y Android
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // Vibración táctil para Android
+        function lightVibration() {
+            if (isAndroid && navigator.vibrate) {
+                navigator.vibrate(15);
+            }
+        }
+
+        // Detectar conexión lenta
+        if (isAndroid && 'connection' in navigator) {
+            const connection = navigator.connection;
+            if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                document.documentElement.style.setProperty('--transition-time', '0.2s');
+            }
+        }
+
+        // Datos de los mods
+        const mods = [
+            {
+                id: 'too-slow',
+                name: 'TOO SLOW',
+                image: 'images/Too_Slow_Artwork.png',
+                characterGif: 'images/Boyfriend.gif',
+                playUrl: '',
+                description: 'Enfrenta a Sonic.exe en esta batalla épica de ritmo donde la velocidad es clave.'
+            },
+            {
+                id: 'you-cant-run',
+                name: "YOU CAN'T RUN",
+                image: 'images/You-cant-runfp.png',
+                characterGif: 'images/Boyfriend.gif',
+                playUrl: '',
+                description: 'Escapa del terror en esta frenética persecución musical llena de adrenalina.'
+            },
+            {
+                id: 'triple-trouble',
+                name: 'TRIPLE TROUBLE',
+                image: 'images/Triple-troublefp.png',
+                characterGif: 'images/Boyfriend.gif',
+                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt',
+                description: 'Enfrenta a los tres terrores en esta batalla triple de supervivencia.'
+            }
+        ];
+
+        // Precargar imágenes críticas
+        mods.forEach(mod => {
+            const img = new Image();
+            img.src = mod.image;
+            const gif = new Image();
+            gif.src = mod.characterGif;
+        });
+
+        // Variables de estado
+        let currentModIndex = 0;
+        let autoGlitchTimer;
+        const DOM = {
+            modImage: document.getElementById('modImage'),
+            characterDisplay: document.getElementById('characterDisplay'),
+            playButton: document.getElementById('playButton'),
+            prevButton: document.getElementById('prevButton'),
+            nextButton: document.getElementById('nextButton'),
+            modTitle: document.getElementById('modTitle'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            glitchOverlay: document.getElementById('glitchOverlay')
+        };
+
+        // Función para mostrar efecto glitch
+        function showGlitchEffect() {
+            DOM.glitchOverlay.style.opacity = '0.7';
+            setTimeout(() => {
+                DOM.glitchOverlay.style.opacity = '0';
+            }, 300);
+        }
+
+        // Glitch aleatorio automático
+        function startAutoGlitch() {
+            if (autoGlitchTimer) clearInterval(autoGlitchTimer);
+            autoGlitchTimer = setInterval(() => {
+                if (Math.random() < 0.3) {
+                    showGlitchEffect();
+                }
+            }, 12000);
+        }
+
+        // Función para actualizar la interfaz
+        function updateDisplay() {
+            const currentMod = mods[currentModIndex];
+            
+            DOM.modImage.classList.add('mod-enter');
+            setTimeout(() => DOM.modImage.classList.remove('mod-enter'), 500);
+            
+            DOM.modImage.src = currentMod.image;
+            DOM.modImage.alt = currentMod.name;
+            DOM.characterDisplay.style.backgroundImage = `url('${currentMod.characterGif}')`;
+            DOM.modTitle.textContent = currentMod.name;
+            
+            updateCounter();
+            showGlitchEffect();
+            lightVibration();
+        }
+
+        function updateCounter() {
+            let counter = document.querySelector('.mod-counter');
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.className = 'mod-counter';
+                document.querySelector('.mod-image-container').appendChild(counter);
+            }
+            counter.textContent = `${currentModIndex + 1}/${mods.length}`;
+        }
+
+        function updateDescription() {
+            // Función vacía - descripción eliminada
+        }
+
+        // Función para manejar el botón Jugar
+        function playMod() {
+            const currentMod = mods[currentModIndex];
+            DOM.loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = currentMod.playUrl;
+            }, 1000);
+        }
+
+        // Swipe gestures para móvil
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    currentModIndex = (currentModIndex + 1) % mods.length;
+                } else {
+                    currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+                }
+                updateDisplay();
+            }
+        }, { passive: true });
+
+        // Event Listeners
+        DOM.prevButton.addEventListener('click', () => {
+            currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+            updateDisplay();
+        });
+
+        DOM.nextButton.addEventListener('click', () => {
+            currentModIndex = (currentModIndex + 1) % mods.length;
+            updateDisplay();
+        });
+
+        DOM.playButton.addEventListener('click', playMod);
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+                updateDisplay();
+            }
+            if (e.key === 'ArrowRight') {
+                currentModIndex = (currentModIndex + 1) % mods.length;
+                updateDisplay();
+            }
+            if (e.key === 'Enter') {
+                playMod();
+            }
+        });
+
+        // Inicialización
+        updateDisplay();
+        startAutoGlitch();
+        
+        if (isMobile) {
+            DOM.modImage.loading = 'lazy';
+        }
+    </script>
 </body>
 </html>
