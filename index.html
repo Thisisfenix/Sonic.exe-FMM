@@ -782,12 +782,12 @@
                                 <p class="mod-date">Juegalo en freeplay</p>
                             </div>
                         </a>
-                        <!-- Próximas actualizaciones -->
-                        <a href="javascript:void(0)" class="mod-item">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjMDBGRkZGIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMjQgMTJWMjRMMzIgMzJIMTZMMjQgMjRWMTJaIiBmaWxsPSIjMDBGRkZGIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNzAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iOCIgZmlsbD0iIzAwRkZGRiI+Pz88L3RleHQ+Cjwvc3ZnPgo=" alt="Próximamente" class="mod-thumbnail" loading="lazy">
+                        <!-- Guess What - Halloween Special -->
+                        <a href="javascript:void(0)" class="mod-item" onclick="loadGuessWhat()">
+                            <img src="images/guesswhat.png" alt="Guess What" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
-                                <p class="mod-name">Próximas actualizaciones</p>
-                                <p class="mod-date">Mantente atento...</p>
+                                <p class="mod-name">🎃 Guess What?</p>
+                                <p class="mod-date">31 de Octubre - Halloween</p>
                             </div>
                         </a>
                     </div>
@@ -1170,6 +1170,13 @@
                 document.body.removeEventListener('touchstart', audioInitTouch);
             }, { once: true });
         });
+        
+        // Función para cargar Guess What
+        function loadGuessWhat() {
+            const script = document.createElement('script');
+            script.src = 'js/guessWhat.js';
+            document.head.appendChild(script);
+        }
     </script>
 </body>
 
