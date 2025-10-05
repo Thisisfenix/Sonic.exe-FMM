@@ -1087,15 +1087,11 @@
                 const handleUpdateClick = (e) => {
                     e.preventDefault();
                     
-                    // Reproducir sonido de confirmación
-                    try {
-                        const sound = document.getElementById('selectSound');
-                        if (sound) {
-                            sound.currentTime = 0;
-                            sound.play().catch(() => {});
-                        }
-                    } catch (e) {
-                        console.log('Error al reproducir sonido:', e);
+                    // Reproducir sonido
+                    const sound = document.getElementById('selectSound');
+                    if (sound) {
+                        sound.currentTime = 0;
+                        sound.play().catch(() => {});
                     }
                     
                     showPanel(updatePanel);
@@ -1109,7 +1105,7 @@
                     if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 };
                 
-                updateBtn.addEventListener('click', handleUpdateClick);
+                updateBtn.addEventListener('mousedown', handleUpdateClick);
                 updateBtn.addEventListener('touchstart', handleUpdateClick, { passive: true });
             }
 
