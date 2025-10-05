@@ -413,6 +413,11 @@
         <p class="loading-text">CARGANDO...</p>
     </div>
 
+    <!-- Audio elements -->
+    <audio id="bgMusic" src="sounds/storymodemenumusic.ogg" loop></audio>
+    <audio id="scrollSound" src="sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="confirmSound" src="sounds/confirmMenu.ogg"></audio>
+
     <!-- Bootstrap JS Bundle con Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -518,6 +523,13 @@
             updateCounter();
             showGlitchEffect();
             lightVibration();
+            
+            // Reproducir sonido de scroll
+            const scrollSound = document.getElementById('scrollSound');
+            if (scrollSound) {
+                scrollSound.currentTime = 0;
+                scrollSound.play().catch(() => {});
+            }
         }
 
         function updateCounter() {
@@ -537,6 +549,14 @@
         // Función para manejar el botón Jugar
         function playMod() {
             const currentMod = mods[currentModIndex];
+            
+            // Reproducir sonido de confirmación
+            const confirmSound = document.getElementById('confirmSound');
+            if (confirmSound) {
+                confirmSound.currentTime = 0;
+                confirmSound.play().catch(() => {});
+            }
+            
             DOM.loadingOverlay.style.display = 'flex';
             
             setTimeout(() => {
@@ -568,14 +588,19 @@
         DOM.prevButton.addEventListener('click', () => {
             currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
             updateDisplay();
+            enableAudio();
         });
 
         DOM.nextButton.addEventListener('click', () => {
             currentModIndex = (currentModIndex + 1) % mods.length;
             updateDisplay();
+            enableAudio();
         });
 
-        DOM.playButton.addEventListener('click', playMod);
+        DOM.playButton.addEventListener('click', () => {
+            enableAudio();
+            playMod();
+        });
 
         // Navegación con teclado
         document.addEventListener('keydown', (e) => {
@@ -592,9 +617,30 @@
             }
         });
 
+        // Inicialización de audio
+        function initAudio() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.volume = 0.6;
+                bgMusic.play().catch(() => {});
+            }
+        }
+
         // Inicialización
         updateDisplay();
         startAutoGlitch();
+        
+        // Iniciar audio después de cualquier interacción del usuario
+        const enableAudio = () => {
+            initAudio();
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+        };
+        
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+        document.addEventListener('keydown', enableAudio);
         
         if (isMobile) {
             DOM.modImage.loading = 'lazy';

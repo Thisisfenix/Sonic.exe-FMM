@@ -15,7 +15,7 @@
         /* Estilos base */
         .sonic-body {
             background-color: #000;
-            background-image: url('../BG/backgroundST.png');
+            background-image: url('BG/backgroundST.png');
             background-size: cover;
             background-position: center;
             font-family: 'Press Start 2P', cursive;
@@ -325,7 +325,16 @@
                 // Iniciar música de fondo
                 const bgMusic = document.getElementById('backgroundMusic');
                 bgMusic.volume = 0.5;
-                bgMusic.play();
+                bgMusic.play().catch(() => {
+                    // Si falla la reproducción automática, activar con interacción
+                    const enableAudio = () => {
+                        bgMusic.play();
+                        document.removeEventListener('click', enableAudio);
+                        document.removeEventListener('touchstart', enableAudio);
+                    };
+                    document.addEventListener('click', enableAudio);
+                    document.addEventListener('touchstart', enableAudio);
+                });
                 
             } catch (error) {
                 console.error('Error cargando datos:', error);
