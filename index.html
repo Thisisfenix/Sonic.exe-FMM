@@ -721,7 +721,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> v1.6.0 Hotfix2
+                    <i class="bi bi-stars"></i> v1.6.0 Hotfix3
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -810,10 +810,14 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.0 Hotfix2</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.0 Hotfix3</h5>
                 <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
+                <p><strong>Novedades del Hotfix3:</strong></p>
+                <ul>
+                    <li>🔊 Arreglado sonido del botón de actualizaciones.</li>
+                </ul>
                 <p><strong>Novedades del Hotfix2:</strong></p>
                 <ul>
                     <li>🔥 Añadida noticia sobre Bodrio Collection ya disponible.</li>
@@ -1082,6 +1086,18 @@
             if (updateBtn) {
                 const handleUpdateClick = (e) => {
                     e.preventDefault();
+                    
+                    // Reproducir sonido de confirmación
+                    try {
+                        const sound = document.getElementById('selectSound');
+                        if (sound) {
+                            sound.currentTime = 0;
+                            sound.play().catch(() => {});
+                        }
+                    } catch (e) {
+                        console.log('Error al reproducir sonido:', e);
+                    }
+                    
                     showPanel(updatePanel);
                     sonicLogo.classList.remove('show');
                     sonicLogo.classList.add('hide');
@@ -1093,7 +1109,7 @@
                     if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 };
                 
-                updateBtn.addEventListener('mousedown', handleUpdateClick);
+                updateBtn.addEventListener('click', handleUpdateClick);
                 updateBtn.addEventListener('touchstart', handleUpdateClick, { passive: true });
             }
 
