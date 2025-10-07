@@ -3,74 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENCORE - Sonic.exe v3</title>
+    <title>Sonic.exe | Encore</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
-    <!-- Bootstrap 5 -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Fuentes estilo FNF -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    <!-- Iconos Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Hojas de estilo externas -->
-    <link rel="stylesheet" href="css/encore.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <!-- Fuente personalizada -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Encore Theme */
+        :root {
+            --encore-blue: #0066ff;
+            --encore-purple: #b300ff;
+            --encore-cyan: #00ffff;
+            --encore-magenta: #ff00ff;
+            --sonic-dark: #0a0a20;
+            --neon-glow: #00ffff;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: url('BG/BackGROUND.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            min-height: 100vh;
+            text-shadow: 0 0 5px var(--blood-red);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px;
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            width: 100%;
+            max-width: 980px; /* Contenedor mega máximo */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        /* Imagen del mod con altura controlada */
+        .mod-image-container {
+            width: 880px;
+            height: 495px;
+            margin: 0 auto;
+            position: relative;
+            border-top: 1px solid var(--encore-blue);
+            border-bottom: 1px solid var(--encore-blue);
+            box-shadow: 0 0 1px var(--encore-blue), 0 0 2px var(--encore-purple);
+            border-radius: 0px;
+            overflow: hidden;
+        }
+
+        .mod-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: linear-gradient(45deg, rgba(0, 102, 255, 0.1), rgba(179, 0, 255, 0.1));
+        }
+
+        /* Efecto glitch */
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('BG/StaticNoise.gif') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+
+        /* Panel de información unificado */
+        .info-panel {
+            width: 880px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--encore-blue);
+            box-shadow: 0 0 1px var(--encore-blue), 0 0 2px var(--encore-purple);
+            border-radius: 0px;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Navegación entre mods */
+        .mod-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(45deg, rgba(0, 102, 255, 0.2), rgba(179, 0, 255, 0.2));
+            border: 1px solid var(--encore-cyan);
+            padding: 2px 3px;
+            border-radius: 0px;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, var(--encore-blue), var(--encore-purple));
+            border: 1px solid var(--encore-cyan);
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, var(--encore-purple), var(--encore-magenta));
+            box-shadow: 0 0 2px var(--encore-cyan);
+        }
+
+        .mod-title {
+            background: linear-gradient(45deg, var(--encore-cyan), var(--encore-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            font-size: 0.3rem;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            filter: drop-shadow(0 0 1px var(--encore-cyan));
+        }
+
+        /* Botones de acción debajo del título */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            width: 100%;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, var(--encore-blue), var(--encore-purple));
+            border: 1px solid var(--encore-cyan);
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 2px 6px;
+            font-size: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0px;
+            cursor: pointer;
+            min-width: 45px;
+            flex-grow: 1;
+            box-shadow: 0 0 1px rgba(0, 255, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(45deg, var(--encore-purple), var(--encore-magenta));
+            box-shadow: 0 0 3px var(--encore-cyan), 0 0 6px var(--encore-purple);
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Contador de mods */
+        .mod-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, var(--encore-blue), var(--encore-purple));
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            border: 1px solid var(--encore-cyan);
+            box-shadow: 0 0 1px var(--encore-cyan);
+        }
+
+        /* Animación de entrada */
+        .mod-enter {
+            animation: modEnter 0.5s ease-out;
+        }
+
+        @keyframes modEnter {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-text {
+            background: linear-gradient(45deg, var(--encore-cyan), var(--encore-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite;
+            filter: drop-shadow(0 0 10px var(--encore-cyan));
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Efectos especiales */
+        .static-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/static-effect.gif');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Media queries para pantallas más grandes */
+        @media (min-width: 768px) {
+            .mod-image-container {
+                padding-bottom: 50%; /* Proporción más ancha en pantallas grandes */
+            }
+            
+            .main-container {
+                max-width: 1000px; /* Aún más ancho en pantallas grandes */
+            }
+            
+            .mod-title {
+                font-size: 1.2rem;
+            }
+            
+            .character-display {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .action-btn {
+                font-size: 1rem;
+                min-width: 150px;
+            }
+            
+            .game-content {
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: auto;
+            }
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 400px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Efecto de escaneo CRT (se activará via JS) -->
-    <div class="crt-overlay"></div>
+    <!-- Efecto de estática sutil -->
+    <div class="static-effect"></div>
 
-    <div class="container my-5">
-        <!-- Título con efecto glitch -->
-        <h1 class="encore-title text-center mb-4">ENCORE</h1>
-        
-        <!-- Contenedor principal de la canción -->
-        <div class="song-container mx-auto">
-            <!-- Imagen de la canción -->
-            <div class="song-artwork-frame">
-                <img src="images/Too_Slow_Artwork.png" alt="Song Artwork" class="song-artwork img-fluid" id="songImage">
-                <div class="scanlines"></div>
-            </div>
-            
-            <!-- Título de la canción -->
-            <h2 class="song-name text-center mt-3" id="songTitle">TOO SLOW</h2>
-            
-            <!-- Navegación -->
-            <div class="navigation-buttons d-flex justify-content-center my-4">
-                <button class="nav-button prev-button me-3" id="prevButton">
-                    <i class="bi bi-arrow-left-circle-fill"></i>
-                </button>
-                <button class="nav-button next-button" id="nextButton">
-                    <i class="bi bi-arrow-right-circle-fill"></i>
-                </button>
-            </div>
-            
-            <!-- Barra de progreso estilo FNF -->
-            <div class="progress-container mb-4">
-                <div class="progress-bar" id="songProgress"></div>
-            </div>
-            
-            <!-- Botones de acción -->
-            <div class="action-buttons d-flex justify-content-center gap-3">
-                <a href="#" class="download-button btn" id="downloadButton">
-                    <i class="bi bi-download me-2"></i>DESCARGAR
-                </a>
-                <a href="index.html" class="menu-button btn">
-                    <i class="bi bi-house-door me-2"></i>MENÚ
-                </a>
-            </div>
+    <div class="main-container">
+        <!-- Imagen del mod actual -->
+        <div class="mod-image-container">
+            <img id="modImage" class="mod-image" alt="Imagen del Mod">
+            <div class="glitch-overlay" id="glitchOverlay"></div>
         </div>
-        
-        <!-- Indicador de dificultad -->
-        <div class="difficulty-indicator text-center mt-4">
-            <span class="difficulty-badge">HARD</span>
+
+        <!-- Panel de información unificado -->
+        <div class="info-panel">
+            <!-- Navegación entre mods -->
+            <div class="mod-navigation">
+                <button id="prevButton" class="nav-btn">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                
+                <div style="display: flex; align-items: center; flex-grow: 1; justify-content: center; overflow: hidden;">
+                    <div id="modTitle" class="mod-title">TOO SLOW</div>
+                </div>
+                
+                <button id="nextButton" class="nav-btn">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Botones de acción debajo del título -->
+            <div class="action-buttons">
+                <button id="downloadButton" class="action-btn">
+                    <i class="bi bi-download me-2"></i> DESCARGAR
+                </button>
+                <a href="index.html" class="action-btn">
+                    <i class="bi bi-house-door me-2"></i> MENÚ
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Efecto de partículas (se activará via JS) -->
-    <canvas id="particlesCanvas" class="particles-background"></canvas>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="loading-text">DESCARGANDO...</p>
+    </div>
 
-    <!-- Scripts -->
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/encore.js"></script>
-    <script src="js/particles.js"></script>
+    <!-- Audio elements -->
+    <audio id="bgMusic" src="sounds/encoreMusic.ogg" loop></audio>
+    <audio id="scrollSound" src="sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="confirmSound" src="sounds/confirmMenu.ogg"></audio>
+
+    <!-- Bootstrap JS Bundle con Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Detectar móvil y Android
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        // Vibración táctil para Android
+        function lightVibration() {
+            if (isAndroid && navigator.vibrate) {
+                navigator.vibrate(15);
+            }
+        }
+
+        // Datos de los mods
+        const mods = [
+            {
+                id: 'too-slow-encore',
+                name: 'TOO SLOW ENCORE',
+                image: 'images/Too_Slow_Artwork.png',
+                characterGif: 'images/Boyfriend.gif',
+                downloadUrl: '#',
+                description: 'Versión extendida de Too Slow con nuevos elementos musicales.'
+            },
+            {
+                id: 'you-cant-run-encore',
+                name: "YOU CAN'T RUN ENCORE",
+                image: 'images/You-cant-runfp.png',
+                characterGif: 'images/Boyfriend.gif',
+                downloadUrl: '#',
+                description: 'Versión extendida de You Cant Run con efectos especiales.'
+            },
+            {
+                id: 'triple-trouble-encore',
+                name: 'TRIPLE TROUBLE ENCORE',
+                image: 'images/Triple-troublefp.png',
+                characterGif: 'images/Boyfriend.gif',
+                downloadUrl: '#',
+                description: 'La batalla final extendida contra los tres terrores.'
+            }
+        ];
+
+        // Variables de estado
+        let currentModIndex = 0;
+        let autoGlitchTimer;
+        const DOM = {
+            modImage: document.getElementById('modImage'),
+            downloadButton: document.getElementById('downloadButton'),
+            prevButton: document.getElementById('prevButton'),
+            nextButton: document.getElementById('nextButton'),
+            modTitle: document.getElementById('modTitle'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            glitchOverlay: document.getElementById('glitchOverlay')
+        };
+
+        // Función para mostrar efecto glitch
+        function showGlitchEffect() {
+            DOM.glitchOverlay.style.opacity = '0.7';
+            setTimeout(() => {
+                DOM.glitchOverlay.style.opacity = '0';
+            }, 300);
+        }
+
+        // Glitch aleatorio automático
+        function startAutoGlitch() {
+            if (autoGlitchTimer) clearInterval(autoGlitchTimer);
+            autoGlitchTimer = setInterval(() => {
+                if (Math.random() < 0.3) {
+                    showGlitchEffect();
+                }
+            }, 12000);
+        }
+
+        // Función para actualizar la interfaz
+        function updateDisplay() {
+            const currentMod = mods[currentModIndex];
+            
+            DOM.modImage.classList.add('mod-enter');
+            setTimeout(() => DOM.modImage.classList.remove('mod-enter'), 500);
+            
+            DOM.modImage.src = currentMod.image;
+            DOM.modImage.alt = currentMod.name;
+            DOM.modTitle.textContent = currentMod.name;
+            
+            updateCounter();
+            showGlitchEffect();
+            lightVibration();
+            
+            // Reproducir sonido de scroll
+            const scrollSound = document.getElementById('scrollSound');
+            if (scrollSound) {
+                scrollSound.currentTime = 0;
+                scrollSound.play().catch(() => {});
+            }
+        }
+
+        function updateCounter() {
+            let counter = document.querySelector('.mod-counter');
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.className = 'mod-counter';
+                document.querySelector('.mod-image-container').appendChild(counter);
+            }
+            counter.textContent = `${currentModIndex + 1}/${mods.length}`;
+        }
+
+        // Función para manejar el botón Descargar
+        function downloadMod() {
+            const currentMod = mods[currentModIndex];
+            
+            // Reproducir sonido de confirmación
+            const confirmSound = document.getElementById('confirmSound');
+            if (confirmSound) {
+                confirmSound.currentTime = 0;
+                confirmSound.play().catch(() => {});
+            }
+            
+            DOM.loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                if (currentMod.downloadUrl !== '#') {
+                    window.open(currentMod.downloadUrl, '_blank');
+                }
+                DOM.loadingOverlay.style.display = 'none';
+            }, 1000);
+        }
+
+        // Swipe gestures para móvil
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    currentModIndex = (currentModIndex + 1) % mods.length;
+                } else {
+                    currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+                }
+                updateDisplay();
+            }
+        }, { passive: true });
+
+        // Event Listeners
+        DOM.prevButton.addEventListener('click', () => {
+            currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+            updateDisplay();
+            enableAudio();
+        });
+
+        DOM.nextButton.addEventListener('click', () => {
+            currentModIndex = (currentModIndex + 1) % mods.length;
+            updateDisplay();
+            enableAudio();
+        });
+
+        DOM.downloadButton.addEventListener('click', () => {
+            enableAudio();
+            downloadMod();
+        });
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+                updateDisplay();
+            }
+            if (e.key === 'ArrowRight') {
+                currentModIndex = (currentModIndex + 1) % mods.length;
+                updateDisplay();
+            }
+            if (e.key === 'Enter') {
+                downloadMod();
+            }
+        });
+
+        // Inicialización de audio
+        function initAudio() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.volume = 0.6;
+                bgMusic.play().catch(() => {});
+            }
+        }
+
+        // Inicialización
+        updateDisplay();
+        startAutoGlitch();
+        
+        // Iniciar audio después de cualquier interacción del usuario
+        const enableAudio = () => {
+            initAudio();
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+        };
+        
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        
+        if (isMobile) {
+            DOM.modImage.loading = 'lazy';
+        }
+    </script>
 </body>
 </html>

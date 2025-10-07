@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SONIC.EXE MEDIA PLAYER</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <style>
         :root {
             --blood-red: #ff0000;
-            --glow: 0 0 10px #ff0000, 0 0 20px #ff0000;
-            --text-glow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+            --dark-red: #cc0000;
+            --crimson: #dc143c;
+            --black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
+            --glow-red: 0 0 20px rgba(255, 0, 0, 0.5);
+            --glow-soft: 0 0 15px rgba(255, 0, 0, 0.3);
+            --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.8);
             --app-height: 100vh;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -20,65 +29,103 @@
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
-        
+
         body {
-            background-image: url('BG/backgroundlool.png');
-            background-size: cover;
-            background-color: rgba(0, 0, 0, 0.5);
-            background-blend-mode: overlay;
-            font-family: 'Courier New', monospace;
-            color: white;
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 50%, var(--black) 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
             height: var(--app-height);
             overflow: hidden;
-            text-shadow: var(--text-glow);
+            margin: 0;
+            padding: 0;
         }
-        
+
         .player-container {
             display: flex;
             flex-direction: column;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border: none;
+            box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.1);
+            overflow: hidden;
             position: relative;
-            border: 3px solid var(--blood-red);
-            box-shadow: var(--glow);
         }
-        
+
+        .player-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 0, 0.05) 50%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .player-header {
-            background: linear-gradient(to right, #000, #300000);
-            padding: 10px;
+            background: rgba(51, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--blood-red);
+            border-bottom: 2px solid rgba(255, 0, 0, 0.6);
+            position: relative;
+            z-index: 2;
         }
-        
+
         .player-title {
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: var(--blood-red);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            position: relative;
         }
-        
+
+        .player-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--blood-red), transparent);
+            border-radius: 1px;
+        }
+
         .player-controls {
             display: flex;
+            gap: 6px;
         }
-        
+
         .player-btn {
-            width: 25px;
-            height: 25px;
-            background: #300000;
-            border: 1px solid var(--blood-red);
-            color: white;
-            font-weight: bold;
+            width: 32px;
+            height: 32px;
+            background: rgba(51, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            border-radius: 8px;
+            color: #ffffff;
             cursor: pointer;
-            margin-left: 5px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: var(--glow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 14px;
         }
-        
+
+        .player-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: var(--blood-red);
+            box-shadow: var(--glow-soft);
+            transform: translateY(-2px);
+        }
+
         .video-container {
             flex: 1;
             width: 100%;
@@ -89,7 +136,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .media-wrapper {
             position: relative;
             width: 100%;
@@ -107,7 +154,7 @@
             object-fit: contain;
             background-color: transparent;
         }
-        
+
         .playlist-overlay {
             position: absolute;
             top: 0;
@@ -122,11 +169,11 @@
             overflow-y: auto;
             padding-top: 50px;
         }
-        
+
         .playlist-overlay.show {
             right: 0;
         }
-        
+
         .playlist-header {
             position: fixed;
             top: 0;
@@ -142,13 +189,13 @@
             color: var(--blood-red);
             font-weight: bold;
         }
-        
+
         .playlist-close {
             cursor: pointer;
             font-size: 18px;
             padding: 5px;
         }
-        
+
         .playlist-item {
             padding: 12px;
             border-bottom: 1px solid #300000;
@@ -158,194 +205,493 @@
             transition: all 0.3s;
             font-size: 14px;
         }
-        
+
         .playlist-item:hover {
             background-color: #300000;
             color: var(--blood-red);
         }
-        
+
         .playlist-item.active {
             background-color: #300000;
             color: var(--blood-red);
             font-weight: bold;
             border-left: 3px solid var(--blood-red);
         }
-        
-        .playlist-item img {
+
+        .playlist-item img,
+        .playlist-item video {
             width: 50px;
             height: 30px;
             margin-right: 10px;
             object-fit: cover;
             border: 1px solid var(--blood-red);
+            border-radius: 4px;
+            filter: drop-shadow(0 0 3px var(--blood-red));
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(51, 0, 0, 0.9), rgba(26, 0, 0, 0.9));
         }
-        
+
+        .playlist-item .lazy-placeholder {
+            width: 50px;
+            height: 30px;
+            margin-right: 10px;
+            background: linear-gradient(135deg, rgba(51, 0, 0, 0.9), rgba(26, 0, 0, 0.9));
+            border: 1px solid var(--blood-red);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blood-red);
+            font-size: 10px;
+            opacity: 0.8;
+            box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+
+        .playlist-item:hover img,
+        .playlist-item:hover video {
+            filter: drop-shadow(0 0 8px var(--blood-red)) brightness(1.2);
+            transform: scale(1.05);
+        }
+
         .controls-container {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), #200000);
-            padding: 12px;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            background: rgba(51, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
-            border-top: 2px solid var(--blood-red);
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
+            border-top: 2px solid rgba(255, 0, 0, 0.6);
+            position: relative;
+            z-index: 2;
         }
-        
+
         .progress-container {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            gap: 12px;
         }
-        
+
         .time-display {
-            font-size: 12px;
-            min-width: 50px;
+            font-size: 13px;
+            min-width: 45px;
             text-align: center;
-            color: var(--blood-red);
-            font-family: 'Courier New', monospace;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-family: 'Segoe UI', sans-serif;
         }
-        
+
         .progress-bar {
             flex-grow: 1;
-            height: 8px;
-            background-color: #300000;
-            margin: 0 8px;
+            height: 6px;
+            background: rgba(51, 0, 0, 0.8);
+            border-radius: 3px;
             cursor: pointer;
             position: relative;
-            border: 1px solid var(--blood-red);
+            overflow: hidden;
+            transition: height 0.2s ease;
+            border: 1px solid rgba(255, 0, 0, 0.2);
         }
-        
+
+        .progress-bar:hover {
+            height: 8px;
+        }
+
         .progress-filled {
             position: absolute;
             top: 0;
             left: 0;
             height: 100%;
             width: 0%;
-            background: var(--blood-red);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            transition: all 0.2s ease;
         }
-        
+
         .main-controls {
+            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-top: 5px;
         }
-        
+
         .center-controls {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
+            gap: 2px;
         }
-        
+
         .control-btn {
-            background: #300000;
-            border: 1px solid var(--blood-red);
-            color: white;
-            font-size: 18px;
-            width: 42px;
-            height: 42px;
-            min-width: 42px;
-            min-height: 42px;
+            background: rgba(51, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: #ffffff;
+            font-size: 14px;
+            width: 38px;
+            height: 38px;
             cursor: pointer;
-            margin: 0 6px;
+            margin: 0 3px;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .play-btn {
-            font-size: 22px;
-            width: 50px;
-            height: 50px;
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+            transition: left 0.5s ease;
         }
-        
-        .volume-container {
+
+        .control-btn:hover {
+            background: rgba(255, 0, 0, 0.15);
+            border-color: var(--blood-red);
+            box-shadow: var(--glow-soft);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .control-btn.active {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: var(--blood-red);
+            box-shadow: var(--glow-red);
+            color: #ffffff;
+        }
+
+        .right-controls {
             display: flex;
+            gap: 2px;
             align-items: center;
         }
-        
+
+        .play-btn {
+            font-size: 18px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 0, 0, 0.1) !important;
+            border: 2px solid rgba(255, 0, 0, 0.5) !important;
+            border-radius: 50% !important;
+            box-shadow: var(--glow-red), inset 0 0 20px rgba(255, 0, 0, 0.1);
+        }
+
+        .play-btn:hover {
+            background: rgba(255, 0, 0, 0.2) !important;
+            border-color: var(--blood-red) !important;
+            transform: scale(1.05) !important;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .volume-slider {
-            width: 70px;
-            height: 6px;
-            background-color: #300000;
+            width: 120px;
+            height: 8px;
+            background: rgba(51, 0, 0, 0.8);
+            border-radius: 4px;
             cursor: pointer;
             position: relative;
-            border: 1px solid var(--blood-red);
-            margin-left: 8px;
+            overflow: hidden;
+            transition: height 0.2s ease;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 8px 0;
+            margin: -8px 0;
         }
-        
+
+        .volume-slider:hover {
+            height: 10px;
+        }
+
         .volume-filled {
             position: absolute;
             top: 0;
             left: 0;
             height: 100%;
             width: 100%;
-            background: var(--blood-red);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
         }
 
-        /* Efectos de glitch */
+        /* Efectos de glitch modernos */
         @keyframes glitch {
-            0% { filter: hue-rotate(0deg); }
-            25% { filter: hue-rotate(90deg); }
-            50% { filter: hue-rotate(180deg); }
-            75% { filter: hue-rotate(270deg); }
-            100% { filter: hue-rotate(360deg); }
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                transform: translateX(0);
+            }
+
+            10% {
+                text-shadow: -2px 0 rgba(255, 0, 0, 0.8), 2px 0 rgba(0, 255, 255, 0.8);
+                transform: translateX(-1px);
+            }
+
+            20% {
+                text-shadow: 2px 0 rgba(255, 0, 0, 0.8), -2px 0 rgba(0, 255, 255, 0.8);
+                transform: translateX(1px);
+            }
+
+            30% {
+                text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                transform: translateX(0);
+            }
         }
-        
+
         .glitch-effect {
-            animation: glitch 0.5s linear infinite;
+            animation: glitch 2s ease-in-out infinite;
         }
+
+        /* Cursor personalizado */
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="%23ff0000" opacity="0.8"/><circle cx="10" cy="10" r="3" fill="%23000"/></svg>'), auto;
+        }
+
+        /* Protección de imágenes */
+        img,
+        video {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            pointer-events: none;
+        }
+
+        .playlist-item img,
+        .playlist-item video {
+            pointer-events: auto;
+        }
+
+        #mediaElement {
+            pointer-events: auto;
+        }
+
+        /* Visualizador de audio */
+        .audio-visualizer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            gap: 2px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .audio-bar {
+            width: 4px;
+            background: var(--blood-red);
+            min-height: 2px;
+            transition: height 0.1s;
+            box-shadow: 0 0 5px var(--blood-red);
+        }
+
+        /* Modo teatro */
+        .theater-mode {
+            background: rgba(0, 0, 0, 0.95) !important;
+        }
+
+        .theater-mode .player-header,
+        .theater-mode .controls-container {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .theater-mode:hover .player-header,
+        .theater-mode:hover .controls-container {
+            opacity: 1;
+        }
+
+        /* Fullscreen */
+        .player-container:-webkit-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        .player-container:-moz-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        .player-container:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        /* Transiciones */
+        .fade-transition {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-transition.active {
+            opacity: 1;
+        }
+
+        /* Modo corrupto */
+        @keyframes corrupt {
+            0% {
+                transform: translateX(0);
+            }
+
+            10% {
+                transform: translateX(-2px) skew(1deg);
+            }
+
+            20% {
+                transform: translateX(2px) skew(-1deg);
+            }
+
+            30% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .corrupt-mode {
+            animation: corrupt 0.3s ease-in-out;
+        }
+
+
+
+        /* Solo favoritos */
+        .favorites-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 10px;
+            width: 280px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--blood-red);
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 25;
+        }
+
+        .favorites-panel.show {
+            display: block;
+        }
+
+        .favorites-header {
+            padding: 8px;
+            background: var(--blood-red);
+            color: #000;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .favorite-item {
+            padding: 6px 8px;
+            border-bottom: 1px solid #300000;
+            cursor: pointer;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .favorite-item:hover {
+            background: #300000;
+            color: var(--blood-red);
+        }
+
+
 
         @media (max-width: 480px) {
             .player-container {
-                height: calc(var(--app-height) - 60px);
-                margin-bottom: 60px;
+                height: var(--app-height);
             }
 
             .player-title {
                 font-size: 14px;
             }
-            
+
             .player-btn {
                 width: 22px;
                 height: 22px;
                 font-size: 12px;
             }
-            
+
             .playlist-overlay {
                 max-width: 85%;
                 padding-top: 60px;
             }
-            
+
             .playlist-item {
                 padding: 10px;
                 font-size: 12px;
             }
-            
+
             .playlist-item img {
                 width: 40px;
                 height: 25px;
             }
-            
+
             .control-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 16px;
-                margin: 0 5px;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                margin: 0 2px;
+                padding: 4px;
             }
-            
+
+            .left-controls,
+            .right-controls {
+                gap: 2px;
+            }
+
+            .center-controls .control-btn {
+                width: 36px;
+                height: 36px;
+            }
+
             .play-btn {
                 width: 46px;
                 height: 46px;
                 font-size: 20px;
             }
-            
+
             .volume-slider {
                 width: 60px;
             }
 
             .progress-bar {
                 height: 10px;
+            }
+
+            .favorites-panel {
+                width: 90%;
+                right: 5%;
+                max-height: 120px;
             }
         }
 
@@ -355,23 +701,41 @@
                 padding-left: env(safe-area-inset-left);
                 padding-right: env(safe-area-inset-right);
             }
+
+            .play-btn {
+                width: 46px;
+                height: 46px;
+                font-size: 20px;
+            }
+
+            .volume-slider {
+                width: 60px;
+            }
+
+            .progress-bar {
+                height: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="player-container">
         <div class="player-header">
             <div class="player-title glitch-effect">SONIC.EXE MEDIA PLAYER</div>
             <div class="player-controls">
+                <button class="player-btn" id="theaterBtn" title="Modo Teatro">🎭</button>
+                <button class="player-btn" id="fullscreenBtn" title="Pantalla Completa">⛶</button>
                 <button class="player-btn" id="closeBtn">✕</button>
             </div>
         </div>
-        
+
         <div class="video-container">
             <div class="media-wrapper">
                 <video id="mediaElement" preload="auto" playsinline webkit-playsinline></video>
+                <div class="audio-visualizer" id="audioVisualizer"></div>
             </div>
-            
+
             <div class="playlist-overlay" id="playlistOverlay">
                 <div class="playlist-header">
                     <div>CREEPYPASTA VIDEOS</div>
@@ -379,8 +743,14 @@
                 </div>
                 <div id="playlistItemsContainer"></div>
             </div>
+
+            <!-- Solo Favoritos -->
+            <div class="favorites-panel" id="favoritesPanel">
+                <div class="favorites-header">FAVORITOS</div>
+                <div id="favoritesContent"></div>
+            </div>
         </div>
-        
+
         <div class="controls-container">
             <div class="progress-container">
                 <div class="time-display" id="currentTime">0:00</div>
@@ -389,18 +759,20 @@
                 </div>
                 <div class="time-display" id="durationTime">0:00</div>
             </div>
-            
+
             <div class="main-controls">
-                <div class="volume-container">
+                <div class="left-controls">
                     <button class="control-btn" id="volumeBtn">
                         <i class="fas fa-volume-up"></i>
                     </button>
                     <div class="volume-slider" id="volumeSlider">
                         <div class="volume-filled" id="volumeFilled"></div>
                     </div>
+                    <button class="control-btn" id="speedBtn" title="Velocidad">1x</button>
                 </div>
-                
+
                 <div class="center-controls">
+                    <button class="control-btn" id="seek-10" title="-10s">⏪</button>
                     <button class="control-btn" id="prevBtn">
                         <i class="fas fa-step-backward"></i>
                     </button>
@@ -410,19 +782,28 @@
                     <button class="control-btn" id="nextBtn">
                         <i class="fas fa-step-forward"></i>
                     </button>
+                    <button class="control-btn" id="seek+10" title="+10s">⏩</button>
                 </div>
-                
-                <button class="control-btn" id="playlistBtn">
-                    <i class="fas fa-list"></i>
-                </button>
+
+                <div class="right-controls">
+                    <button class="control-btn" id="loopBtn" title="Bucle">🔁</button>
+                    <button class="control-btn" id="shuffleBtn" title="Aleatorio">🔀</button>
+                    <button class="control-btn" id="favoriteBtn" title="Favorito">♥</button>
+                    <button class="control-btn" id="favoritesListBtn" title="Ver Favoritos">📜</button>
+                    <button class="control-btn" id="playlistBtn">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Ajustar altura para móviles
             const setAppHeight = () => {
                 document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
@@ -465,9 +846,31 @@
                 { src: 'media/32.mp4', title: 'top 5 me vale verga', type: 'video' },
                 { src: 'media/33.mp4', title: 'Pinche tallota alv', type: 'video' },
                 { src: 'media/34.mp4', title: 'que leyenda miedo we', type: 'video' },
+                { src: 'media/35.mp4', title: 'Video 35', type: 'video' },
                 { src: 'media/36.mp4', title: 'ridinginmycar', type: 'video' },
                 { src: 'media/37.mp4', title: 'pelea durisima', type: 'video' },
                 { src: 'media/38.png', title: 'when', type: 'image' },
+                { src: 'media/39.png', title: 'La historia del polnito aykriko', type: 'image' },
+                { src: 'media/40.mp4', title: 'Ay wey que miedo D:', type: 'video' },
+                { src: 'media/41.mp4', title: 'DeidadX lanzando temazos', type: 'video' },
+                { src: 'media/42.mp4', title: 'Ya pero cuanto cuestan', type: 'video' },
+                { src: 'media/43.mp4', title: 'Gissel haciendo legendary', type: 'video' },
+                { src: 'media/44.png', title: 'When eres samy', type: 'image' },
+                { src: 'media/45.png', title: 'la addicion del tiktok es peor que de la paja jajalol', type: 'image' },
+                { src: 'media/46.png', title: 'bien duro mi webo', type: 'image' },
+                { src: 'media/47.png', title: 'sonrisas bien durisimas', type: 'image' },
+                { src: 'media/48.png', title: 'los humores de los animes actuales es tocar teterras', type: 'image' },
+                { src: 'media/49.png', title: 'no duro nada', type: 'image' },
+                { src: 'media/50.png', title: 'Humor del cabronn', type: 'image' },
+                { src: 'media/51.png', title: 'Freaky x calling you', type: 'image' },
+                { src: 'media/52.png', title: 'Sale eclipsito', type: 'image' },
+                { src: 'media/53.png', title: '############', type: 'image' },
+                { src: 'media/54.png', title: 'Tremenda obra', type: 'image' },
+                { src: 'media/55.png', title: 'Here i come', type: 'image' },
+                { src: 'media/56.png', title: 'SEMEN', type: 'image' },
+                { src: 'media/57.jpeg', title: 'aura farming', type: 'image' },
+                { src: 'media/58.mp4', title: 'Se preparo', type: 'video' },
+                { src: 'media/59.png', title: 'Weege', type: 'image' },
                 { src: 'media/Screenshot_20250724_172547_Discord.png', title: 'ki ki ki ma ma ma (comentario de justaguy)', type: 'image' },
                 { src: 'media/Screenshot_20250724_172600_Discord.jpg', title: 'auch (comentario de abel)', type: 'image' },
                 { src: 'media/Screenshot_20250724_172610_Discord.jpg', title: 'cuidado wey (comentario de cacaran digo takeran)', type: 'image' },
@@ -494,18 +897,42 @@
             const playlistClose = document.getElementById('playlistClose');
             const playlistItemsContainer = document.getElementById('playlistItemsContainer');
             const closeBtn = document.getElementById('closeBtn');
-            
+
             // Variables de estado
             let currentMediaIndex = 0;
             let isPlaying = false;
             let isDragging = false;
             let isVolumeDragging = false;
             let wasPlaying = false;
+            let playbackSpeed = 1;
+            let isLooping = false;
+            let isShuffling = false;
+            let isTheaterMode = false;
+            let corruptMode = false;
+            let audioContext, analyser, dataArray;
+            let favorites = JSON.parse(localStorage.getItem('sonicExeFavorites') || '[]');
+            let history = JSON.parse(localStorage.getItem('sonicExeHistory') || '[]');
 
-            // Inicializar playlist
+            // Elementos DOM adicionales
+            const theaterBtn = document.getElementById('theaterBtn');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const speedBtn = document.getElementById('speedBtn');
+            const loopBtn = document.getElementById('loopBtn');
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            const audioVisualizer = document.getElementById('audioVisualizer');
+            const favoritesListBtn = document.getElementById('favoritesListBtn');
+            const favoritesPanel = document.getElementById('favoritesPanel');
+            const favoritesContent = document.getElementById('favoritesContent');
+            const seekBtns = {
+                '-10': document.getElementById('seek-10'),
+                '+10': document.getElementById('seek+10')
+            };
+
+            // Inicializar playlist con lazy loading
             function initializePlaylist() {
                 playlistItemsContainer.innerHTML = '';
-                
+
                 mediaItems.forEach((item, index) => {
                     const playlistItem = document.createElement('div');
                     playlistItem.className = 'playlist-item';
@@ -513,26 +940,268 @@
                         playlistItem.classList.add('active');
                     }
                     playlistItem.dataset.index = index;
-                    
-                    playlistItem.innerHTML = `
-                        <img src="${item.type === 'video' ? getVideoThumbnail(item.src) : item.src}" 
-                             alt="${item.title}" 
-                             onerror="this.src='https://i.imgur.com/XH6y9Wq.png'">
-                        <span>${item.title}</span>
-                    `;
-                    
+
+                    if (item.type === 'video') {
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'lazy-placeholder';
+                        placeholder.innerHTML = '📹';
+                        placeholder.dataset.src = item.src;
+                        placeholder.dataset.type = 'video';
+
+                        playlistItem.appendChild(placeholder);
+                        playlistItem.innerHTML += `<span>${item.title}</span>`;
+                    } else {
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'lazy-placeholder';
+                        placeholder.innerHTML = '🖼️';
+                        placeholder.dataset.src = item.src;
+                        placeholder.dataset.type = 'image';
+
+                        playlistItem.appendChild(placeholder);
+                        playlistItem.innerHTML += `<span>${item.title}</span>`;
+                    }
+
                     playlistItem.addEventListener('click', () => {
                         loadMedia(index);
                         playlistOverlay.classList.remove('show');
                     });
-                    
+
                     playlistItemsContainer.appendChild(playlistItem);
+                });
+
+                // Configurar lazy loading
+                setupLazyLoading();
+            }
+
+            // Configurar lazy loading para thumbnails
+            function setupLazyLoading() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const placeholder = entry.target;
+                            loadThumbnail(placeholder);
+                            observer.unobserve(placeholder);
+                        }
+                    });
+                }, {
+                    root: playlistOverlay,
+                    rootMargin: '100px'
+                });
+
+                document.querySelectorAll('.lazy-placeholder').forEach(placeholder => {
+                    observer.observe(placeholder);
                 });
             }
 
-            // Obtener miniatura para videos
-            function getVideoThumbnail(videoSrc) {
-                return videoSrc.replace('.mp4', '.jpg') || 'https://i.imgur.com/XH6y9Wq.png';
+            // Precargar thumbnails cercanos al elemento actual
+            function preloadNearbyThumbnails() {
+                const range = 3; // Cargar 3 elementos antes y después del actual
+                const start = Math.max(0, currentMediaIndex - range);
+                const end = Math.min(mediaItems.length - 1, currentMediaIndex + range);
+
+                for (let i = start; i <= end; i++) {
+                    const playlistItem = playlistItemsContainer.children[i];
+                    if (playlistItem) {
+                        const placeholder = playlistItem.querySelector('.lazy-placeholder');
+                        if (placeholder) {
+                            loadThumbnail(placeholder);
+                        }
+                    }
+                }
+            }
+
+            // Cargar thumbnail individual
+            function loadThumbnail(placeholder) {
+                const src = placeholder.dataset.src;
+                const type = placeholder.dataset.type;
+
+                if (type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = src;
+                    video.muted = true;
+                    video.style.width = '50px';
+                    video.style.height = '30px';
+                    video.style.objectFit = 'cover';
+                    video.style.border = '1px solid var(--blood-red)';
+                    video.style.borderRadius = '4px';
+                    video.style.filter = 'drop-shadow(0 0 3px var(--blood-red))';
+                    video.style.transition = 'all 0.3s ease';
+                    video.currentTime = 0.5;
+
+                    video.addEventListener('loadeddata', () => {
+                        placeholder.replaceWith(video);
+                    });
+
+                    video.addEventListener('error', () => {
+                        placeholder.innerHTML = '❌';
+                        placeholder.style.color = '#ff6b6b';
+                    });
+                } else {
+                    const img = document.createElement('img');
+                    img.style.width = '50px';
+                    img.style.height = '30px';
+                    img.style.objectFit = 'cover';
+                    img.style.border = '1px solid var(--blood-red)';
+                    img.style.borderRadius = '4px';
+                    img.style.filter = 'drop-shadow(0 0 3px var(--blood-red))';
+                    img.style.transition = 'all 0.3s ease';
+                    img.className = 'playlist-thumb';
+
+                    img.onload = () => {
+                        placeholder.replaceWith(img);
+                    };
+
+                    img.onerror = () => {
+                        placeholder.innerHTML = '❌';
+                        placeholder.style.color = '#ff6b6b';
+                    };
+
+                    img.src = src;
+                    img.alt = placeholder.parentElement.querySelector('span').textContent;
+                }
+            }
+
+            // Inicializar visualizador de audio
+            function initAudioVisualizer() {
+                for (let i = 0; i < 32; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'audio-bar';
+                    audioVisualizer.appendChild(bar);
+                }
+            }
+
+            // Actualizar visualizador
+            function updateVisualizer() {
+                if (!analyser || !dataArray || audioVisualizer.style.display === 'none') return;
+                try {
+                    analyser.getByteFrequencyData(dataArray);
+                    const bars = audioVisualizer.querySelectorAll('.audio-bar');
+                    bars.forEach((bar, i) => {
+                        const height = (dataArray[i] / 255) * 50;
+                        bar.style.height = Math.max(2, height) + 'px';
+                    });
+                } catch (error) {
+                    // Silenciar errores del visualizador
+                }
+            }
+
+            // Configurar audio context
+            function setupAudioContext() {
+                // Deshabilitar para archivos locales (file://)
+                if (window.location.protocol === 'file:') {
+                    audioVisualizer.style.display = 'none';
+                    return;
+                }
+
+                if (!audioContext && mediaElement.src) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const source = audioContext.createMediaElementSource(mediaElement);
+                        analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 64;
+                        dataArray = new Uint8Array(analyser.frequencyBinCount);
+                        source.connect(analyser);
+                        analyser.connect(audioContext.destination);
+                    } catch (error) {
+                        audioVisualizer.style.display = 'none';
+                    }
+                }
+            }
+
+            // Modo teatro
+            function toggleTheaterMode() {
+                isTheaterMode = !isTheaterMode;
+                document.querySelector('.player-container').classList.toggle('theater-mode', isTheaterMode);
+                theaterBtn.classList.toggle('active', isTheaterMode);
+            }
+
+            // Pantalla completa
+            function toggleFullscreen() {
+                const container = document.querySelector('.player-container');
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().catch(err => console.log(err));
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            // Velocidad de reproducción
+            function cycleSpeed() {
+                const speeds = [0.5, 1, 1.25, 1.5, 2];
+                const currentIndex = speeds.indexOf(playbackSpeed);
+                playbackSpeed = speeds[(currentIndex + 1) % speeds.length];
+                mediaElement.playbackRate = playbackSpeed;
+                speedBtn.textContent = playbackSpeed + 'x';
+            }
+
+            // Bucle
+            function toggleLoop() {
+                isLooping = !isLooping;
+                mediaElement.loop = isLooping;
+                loopBtn.classList.toggle('active', isLooping);
+            }
+
+            // Aleatorio
+            function toggleShuffle() {
+                isShuffling = !isShuffling;
+                shuffleBtn.classList.toggle('active', isShuffling);
+            }
+
+            // Favoritos
+            function toggleFavorite() {
+                const currentMedia = mediaItems[currentMediaIndex];
+                const index = favorites.findIndex(f => f.src === currentMedia.src);
+                if (index === -1) {
+                    favorites.push(currentMedia);
+                    favoriteBtn.classList.add('active');
+                } else {
+                    favorites.splice(index, 1);
+                    favoriteBtn.classList.remove('active');
+                }
+                localStorage.setItem('sonicExeFavorites', JSON.stringify(favorites));
+            }
+
+
+
+            // Buscar en el tiempo
+            function seekTime(seconds) {
+                if (mediaItems[currentMediaIndex].type === 'video') {
+                    mediaElement.currentTime = Math.max(0, Math.min(mediaElement.duration, mediaElement.currentTime + seconds));
+                }
+            }
+
+            // Agregar al historial
+            function addToHistory(media) {
+                const existing = history.findIndex(h => h.src === media.src);
+                if (existing !== -1) history.splice(existing, 1);
+                history.unshift({ ...media, timestamp: Date.now() });
+                history = history.slice(0, 20);
+                localStorage.setItem('sonicExeHistory', JSON.stringify(history));
+            }
+
+            // Modo corrupto
+            function triggerCorruptMode() {
+                if (!corruptMode) return;
+                const elements = document.querySelectorAll('.player-title, .control-btn, .playlist-item');
+                const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                randomElement.classList.add('corrupt-mode');
+                setTimeout(() => randomElement.classList.remove('corrupt-mode'), 300);
+            }
+
+            // Solo favoritos
+            function updateFavoritesContent() {
+                favoritesContent.innerHTML = '';
+                favorites.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'favorite-item';
+                    div.innerHTML = `<span>${item.title}</span>`;
+                    div.onclick = () => {
+                        const index = mediaItems.findIndex(m => m.src === item.src);
+                        if (index !== -1) loadMedia(index);
+                        favoritesPanel.classList.remove('show');
+                    };
+                    favoritesContent.appendChild(div);
+                });
             }
 
             // Cargar medio
@@ -540,29 +1209,53 @@
                 if (index >= 0 && index < mediaItems.length) {
                     currentMediaIndex = index;
                     const media = mediaItems[index];
-                    
+
                     mediaElement.pause();
                     mediaElement.src = '';
                     mediaElement.load();
                     mediaElement.removeAttribute('poster');
-                    
+
+                    // Efecto de carga
+                    mediaElement.style.filter = 'blur(2px) brightness(0.5)';
+
                     if (media.type === 'video') {
                         mediaElement.src = media.src;
                         mediaElement.style.display = 'block';
                         mediaElement.controls = false;
-                        
+                        mediaElement.preload = 'metadata';
+
+                        mediaElement.addEventListener('loadeddata', () => {
+                            mediaElement.style.filter = 'none';
+                        }, { once: true });
+
                         mediaElement.load();
-                        setTimeout(() => {
-                            mediaElement.currentTime = 0.1;
-                        }, 100);
                     } else {
-                        mediaElement.poster = media.src;
+                        const tempImg = new Image();
+                        tempImg.onload = () => {
+                            mediaElement.poster = media.src;
+                            mediaElement.style.filter = 'none';
+                        };
+                        tempImg.onerror = () => {
+                            mediaElement.poster = 'media/default-thumb.jpg';
+                            mediaElement.style.filter = 'none';
+                        };
+                        tempImg.src = media.src;
                         mediaElement.style.display = 'block';
                     }
-                    
+
                     isPlaying = false;
                     updatePlayButton();
                     updatePlaylistActiveItem(index);
+                    addToHistory(media);
+
+                    // Actualizar favorito
+                    const isFavorite = favorites.some(f => f.src === media.src);
+                    favoriteBtn.classList.toggle('active', isFavorite);
+
+                    // Configurar audio context para visualizador
+                    if (media.type === 'video') {
+                        setTimeout(setupAudioContext, 100);
+                    }
                 }
             }
 
@@ -571,12 +1264,17 @@
                 document.querySelectorAll('.playlist-item').forEach((item, i) => {
                     item.classList.toggle('active', i === index);
                 });
+
+                // Precargar thumbnails cercanos cuando cambia el elemento activo
+                if (playlistOverlay.classList.contains('show')) {
+                    setTimeout(preloadNearbyThumbnails, 100);
+                }
             }
 
             // Reproducir medio
             function playMedia() {
                 const media = mediaItems[currentMediaIndex];
-                
+
                 if (media.type === 'video') {
                     mediaElement.play()
                         .then(() => {
@@ -613,7 +1311,15 @@
 
             // Siguiente medio
             function playNext() {
-                loadMedia((currentMediaIndex + 1) % mediaItems.length);
+                let nextIndex;
+                if (isShuffling) {
+                    do {
+                        nextIndex = Math.floor(Math.random() * mediaItems.length);
+                    } while (nextIndex === currentMediaIndex && mediaItems.length > 1);
+                } else {
+                    nextIndex = (currentMediaIndex + 1) % mediaItems.length;
+                }
+                loadMedia(nextIndex);
             }
 
             // Medio anterior
@@ -631,12 +1337,13 @@
             // Actualizar barra de progreso
             function updateProgress() {
                 const media = mediaItems[currentMediaIndex];
-                
+
                 if (media.type === 'video' && mediaElement.readyState > 0) {
                     const percent = (mediaElement.currentTime / mediaElement.duration) * 100;
                     progressFilled.style.width = `${percent}%`;
                     currentTimeDisplay.textContent = formatTime(mediaElement.currentTime);
                     durationTimeDisplay.textContent = formatTime(mediaElement.duration);
+                    updateVisualizer();
                 } else {
                     progressFilled.style.width = '0%';
                     currentTimeDisplay.textContent = '0:00';
@@ -648,7 +1355,7 @@
             function updateVolume() {
                 const percent = mediaElement.volume * 100;
                 volumeFilled.style.width = `${percent}%`;
-                
+
                 if (mediaElement.volume === 0) {
                     volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
                 } else if (mediaElement.volume < 0.5) {
@@ -661,7 +1368,7 @@
             // Actualizar botón de play/pause
             function updatePlayButton() {
                 const media = mediaItems[currentMediaIndex];
-                
+
                 if (media.type === 'video') {
                     playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
                     playBtn.style.opacity = '1';
@@ -677,7 +1384,7 @@
                 progressBar.addEventListener('touchstart', handleProgressStart);
                 progressBar.addEventListener('touchmove', handleProgressMove);
                 progressBar.addEventListener('touchend', handleProgressEnd);
-                
+
                 // Control de volumen
                 volumeSlider.addEventListener('touchstart', handleVolumeStart);
                 volumeSlider.addEventListener('touchmove', handleVolumeMove);
@@ -686,7 +1393,7 @@
 
             function handleProgressStart(e) {
                 if (mediaItems[currentMediaIndex].type !== 'video') return;
-                
+
                 e.preventDefault();
                 isDragging = true;
                 wasPlaying = isPlaying;
@@ -712,7 +1419,7 @@
                 const rect = progressBar.getBoundingClientRect();
                 let percent = (touch.clientX - rect.left) / rect.width;
                 percent = Math.max(0, Math.min(1, percent));
-                
+
                 mediaElement.currentTime = percent * mediaElement.duration;
                 updateProgress();
             }
@@ -738,7 +1445,7 @@
                 const rect = volumeSlider.getBoundingClientRect();
                 let percent = (touch.clientX - rect.left) / rect.width;
                 percent = Math.max(0, Math.min(1, percent));
-                
+
                 mediaElement.volume = percent;
                 updateVolume();
             }
@@ -747,7 +1454,7 @@
             playBtn.addEventListener('click', togglePlayPause);
             prevBtn.addEventListener('click', playPrev);
             nextBtn.addEventListener('click', playNext);
-            
+
             mediaElement.addEventListener('timeupdate', updateProgress);
             mediaElement.addEventListener('loadedmetadata', updateProgress);
             mediaElement.addEventListener('ended', () => {
@@ -762,87 +1469,194 @@
                 isPlaying = false;
                 updatePlayButton();
             });
-            
+
             progressBar.addEventListener('click', (e) => {
                 if (mediaItems[currentMediaIndex].type !== 'video') return;
-                
+
                 const percent = e.offsetX / progressBar.offsetWidth;
                 mediaElement.currentTime = percent * mediaElement.duration;
             });
-            
+
             progressBar.addEventListener('mousedown', () => {
                 if (mediaItems[currentMediaIndex].type !== 'video') return;
-                
+
                 isDragging = true;
                 wasPlaying = isPlaying;
                 if (wasPlaying) pauseMedia();
             });
-            
+
             document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     const rect = progressBar.getBoundingClientRect();
                     let percent = (e.clientX - rect.left) / rect.width;
                     percent = Math.max(0, Math.min(1, percent));
-                    
+
                     mediaElement.currentTime = percent * mediaElement.duration;
                     updateProgress();
                 }
-                
+
                 if (isVolumeDragging) {
                     const rect = volumeSlider.getBoundingClientRect();
                     let percent = (e.clientX - rect.left) / rect.width;
                     percent = Math.max(0, Math.min(1, percent));
-                    
+
                     mediaElement.volume = percent;
                     updateVolume();
                 }
             });
-            
+
             document.addEventListener('mouseup', () => {
                 if (isDragging) {
                     isDragging = false;
                     if (wasPlaying) playMedia();
                 }
-                
+
                 if (isVolumeDragging) {
                     isVolumeDragging = false;
                 }
             });
-            
+
             volumeBtn.addEventListener('click', () => {
                 mediaElement.volume = mediaElement.volume > 0 ? 0 : 1;
                 updateVolume();
             });
-            
+
             volumeSlider.addEventListener('click', (e) => {
                 const percent = e.offsetX / volumeSlider.offsetWidth;
                 mediaElement.volume = percent;
                 updateVolume();
             });
-            
+
             volumeSlider.addEventListener('mousedown', () => {
                 isVolumeDragging = true;
             });
-            
+
             playlistBtn.addEventListener('click', () => {
                 playlistOverlay.classList.toggle('show');
+                if (playlistOverlay.classList.contains('show')) {
+                    // Precargar thumbnails del elemento actual y próximos
+                    preloadNearbyThumbnails();
+                }
             });
-            
+
             playlistClose.addEventListener('click', () => {
                 playlistOverlay.classList.remove('show');
             });
-            
+
             closeBtn.addEventListener('click', () => {
                 window.location.href = 'index.html';
             });
-            
+
+            // Nuevos event listeners
+            theaterBtn.addEventListener('click', toggleTheaterMode);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            speedBtn.addEventListener('click', cycleSpeed);
+            loopBtn.addEventListener('click', toggleLoop);
+            shuffleBtn.addEventListener('click', toggleShuffle);
+            favoriteBtn.addEventListener('click', toggleFavorite);
+
+            // Panel de favoritos
+            favoritesListBtn.addEventListener('click', () => {
+                favoritesPanel.classList.toggle('show');
+                updateFavoritesContent();
+            });
+
+            // Controles de tiempo
+            seekBtns['-10'].addEventListener('click', () => seekTime(-10));
+            seekBtns['+10'].addEventListener('click', () => seekTime(10));
+
+
+
+            // Atajos de teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT') return;
+
+                switch (e.code) {
+                    case 'Space':
+                        e.preventDefault();
+                        togglePlayPause();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        seekTime(-10);
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        seekTime(10);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        mediaElement.volume = Math.min(1, mediaElement.volume + 0.1);
+                        updateVolume();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        mediaElement.volume = Math.max(0, mediaElement.volume - 0.1);
+                        updateVolume();
+                        break;
+                    case 'KeyM':
+                        e.preventDefault();
+                        mediaElement.volume = mediaElement.volume > 0 ? 0 : 1;
+                        updateVolume();
+                        break;
+                    case 'KeyF':
+                        e.preventDefault();
+                        toggleFullscreen();
+                        break;
+                    case 'KeyT':
+                        e.preventDefault();
+                        toggleTheaterMode();
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        favoritesPanel.classList.remove('show');
+                        break;
+                }
+            });
+
+            // Gestos táctiles para cambiar video
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            mediaElement.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            mediaElement.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0) {
+                        playPrev();
+                    } else {
+                        playNext();
+                    }
+                }
+            });
+
+            // Auto-play siguiente en shuffle
+            mediaElement.addEventListener('ended', () => {
+                if (!isLooping) {
+                    playNext();
+                }
+            });
+
             // Inicialización
             initializePlaylist();
+            initAudioVisualizer();
             loadMedia(0);
             mediaElement.volume = 0.7;
             updateVolume();
             setupTouchControls();
-            
+
+            // Configurar velocidad inicial
+            mediaElement.playbackRate = playbackSpeed;
+            speedBtn.textContent = playbackSpeed + 'x';
+
             // Efecto glitch aleatorio en el título
             setInterval(() => {
                 if (Math.random() > 0.95) {
@@ -853,11 +1667,53 @@
                 }
             }, 3000);
 
+            // Modo corrupto aleatorio (sutil)
+            setInterval(() => {
+                if (Math.random() > 0.98) {
+                    triggerCorruptMode();
+                }
+            }, 5000);
+
+            // Activar modo corrupto por defecto (sutil)
+            corruptMode = true;
+
             // Prevenir zoom en móviles
-            document.addEventListener('gesturestart', function(e) {
+            document.addEventListener('gesturestart', function (e) {
                 e.preventDefault();
+            });
+
+            // Protección contra descarga de imágenes
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                return false;
+            });
+
+            document.addEventListener('dragstart', function (e) {
+                if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            document.addEventListener('selectstart', function (e) {
+                if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Deshabilitar teclas de desarrollador
+            document.addEventListener('keydown', function (e) {
+                // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+                if (e.keyCode === 123 ||
+                    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+                    (e.ctrlKey && e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
             });
         });
     </script>
 </body>
+
 </html>

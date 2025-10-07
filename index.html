@@ -695,8 +695,55 @@
             }
         }
 
+        /* Botón del minijuego - al lado izquierdo de noticias */
+        .game-button {
+            position: absolute;
+            bottom: 40px;
+            right: 440px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.3s ease;
+        }
+
+        .game-button:hover {
+            transform: scale(1.1);
+        }
+
+        .game-button img {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 8px #ff6b00) drop-shadow(0 0 15px #ff6b00);
+            transition: filter 0.3s ease, transform 0.3s ease;
+            animation: pulseAura 2s infinite alternate;
+        }
+
+        .game-button:hover img {
+            filter: drop-shadow(0 0 12px #ff6b00) drop-shadow(0 0 20px #ff6b00);
+            transform: scale(1.05);
+        }
+
+        @keyframes pulseAura {
+            0% {
+                filter: drop-shadow(0 0 8px #ff6b00) drop-shadow(0 0 15px #ff6b00);
+            }
+            100% {
+                filter: drop-shadow(0 0 12px #ff6b00) drop-shadow(0 0 20px #ff6b00);
+            }
+        }
+
+        /* Responsive para móvil */
+        @media (max-width: 600px) {
+            .game-button {
+                width: 30px;
+                height: 30px;
+                margin: 0 5px;
+            }
+        }
+
         /* Mejoras de usabilidad táctil */
-        .menu-btn, .news-toggle, .version-btn, .carousel-btn {
+        .menu-btn, .news-toggle, .version-btn, .carousel-btn, .game-button {
             min-height: 44px;
             touch-action: manipulation;
         }
@@ -708,6 +755,92 @@
             left: -10px;
             right: -10px;
             bottom: -10px;
+        }
+
+        /* Animaciones para el efecto especial */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-10px); }
+            20% { transform: translateX(10px); }
+            30% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            50% { transform: translateX(-6px); }
+            60% { transform: translateX(6px); }
+            70% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+            90% { transform: translateX(-2px); }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes centerAndJump {
+            0% { 
+                transform: translate(0, 0) scale(1);
+                z-index: 20;
+            }
+            50% { 
+                transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(2);
+                z-index: 9999;
+            }
+            100% { 
+                transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(10);
+                z-index: 9999;
+            }
+        }
+
+        @keyframes jumpscare {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.1);
+            }
+            10% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(5);
+            }
+            90% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(5);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.1);
+            }
+        }
+
+        .jumpscare-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            z-index: 99999;
+            pointer-events: none;
+            animation: jumpscare 1.5s ease-out;
+        }
+
+        .jumpscare-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .fall-animation {
+            animation: fall 2s ease-in forwards;
+        }
+
+        .center-jump-animation {
+            animation: centerAndJump 3s ease-in-out forwards;
+        }
+
+        .special-effect-active {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -721,7 +854,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> v1.6.0 Hotfix3
+                    <i class="bi bi-stars"></i> Rework v1.6.1
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -751,6 +884,11 @@
                 <button class="menu-btn visible" data-url="credits.html" aria-label="Ir a Credits">
                     <img src="images/350_sin_titulo_20240927230724.png" alt="Ir a Credits" class="btn-img">
                 </button>
+            </div>
+
+            <!-- Botón del minijuego al lado de noticias -->
+            <div class="game-button" id="gameButton">
+                <img src="images/samyholahola.png" alt="Minijuego" id="gameIcon">
             </div>
 
             <!-- Noticias (aparece después del menú en móvil) -->
@@ -810,40 +948,55 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.0 Hotfix3</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.1</h5>
                 <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <p><strong>Novedades del Hotfix3:</strong></p>
+                <h4><strong>🎆 NOVEDADES v1.6.1</strong></h4>
+                <br>
+                <p><strong>🎵 Encore Section:</strong></p>
+                <ul>
+                    <li>🎨 Diseño completamente reworkeado con tema Encore único.</li>
+                    <li>🔵 Nueva paleta de colores: azul, púrpura, cian y magenta neón.</li>
+                    <li>⚡ Efectos glitch automáticos y aleatorios mejorados.</li>
+                    <li>🖼️ Contenedor de imagen redimensionado a 880x495px para mejor visualización.</li>
+                    <li>🎯 Botones de navegación agrandados (40x40px) para mejor usabilidad.</li>
+                    <li>📊 Contador de mods rediseñado y más visible.</li>
+                    <li>📱 Panel de información ajustado al mismo ancho que la imagen.</li>
+                    <li>🎮 Controles táctiles mejorados con gestos swipe para móviles.</li>
+                    <li>🔊 Integración completa de efectos de sonido Encore.</li>
+                </ul>
+                <p><strong>🎵 Sound Test:</strong></p>
+                <ul>
+                    <li>🎹 Teclado virtual completo con números y ENTER para Android.</li>
+                    <li>🎵 20 canciones disponibles con códigos únicos.</li>
+                    <li>🔓 6 sistemas de desbloqueo especiales diferentes con mecánicas únicas.</li>
+                    <li>🎯 Sistema de recolección de cartuchos con probabilidades aleatorias.</li>
+                    <li>⏰ Desbloqueos por tiempo de permanencia en el soundtest.</li>
+                    <li>🔤 Códigos secretos de texto para canciones ocultas.</li>
+                    <li>🔄 Sistema de alternancia para códigos duplicados.</li>
+                    <li>🎶 Música de fondo con activación por interacción del usuario.</li>
+                    <li>🔊 Efectos de sonido integrados para navegación y confirmación.</li>
+                </ul>
+                <p><strong>🎮 Menú Principal:</strong></p>
+                <ul>
+                    <li>🕹️ Nuevo minijuego completo accesible desde la imagen de Samy.</li>
+                    <li>🎯 Sistema de juego interactivo con mecánicas únicas.</li>
+                    <li>📱 Optimización completa para dispositivos móviles y PC.</li>
+                    <li>🔊 Efectos de sonido y música integrados en el minijuego.</li>
+                </ul>
+                <br>
+                <p><strong>📋 Novedades anteriores v1.6.0 Hotfix3:</strong></p>
                 <ul>
                     <li>🔊 Arreglado sonido del botón de actualizaciones.</li>
-                </ul>
-                <p><strong>Novedades del Hotfix2:</strong></p>
-                <ul>
                     <li>🔥 Añadida noticia sobre Bodrio Collection ya disponible.</li>
                     <li>🎵 Cambiada música de fondo del menú principal a MainMenuMusic.ogg.</li>
                     <li>🎶 Story Mode: Nueva música de fondo (storymodemenumusic.ogg).</li>
                     <li>🔊 Story Mode: Sonidos de navegación y confirmación añadidos.</li>
-                    <li>🎵 Sound Test: Música de fondo y background actualizados.</li>
                     <li>👥 Actualización de créditos: Jarret movido a ex-colaboradores.</li>
                     <li>🎵 AbelitoGamer ahora aparece como creador de TrinityEncore.</li>
                     <li>🧹 Limpieza general: Eliminado Mart de créditos.</li>
                     <li>⚙️ Mejoras en inicialización de audio sin botones molestos.</li>
-                </ul>
-                <p><strong>Novedades de la actualización v1.6.0:</strong></p>
-                <ul>
-                    <li>Navegación por teclado en Freeplay (flechas izq/der, Enter, Escape).</li>
-                    <li>Swipe gestures para Android en Freeplay.</li>
-                    <li>Flechas de navegación ahora están fijas y no se mueven con el título.</li>
-                    <li>URLs dinámicas que muestran el mod actual en la dirección.</li>
-                    <li>Numeración automática de mods en catálogos de niveles.</li>
-                    <li>Copia automática de URLs al portapapeles al hacer clic en layouts.</li>
-                    <li>Prevención de zoom accidental en dispositivos Android.</li>
-                    <li>Mejoras táctiles: área mínima de 44px en todos los botones.</li>
-                    <li>Feedback visual mejorado al presionar botones (escala 0.95).</li>
-                    <li>Colaboradores externos agregados en créditos con etiqueta dorada.</li>
-                    <li>Corrección del botón back en Sound Test para regresar al menú.</li>
-                    <li>Optimización completa para experiencia dual PC/Android.</li>
                 </ul>
             </div>
         </div>
@@ -851,7 +1004,8 @@
 
     <audio id="bgMusic" src="./sounds/MainMenuMusic.ogg" loop></audio>
     <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio> 
-    <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio> 
+    <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio>
+    <audio id="crashSound" src="./sounds/crash.mp3"></audio> 
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -891,6 +1045,17 @@
             // Variables para el carrusel
             let currentNewsIndex = 0;
             let newsItems = [];
+            
+            // Botón del minijuego
+            const gameButton = document.getElementById('gameButton');
+            if (gameButton) {
+                gameButton.addEventListener('click', startMiniGame);
+                // También para eventos táctiles
+                gameButton.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    startMiniGame();
+                }, { passive: false });
+            }
 
             // Inicializar el carrusel de noticias
             function initNewsCarousel() {
@@ -1207,6 +1372,112 @@
             const script = document.createElement('script');
             script.src = 'js/guessWhat.js';
             document.head.appendChild(script);
+        }
+
+        // Función para cargar el minijuego con animación especial
+        function startMiniGame() {
+            // Prevenir múltiples activaciones
+            if (window.specialEffectActive) return;
+            window.specialEffectActive = true;
+            
+            const bgMusic = document.getElementById('bgMusic');
+            const gameButton = document.getElementById('gameButton');
+            const allElements = document.querySelectorAll('body > *:not(.game-button)');
+            
+            // Fase 1: Ralentizar música gradualmente
+            if (bgMusic) {
+                let playbackRate = 1;
+                const slowDown = setInterval(() => {
+                    playbackRate -= 0.05;
+                    if (playbackRate <= 0) {
+                        playbackRate = 0;
+                        bgMusic.pause();
+                        clearInterval(slowDown);
+                        
+                        // Fase 2: Shake del sitio web (después de 1 segundo)
+                        setTimeout(() => {
+                            document.body.classList.add('shake-animation');
+                            
+                            // Fase 3: Caída de elementos (después del shake)
+                            setTimeout(() => {
+                                document.body.classList.remove('shake-animation');
+                                
+                                // Reproducir sonido de crash
+                                const crashSound = document.getElementById('crashSound');
+                                if (crashSound) {
+                                    crashSound.currentTime = 0;
+                                    crashSound.play().catch(() => {});
+                                }
+                                
+                                // Hacer caer todos los elementos excepto el botón del juego
+                                allElements.forEach((element, index) => {
+                                    setTimeout(() => {
+                                        element.classList.add('fall-animation');
+                                    }, index * 100);
+                                });
+                                
+                                // Fase 4: Centrar y hacer saltar el icono (después de 1 segundo)
+                                setTimeout(() => {
+                                    gameButton.classList.add('center-jump-animation');
+                                    
+                                    // Fase 5: Jumpscare (después de 2.5 segundos)
+                                    setTimeout(() => {
+                                        const jumpscareDiv = document.createElement('div');
+                                        jumpscareDiv.className = 'jumpscare-overlay';
+                                        jumpscareDiv.innerHTML = '<img src="images/samyholahola.png" alt="Jumpscare">';
+                                        document.body.appendChild(jumpscareDiv);
+                                        
+                                        // Fase 6: Cargar minijuego (después del jumpscare)
+                                        setTimeout(() => {
+                                            document.body.removeChild(jumpscareDiv);
+                                            const script = document.createElement('script');
+                                            script.src = 'js/minigame.js';
+                                            document.head.appendChild(script);
+                                        }, 1500);
+                                    }, 2500);
+                                }, 1000);
+                            }, 500);
+                        }, 1000);
+                    } else {
+                        bgMusic.playbackRate = playbackRate;
+                    }
+                }, 100);
+            } else {
+                // Si no hay música, ejecutar directamente las animaciones
+                setTimeout(() => {
+                    document.body.classList.add('shake-animation');
+                    setTimeout(() => {
+                        document.body.classList.remove('shake-animation');
+                        const crashSound = document.getElementById('crashSound');
+                        if (crashSound) {
+                            crashSound.currentTime = 0;
+                            crashSound.play().catch(() => {});
+                        }
+                        
+                        allElements.forEach((element, index) => {
+                            setTimeout(() => {
+                                element.classList.add('fall-animation');
+                            }, index * 100);
+                        });
+                        setTimeout(() => {
+                            gameButton.classList.add('center-jump-animation');
+                            setTimeout(() => {
+                                const jumpscareDiv = document.createElement('div');
+                                jumpscareDiv.className = 'jumpscare-overlay';
+                                jumpscareDiv.innerHTML = '<img src="images/samyholahola.png" alt="Jumpscare">';
+                                document.body.appendChild(jumpscareDiv);
+                                
+                                setTimeout(() => {
+                                    document.body.removeChild(jumpscareDiv);
+                                    const script = document.createElement('script');
+                                    script.src = 'js/minigame.js';
+                                    document.head.appendChild(script);
+                                }, 1500);
+                            }, 2500);
+                        }, 1000);
+                    }, 500);
+                }, 1000);
+            }
         }
     </script>
 </body>

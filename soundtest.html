@@ -1,474 +1,795 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic.exe V3 - Sound Test</title>
+    <title>SOUND TEST</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Fuente estilo Sonic -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* Estilos base */
-        .sonic-body {
+        @font-face {
+            font-family: 'SonicCD';
+            src: url('font/sonic-cd-menu-font.ttf') format('truetype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('BG/backgroundST.png') center/cover no-repeat;
             background-color: #000;
-            background-image: url('BG/backgroundST.png');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Press Start 2P', cursive;
-            color: #00a2ff;
-        }
-
-        .sonic-cd-container {
-            width: 320px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00a2ff;
-            border-radius: 5px;
-            box-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Efecto scanline */
-        .scanline {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.7), transparent);
-            animation: scan 3s linear infinite;
-            z-index: 1;
-        }
-
-        @keyframes scan {
-            0% { top: -2px; }
-            100% { top: 100%; }
-        }
-
-        /* Texto estilo Sonic CD */
-        .sonic-title {
-            font-size: 1.8rem;
-            color: #00a2ff;
-            text-shadow: 0 0 10px #00a2ff;
-            letter-spacing: 2px;
-        }
-
-        .sonic-subtitle {
-            font-size: 0.8rem;
-            color: #fff;
-            padding: 0 20px;
-        }
-
-        /* Display numérico */
-        .sonic-display {
-            margin: 25px 0;
-        }
-
-        .sonic-digit-group {
-            width: 100px;
-        }
-
-        .sonic-digit-label {
-            font-size: 0.8rem;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .sonic-digit {
-            font-size: 2rem;
-            color: #00ff00;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 2px solid #00a2ff;
-            border-radius: 5px;
-            padding: 5px 10px;
-            text-shadow: 0 0 5px #00ff00;
-        }
-
-        .sonic-separator {
-            font-size: 2rem;
-            color: #00a2ff;
-            height: 60px;
-        }
-
-        /* Botones */
-        .sonic-arrow-btn {
-            color: #00a2ff;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00a2ff;
-            min-width: 30px;
-        }
-
-        .sonic-arrow-btn:hover {
-            color: #00ff00;
-            border-color: #00ff00;
-        }
-
-        .sonic-btn-play {
-            background-color: #00a2ff;
-            color: #000;
-            font-weight: bold;
-            border: none;
-        }
-
-        .sonic-btn-play:hover {
-            background-color: #00c3ff;
-            box-shadow: 0 0 10px #00a2ff;
-        }
-
-        .sonic-btn-back {
-            background-color: transparent;
-            color: #00a2ff;
-            border: 1px solid #00a2ff;
-        }
-
-        .sonic-btn-back:hover {
-            color: #ff5555;
-            border-color: #ff5555;
-        }
-
-        /* Responsive */
-        @media (max-width: 576px) {
-            .sonic-cd-container {
-                width: 280px;
-                padding: 15px;
-            }
-            
-            .sonic-title {
-                font-size: 1.5rem;
-            }
-            
-            .sonic-digit {
-                font-size: 1.8rem;
-            }
-            
-            .sonic-separator {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* Estilos adicionales para las imágenes */
-        .random-image {
-            position: absolute;
-            z-index: 1000;
-            max-width: 200px;
-            display: none;
-            pointer-events: none;
-            animation: appearDisappear 3s forwards;
-        }
-        
-        @keyframes appearDisappear {
-            0% { opacity: 0; transform: scale(0.5); }
-            20% { opacity: 1; transform: scale(1.1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.5); display: none; }
-        }
-        
-        .image-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            font-family: 'SonicCD', monospace;
+            color: #ffffff;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
-            color: #00ff00;
-            font-size: 1.5rem;
+            overflow: hidden;
+        }
+
+        .soundtest-screen {
+            width: 480px;
+            height: 360px;
+            background: #000;
+            border: 4px solid #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 32px;
+            color: #ffff00;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 50px;
+        }
+
+        .number-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .number-label {
+            font-size: 18px;
+            color: #ffff00;
+            letter-spacing: 2px;
+        }
+
+        .number-display {
+            font-size: 48px;
+            color: #ffff00;
+            font-family: 'SonicCD', monospace;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .number-controls {
+            display: flex;
+            gap: 20px;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: #ffff00;
+            color: #000;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .control-btn:hover {
+            background: #cccc00;
+        }
+
+        .control-btn:active {
+            background: #999900;
+        }
+
+        .separator {
+            font-size: 48px;
+            color: #ffff00;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 40px;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            font-family: 'SonicCD', monospace;
+            font-size: 18px;
+            background: #ffff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.1s;
+        }
+
+        .action-btn:hover {
+            background: #cccc00;
+        }
+
+        .action-btn:active {
+            background: #999900;
+        }
+
+        .song-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #ffff00;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .song-info.show {
+            opacity: 1;
+        }
+
+        .virtual-keyboard {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 2px solid #ffff00;
+            padding: 10px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .virtual-keyboard.show {
+            display: block;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .key-btn {
+            background: #333;
+            color: #ffff00;
+            border: 1px solid #ffff00;
+            padding: 10px 15px;
+            margin: 2px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .key-btn:hover {
+            background: #555;
+        }
+
+        .key-btn.space {
+            min-width: 120px;
+        }
+
+        .text-input {
+            background: #000;
+            color: #ffff00;
+            border: 2px solid #ffff00;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 10px;
+            width: 200px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        .loading-screen.show {
+            display: flex;
+        }
+
+        .loading-text {
+            color: #000;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ccc;
+            border-top: 5px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .soundtest-screen {
+                width: 90vw;
+                height: 70vh;
+                max-width: 400px;
+                max-height: 300px;
+            }
+
+            .title {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            .controls {
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+
+            .number-display {
+                font-size: 36px;
+            }
+
+            .separator {
+                font-size: 36px;
+            }
+
+            .control-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+
+            .action-btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+
+            .action-buttons {
+                gap: 30px;
+            }
         }
     </style>
 </head>
-<body class="sonic-body">
-    <!-- Overlay de carga -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div>CARGANDO SONIDOS...</div>
-    </div>
-    
-    <!-- Contenedor para imágenes aleatorias -->
-    <div id="image-container" class="image-container"></div>
-    
-    <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
-        <div class="sonic-cd-container position-relative p-4">
-            <!-- Efecto scanline -->
-            <div class="scanline position-absolute top-0 start-0 w-100"></div>
-            
-            <!-- Encabezado -->
-            <header class="text-center mb-4">
-                <h1 class="sonic-title mb-0">SOUND TEST</h1>
-                <div class="sonic-subtitle d-flex justify-content-between mt-2">
-                    <span>PCM</span>
-                    <span id="version-number">0.1</span>
+
+<body>
+    <div class="soundtest-screen">
+        <div class="title">SOUND TEST</div>
+
+        <div class="controls">
+            <div class="number-section">
+                <div class="number-label">PGM</div>
+                <div class="number-display" id="pgm-display">00</div>
+                <div class="number-controls">
+                    <button class="control-btn" id="pgm-up">▲</button>
+                    <button class="control-btn" id="pgm-down">▼</button>
                 </div>
-            </header>
-            
-            <!-- Display numérico -->
-            <div class="sonic-display d-flex justify-content-center gap-3 mb-4">
-                <div class="sonic-digit-group text-center">
-                    <div class="sonic-digit-label">PGM</div>
-                    <div id="pgm-display" class="sonic-digit">00</div>
-                    <div class="sonic-arrows d-flex justify-content-center gap-2 mt-1">
-                        <button id="increment-pgm" class="sonic-arrow-btn btn btn-sm p-1">
-                            <i class="bi bi-caret-up-fill"></i>
-                        </button>
-                        <button id="decrement-pgm" class="sonic-arrow-btn btn btn-sm p-1">
-                            <i class="bi bi-caret-down-fill"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="sonic-separator d-flex align-items-center">-</div>
-                
-                <div class="sonic-digit-group text-center">
-                    <div class="sonic-digit-label">DA</div>
-                    <div id="da-display" class="sonic-digit">00</div>
-                    <div class="sonic-arrows d-flex justify-content-center gap-2 mt-1">
-                        <button id="increment-da" class="sonic-arrow-btn btn btn-sm p-1">
-                            <i class="bi bi-caret-up-fill"></i>
-                        </button>
-                        <button id="decrement-da" class="sonic-arrow-btn btn btn-sm p-1">
-                            <i class="bi bi-caret-down-fill"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Botones de control -->
-            <div class="sonic-controls d-flex justify-content-center gap-3">
-                <button id="play-button" class="sonic-btn-play btn px-4 py-2">
-                    <i class="bi bi-play-fill me-2"></i>PLAY
-                </button>
-                <button id="back-button" class="sonic-btn-back btn px-3 py-2">
-                    <i class="bi bi-x-lg me-1"></i>BACK
-                </button>
             </div>
 
-            <!-- Información de la canción -->
-            <div id="song-info" class="mt-3 text-center" style="color: #fff; font-size: 0.7rem; display: none;">
-                <div id="song-name"></div>
-                <div id="song-link" class="mt-1"></div>
+            <div class="separator">-</div>
+
+            <div class="number-section">
+                <div class="number-label">DA</div>
+                <div class="number-display" id="da-display">00</div>
+                <div class="number-controls">
+                    <button class="control-btn" id="da-up">▲</button>
+                    <button class="control-btn" id="da-down">▼</button>
+                </div>
             </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" id="play-btn">PLAY</button>
+            <button class="action-btn" id="keyboard-btn">KEYBOARD</button>
+            <button class="action-btn" id="back-btn">BACK</button>
+        </div>
+
+        <div class="song-info" id="song-info">
+            <div id="song-name"></div>
+        </div>
+        
+        <div class="music-prompt" id="music-prompt" style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #ffff00; opacity: 0.7; cursor: pointer;">
+            Click para reproducir música
         </div>
     </div>
 
-    <!-- Elementos de audio -->
-    <audio id="backgroundMusic" src="sounds/soundtest.ogg" loop></audio>
-    <audio id="selectSound" src="sounds/pauseScrollMenu.ogg"></audio>
-    <audio id="correctSound" src="sounds/confirmMenu.ogg"></audio>
-    <audio id="errorSound" src="sounds/NO.ogg"></audio>
-    <audio id="bloodSound" src="assets/sounds/blood.mp3"></audio>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-text" id="loading-text">CARGANDO...</div>
+        <div class="loading-spinner"></div>
+    </div>
 
-    <!-- Bootstrap JS Bundle con Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- JS personalizado -->
+    <div class="virtual-keyboard" id="virtual-keyboard">
+        <input type="text" class="text-input" id="text-input" placeholder="Type here..." maxlength="10">
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="q">Q</button>
+            <button class="key-btn" data-key="w">W</button>
+            <button class="key-btn" data-key="e">E</button>
+            <button class="key-btn" data-key="r">R</button>
+            <button class="key-btn" data-key="t">T</button>
+            <button class="key-btn" data-key="y">Y</button>
+            <button class="key-btn" data-key="u">U</button>
+            <button class="key-btn" data-key="i">I</button>
+            <button class="key-btn" data-key="o">O</button>
+            <button class="key-btn" data-key="p">P</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="a">A</button>
+            <button class="key-btn" data-key="s">S</button>
+            <button class="key-btn" data-key="d">D</button>
+            <button class="key-btn" data-key="f">F</button>
+            <button class="key-btn" data-key="g">G</button>
+            <button class="key-btn" data-key="h">H</button>
+            <button class="key-btn" data-key="j">J</button>
+            <button class="key-btn" data-key="k">K</button>
+            <button class="key-btn" data-key="l">L</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="z">Z</button>
+            <button class="key-btn" data-key="x">X</button>
+            <button class="key-btn" data-key="c">C</button>
+            <button class="key-btn" data-key="v">V</button>
+            <button class="key-btn" data-key="b">B</button>
+            <button class="key-btn" data-key="n">N</button>
+            <button class="key-btn" data-key="m">M</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="1">1</button>
+            <button class="key-btn" data-key="2">2</button>
+            <button class="key-btn" data-key="3">3</button>
+            <button class="key-btn" data-key="4">4</button>
+            <button class="key-btn" data-key="5">5</button>
+            <button class="key-btn" data-key="6">6</button>
+            <button class="key-btn" data-key="7">7</button>
+            <button class="key-btn" data-key="8">8</button>
+            <button class="key-btn" data-key="9">9</button>
+            <button class="key-btn" data-key="0">0</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn" id="clear-btn">CLEAR</button>
+            <button class="key-btn space" data-key=" ">SPACE</button>
+            <button class="key-btn" id="enter-btn">ENTER</button>
+            <button class="key-btn" id="close-keyboard">CLOSE</button>
+        </div>
+    </div>
+
+    <audio id="select-sound" preload="auto">
+        <source src="sounds/pauseScrollMenu.ogg" type="audio/ogg">
+    </audio>
+    <audio id="confirm-sound" preload="auto">
+        <source src="sounds/confirmMenu.ogg" type="audio/ogg">
+    </audio>
+    <audio id="error-sound" preload="auto">
+        <source src="sounds/NO.ogg" type="audio/ogg">
+    </audio>
+    <audio id="soundtest-music" preload="auto" loop>
+        <source src="sounds/soundtest.ogg" type="audio/ogg">
+    </audio>
+
     <script>
-        // Variables globales
         let pgmValue = 0;
         let daValue = 0;
-        let currentAudio = null;
-        let songsData = [];
-        let imageList = [];
-        
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos desde JSON
-            loadSongsData();
-            
-            // Configurar botones
-            document.getElementById('increment-pgm').addEventListener('click', () => changeValue('pgm', 1));
-            document.getElementById('decrement-pgm').addEventListener('click', () => changeValue('pgm', -1));
-            document.getElementById('increment-da').addEventListener('click', () => changeValue('da', 1));
-            document.getElementById('decrement-da').addEventListener('click', () => changeValue('da', -1));
-            
-            document.getElementById('play-button').addEventListener('click', playSound);
-            document.getElementById('back-button').addEventListener('click', goBack);
-        });
-        
-        // Cargar datos de canciones desde JSON
-        async function loadSongsData() {
-            try {
-                // En una implementación real, cargarías desde un archivo JSON
-                // const response = await fetch('songs.json');
-                // songsData = await response.json();
-                
-                // Datos de ejemplo (reemplaza con tu JSON real)
-                songsData = [
-                    { pgm: 0, da: 1, name: "Menu Theme", url: "https://funkymaker.com/?song=menu", imageTrigger: false },
-                    { pgm: 1, da: 5, name: "Game Over", url: "https://funkymaker.com/?song=gameover", imageTrigger: false },
-                    { pgm: 5, da: 12, name: "Blood Feast", url: "https://funkymaker.com/?song=blood", imageTrigger: true },
-                    { pgm: 7, da: 3, name: "Nightmare", url: "https://funkymaker.com/?song=nightmare", imageTrigger: true },
-                    { pgm: 13, da: 13, name: "Demon Theme", url: "https://funkymaker.com/?song=demon", imageTrigger: true }
-                ];
-                
-                // Lista de imágenes (reemplaza con tus rutas reales)
-                imageList = [
-                    'assets/images/random1.png',
-                    'assets/images/random2.png',
-                    'assets/images/random3.jpg',
-                    'assets/images/random4.png'
-                ];
-                
-                // Ocultar overlay de carga
-                document.getElementById('loading-overlay').style.display = 'none';
-                
-                // Iniciar música de fondo
-                const bgMusic = document.getElementById('backgroundMusic');
-                bgMusic.volume = 0.5;
-                bgMusic.play().catch(() => {
-                    // Si falla la reproducción automática, activar con interacción
-                    const enableAudio = () => {
-                        bgMusic.play();
-                        document.removeEventListener('click', enableAudio);
-                        document.removeEventListener('touchstart', enableAudio);
-                    };
-                    document.addEventListener('click', enableAudio);
-                    document.addEventListener('touchstart', enableAudio);
-                });
-                
-            } catch (error) {
-                console.error('Error cargando datos:', error);
-                document.getElementById('loading-overlay').innerHTML = 
-                    '<div>ERROR CARGANDO DATOS<br><button onclick="location.reload()" class="btn btn-primary mt-3">REINTENTAR</button></div>';
-            }
+
+        // Datos de las canciones de Sonic.EXE
+        const songs = {
+            '02-23': { name: 'Prey', link: 'https://funkymaker.com/play/prey-sonic-exe' },
+            '04-20': { name: 'Too Fest', link: 'https://funkymaker.com/play/too-fest-sonic-exe' },
+            '07-07': { name: 'Cycles', link: 'https://funkymaker.com/play/cycles-sonic-exe' },
+            '08-21': { name: 'Chaos', link: 'https://funkymaker.com/play/chaos-sonic-exe' },
+            '11-21': { name: 'Fatality', link: 'https://funkymaker.com/play/fatality-sonic-exe' },
+            '12-25': { name: 'Endless', link: 'https://funkymaker.com/play/endless-sonic-exe' },
+            '19-63': { name: 'Round-A-bout', link: 'https://funkymaker.com/play/round-a-bout-sonic-exe' },
+            '31-13': { name: 'Faker', link: 'https://funkymaker.com/play/faker-sonic-exe' },
+            '66-06': { name: 'Sunshine', link: 'https://funkymaker.com/play/sunshine-sonic-exe' },
+            '99-99': { name: 'I AM GOD', link: 'https://funkymaker.com/play/i-am-god-sonic-exe' },
+            'personnel': { name: 'Personnel', link: 'https://funkymaker.com/play/personnel-sonic-exe' },
+            'hog': { name: 'Hog', link: 'https://funkymaker.com/play/hog-sonic-exe' },
+            'mania': { name: 'Mania', link: 'https://funkymaker.com/play/mania-sonic-exe' },
+            '09-23': { name: 'B4CKSLASH', link: 'https://funkymaker.com/play/b4ckslash-sonic-exe' },
+            '06-20': { name: 'Digitalized', link: 'https://funkymaker.com/play/digitalized-sonic-exe' },
+            'forestall': { name: 'Forestall Desire', link: 'https://funkymaker.com/play/forestall-desire-sonic-exe' },
+            '08-17': { name: 'My Horizon (Armydillo Mix)', link: 'https://funkymaker.com/play/my-horizon-sonic-exe' },
+            '01-11': { name: 'Malediction', link: 'https://funkymaker.com/play/malediction-sonic-exe' },
+            'blinddate': { name: 'Blind Date', link: 'https://funkymaker.com/play/blind-date-sonic-exe' }
+        };
+
+        // Elementos DOM
+        const pgmDisplay = document.getElementById('pgm-display');
+        const daDisplay = document.getElementById('da-display');
+        const songInfo = document.getElementById('song-info');
+        const songName = document.getElementById('song-name');
+
+        // Sonidos
+        const selectSound = document.getElementById('select-sound');
+        const confirmSound = document.getElementById('confirm-sound');
+        const errorSound = document.getElementById('error-sound');
+
+        // Funciones de sonido
+        function playSound(audio) {
+            audio.currentTime = 0;
+            audio.play().catch(() => { });
         }
-        
-        // Cambiar valores PGM o DA
-        function changeValue(type, change) {
-            playSoundEffect('selectSound');
-            
-            if (type === 'pgm') {
-                pgmValue = (pgmValue + change + 100) % 100;
-                document.getElementById('pgm-display').textContent = pgmValue.toString().padStart(2, '0');
-            } else {
-                daValue = (daValue + change + 100) % 100;
-                document.getElementById('da-display').textContent = daValue.toString().padStart(2, '0');
-            }
-            
-            // Ocultar información de canción al cambiar valores
-            document.getElementById('song-info').style.display = 'none';
+
+        // Actualizar displays
+        function updateDisplay() {
+            pgmDisplay.textContent = pgmValue.toString().padStart(2, '0');
+            daDisplay.textContent = daValue.toString().padStart(2, '0');
         }
-        
-        // Reproducir efecto de sonido
-        function playSoundEffect(soundId) {
-            const sound = document.getElementById(soundId);
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Error reproduciendo sonido:", e));
-            }
+
+        // Cambiar valores
+        function changePGM(delta) {
+            playSound(selectSound);
+            pgmValue = (pgmValue + delta + 100) % 100;
+            updateDisplay();
+            songInfo.classList.remove('show');
         }
-        
-        // Reproducir sonido seleccionado
-        function playSound() {
-            // Detener sonido anterior si existe
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
-            
-            // Buscar la canción en los datos
-            const song = songsData.find(s => s.pgm === pgmValue && s.da === daValue);
-            
-            if (song) {
-                playSoundEffect('correctSound');
-                
-                // Mostrar información de la canción
-                const songInfo = document.getElementById('song-info');
-                document.getElementById('song-name').textContent = song.name;
-                
-                const songLink = document.getElementById('song-link');
-                songLink.innerHTML = `<a href="${song.url}" target="_blank" style="color: #00a2ff;">JUGAR EN FUNKYMAKER</a>`;
-                
-                songInfo.style.display = 'block';
-                
-                // Si es una canción especial, mostrar imágenes
-                if (song.imageTrigger) {
-                    // Reproducir sonido especial (si existe)
-                    currentAudio = document.getElementById('bloodSound');
-                    if (currentAudio) {
-                        currentAudio.play().catch(e => console.log("Error reproduciendo sonido especial:", e));
-                    }
-                    
-                    // Mostrar imágenes aleatorias
-                    showRandomImages();
-                } else {
-                    // Aquí podrías cargar y reproducir el sonido normal de la canción
-                    // currentAudio = new Audio(song.audioFile);
-                    // currentAudio.play();
+
+        function changeDA(delta) {
+            playSound(selectSound);
+            daValue = (daValue + delta + 100) % 100;
+            updateDisplay();
+            songInfo.classList.remove('show');
+        }
+
+        // Variables para desbloqueos especiales
+        let secretText = '';
+        let cartridgesCollected = 0;
+        let startTime = Date.now();
+        let maniaUnlocked = false;
+        let horizonToggle = false; // Para alternar entre My Horizon y Our Horizon
+
+        // Reproducir canción
+        function playSong() {
+            let key = `${pgmValue.toString().padStart(2, '0')}-${daValue.toString().padStart(2, '0')}`;
+            let song = songs[key];
+
+            // Manejar código duplicado 08-17 (My Horizon vs Our Horizon)
+            if (key === '08-17') {
+                if (horizonToggle) {
+                    song = { name: 'Our Horizon', link: 'https://funkymaker.com/play/our-horizon-sonic-exe' };
                 }
-            } else {
-                playSoundEffect('errorSound');
-                document.getElementById('song-info').style.display = 'none';
+                horizonToggle = !horizonToggle; // Alternar para la próxima vez
             }
-        }
-        
-        // Mostrar imágenes aleatorias
-        function showRandomImages() {
-            const container = document.getElementById('image-container');
-            container.innerHTML = ''; // Limpiar contenedor
+
+            // Verificar desbloqueos especiales
+            if (!song && secretText.toLowerCase() === 'personnel') {
+                song = songs['personnel'];
+                key = 'personnel';
+                secretText = '';
+            }
+
+            // Hog - desbloquear con cartuchos
+            if (!song && cartridgesCollected >= 5) {
+                if (key === '00-00' || secretText.toLowerCase() === 'hog') {
+                    song = songs['hog'];
+                    key = 'hog';
+                    secretText = '';
+                }
+            }
+
+            // Mania - desbloquear después de 15 minutos
+            if (!song && maniaUnlocked) {
+                if (key === '00-01' || secretText.toLowerCase() === 'mania') {
+                    song = songs['mania'];
+                    key = 'mania';
+                    secretText = '';
+                }
+            }
+
+            // B4CKSLASH - desbloquear escribiendo "2005"
+            if (!song && secretText === '2005') {
+                song = songs['09-23'];
+                key = '09-23';
+                secretText = '';
+            }
+
+            // Forestall Desire - desbloquear escribiendo "forestall"
+            if (!song && secretText.toLowerCase() === 'forestall') {
+                song = songs['forestall'];
+                key = 'forestall';
+                secretText = '';
+            }
             
-            // Mostrar entre 3 y 6 imágenes aleatorias
-            const numImages = 3 + Math.floor(Math.random() * 4);
-            
-            for (let i = 0; i < numImages; i++) {
+            // Blind Date - desbloquear escribiendo "blinddate"
+            if (!song && secretText.toLowerCase() === 'blinddate') {
+                song = songs['blinddate'];
+                key = 'blinddate';
+                secretText = '';
+            }
+
+            if (song) {
+                playSound(confirmSound);
+
+                // Mostrar pantalla de carga
+                const loadingScreen = document.getElementById('loading-screen');
+                const loadingText = document.getElementById('loading-text');
+                loadingText.textContent = `CARGANDO ${song.name.toUpperCase()}...`;
+                loadingScreen.classList.add('show');
+
+                // Abrir link después de 2 segundos
                 setTimeout(() => {
-                    const img = document.createElement('img');
-                    const randomImage = imageList[Math.floor(Math.random() * imageList.length)];
-                    img.src = randomImage;
-                    img.className = 'random-image';
-                    
-                    // Posición aleatoria
-                    const posX = Math.random() * (window.innerWidth - 200);
-                    const posY = Math.random() * (window.innerHeight - 200);
-                    img.style.left = `${posX}px`;
-                    img.style.top = `${posY}px`;
-                    
-                    // Tamaño aleatorio (entre 50% y 120%)
-                    const scale = 0.5 + Math.random() * 0.7;
-                    img.style.transform = `scale(${scale})`;
-                    
-                    container.appendChild(img);
-                    
-                    // Mostrar la imagen
+                    if (song.link) {
+                        window.open(song.link, '_blank');
+                    }
+                }, 2000);
+
+                // Volver a la normalidad después de 5 segundos
+                setTimeout(() => {
+                    loadingScreen.classList.remove('show');
+                    songInfo.classList.remove('show');
+                }, 5000);
+            } else {
+                playSound(errorSound);
+                songInfo.classList.remove('show');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('pgm-up').addEventListener('click', () => changePGM(1));
+        document.getElementById('pgm-down').addEventListener('click', () => changePGM(-1));
+        document.getElementById('da-up').addEventListener('click', () => changeDA(1));
+        document.getElementById('da-down').addEventListener('click', () => changeDA(-1));
+        document.getElementById('play-btn').addEventListener('click', playSong);
+        document.getElementById('back-btn').addEventListener('click', () => {
+            playSound(selectSound);
+            setTimeout(() => window.location.href = 'index.html', 200);
+        });
+
+        // Teclado virtual
+        const virtualKeyboard = document.getElementById('virtual-keyboard');
+        const textInput = document.getElementById('text-input');
+
+        document.getElementById('keyboard-btn').addEventListener('click', () => {
+            playSound(selectSound);
+            virtualKeyboard.classList.add('show');
+            textInput.focus();
+        });
+
+        document.getElementById('close-keyboard').addEventListener('click', () => {
+            playSound(selectSound);
+            virtualKeyboard.classList.remove('show');
+            secretText = textInput.value;
+        });
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            playSound(selectSound);
+            textInput.value = '';
+        });
+
+        document.getElementById('enter-btn').addEventListener('click', () => {
+            playSound(selectSound);
+            virtualKeyboard.classList.remove('show');
+            secretText = textInput.value;
+            playSong();
+        });
+
+        // Botones del teclado virtual
+        document.querySelectorAll('.key-btn[data-key]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                playSound(selectSound);
+                const key = btn.getAttribute('data-key');
+                if (textInput.value.length < 10) {
+                    textInput.value += key;
+                }
+            });
+        });
+
+        // Actualizar secretText cuando se escribe en el input
+        textInput.addEventListener('input', () => {
+            secretText = textInput.value;
+        });
+
+        // Controles de teclado
+        document.addEventListener('keydown', (e) => {
+            // Capturar texto para códigos secretos
+            if (e.key.length === 1 && (e.key.match(/[a-zA-Z]/) || e.key.match(/[0-9]/))) {
+                secretText += e.key;
+                // Mantener solo los últimos 10 caracteres
+                if (secretText.length > 10) {
+                    secretText = secretText.slice(-10);
+                }
+                return;
+            }
+
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    e.preventDefault();
+                    changePGM(1);
+                    secretText = ''; // Resetear texto al usar controles
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    e.preventDefault();
+                    changePGM(-1);
+                    secretText = ''; // Resetear texto al usar controles
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    e.preventDefault();
+                    changeDA(-1);
+                    secretText = ''; // Resetear texto al usar controles
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    e.preventDefault();
+                    changeDA(1);
+                    secretText = ''; // Resetear texto al usar controles
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    playSong();
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    window.location.href = 'index.html';
+                    break;
+                case 'Backspace':
+                    secretText = secretText.slice(0, -1);
+                    break;
+            }
+        });
+
+        // Código secreto ↑↓←→Enter
+        let secretSequence = [];
+        const correctSequence = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'];
+
+        document.addEventListener('keydown', (e) => {
+            // Solo capturar la secuencia si no estamos en otros controles
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+                secretSequence.push(e.key);
+
+                // Mantener solo los últimos 5 elementos
+                if (secretSequence.length > 5) {
+                    secretSequence.shift();
+                }
+
+                // Verificar si coincide con la secuencia correcta
+                if (secretSequence.length === 5 &&
+                    secretSequence.every((key, index) => key === correctSequence[index])) {
+                    // Código secreto activado - mostrar mensaje especial
+                    playSound(confirmSound);
+                    songName.textContent = 'SECRET CODE ACTIVATED!';
+                    songInfo.classList.add('show');
+
+                    // Resetear secuencia
+                    secretSequence = [];
+
                     setTimeout(() => {
-                        img.style.display = 'block';
-                    }, 10);
-                    
-                    // Eliminar la imagen después de la animación
-                    setTimeout(() => {
-                        if (img.parentNode) {
-                            img.parentNode.removeChild(img);
-                        }
+                        songInfo.classList.remove('show');
                     }, 3000);
-                    
-                }, i * 500); // Espaciar la aparición de imágenes
+                }
+            }
+        });
+
+        // Detectar cuando el usuario vuelve a la página
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // Usuario volvió a la página, ocultar pantalla de carga
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.classList.remove('show');
+                songInfo.classList.remove('show');
+            }
+        });
+
+        // Detectar focus en la ventana
+        window.addEventListener('focus', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.classList.remove('show');
+            songInfo.classList.remove('show');
+        });
+
+        // Sistema de cartuchos para Hog
+        function collectCartridge() {
+            cartridgesCollected++;
+            playSound(confirmSound);
+            songName.textContent = `CARTUCHO ENCONTRADO! (${cartridgesCollected}/5)`;
+            songInfo.classList.add('show');
+            setTimeout(() => songInfo.classList.remove('show'), 2000);
+
+            if (cartridgesCollected >= 5) {
+                setTimeout(() => {
+                    songName.textContent = 'HOG DESBLOQUEADO!';
+                    songInfo.classList.add('show');
+                    setTimeout(() => songInfo.classList.remove('show'), 3000);
+                }, 2500);
+            }
+        }
+
+        // Evento aleatorio de cartucho (1% probabilidad por click)
+        document.addEventListener('click', () => {
+            if (cartridgesCollected < 5 && Math.random() < 0.01) {
+                collectCartridge();
+            }
+        });
+
+        // Timer para Mania (15 minutos)
+        setInterval(() => {
+            const timeElapsed = Date.now() - startTime;
+            if (timeElapsed >= 900000 && !maniaUnlocked) { // 15 minutos
+                maniaUnlocked = true;
+                playSound(confirmSound);
+                songName.textContent = 'CARTA DE SEGA: TAILS ASIGNADO COMO COMPAÑERO';
+                songInfo.classList.add('show');
+                setTimeout(() => {
+                    songName.textContent = 'MANIA DESBLOQUEADO!';
+                    setTimeout(() => songInfo.classList.remove('show'), 3000);
+                }, 3000);
+            }
+        }, 60000); // Verificar cada minuto
+
+        // Música de fondo del soundtest
+        const soundtestMusic = document.getElementById('soundtest-music');
+        const musicPrompt = document.getElementById('music-prompt');
+        let musicStarted = false;
+        
+        soundtestMusic.volume = 0.5;
+        
+        // Función para iniciar música
+        function startMusic() {
+            if (!musicStarted) {
+                soundtestMusic.play().catch(() => {});
+                musicStarted = true;
+                musicPrompt.style.display = 'none';
             }
         }
         
-        // Volver atrás
-        function goBack() {
-            playSoundEffect('selectSound');
-            // Detener todos los sonidos
-            if (currentAudio) {
-                currentAudio.pause();
-            }
-            document.getElementById('backgroundMusic').pause();
-            
-            // Redirigir al menú principal
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 300);
-        }
+        // Iniciar música con cualquier interacción
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('keydown', startMusic, { once: true });
+        musicPrompt.addEventListener('click', startMusic);
+
+        // Inicialización
+        updateDisplay();
     </script>
 </body>
+
 </html>
