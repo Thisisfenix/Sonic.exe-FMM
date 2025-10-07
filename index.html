@@ -736,9 +736,13 @@
         /* Responsive para móvil */
         @media (max-width: 600px) {
             .game-button {
-                width: 30px;
-                height: 30px;
-                margin: 0 5px;
+                position: relative;
+                bottom: auto;
+                right: auto;
+                width: 40px;
+                height: 40px;
+                margin: 10px auto;
+                display: block;
             }
         }
 
@@ -854,7 +858,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.6.1
+                    <i class="bi bi-stars"></i> Rework v1.6.1 Hotfix 1
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -952,8 +956,16 @@
                 <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <h4><strong>🎆 NOVEDADES v1.6.1</strong></h4>
+                <h4><strong>🎆 NOVEDADES v1.6.1 + HOTFIX</strong></h4>
                 <br>
+                <p><strong>🔧 HOTFIX - Adaptación Móvil:</strong></p>
+                <ul>
+                    <li>🎮 Minijuego Samy Jump: Configuración de escala adaptativa para móviles.</li>
+                    <li>🎵 Encore: Contenedores responsivos y botones táctiles optimizados.</li>
+                    <li>📺 Media Player (Extras): Controles más grandes y interfaz móvil mejorada.</li>
+                    <li>🎹 SoundTest: Teclado virtual optimizado y controles táctiles de 44px mínimo.</li>
+                    <li>🔙 Créditos: Botón de volver restaurado y visible en todas las resoluciones.</li>
+                </ul>
                 <p><strong>🎵 Encore Section:</strong></p>
                 <ul>
                     <li>🎨 Diseño completamente reworkeado con tema Encore único.</li>

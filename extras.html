@@ -626,72 +626,142 @@
 
 
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .player-container {
                 height: var(--app-height);
             }
 
             .player-title {
-                font-size: 14px;
+                font-size: 16px;
             }
 
             .player-btn {
-                width: 22px;
-                height: 22px;
-                font-size: 12px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                min-height: 44px;
             }
 
             .playlist-overlay {
-                max-width: 85%;
+                max-width: 90%;
                 padding-top: 60px;
             }
 
             .playlist-item {
-                padding: 10px;
-                font-size: 12px;
+                padding: 15px;
+                font-size: 14px;
+                min-height: 60px;
             }
 
             .playlist-item img {
-                width: 40px;
-                height: 25px;
+                width: 50px;
+                height: 35px;
             }
 
             .control-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-                margin: 0 2px;
-                padding: 4px;
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+                margin: 0 4px;
+                padding: 8px;
+                min-height: 44px;
             }
 
             .left-controls,
             .right-controls {
-                gap: 2px;
+                gap: 8px;
+            }
+
+            .center-controls {
+                gap: 8px;
             }
 
             .center-controls .control-btn {
-                width: 36px;
-                height: 36px;
+                width: 48px;
+                height: 48px;
             }
 
             .play-btn {
-                width: 46px;
-                height: 46px;
-                font-size: 20px;
+                width: 60px !important;
+                height: 60px !important;
+                font-size: 24px !important;
+            }
+
+            .volume-slider {
+                width: 80px;
+                height: 12px;
+                padding: 12px 0;
+                margin: -12px 0;
+            }
+
+            .progress-bar {
+                height: 12px;
+                padding: 8px 0;
+                margin: -8px 0;
+            }
+
+            .controls-container {
+                padding: 20px;
+                padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            }
+
+            .progress-container {
+                margin-bottom: 20px;
+                gap: 15px;
+            }
+
+            .time-display {
+                font-size: 14px;
+                min-width: 50px;
+            }
+
+            .favorites-panel {
+                width: 95%;
+                right: 2.5%;
+                max-height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .player-title {
+                font-size: 14px;
+            }
+
+            .player-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+                margin: 0 2px;
+            }
+
+            .center-controls .control-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .play-btn {
+                width: 56px !important;
+                height: 56px !important;
+                font-size: 22px !important;
             }
 
             .volume-slider {
                 width: 60px;
             }
 
-            .progress-bar {
-                height: 10px;
+            .left-controls,
+            .right-controls {
+                gap: 4px;
             }
 
-            .favorites-panel {
-                width: 90%;
-                right: 5%;
-                max-height: 120px;
+            .center-controls {
+                gap: 6px;
             }
         }
 

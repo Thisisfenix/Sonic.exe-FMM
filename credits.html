@@ -633,17 +633,16 @@
             }
             
             .back-button {
-                position: fixed;
-                bottom: max(10px, env(safe-area-inset-bottom), 70px);
-                left: 50%;
-                transform: translateX(-50%);
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
                 top: auto;
                 z-index: 25;
-                margin: 0;
-            }
-            
-            .credits-controls .back-button {
-                display: none;
+                margin: 10px auto 0;
+                display: block;
+                width: auto;
+                text-align: center;
             }
         }
 
@@ -871,13 +870,15 @@
 
             .back-button {
                 position: relative;
-                top: unset;
-                left: unset;
-                margin-top: 5px;
+                top: auto;
+                left: auto;
+                margin: 10px auto 0;
                 font-size: 0.7rem;
                 padding: 8px 12px;
                 order: 4;
                 width: auto;
+                display: block;
+                text-align: center;
             }
 
             .progress-indicator {
@@ -939,6 +940,8 @@
                 width: 100%;
                 max-width: 200px;
                 text-align: center;
+                display: block;
+                margin: 10px auto 0;
             }
         }
     </style>

@@ -25,10 +25,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         ">
             <div id="phaserGame" style="
                 border: 2px solid #ff6b00;
                 box-shadow: 0 0 20px #ff6b00;
+                max-width: 100vw;
+                max-height: 100vh;
+                width: 100%;
+                height: 100%;
             "></div>
         </div>
     `;
@@ -88,12 +93,23 @@
             }
         }
     
-        // Configuración de Phaser
+        // Configuración de Phaser con adaptación móvil
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const gameWidth = isMobile ? Math.min(window.innerWidth, 480) : window.innerWidth;
+        const gameHeight = isMobile ? Math.min(window.innerHeight, 800) : window.innerHeight;
+        
         const config = {
             type: Phaser.AUTO,
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: gameWidth,
+            height: gameHeight,
             parent: 'phaserGame',
+            scale: {
+                mode: isMobile ? Phaser.Scale.FIT : Phaser.Scale.NONE,
+                parent: 'phaserGame',
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: gameWidth,
+                height: gameHeight
+            },
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -1382,8 +1398,8 @@
             if (settingsMenu) return;
             
             const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const menuWidth = isMobile ? Math.min(350, config.width - 40) : 400;
-            const menuHeight = isMobile ? Math.min(450, config.height - 80) : 500;
+            const menuWidth = isMobile ? Math.min(350, gameWidth - 40) : 400;
+            const menuHeight = isMobile ? Math.min(450, gameHeight - 80) : 500;
             
             settingsMenu = scene.add.container(config.width/2, config.height/2);
             settingsMenu.setScrollFactor(0).setDepth(1000);
