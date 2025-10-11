@@ -1,1523 +1,1545 @@
-// Samy Jump Minigame v1.0.0
+// Samy Ware - WarioWare Style Minigames with Phaser
 // Desarrollado para Sonic.EXE FMM
-// Fecha: 2024
+
+// Load Phaser.js if not already loaded
+if (typeof Phaser === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js';
+    script.onload = () => console.log('Phaser.js loaded');
+    document.head.appendChild(script);
+}
+
 (function() {
     'use strict';
     
-    // Configuración del juego
-    const GAME_CONFIG = {
-        VERSION: '1.0.0',
-        DEBUG: false,
-        SAVE_KEY: 'sonicJumpV1',
-        MAX_HEIGHT: 50000, // Límite de altura para evitar overflow
-        PERFORMANCE_MODE: window.innerWidth < 800 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let gameActive = false;
+    let currentScore = 0;
+    let gamesCompleted = 0;
+    let gameSpeed = 1;
+    let lives = 3;
+    let currentTheme = 'default';
+    let achievements = [];
+    let bestScore = 0;
+    let streak = 0;
+    let maxStreak = 0;
+    
+    // Web Audio API setup
+    let audioContext = null;
+    let soundEnabled = true;
+    let musicEnabled = true;
+    
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioContext;
+    }
+    
+    function playTone(frequency, duration, type = 'sine', volume = 0.3) {
+        if (!soundEnabled) return;
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0, ctx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
+    }
+    
+    const sounds = {
+        success: () => playTone(523, 0.2, 'triangle', 0.4),
+        fail: () => playTone(196, 0.3, 'sawtooth', 0.3),
+        collect: () => playTone(659, 0.1, 'square', 0.2),
+        jump: () => playTone(440, 0.15, 'sine', 0.3),
+        click: () => playTone(800, 0.05, 'square', 0.1),
+        perfect: () => {
+            playTone(523, 0.1, 'triangle', 0.3);
+            setTimeout(() => playTone(659, 0.1, 'triangle', 0.3), 100);
+            setTimeout(() => playTone(784, 0.2, 'triangle', 0.4), 200);
+        }
     };
-    // Crear HTML del minijuego
+    
+    // Themes
+    const themes = {
+        default: {
+            name: '🎮 Clásico',
+            bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            primary: '#ff6b6b',
+            secondary: '#74b9ff'
+        },
+        dark: {
+            name: '🌙 Oscuro',
+            bg: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+            primary: '#e74c3c',
+            secondary: '#3498db'
+        },
+        neon: {
+            name: '💫 Neón',
+            bg: 'linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%)',
+            primary: '#06ffa5',
+            secondary: '#ffbe0b'
+        },
+        retro: {
+            name: '🕹️ Retro',
+            bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            primary: '#4facfe',
+            secondary: '#00f2fe'
+        }
+    };
+    
+    // Achievements system
+    const achievementsList = {
+        firstWin: { name: '🎯 Primer Éxito', desc: 'Completa tu primer minijuego', unlocked: false },
+        perfectionist: { name: '💯 Perfeccionista', desc: 'Consigue 100 puntos en un juego', unlocked: false },
+        speedster: { name: '⚡ Velocista', desc: 'Alcanza velocidad 2.0x', unlocked: false },
+        survivor: { name: '🛡️ Superviviente', desc: 'Completa 20 juegos seguidos', unlocked: false },
+        streaker: { name: '🔥 Racha', desc: 'Consigue 10 éxitos seguidos', unlocked: false },
+        explorer: { name: '🗺️ Explorador', desc: 'Juega todos los minijuegos', unlocked: false },
+        master: { name: '👑 Maestro', desc: 'Alcanza 1000 puntos totales', unlocked: false }
+    };
+    
+    function checkAchievements() {
+        if (!achievementsList.firstWin.unlocked && gamesCompleted >= 1) {
+            unlockAchievement('firstWin');
+        }
+        if (!achievementsList.speedster.unlocked && gameSpeed >= 2.0) {
+            unlockAchievement('speedster');
+        }
+        if (!achievementsList.survivor.unlocked && gamesCompleted >= 20) {
+            unlockAchievement('survivor');
+        }
+        if (!achievementsList.master.unlocked && currentScore >= 1000) {
+            unlockAchievement('master');
+        }
+    }
+    
+    function unlockAchievement(id) {
+        if (!achievementsList[id].unlocked) {
+            achievementsList[id].unlocked = true;
+            achievements.push(id);
+            sounds.perfect();
+            showAchievementNotification(achievementsList[id]);
+            saveStats();
+        }
+    }
+    
+    function showAchievementNotification(achievement) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed; top: 20px; right: 20px; z-index: 10000;
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white; padding: 15px 20px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease-out;
+            max-width: 300px; font-family: Arial, sans-serif;
+        `;
+        notification.innerHTML = `
+            <div style="font-weight: bold; margin-bottom: 5px;">🏆 ¡LOGRO DESBLOQUEADO!</div>
+            <div style="font-size: 14px;">${achievement.name}</div>
+            <div style="font-size: 12px; opacity: 0.9;">${achievement.desc}</div>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 4000);
+    }
+    
+    // Phaser game instance
+    let phaserGame = null;
+    let gameTimer = null;
+
     const gameHTML = `
-        <div id="miniGameOverlay" style="
+        <div id="samyWareOverlay" style="
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             z-index: 1000;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             overflow: hidden;
+            font-family: Arial, sans-serif;
+            padding: ${isMobile ? '0' : '20px'};
         ">
-            <div id="phaserGame" style="
-                border: 2px solid #ff6b00;
-                box-shadow: 0 0 20px #ff6b00;
-                max-width: 100vw;
-                max-height: 100vh;
-                width: 100%;
-                height: 100%;
+            <div id="gameContainer" style="
+                width: ${isMobile ? '100vw' : '600px'};
+                height: ${isMobile ? '100vh' : '500px'};
+                background: #fff;
+                border-radius: ${isMobile ? '0' : '15px'};
+                margin: 0;
+                box-shadow: ${isMobile ? 'none' : '0 10px 30px rgba(0,0,0,0.3)'};
+                display: flex;
+                flex-direction: column;
             "></div>
         </div>
     `;
     
-    // Cargar Phaser desde CDN
-    const phaserScript = document.createElement('script');
-    phaserScript.src = 'https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js';
-    document.head.appendChild(phaserScript);
+    document.body.insertAdjacentHTML('beforeend', gameHTML);
     
-    phaserScript.onload = function() {
-        // Insertar HTML en el body
-        document.body.insertAdjacentHTML('beforeend', gameHTML);
-        
-        // Relentizar y apagar música
-        const bgMusic = document.getElementById('bgMusic');
-        let musicSpeed = 1;
-        const slowDown = setInterval(() => {
-            musicSpeed -= 0.1;
-            if (musicSpeed <= 0) {
-                bgMusic.pause();
-                clearInterval(slowDown);
-            } else {
-                bgMusic.playbackRate = musicSpeed;
-            }
-        }, 100);
-        
-        const overlay = document.getElementById('miniGameOverlay');
-        let game;
-        let score = 0;
-        let gameData = loadGameData();
-        let highScore = gameData.highScore || 0;
-        
-        // Función para cargar datos del juego
-        function loadGameData() {
-            try {
-                const saved = localStorage.getItem(GAME_CONFIG.SAVE_KEY);
-                return saved ? JSON.parse(saved) : {
-                    highScore: 0,
-                    totalGames: 0,
-                    totalTime: 0,
-                    bossesDefeated: [],
-                    version: GAME_CONFIG.VERSION
-                };
-            } catch (e) {
-                console.warn('Error cargando datos:', e);
-                return { highScore: 0, totalGames: 0, totalTime: 0, bossesDefeated: [], version: GAME_CONFIG.VERSION };
-            }
+    const overlay = document.getElementById('samyWareOverlay');
+    const container = document.getElementById('gameContainer');
+
+    // Save/Load stats
+    function saveStats() {
+        localStorage.setItem('samyWareStats', JSON.stringify({
+            currentScore, gamesCompleted, gameSpeed, lives, currentTheme,
+            achievements, bestScore, maxStreak, soundEnabled, musicEnabled
+        }));
+    }
+
+    function loadStats() {
+        const saved = localStorage.getItem('samyWareStats');
+        if (saved) {
+            const data = JSON.parse(saved);
+            currentScore = data.currentScore || 0;
+            gamesCompleted = data.gamesCompleted || 0;
+            gameSpeed = data.gameSpeed || 1;
+            lives = data.lives || 3;
+            currentTheme = data.currentTheme || 'default';
+            achievements = data.achievements || [];
+            bestScore = data.bestScore || 0;
+            maxStreak = data.maxStreak || 0;
+            soundEnabled = data.soundEnabled !== false;
+            musicEnabled = data.musicEnabled !== false;
+            
+            // Restore achievements
+            achievements.forEach(id => {
+                if (achievementsList[id]) {
+                    achievementsList[id].unlocked = true;
+                }
+            });
+        }
+    }
+
+    // Clean up function
+    function cleanup() {
+        if (phaserGame) {
+            phaserGame.destroy(true);
+            phaserGame = null;
+        }
+        if (gameTimer) clearInterval(gameTimer);
+        gameTimer = null;
+        gameActive = false;
+        window.submitCount = null;
+    }
+
+    // Main menu
+    function createMainMenu() {
+        cleanup();
+        // Center main menu
+        const overlay = document.getElementById('samyWareOverlay');
+        if (overlay) {
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+        }
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.width = isMobile ? '100vw' : '500px';
+            gameContainer.style.height = isMobile ? '100vh' : '600px';
         }
         
-        // Función para guardar datos del juego
-        function saveGameData() {
-            try {
-                gameData.version = GAME_CONFIG.VERSION;
-                localStorage.setItem(GAME_CONFIG.SAVE_KEY, JSON.stringify(gameData));
-            } catch (e) {
-                console.warn('Error guardando datos:', e);
-            }
-        }
+        container.innerHTML = `
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; background: ${themes[currentTheme].bg};">
+                <h1 style="color: #ffffff; margin: 0 0 10px 0; font-size: ${isMobile ? '36px' : '28px'}; text-shadow: 4px 4px 8px rgba(0,0,0,0.7); animation: pulse 2s infinite; font-family: 'Arial Black', Arial, sans-serif;">🎮 SAMY WARE</h1>
+                <p style="color: #f8f9fa; margin: 0 0 ${isMobile ? '30px' : '20px'} 0; font-size: ${isMobile ? '18px' : '14px'}; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); font-weight: bold;">¡Minijuegos Rápidos!</p>
+                
+                <div style="position: relative; margin: ${isMobile ? '20px 0' : '15px 0'};">
+                    <img src="images/samyholahola.png" alt="Samy" style="width: ${isMobile ? '150px' : '120px'}; height: ${isMobile ? '150px' : '120px'}; object-fit: contain; animation: bounce 2s infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="width: ${isMobile ? '150px' : '120px'}; height: ${isMobile ? '150px' : '120px'}; background: linear-gradient(45deg, #4ecdc4, #44a08d); border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: ${isMobile ? '60px' : '48px'}; animation: bounce 2s infinite; margin: 0 auto;">🎮</div>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.25); padding: ${isMobile ? '25px' : '12px'}; border-radius: 20px; margin: ${isMobile ? '20px 0' : '8px 0'}; backdrop-filter: blur(15px); border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+                    <div style="color: #ffffff; font-size: ${isMobile ? '20px' : '14px'}; margin-bottom: ${isMobile ? '15px' : '8px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">📊 STATS</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: ${isMobile ? '20px' : '8px'}; max-width: ${isMobile ? '450px' : '300px'};">
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '24px' : '28px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${currentScore}</div>
+                            <div style="font-size: ${isMobile ? '14px' : '16px'}; opacity: 0.9; font-weight: bold;">Puntos</div>
+                        </div>
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '24px' : '28px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${gamesCompleted}</div>
+                            <div style="font-size: ${isMobile ? '14px' : '16px'}; opacity: 0.9; font-weight: bold;">Juegos</div>
+                        </div>
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '24px' : '28px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${lives}</div>
+                            <div style="font-size: ${isMobile ? '14px' : '16px'}; opacity: 0.9; font-weight: bold;">Vidas</div>
+                        </div>
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '24px' : '28px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${maxStreak}</div>
+                            <div style="font-size: ${isMobile ? '14px' : '16px'}; opacity: 0.9; font-weight: bold;">Mejor Racha</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: ${isMobile ? '20px' : '8px'}; max-width: ${isMobile ? '450px' : '300px'}; margin-top: 10px;">
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '20px' : '24px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${bestScore}</div>
+                            <div style="font-size: ${isMobile ? '12px' : '14px'}; opacity: 0.9; font-weight: bold;">Mejor</div>
+                        </div>
+                        <div style="color: #ffffff; text-align: center;">
+                            <div style="font-size: ${isMobile ? '20px' : '24px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${gameSpeed.toFixed(1)}x</div>
+                            <div style="font-size: ${isMobile ? '12px' : '14px'}; opacity: 0.9; font-weight: bold;">Velocidad</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="startContinuousGame()" style="padding: ${isMobile ? '25px 50px' : '15px 25px'}; font-size: ${isMobile ? '24px' : '18px'}; background: linear-gradient(45deg, ${themes[currentTheme].primary}, ${themes[currentTheme].secondary}); color: white; border: none; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(255,107,107,0.5); margin: ${isMobile ? '15px' : '5px'}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); transform: scale(1); animation: pulse 2s infinite; width: ${isMobile ? 'auto' : '90%'};" onmouseover="this.style.transform='scale(1.05)'; sounds.click()" onmouseout="this.style.transform='scale(1)'">
+                    🎲 ${isMobile ? '¡JUGAR INFINITO!' : '¡JUGAR!'}
+                </button>
+                
+                <div style="display: flex; gap: ${isMobile ? '10px' : '10px'}; margin-top: ${isMobile ? '25px' : '15px'}; flex-wrap: wrap; justify-content: center; width: 100%;">
+                    <button onclick="showSettings()" style="padding: ${isMobile ? '12px 20px' : '10px 15px'}; font-size: ${isMobile ? '14px' : '12px'}; background: linear-gradient(45deg, #74b9ff, #0984e3); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(116,185,255,0.4); font-weight: bold;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        ⚙️ CONFIG
+                    </button>
+                    <button onclick="showAchievements()" style="padding: ${isMobile ? '12px 20px' : '10px 15px'}; font-size: ${isMobile ? '14px' : '12px'}; background: linear-gradient(45deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(243,156,18,0.4); font-weight: bold;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🏆 LOGROS
+                    </button>
+                    <button onclick="showThemes()" style="padding: ${isMobile ? '12px 20px' : '10px 15px'}; font-size: ${isMobile ? '14px' : '12px'}; background: linear-gradient(45deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(155,89,182,0.4); font-weight: bold;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🎨 TEMAS
+                    </button>
+                    <button onclick="resetStats()" style="padding: ${isMobile ? '12px 20px' : '10px 15px'}; font-size: ${isMobile ? '14px' : '12px'}; background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.4); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); font-weight: bold;" onmouseover="this.style.transform='scale(1.05)'; this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(255,255,255,0.25)'">
+                        🔄 RESET
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Continuous game mode
+    let continuousMode = false;
     
-        // Configuración de Phaser con adaptación móvil
-        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const gameWidth = isMobile ? Math.min(window.innerWidth, 480) : window.innerWidth;
-        const gameHeight = isMobile ? Math.min(window.innerHeight, 800) : window.innerHeight;
+    window.startContinuousGame = function() {
+        continuousMode = true;
+        startNextGame();
+    };
+    
+    function startNextGame() {
+        const games = ['jump', 'collect', 'dodge', 'tap', 'reaction', 'avoid', 'catch', 'shoot', 'balance', 'count', 'memory', 'math', 'rhythm', 'simon'];
+        const randomGame = games[Math.floor(Math.random() * games.length)];
+        startMicrogame(randomGame);
+    }
+
+    window.resetStats = function() {
+        if (confirm('¿Estás seguro de que quieres reiniciar todas las estadísticas?')) {
+            currentScore = 0;
+            gamesCompleted = 0;
+            gameSpeed = 1;
+            lives = 3;
+            saveStats();
+            createMainMenu();
+        }
+    };
+
+    // Start specific microgame
+    function startMicrogame(gameType) {
+        cleanup();
+        gameActive = true;
+        
+        // Make minigames fullscreen
+        const overlay = document.getElementById('samyWareOverlay');
+        if (overlay) {
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+        }
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.width = isMobile ? '100vw' : '90vw';
+            gameContainer.style.height = isMobile ? '100vh' : '90vh';
+        }
+        
+        // Create Phaser game container
+        container.innerHTML = `
+            <div style="padding: 15px; text-align: center; background: #ff6b6b; color: white;">
+                <h3 id="gameTitle">🎮 CARGANDO...</h3>
+                <div>Tiempo: <span id="gameTime">5</span>s | <span id="gameInfo">Preparate...</span></div>
+            </div>
+            <div id="phaserContainer" style="flex: 1; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #2c3e50, #34495e); width: 100%;"></div>
+            ${isMobile ? '<div id="mobileControls" style="padding: 15px; background: rgba(0,0,0,0.8); text-align: center;"></div>' : ''}
+        `;
+        
+        // Wait for Phaser to be available
+        const initGame = () => {
+            if (typeof Phaser === 'undefined') {
+                setTimeout(initGame, 100);
+                return;
+            }
+            
+            if (gameType === 'jump') createPhaserJumpGame();
+            else if (gameType === 'collect') createPhaserCollectGame();
+            else if (gameType === 'dodge') createPhaserDodgeGame();
+            else if (gameType === 'tap') createPhaserTapGame();
+            else if (gameType === 'reaction') createPhaserReactionGame();
+            else if (gameType === 'avoid') createPhaserAvoidGame();
+            else if (gameType === 'catch') createPhaserCatchGame();
+            else if (gameType === 'shoot') createPhaserShootGame();
+            else if (gameType === 'balance') createPhaserBalanceGame();
+            else if (gameType === 'count') createPhaserCountGame();
+            else if (gameType === 'memory') createMemoryGame();
+            else if (gameType === 'math') createMathGame();
+            else if (gameType === 'rhythm') createRhythmGame();
+            else if (gameType === 'simon') createSimonGame();
+        };
+        
+        initGame();
+    }
+
+    // Phaser Jump Game
+    function createPhaserJumpGame() {
+        document.getElementById('gameTitle').textContent = '🦘 ¡SALTA ALTO!';
+        document.getElementById('gameInfo').textContent = 'Altura: 0m';
         
         const config = {
             type: Phaser.AUTO,
-            width: gameWidth,
-            height: gameHeight,
-            parent: 'phaserGame',
-            scale: {
-                mode: isMobile ? Phaser.Scale.FIT : Phaser.Scale.NONE,
-                parent: 'phaserGame',
-                autoCenter: Phaser.Scale.CENTER_BOTH,
-                width: gameWidth,
-                height: gameHeight
-            },
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 800 },
-                    debug: false
-                }
-            },
+            width: Math.min(container.offsetWidth - 20, isMobile ? 580 : 800),
+            height: Math.min(container.offsetHeight - 120, isMobile ? 380 : 600),
+            parent: 'phaserContainer',
+            physics: { default: 'arcade', arcade: { gravity: { y: 800 } } },
             scene: {
-                preload: preload,
-                create: create,
-                update: update
+                preload: function() {
+                    this.add.graphics().fillStyle(0x8B4513).fillRect(0, 0, 100, 15).generateTexture('platform', 100, 15);
+                    this.load.image('samy', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.maxHeight = 0;
+                    this.platforms = this.physics.add.staticGroup();
+                    
+                    // Ground
+                    const ground = this.add.rectangle(config.width/2, config.height - 20, config.width, 40, 0x654321);
+                    this.physics.add.existing(ground, true);
+                    this.platforms.add(ground);
+                    
+                    // Floating platforms
+                    for (let i = 1; i <= 8; i++) {
+                        const platform = this.add.rectangle(Math.random() * (config.width - 100) + 50, config.height - 80 - (i * 60), 100, 15, 0x8B4513);
+                        this.physics.add.existing(platform, true);
+                        this.platforms.add(platform);
+                    }
+                    
+                    // Player
+                    this.player = this.physics.add.sprite(config.width/2, config.height - 60, 'samy');
+                    this.player.setScale(0.3);
+                    this.player.setBounce(0.2);
+                    this.player.setCollideWorldBounds(true);
+                    this.physics.add.collider(this.player, this.platforms);
+                    
+                    // Controls
+                    this.cursors = this.input.keyboard.createCursorKeys();
+                    this.wasd = this.input.keyboard.addKeys('W,S,A,D,SPACE');
+                    
+                    // Mobile controls
+                    if (isMobile) {
+                        document.getElementById('mobileControls').innerHTML = `
+                            <button id="jumpBtn" style="padding: 20px 40px; background: #4ecdc4; color: white; border: none; border-radius: 10px; font-size: 20px;">SALTAR</button>
+                        `;
+                        document.getElementById('jumpBtn').onclick = () => {
+                            if (this.player && this.player.body && this.player.body.touching.down) {
+                                this.player.setVelocityY(-600);
+                            }
+                        };
+                    }
+                },
+                update: function() {
+                    if (!gameActive || !this.player) return;
+                    
+                    // Movement
+                    if (this.cursors.left.isDown || this.wasd.A.isDown) {
+                        this.player.setVelocityX(-200);
+                    } else if (this.cursors.right.isDown || this.wasd.D.isDown) {
+                        this.player.setVelocityX(200);
+                    } else {
+                        this.player.setVelocityX(0);
+                    }
+                    
+                    // Jumping
+                    if ((this.cursors.up.isDown || this.cursors.space.isDown || this.wasd.W.isDown || this.wasd.SPACE.isDown) && this.player.body.touching.down) {
+                        this.player.setVelocityY(-600);
+                    }
+                    
+                    // Update height
+                    const height = Math.max(0, Math.floor((config.height - this.player.y) / 20));
+                    if (height > this.maxHeight) {
+                        this.maxHeight = height;
+                        const infoEl = document.getElementById('gameInfo');
+                        if (infoEl) infoEl.textContent = `Altura: ${height}m`;
+                    }
+                }
             }
         };
         
-        let player;
-        let platforms;
-        let cursors;
-        let scoreText;
-        let gameOverText;
-        let startText;
-        let gameStarted = false;
-        let gameOver = false;
-        let maxHeight = 0;
-        let deathZone = 0;
-        let particles;
-        let lastPlatformY = 0;
-        let currentX = 0;
-        let boss;
-        let bossActive = false;
-        let bossHealth = 100;
-        let bombs;
-        let activeBombs;
-        let bossText;
-        let healthBar;
-        let healthBarBg;
-        let miniGameActive = false;
-        let lastMiniGameHeight = 0;
-        let bossFloor;
-        let bossDefeated = false;
-        let stormActive = false;
-        let glitchActive = false;
-        let gravityInverted = false;
-        let timeWarpActive = false;
-        let lightnings = [];
-        let glitchOverlay;
-        let stormTimer;
-        let gravityTimer;
-        let gameStartTime = 0;
-        let lastBossType = 0;
-        let performanceMode = GAME_CONFIG.PERFORMANCE_MODE;
-    
-        function exitGame() {
-            if (game) {
-                game.destroy(true);
-            }
-            overlay.remove();
-            bgMusic.playbackRate = 1;
-            bgMusic.play();
-        }
-    
-        function preload() {
-            // Pantalla de carga
-            const loadingText = this.add.text(config.width/2, config.height/2, 'Cargando...', 
-                { fontSize: '32px', fill: '#ff6b00', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            
-            const progressBar = this.add.graphics();
-            const progressBox = this.add.graphics();
-            progressBox.fillStyle(0x222222);
-            progressBox.fillRect(config.width/2 - 160, config.height/2 + 50, 320, 50);
-            
-            // Eventos de carga
-            this.load.on('progress', (value) => {
-                progressBar.clear();
-                progressBar.fillStyle(0xff6b00);
-                progressBar.fillRect(config.width/2 - 150, config.height/2 + 60, 300 * value, 30);
-                loadingText.setText(`Cargando... ${Math.round(value * 100)}%`);
-            });
-            
-            this.load.on('complete', () => {
-                progressBar.destroy();
-                progressBox.destroy();
-                loadingText.destroy();
-            });
-            
-            // Sistema de recarga de recursos
-            this.load.on('loaderror', (file) => {
-                console.warn('Error cargando:', file.src);
-                loadingText.setText('Error de carga, reintentando...');
-                this.time.delayedCall(1000, () => {
-                    this.load.image(file.key, file.src);
-                    this.load.start();
-                });
-            });
-            
-            // Cargar imagen de mango con fallback
-            this.load.image('mango', 'images/mango.png');
-            
-            // Cargar imagen del jugador con fallback
-            this.load.image('player', 'images/samyholahola.png');
-            
-            // Cargar imagen de Sonic.EXE para plataformas
-            this.load.image('sonicexe', 'images/sonic.exe.jpeg');
-            
-            // Cargar imagen del boss
-            this.load.image('boss', 'images/sonic.exeboss.png');
-            
-            // Crear texturas de respaldo si fallan las imágenes
-            this.load.on('complete', () => {
-                // Verificar si las imágenes se cargaron correctamente
-                if (!this.textures.exists('mango')) {
-                    const mangoFallback = this.add.graphics();
-                    mangoFallback.fillStyle(0xFFA500);
-                    mangoFallback.fillRoundedRect(0, 0, 100, 20, 10);
-                    mangoFallback.generateTexture('mango', 100, 20);
-                    mangoFallback.destroy(); // Liberar memoria
-                }
-                
-                if (!this.textures.exists('player')) {
-                    const playerFallback = this.add.graphics();
-                    playerFallback.fillStyle(0x0066FF);
-                    playerFallback.fillCircle(25, 25, 20);
-                    playerFallback.generateTexture('player', 50, 50);
-                    playerFallback.destroy(); // Liberar memoria
-                }
-                
-                if (!this.textures.exists('sonicexe')) {
-                    const sonicexeFallback = this.add.graphics();
-                    sonicexeFallback.fillStyle(0x000000);
-                    sonicexeFallback.fillRoundedRect(0, 0, 120, 30, 5);
-                    sonicexeFallback.generateTexture('sonicexe', 120, 30);
-                    sonicexeFallback.destroy(); // Liberar memoria
-                }
-                
-                if (!this.textures.exists('boss')) {
-                    const bossFallback = this.add.graphics();
-                    bossFallback.fillStyle(0x000000);
-                    bossFallback.fillCircle(50, 50, 40);
-                    bossFallback.fillStyle(0xff0000);
-                    bossFallback.fillCircle(35, 40, 8);
-                    bossFallback.fillCircle(65, 40, 8);
-                    bossFallback.generateTexture('boss', 100, 100);
-                    bossFallback.destroy(); // Liberar memoria
-                }
-            });
-            
-            // Crear texturas optimizadas
-            const bombGraphics = this.add.graphics();
-            bombGraphics.fillStyle(0x333333);
-            bombGraphics.fillCircle(15, 15, 12);
-            bombGraphics.fillStyle(0xff6600);
-            bombGraphics.fillRect(12, 5, 6, 8);
-            bombGraphics.generateTexture('bomb', 30, 30);
-            bombGraphics.destroy();
-            
-            const activeBombGraphics = this.add.graphics();
-            activeBombGraphics.fillStyle(0xff0000);
-            activeBombGraphics.fillCircle(15, 15, 12);
-            activeBombGraphics.fillStyle(0xffff00);
-            activeBombGraphics.fillRect(12, 5, 6, 8);
-            activeBombGraphics.generateTexture('activeBomb', 30, 30);
-            activeBombGraphics.destroy();
-                
-            const normalPlatform = this.add.graphics();
-            normalPlatform.fillStyle(0xFFD700);
-            normalPlatform.fillRoundedRect(0, 0, 200, 40, 8);
-            normalPlatform.lineStyle(3, 0xFF8C00);
-            normalPlatform.strokeRoundedRect(0, 0, 200, 40, 8);
-            normalPlatform.generateTexture('ground', 200, 40);
-            normalPlatform.destroy();
-            
-            const stonePlatform = this.add.graphics();
-            stonePlatform.fillStyle(0xC0C0C0);
-            stonePlatform.fillRoundedRect(0, 0, 150, 36, 6);
-            stonePlatform.lineStyle(3, 0x808080);
-            stonePlatform.strokeRoundedRect(0, 0, 150, 36, 6);
-            stonePlatform.generateTexture('stone', 150, 36);
-            stonePlatform.destroy();
-            
-            const crystalPlatform = this.add.graphics();
-            crystalPlatform.fillStyle(0x00FFFF);
-            crystalPlatform.fillRoundedRect(0, 0, 120, 32, 12);
-            crystalPlatform.lineStyle(3, 0x0080FF);
-            crystalPlatform.strokeRoundedRect(0, 0, 120, 32, 12);
-            crystalPlatform.generateTexture('crystal', 120, 32);
-            crystalPlatform.destroy();
-                
-            const cloudGraphics = this.add.graphics();
-            cloudGraphics.fillStyle(0xffffff);
-            cloudGraphics.fillCircle(20, 15, 15);
-            cloudGraphics.fillCircle(35, 15, 12);
-            cloudGraphics.fillCircle(50, 15, 10);
-            cloudGraphics.generateTexture('cloud', 70, 30);
-            cloudGraphics.destroy();
-                
-            const starGraphics = this.add.graphics();
-            starGraphics.fillStyle(0xffff00);
-            starGraphics.fillCircle(8, 8, 3);
-            starGraphics.generateTexture('star', 16, 16);
-            starGraphics.destroy();
-                
-            const mountainGraphics = this.add.graphics();
-            mountainGraphics.fillStyle(0x4a4a4a);
-            mountainGraphics.fillTriangle(0, 60, 30, 0, 60, 60);
-            mountainGraphics.generateTexture('mountain', 60, 60);
-            mountainGraphics.destroy();
-                
-            const tree = this.add.graphics();
-            tree.fillStyle(0x8B4513);
-            tree.fillRect(18, 30, 4, 20);
-            tree.fillStyle(0x228B22);
-            tree.fillCircle(20, 25, 15);
-            tree.generateTexture('tree', 40, 50);
-            tree.destroy();
-        }
-    
-        function create() {
-            // Crear capas de fondo por altura
-            createBackgroundLayers.call(this);
-            
-            // Variables de control
-            this.leftPressed = false;
-            this.rightPressed = false;
-            
-            // Crear plataformas random
-            platforms = this.physics.add.staticGroup();
-            generateRandomPlatforms.call(this);
-            
-            // Crear jugador
-            player = this.physics.add.sprite(config.width/2, config.height - 100, 'player');
-            player.setBounce(0.2);
-            player.setScale(1.5); // Agrandar más la imagen del jugador
-            
-            // Inicializar zona de muerte
-            maxHeight = config.height - 100;
-            deathZone = config.height + 300;
-            
-            // Crear partículas para efectos
-            particles = this.add.particles(0, 0, 'star', {
-                scale: { start: 0.3, end: 0 },
-                speed: { min: 50, max: 100 },
-                lifespan: 600,
-                emitting: false
-            });
-            
-            // Crear grupos de bombas
-            bombs = this.physics.add.group();
-            activeBombs = this.physics.add.group();
-            
-            // Colisiones solo desde arriba
-            this.physics.add.collider(player, platforms, null, (player, platform) => {
-                return player.body.velocity.y > 0 && player.y < platform.y;
-            });
-            
-            // Colisiones con bombas
-            this.physics.add.overlap(player, bombs, collectBomb, null, this);
-            this.physics.add.overlap(player, activeBombs, playerHitByBomb, null, this);
-            
-            // Funciones de colisión con bombas
-            function collectBomb(player, bomb) {
-                bomb.destroy();
-                particles.emitParticleAt(bomb.x, bomb.y, 10);
-            }
-            
-            function playerHitByBomb(player, bomb) {
-                bomb.destroy();
-                player.setTint(0xff0000);
-                this.time.delayedCall(200, () => {
-                    player.clearTint();
-                });
-                player.setVelocityY(-300);
-            }
-            
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => {
+            const scene = phaserGame && phaserGame.scene && phaserGame.scene.scenes[0];
+            const maxHeight = scene ? scene.maxHeight : 0;
+            endMicrogame(maxHeight > 5 ? 100 : 50);
+        });
+    }
 
-            
-            // Controles (flechas + WASD + espacio)
-            cursors = this.input.keyboard.createCursorKeys();
-            this.wasd = this.input.keyboard.addKeys('W,S,A,D');
-            this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-            
-            // Crear menú de configuraciones
-            createSettingsMenu(this);
-            
-            // Botón de configuraciones adaptativo
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const settingsBtn = this.add.rectangle(
-                config.width - (isMobile ? 50 : 60), 
-                isMobile ? 50 : 30, 
-                isMobile ? 80 : 60, 
-                isMobile ? 80 : 40, 
-                0x333333, 0.8
-            ).setScrollFactor(0).setInteractive();
-            
-            settingsBtn.setStrokeStyle(2, 0x00ff00);
-            
-            const settingsIcon = this.add.text(
-                config.width - (isMobile ? 50 : 60), 
-                isMobile ? 50 : 30, 
-                '⚙️', {
-                fontSize: isMobile ? '32px' : '24px',
-                fill: '#ffffff'
-            }).setOrigin(0.5).setScrollFactor(0);
-            
-            settingsBtn.on('pointerdown', () => toggleSettings(this));
-            settingsIcon.setInteractive().on('pointerdown', () => toggleSettings(this));
-            
-            // Textos
-            scoreText = this.add.text(16, 16, 'Altura: 0', { fontSize: '24px', fill: '#ffffff', stroke: '#000000', strokeThickness: 2 });
-            scoreText.setScrollFactor(0);
-            const controlsText = isMobile ? 
-                'SAMY JUMP\nToca para jugar | Botón ⚙️: Configuraciones' :
-                'SAMY JUMP\nToca para jugar | WASD/Flechas: Mover | Espacio: Saltar | ESC: Configuraciones';
-            
-            startText = this.add.text(config.width/2, config.height/2, controlsText, 
-                { fontSize: isMobile ? '16px' : '18px', fill: '#ffffff', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            
-            // Controles táctiles
-            this.leftZone = this.add.rectangle(config.width * 0.25, config.height/2, config.width * 0.5, config.height, 0x000000, 0);
-            this.leftZone.setInteractive();
-            this.leftZone.setScrollFactor(0);
-            
-            this.rightZone = this.add.rectangle(config.width * 0.75, config.height/2, config.width * 0.5, config.height, 0x000000, 0);
-            this.rightZone.setInteractive();
-            this.rightZone.setScrollFactor(0);
-            
-            // Eventos táctiles con sensibilidad
-            this.leftZone.on('pointerdown', () => {
-                if (!settingsOpen) this.leftPressed = true;
-            });
-            this.leftZone.on('pointerup', () => this.leftPressed = false);
-            this.leftZone.on('pointerout', () => this.leftPressed = false);
-            
-            this.rightZone.on('pointerdown', () => {
-                if (!settingsOpen) this.rightPressed = true;
-            });
-            this.rightZone.on('pointerup', () => this.rightPressed = false);
-            this.rightZone.on('pointerout', () => this.rightPressed = false);
-            
-            // Toque para iniciar/reiniciar (evitar conflicto con configuraciones)
-            this.input.on('pointerdown', (pointer) => {
-                // Verificar si no se tocó el botón de configuraciones
-                const btnArea = {
-                    x: config.width - (isMobile ? 90 : 90),
-                    y: isMobile ? 10 : 10,
-                    width: isMobile ? 80 : 80,
-                    height: isMobile ? 80 : 60
-                };
-                
-                const inButtonArea = pointer.x >= btnArea.x && pointer.x <= btnArea.x + btnArea.width &&
-                                   pointer.y >= btnArea.y && pointer.y <= btnArea.y + btnArea.height;
-                
-                if (!inButtonArea && !settingsOpen) {
-                    if (!gameStarted && !gameOver) {
-                        startGame.call(this);
-                    } else if (gameOver) {
-                        resetGame.call(this);
-                    }
-                }
-            });
-            
-            // Función para crear capas de fondo
-            function createBackgroundLayers() {
-                // Cielo con gradiente por altura
-                for (let y = -4000; y < config.height; y += 500) {
-                    const skyLayer = this.add.graphics();
-                    const topColor = y < -2000 ? 0x000033 : y < -1000 ? 0x1e3c72 : 0x87CEEB;
-                    const bottomColor = y < -2000 ? 0x1e3c72 : y < -1000 ? 0x87CEEB : 0xffffff;
-                    skyLayer.fillGradientStyle(topColor, topColor, bottomColor, bottomColor, 1);
-                    skyLayer.fillRect(0, y, config.width, 500);
-                    skyLayer.setScrollFactor(0.1);
-                }
-                
-                // Montañas de fondo
-                for (let i = 0; i < 8; i++) {
-                    const mountain = this.add.image(
-                        Phaser.Math.Between(0, config.width),
-                        Phaser.Math.Between(config.height - 200, config.height),
-                        'mountain'
-                    );
-                    mountain.setScrollFactor(0.2);
-                    mountain.setTint(0x666666);
-                }
-                
-                // Árboles en el suelo
-                for (let i = 0; i < 10; i++) {
-                    const tree = this.add.image(
-                        Phaser.Math.Between(0, config.width),
-                        Phaser.Math.Between(config.height - 100, config.height - 50),
-                        'tree'
-                    );
-                    tree.setScrollFactor(0.3);
-                }
-                
-                // Nubes por capas de altura
-                for (let y = -3000; y < config.height; y += 300) {
-                    for (let i = 0; i < 3; i++) {
-                        const cloud = this.add.image(
-                            Phaser.Math.Between(0, config.width),
-                            y + Phaser.Math.Between(-50, 50),
-                            'cloud'
+    // Phaser Collect Game
+    function createPhaserCollectGame() {
+        document.getElementById('gameTitle').textContent = '💎 ¡RECOGE 5!';
+        document.getElementById('gameInfo').textContent = 'Gemas: 0/5';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('gem', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.gemsCollected = 0;
+                    
+                    // Gems
+                    this.gems = this.add.group();
+                    for (let i = 0; i < 8; i++) {
+                        const gem = this.add.sprite(
+                            Math.random() * (config.width - 60) + 30,
+                            Math.random() * (config.height - 60) + 30,
+                            'gem'
                         );
-                        cloud.setAlpha(y < -1500 ? 0.3 : 0.6);
-                        cloud.setScrollFactor(Phaser.Math.FloatBetween(0.2, 0.4));
+                        gem.setScale(0.2);
+                        gem.setTint(0xff6b6b);
+                        gem.setInteractive();
+                        gem.on('pointerdown', () => {
+                            gem.setActive(false).setVisible(false);
+                            this.gemsCollected++;
+                            document.getElementById('gameInfo').textContent = `Gemas: ${this.gemsCollected}/5`;
+                            if (this.gemsCollected >= 5) {
+                                endMicrogame(100);
+                            }
+                        });
+                        this.gems.add(gem);
                     }
                 }
-                
-                // Estrellas en el cielo alto
-                for (let i = 0; i < 50; i++) {
-                    const star = this.add.image(
-                        Phaser.Math.Between(0, config.width),
-                        Phaser.Math.Between(-4000, -1000),
+            }
+        };
+        
+        // Add custom cursor CSS
+        const cursorStyle = document.createElement('style');
+        cursorStyle.textContent = `
+            #phaserContainer {
+                cursor: url('images/samyholahola.png') 25 25, auto !important;
+            }
+        `;
+        document.head.appendChild(cursorStyle);
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(phaserGame.scene.scenes[0].gemsCollected >= 3 ? 50 : 0));
+    }
+
+    // Phaser Dodge Game
+    function createPhaserDodgeGame() {
+        document.getElementById('gameTitle').textContent = '🌪️ ¡SOBREVIVE!';
+        document.getElementById('gameInfo').textContent = 'Vivo: ✅';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            physics: { default: 'arcade' },
+            scene: {
+                preload: function() {
+                    this.load.image('obstacle', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.alive = true;
+                    
+                    // Obstacles group
+                    this.obstacles = this.physics.add.group();
+                    
+                    // Spawn obstacles
+                    this.obstacleTimer = this.time.addEvent({
+                        delay: 600,
+                        callback: () => {
+                            if (!this.alive) return;
+                            const obstacle = this.physics.add.sprite(
+                                Math.random() * config.width,
+                                -50,
+                                'obstacle'
+                            );
+                            obstacle.setScale(0.2);
+                            obstacle.setTint(0xff0000);
+                            obstacle.setVelocityY(200 + Math.random() * 200);
+                            // Remove click interaction - this is a dodge game, not click game
+                            // Player should avoid obstacles, not click them
+                            this.obstacles.add(obstacle);
+                        },
+                        loop: true
+                    });
+                }
+            }
+        };
+        
+        // Add custom cursor CSS
+        const cursorStyle = document.createElement('style');
+        cursorStyle.textContent = `
+            #phaserContainer {
+                cursor: url('images/samyholahola.png') 25 25, auto !important;
+            }
+        `;
+        document.head.appendChild(cursorStyle);
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(phaserGame.scene.scenes[0].alive ? 100 : 0));
+    }
+
+    // Simple HTML games for the rest
+    function createPhaserTapGame() {
+        document.getElementById('gameTitle').textContent = '👆 ¡TOCA 10 VECES!';
+        document.getElementById('gameInfo').textContent = 'Toques: 0/10';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                create: function() {
+                    this.taps = 0;
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x667eea);
+                    
+                    // Create tap button
+                    const button = this.add.circle(config.width/2, config.height/2, 100, 0xe17055);
+                    button.setInteractive();
+                    
+                    const text = this.add.text(config.width/2, config.height/2, 'TAP!', {
+                        fontSize: '32px',
+                        fill: '#ffffff'
+                    }).setOrigin(0.5);
+                    
+                    button.on('pointerdown', () => {
+                        this.taps++;
+                        document.getElementById('gameInfo').textContent = `Toques: ${this.taps}/10`;
+                        button.setScale(0.9);
+                        this.time.delayedCall(100, () => button.setScale(1));
+                        if (this.taps >= 10) endMicrogame(100);
+                    });
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(phaserGame.scene.scenes[0].taps >= 7 ? 50 : 0));
+    }
+
+    // Simple implementations for remaining games
+    function createPhaserReactionGame() {
+        document.getElementById('gameTitle').textContent = '⚡ ¡CUANDO CAMBIE!';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                create: function() {
+                    this.reacted = false;
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x2c3e50);
+                    
+                    const box = this.add.rectangle(config.width/2, config.height/2, 200, 200, 0xff6b6b);
+                    box.setInteractive();
+                    
+                    this.time.delayedCall(2000 + Math.random() * 2000, () => {
+                        box.setFillStyle(0x4ecdc4);
+                        const startTime = Date.now();
+                        
+                        box.on('pointerdown', () => {
+                            if (!this.reacted) {
+                                this.reacted = true;
+                                const reactionTime = Date.now() - startTime;
+                                endMicrogame(reactionTime < 500 ? 100 : reactionTime < 1000 ? 50 : 25);
+                            }
+                        });
+                    });
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(0));
+    }
+
+    function createPhaserAvoidGame() {
+        document.getElementById('gameTitle').textContent = '🚫 ¡NO TOQUES NADA!';
+        document.getElementById('gameInfo').textContent = 'Estado: ✅';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('danger', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.touched = false;
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x34495e);
+                    
+                    // Create danger zones
+                    for (let i = 0; i < 6; i++) {
+                        const zone = this.add.sprite(
+                            Math.random() * config.width,
+                            Math.random() * config.height,
+                            'danger'
+                        );
+                        zone.setScale(0.2);
+                        zone.setTint(0xff0000);
+                        zone.setInteractive();
+                        zone.on('pointerdown', () => {
+                            if (!this.touched) {
+                                this.touched = true;
+                                document.getElementById('gameInfo').textContent = 'Estado: 💀';
+                            }
+                        });
+                    }
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(phaserGame.scene.scenes[0].touched ? 0 : 100));
+    }
+
+    function createPhaserCatchGame() {
+        document.getElementById('gameTitle').textContent = '🎯 ¡ATRAPA LA ESTRELLA!';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('star', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.caught = false;
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x667eea);
+                    
+                    // Star
+                    this.star = this.add.sprite(
+                        Math.random() * config.width,
+                        Math.random() * config.height,
                         'star'
                     );
-                    star.setAlpha(Phaser.Math.FloatBetween(0.3, 0.9));
-                    star.setScrollFactor(0.05);
-                }
-            }
-            
-            // Controles de teclado (solo PC)
-            if (!isMobile) {
-                this.input.keyboard.on('keydown-ESC', () => toggleSettings(this));
-                this.input.keyboard.on('keydown-P', () => this.scene.pause());
-            }
-        }
-        
-        function generateRandomPlatforms() {
-            // Plataforma inicial con mango estirado horizontalmente y más grande
-            const basePlatform = platforms.create(config.width/2, config.height - 50, 'mango');
-            basePlatform.setScale(6, 0.8).refreshBody(); // Más ancha y más grande
-            
-            // Segunda plataforma inicial (más cerca)
-            const secondPlatform = platforms.create(config.width/2 + 80, config.height - 140, 'mango');
-            secondPlatform.setScale(4.5, 0.8).refreshBody(); // Más ancha y más grande
-            
-            // Inicializar variables para generación infinita
-            lastPlatformY = config.height - 200;
-            currentX = config.width/2 + 80;
-            
-            // Generar plataformas iniciales
-            generateMorePlatforms.call(this, 20);
-        }
-        
-        function generateMorePlatforms(count) {
-            const platformTypes = ['ground', 'stone', 'crystal'];
-            const verticalSpacing = 120;
-            
-            for (let i = 0; i < count; i++) {
-                lastPlatformY -= verticalSpacing;
-                
-                // Variar posición horizontal pero mantener alcanzable
-                const maxMove = 150;
-                const newX = currentX + Phaser.Math.Between(-maxMove, maxMove);
-                currentX = Phaser.Math.Clamp(newX, 100, config.width - 100);
-                
-                // Calcular altura actual
-                const currentHeight = Math.max(0, Math.floor((config.height - lastPlatformY) / 5));
-                
-                // Usar mango como plataforma hasta altura 1000m
-                if (currentHeight < 1000) {
-                    const platform = platforms.create(currentX, lastPlatformY, 'mango');
-                    platform.setScale(5, 0.7).refreshBody(); // Más ancha y más grande
-                } else if (currentHeight >= 1000 && currentHeight < 2000) {
-                    // Del 1000 al 2000 usar Sonic.EXE
-                    const platform = platforms.create(currentX, lastPlatformY, 'sonicexe');
-                    platform.setScale(3, 0.5).refreshBody(); // Escalar apropiadamente
-                } else if (currentHeight >= 2000 && currentHeight < 2200 && !bossDefeated) {
-                    // En el 2000m crear suelo grande para el boss
-                    if (!bossFloor) {
-                        bossFloor = platforms.create(config.width/2, lastPlatformY, 'sonicexe');
-                        bossFloor.setScale(config.width/120, 1).refreshBody(); // Suelo completo
-                    }
-                } else if (currentHeight >= 2500 && currentHeight < 3000) {
-                    // Zona de tormenta - plataformas de cristal
-                    const platform = platforms.create(currentX, lastPlatformY, 'crystal');
-                    platform.setScale(Phaser.Math.FloatBetween(1.0, 1.5), 1).refreshBody();
-                } else if (currentHeight >= 3000 && currentHeight < 3500) {
-                    // Zona glitch - plataformas que cambian
-                    const platformType = Phaser.Utils.Array.GetRandom(platformTypes);
-                    const platform = platforms.create(currentX, lastPlatformY, platformType);
-                    platform.setScale(Phaser.Math.FloatBetween(0.8, 1.5), 1).refreshBody();
-                    platform.setTint(Phaser.Math.Between(0x000000, 0xffffff));
-                } else if (currentHeight >= 3500 && currentHeight < 4000) {
-                    // Zona gravedad - plataformas arriba y abajo
-                    const platformType = Phaser.Utils.Array.GetRandom(platformTypes);
-                    const platform = platforms.create(currentX, lastPlatformY, platformType);
-                    platform.setScale(Phaser.Math.FloatBetween(1.0, 1.3), 1).refreshBody();
-                    // Crear plataforma espejo en el techo
-                    if (Math.random() < 0.3) {
-                        const mirrorPlatform = platforms.create(currentX, lastPlatformY - 400, platformType);
-                        mirrorPlatform.setScale(Phaser.Math.FloatBetween(1.0, 1.3), 1).refreshBody();
-                    }
-                } else {
-                    // Después de 4000m usar plataformas normales
-                    const platformType = Phaser.Utils.Array.GetRandom(platformTypes);
-                    const platform = platforms.create(currentX, lastPlatformY, platformType);
-                    platform.setScale(Phaser.Math.FloatBetween(1.0, 1.3), 1).refreshBody();
-                }
-            }
-        }
-    
-        function startGame() {
-            gameStarted = true;
-            gameOver = false;
-            score = 0;
-            gameStartTime = Date.now();
-            gameData.totalGames++;
-            startText.setVisible(false);
-            if (gameOverText) gameOverText.setVisible(false);
-            
-            // Modo rendimiento para dispositivos lentos
-            if (performanceMode) {
-                this.physics.world.gravity.y = 600; // Gravedad reducida
-                particles.setConfig({ lifespan: 300 }); // Partículas más cortas
-            }
-        }
-        
-        function resetGame() {
-            gameStarted = false;
-            gameOver = false;
-            score = 0;
-            bossActive = false;
-            bossHealth = 100;
-            miniGameActive = false;
-            lastMiniGameHeight = 0;
-            bossDefeated = false;
-            stormActive = false;
-            glitchActive = false;
-            gravityInverted = false;
-            timeWarpActive = false;
-            lastBossType = 0;
-            gameStartTime = 0;
-            
-            // Limpiar efectos especiales de forma segura
-            const elementsToClean = [bossFloor, stormTimer, gravityTimer, glitchOverlay];
-            elementsToClean.forEach(element => {
-                if (element && element.destroy) {
-                    element.destroy();
-                }
-            });
-            
-            bossFloor = null;
-            stormTimer = null;
-            gravityTimer = null;
-            glitchOverlay = null;
-            
-            // Resetear física de forma segura
-            if (this.physics && this.physics.world) {
-                this.physics.world.gravity.y = performanceMode ? 600 : 800;
-                this.physics.world.timeScale = 1;
-            }
-            
-            // Limpiar boss y bombas
-            if (boss) boss.destroy();
-            if (bossText) bossText.destroy();
-            if (healthBar) healthBar.destroy();
-            if (healthBarBg) healthBarBg.destroy();
-            bombs.clear(true, true);
-            activeBombs.clear(true, true);
-            
-            // Limpiar todas las plataformas existentes completamente
-            platforms.children.entries.forEach(platform => {
-                if (platform && platform.destroy) {
-                    platform.destroy();
-                }
-            });
-            platforms.clear(true, true);
-            
-            // Regenerar plataformas
-            generateRandomPlatforms.call(this);
-            
-            player.setPosition(config.width/2, config.height - 100);
-            player.setVelocity(0, 0);
-            player.setRotation(0);
-            scoreText.setText('Altura: 0m');
-            this.cameras.main.scrollY = 0;
-            maxHeight = config.height - 100;
-            deathZone = config.height + 300;
-            if (this.dangerOverlay) this.dangerOverlay.setAlpha(0);
-            startText.setVisible(true);
-            if (gameOverText) gameOverText.setVisible(false);
-        }
-    
-        function jump() {
-            if (player.body.touching.down && gameStarted && !gameOver) {
-                player.setVelocityY(-600);
-                score += 10;
-                scoreText.setText('Altura: ' + Math.max(0, Math.floor((config.height - player.y) / 10)));
-            }
-        }
-    
-        function update() {
-            if (!gameStarted || gameOver) return;
-            
-            // Contador de altura en tiempo real con límite de seguridad
-            const currentHeight = Math.max(0, Math.min(GAME_CONFIG.MAX_HEIGHT, Math.floor((config.height - player.y) / 5)));
-            scoreText.setText(`Altura: ${currentHeight}m | v${GAME_CONFIG.VERSION}`);
-            
-            // Verificación de límite de altura
-            if (currentHeight >= GAME_CONFIG.MAX_HEIGHT) {
-                endGame.call(this, 'MAX_HEIGHT_REACHED');
-                return;
-            }
-            
-            // Activar minijuegos cada 500m
-            if (currentHeight >= lastMiniGameHeight + 500 && !miniGameActive && !bossActive && currentHeight < 2000) {
-                activateMiniGame.call(this, currentHeight);
-            }
-            
-            // Activar zonas especiales
-            if (currentHeight >= 2500 && currentHeight < 3000 && !stormActive) {
-                activateStormZone.call(this);
-            } else if (currentHeight >= 3000 && currentHeight < 3500 && !glitchActive) {
-                activateGlitchZone.call(this);
-            } else if (currentHeight >= 3500 && currentHeight < 4000) {
-                updateGravityZone.call(this);
-            } else if (currentHeight >= 4500 && currentHeight < 5000 && !timeWarpActive) {
-                activateTimeWarp.call(this);
-            }
-            
-            // Activar bosses en diferentes alturas con validación
-            const bossHeights = [2000, 5000, 8000, 12000];
-            for (let i = 0; i < bossHeights.length; i++) {
-                const bossHeight = bossHeights[i];
-                const bossType = i + 1;
-                
-                if (currentHeight >= bossHeight && currentHeight < bossHeight + 200 && 
-                    !bossActive && lastBossType < bossType) {
-                    activateBoss.call(this, bossType);
-                    lastBossType = bossType;
-                    break;
-                }
-            }
-            
-            // Controles de movimiento
-            let moveLeft = cursors.left.isDown || this.wasd.A.isDown || this.leftPressed;
-            let moveRight = cursors.right.isDown || this.wasd.D.isDown || this.rightPressed;
-            
-            if (moveLeft) {
-                player.setVelocityX(-250 * gameSettings.controls.touchSensitivity);
-            } else if (moveRight) {
-                player.setVelocityX(250 * gameSettings.controls.touchSensitivity);
-            } else {
-                player.setVelocityX(0);
-            }
-            
-            // Actualizar altura máxima y zona de muerte
-            if (player.y < maxHeight) {
-                maxHeight = player.y;
-                deathZone = maxHeight + 400;
-                
-                // Generar más plataformas cuando el jugador sube
-                if (player.y < lastPlatformY + 1000) {
-                    generateMorePlatforms.call(this, 10);
-                }
-            }
-            
-            // Actualizar boss
-            if (bossActive && boss) {
-                updateBoss.call(this);
-            }
-            
-            // Limpiar plataformas muy abajo para optimizar rendimiento
-            platforms.children.entries.forEach(platform => {
-                if (platform.y > player.y + 800) {
-                    platform.destroy();
-                }
-            });
-            
-            // Salto manual con espacio, W o flecha arriba
-            if ((this.spaceKey.isDown || cursors.up.isDown || this.wasd.W.isDown) && player.body.touching.down) {
-                player.setVelocityY(-600);
-                particles.emitParticleAt(player.x, player.y + 16, 5);
-            }
-            
-            // Auto-salto al tocar plataforma
-            if (player.body.touching.down && player.body.velocity.y >= 0 && !this.spaceKey.isDown && !cursors.up.isDown && !this.wasd.W.isDown) {
-                player.setVelocityY(-500);
-                particles.emitParticleAt(player.x, player.y + 16, 3);
-            }
-            
-            // Cámara sigue al jugador verticalmente
-            if (player.y < config.height - 200) {
-                this.cameras.main.scrollY = player.y - config.height + 200;
-            }
-            
-            // Game over si cae en la zona de muerte
-            if (player.y > deathZone) {
-                endGame.call(this, 'FALL');
-            }
-        }
-        
-        function endGame(reason = 'FALL') {
-            if (gameOver) return; // Evitar múltiples llamadas
-            
-            gameOver = true;
-            const finalScore = Math.max(0, Math.floor((config.height - maxHeight) / 5));
-            const gameTime = Math.floor((Date.now() - gameStartTime) / 1000);
-            
-            // Actualizar estadísticas
-            gameData.totalTime += gameTime;
-            if (finalScore > gameData.highScore) {
-                gameData.highScore = finalScore;
-                highScore = finalScore;
-            }
-            
-            saveGameData();
-            
-            // Mensaje personalizado según la razón
-            let message = '';
-            switch(reason) {
-                case 'MAX_HEIGHT_REACHED':
-                    message = `¡LÍMITE ALCANZADO!\nAltura: ${finalScore}m\nRecord: ${highScore}m\n¡Felicidades!`;
-                    break;
-                default:
-                    message = `GAME OVER\nAltura: ${finalScore}m\nRecord: ${highScore}m\nTiempo: ${gameTime}s\nToca para reiniciar`;
-            }
-            
-            if (!gameOverText) {
-                gameOverText = this.add.text(config.width/2, config.height/2, message, 
-                    { fontSize: '18px', fill: '#ff0000', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-                gameOverText.setScrollFactor(0);
-            } else {
-                gameOverText.setText(message);
-                gameOverText.setVisible(true);
-            }
-            
-            // Indicador visual de zona de muerte
-            if (gameStarted && !gameOver) {
-                const dangerZone = deathZone - 100;
-                if (player.y > dangerZone) {
-                    const danger = Math.min(0.3, (player.y - dangerZone) / 100);
-                    if (!this.dangerOverlay) {
-                        this.dangerOverlay = this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0xff0000, danger);
-                        this.dangerOverlay.setScrollFactor(0);
-                    } else {
-                        this.dangerOverlay.setAlpha(danger);
-                    }
-                } else if (this.dangerOverlay) {
-                    this.dangerOverlay.setAlpha(0);
-                }
-            }
-        }
-        
-        function activateBoss(bossType = 1) {
-            bossActive = true;
-            bossHealth = 100;
-            
-            // Crear suelo del boss
-            if (!bossFloor) {
-                bossFloor = platforms.create(config.width/2, player.y + 100, 'sonicexe');
-                bossFloor.setScale(config.width/120, 1).refreshBody();
-            }
-            
-            // Configuración por tipo de boss
-            const bossNames = ['', 'SONIC.EXE', 'TAILS DOLL', 'KNUCKLES.EXE', 'SHADOW.EXE'];
-            const bossColors = ['', '#ff0000', '#ff6600', '#ff0066', '#9900ff'];
-            
-            // Crear boss
-            boss = this.physics.add.sprite(config.width/2, player.y - 200, 'boss');
-            boss.setScale(bossType === 4 ? 3 : 2);
-            boss.body.setImmovable(true);
-            boss.setVelocityX(100 + bossType * 20);
-            boss.bossType = bossType;
-            
-            // Textos del boss
-            bossText = this.add.text(config.width/2, 50, `${bossNames[bossType]} FIGHT!\nEsquiva y ataca!`, 
-                { fontSize: '20px', fill: bossColors[bossType], align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            bossText.setScrollFactor(0);
-            
-            // Barra de vida del boss
-            healthBarBg = this.add.rectangle(config.width/2, 100, 300, 20, 0x000000);
-            healthBarBg.setScrollFactor(0);
-            healthBar = this.add.rectangle(config.width/2, 100, 300, 20, 0xff0000);
-            healthBar.setScrollFactor(0);
-            
-            // Colisión bombas activas con boss
-            this.physics.add.overlap(activeBombs, boss, (bomb, boss) => {
-                bomb.destroy();
-                bossHealth -= bossType === 4 ? 10 : 20;
-                boss.setTint(0xff0000);
-                this.time.delayedCall(200, () => {
-                    boss.clearTint();
-                });
-                particles.emitParticleAt(boss.x, boss.y, 15);
-            }, null, this);
-            
-            // Ataques según el boss
-            if (bossType <= 1) {
-                this.time.addEvent({
-                    delay: 1000,
-                    callback: spawnBombs,
-                    callbackScope: this,
-                    loop: true
-                });
-            } else {
-                this.time.addEvent({
-                    delay: 1500 - bossType * 100,
-                    callback: () => spawnSpecialAttack.call(this, bossType),
-                    callbackScope: this,
-                    loop: true
-                });
-            }
-        }
-        
-        function spawnSpecialAttack(bossType) {
-            if (!bossActive) return;
-            
-            if (bossType === 2) {
-                // Tails Doll - Láseres
-                const laser = this.add.rectangle(0, player.y, config.width, 15, 0xff6600);
-                laser.setAlpha(0.8);
-                this.tweens.add({
-                    targets: laser,
-                    alpha: 0,
-                    duration: 1000,
-                    onComplete: () => {
-                        if (Math.abs(laser.y - player.y) < 30) {
-                            player.setVelocityY(-300);
-                        }
-                        laser.destroy();
-                    }
-                });
-            } else if (bossType === 3) {
-                // Knuckles.EXE - Puños
-                const fist = this.add.rectangle(
-                    Phaser.Math.Between(100, config.width - 100),
-                    player.y - 300, 50, 50, 0xff0066
-                );
-                this.tweens.add({
-                    targets: fist,
-                    y: player.y + 100,
-                    duration: 1500,
-                    onComplete: () => {
-                        if (Math.abs(fist.x - player.x) < 60) {
-                            player.setVelocityY(-400);
-                        }
-                        fist.destroy();
-                    }
-                });
-            } else if (bossType === 4) {
-                // Shadow.EXE - Caos
-                for (let i = 0; i < 3; i++) {
-                    const chaos = this.add.rectangle(
-                        Phaser.Math.Between(0, config.width),
-                        player.y - 400, 30, 30, 0x9900ff
-                    );
-                    this.tweens.add({
-                        targets: chaos,
-                        y: player.y + 100,
-                        duration: 1800,
-                        delay: i * 300,
-                        onComplete: () => {
-                            if (Math.abs(chaos.x - player.x) < 50) {
-                                player.setVelocityY(-200);
-                            }
-                            chaos.destroy();
+                    this.star.setScale(0.3);
+                    this.star.setTint(0xffd700);
+                    this.star.setInteractive();
+                    
+                    // Move star periodically
+                    this.time.addEvent({
+                        delay: 800,
+                        callback: () => {
+                            this.star.x = Math.random() * config.width;
+                            this.star.y = Math.random() * config.height;
+                        },
+                        loop: true
+                    });
+                    
+                    this.star.on('pointerdown', () => {
+                        if (!this.caught) {
+                            this.caught = true;
+                            endMicrogame(100);
                         }
                     });
                 }
             }
-        }
-        
-        function updateBoss() {
-            if (!boss) return;
-            
-            // Movimiento del boss
-            if (boss.x <= 50 || boss.x >= config.width - 50) {
-                boss.setVelocityX(-boss.body.velocity.x);
-            }
-            
-            // Actualizar barra de vida
-            const healthPercent = bossHealth / 100;
-            healthBar.scaleX = healthPercent;
-            
-            // Boss derrotado
-            if (bossHealth <= 0) {
-                defeatBoss.call(this);
-            }
-        }
-        
-        function spawnBombs() {
-            if (!bossActive) return;
-            
-            // Generar 3-5 bombas
-            const bombCount = Phaser.Math.Between(3, 5);
-            
-            for (let i = 0; i < bombCount; i++) {
-                const x = Phaser.Math.Between(50, config.width - 50);
-                const isActive = Math.random() < 0.3; // 30% de probabilidad de ser activa
-                
-                const bomb = this.physics.add.sprite(x, player.y - 600, isActive ? 'activeBomb' : 'bomb');
-                bomb.setVelocityY(200);
-                bomb.setBounce(0.3);
-                
-                if (isActive) {
-                    activeBombs.add(bomb);
-                    bomb.setTint(0xff0000);
-                } else {
-                    bombs.add(bomb);
-                }
-                
-                // Destruir bomba después de un tiempo
-                this.time.delayedCall(5000, () => {
-                    if (bomb && bomb.active) {
-                        bomb.destroy();
-                    }
-                });
-            }
-        }
-        
-        function defeatBoss() {
-            if (!bossActive || !boss) return; // Validación de seguridad
-            
-            const bossType = boss.bossType || 1;
-            bossActive = false;
-            bossDefeated = true;
-            
-            // Registrar boss derrotado
-            if (!gameData.bossesDefeated.includes(bossType)) {
-                gameData.bossesDefeated.push(bossType);
-            }
-            
-            // Limpiar elementos del boss de forma segura
-            if (boss && boss.active) boss.destroy();
-            if (bossText && bossText.active) bossText.destroy();
-            if (healthBar && healthBar.active) healthBar.destroy();
-            if (healthBarBg && healthBarBg.active) healthBarBg.destroy();
-            
-            // Limpiar bombas
-            bombs.clear(true, true);
-            activeBombs.clear(true, true);
-            
-            // Destruir el suelo del boss para continuar escalando
-            if (bossFloor && bossFloor.active) {
-                bossFloor.destroy();
-                bossFloor = null;
-            }
-            
-            // Mensaje de victoria
-            const bossNames = ['', 'SONIC.EXE', 'TAILS DOLL', 'KNUCKLES.EXE', 'SHADOW.EXE'];
-            const victoryText = this.add.text(config.width/2, config.height/2, 
-                `${bossNames[bossType]} DERROTADO!\n¡Continúa subiendo!`, 
-                { fontSize: '20px', fill: '#00ff00', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            victoryText.setScrollFactor(0);
-            
-            this.time.delayedCall(3000, () => {
-                if (victoryText && victoryText.active) {
-                    victoryText.destroy();
-                }
-            });
-        }
-        
-        function activateMiniGame(height) {
-            miniGameActive = true;
-            lastMiniGameHeight = height;
-            const gameType = Math.floor(height / 500) % 3;
-            
-            player.setVelocity(0, 0);
-            
-            switch(gameType) {
-                case 1:
-                    startCollectGame.call(this);
-                    break;
-                case 2:
-                    startDodgeGame.call(this);
-                    break;
-                default:
-                    startSpeedGame.call(this);
-                    break;
-            }
-        }
-        
-        function startCollectGame() {
-            const gameText = this.add.text(config.width/2, 100, 'MINIJUEGO: Recolecta 5 estrellas\nTiempo: 10s', 
-                { fontSize: '18px', fill: '#ffff00', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            gameText.setScrollFactor(0);
-            
-            let collected = 0;
-            let timeLeft = 10;
-            const stars = this.physics.add.group();
-            
-            for(let i = 0; i < 5; i++) {
-                const star = stars.create(
-                    Phaser.Math.Between(100, config.width - 100),
-                    player.y - Phaser.Math.Between(50, 200),
-                    'star'
-                );
-                star.setScale(2);
-            }
-            
-            this.physics.add.overlap(player, stars, (player, star) => {
-                star.destroy();
-                collected++;
-                particles.emitParticleAt(star.x, star.y, 10);
-                
-                if(collected >= 5) {
-                    completeMiniGame.call(this, gameText, true);
-                    stars.clear(true, true);
-                }
-            });
-            
-            const timer = this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    timeLeft--;
-                    gameText.setText(`MINIJUEGO: Recolecta 5 estrellas\nRecolectadas: ${collected}/5\nTiempo: ${timeLeft}s`);
-                    
-                    if(timeLeft <= 0) {
-                        completeMiniGame.call(this, gameText, collected >= 5);
-                        stars.clear(true, true);
-                        timer.destroy();
-                    }
-                },
-                repeat: 9
-            });
-        }
-        
-        function startDodgeGame() {
-            const gameText = this.add.text(config.width/2, 100, 'MINIJUEGO: Esquiva los obstáculos\nTiempo: 8s', 
-                { fontSize: '18px', fill: '#ff0000', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            gameText.setScrollFactor(0);
-            
-            let timeLeft = 8;
-            let failed = false;
-            const obstacles = this.physics.add.group();
-            
-            const obstacleTimer = this.time.addEvent({
-                delay: 800,
-                callback: () => {
-                    const obstacle = obstacles.create(
-                        Phaser.Math.Between(50, config.width - 50),
-                        player.y - 300,
-                        'bomb'
-                    );
-                    obstacle.setVelocityY(300);
-                    obstacle.setScale(1.5);
-                },
-                repeat: 10
-            });
-            
-            this.physics.add.overlap(player, obstacles, () => {
-                if(!failed) {
-                    failed = true;
-                    completeMiniGame.call(this, gameText, false);
-                    obstacles.clear(true, true);
-                    obstacleTimer.destroy();
-                }
-            });
-            
-            const timer = this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    timeLeft--;
-                    gameText.setText(`MINIJUEGO: Esquiva los obstáculos\nTiempo: ${timeLeft}s`);
-                    
-                    if(timeLeft <= 0 && !failed) {
-                        completeMiniGame.call(this, gameText, true);
-                        obstacles.clear(true, true);
-                        obstacleTimer.destroy();
-                    }
-                },
-                repeat: 7
-            });
-        }
-        
-        function startSpeedGame() {
-            const gameText = this.add.text(config.width/2, 100, 'MINIJUEGO: Salta 10 veces rápido\nSaltos: 0/10', 
-                { fontSize: '18px', fill: '#00ff00', align: 'center', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-            gameText.setScrollFactor(0);
-            
-            let jumps = 0;
-            let timeLeft = 8;
-            let wasOnGround = true;
-            
-            const timer = this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    timeLeft--;
-                    gameText.setText(`MINIJUEGO: Salta 10 veces rápido\nSaltos: ${jumps}/10\nTiempo: ${timeLeft}s`);
-                    
-                    if(timeLeft <= 0) {
-                        completeMiniGame.call(this, gameText, jumps >= 10);
-                    }
-                },
-                repeat: 7
-            });
-            
-            const jumpCheck = this.time.addEvent({
-                delay: 50,
-                callback: () => {
-                    if(player.body.touching.down && !wasOnGround) {
-                        jumps++;
-                        particles.emitParticleAt(player.x, player.y + 20, 5);
-                        
-                        if(jumps >= 10) {
-                            completeMiniGame.call(this, gameText, true);
-                            jumpCheck.destroy();
-                            timer.destroy();
-                        }
-                    }
-                    wasOnGround = player.body.touching.down;
-                },
-                loop: true
-            });
-        }
-        
-        function completeMiniGame(gameText, success) {
-            miniGameActive = false;
-            
-            if (!gameText || !gameText.active) return;
-            
-            const resultText = success ? 
-                'MINIJUEGO COMPLETADO!\n+100 puntos' : 
-                'MINIJUEGO FALLADO\nIntenta de nuevo';
-            
-            const color = success ? '#00ff00' : '#ff0000';
-            
-            try {
-                gameText.setText(resultText);
-                gameText.setFill(color);
-            } catch (e) {
-                console.warn('Error actualizando texto del minijuego:', e);
-                return;
-            }
-            
-            if(success) {
-                particles.emitParticleAt(player.x, player.y, 20);
-            }
-            
-            this.time.delayedCall(2000, () => {
-                if (gameText && gameText.active) {
-                    gameText.destroy();
-                }
-            });
-        }
-        
-        function activateStormZone() {
-            stormActive = true;
-            
-            // Crear overlay de tormenta
-            const stormOverlay = this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x000033, 0.3);
-            stormOverlay.setScrollFactor(0);
-            
-            // Generar rayos
-            stormTimer = this.time.addEvent({
-                delay: 2000,
-                callback: () => {
-                    const lightning = this.add.rectangle(
-                        Phaser.Math.Between(0, config.width),
-                        player.y - 400,
-                        20, 800,
-                        0xffff00
-                    );
-                    lightning.setAlpha(0.8);
-                    
-                    // Efecto de rayo
-                    this.tweens.add({
-                        targets: lightning,
-                        alpha: 0,
-                        duration: 500,
-                        onComplete: () => lightning.destroy()
-                    });
-                    
-                    // Daño si está cerca del jugador
-                    if (Math.abs(lightning.x - player.x) < 50) {
-                        player.setVelocityY(-400);
-                        player.setTint(0xffff00);
-                        this.time.delayedCall(200, () => player.clearTint());
-                    }
-                },
-                loop: true
-            });
-        }
-        
-        function activateGlitchZone() {
-            glitchActive = true;
-            
-            // Crear overlay de glitch
-            glitchOverlay = this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0xff00ff, 0.1);
-            glitchOverlay.setScrollFactor(0);
-            
-            // Efecto glitch aleatorio
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    // Cambiar color del overlay
-                    const colors = [0xff00ff, 0x00ffff, 0xff0000, 0x00ff00];
-                    glitchOverlay.setFillStyle(Phaser.Utils.Array.GetRandom(colors), 0.2);
-                    
-                    // Efecto en el jugador
-                    if (Math.random() < 0.3) {
-                        player.setTint(Phaser.Math.Between(0x000000, 0xffffff));
-                        this.time.delayedCall(300, () => player.clearTint());
-                    }
-                    
-                    // Teletransportar plataformas
-                    platforms.children.entries.forEach(platform => {
-                        if (Math.random() < 0.1 && platform.y > player.y - 200 && platform.y < player.y + 200) {
-                            platform.x = Phaser.Math.Between(100, config.width - 100);
-                        }
-                    });
-                },
-                loop: true
-            });
-        }
-        
-        function updateGravityZone() {
-            if (!gravityTimer) {
-                gravityTimer = this.time.addEvent({
-                    delay: 8000,
-                    callback: () => {
-                        gravityInverted = !gravityInverted;
-                        this.physics.world.gravity.y = gravityInverted ? -800 : 800;
-                        
-                        // Mensaje visual
-                        const gravityText = this.add.text(config.width/2, 150, 
-                            gravityInverted ? 'GRAVEDAD INVERTIDA!' : 'GRAVEDAD NORMAL', 
-                            { fontSize: '20px', fill: '#ff00ff', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5);
-                        gravityText.setScrollFactor(0);
-                        
-                        this.time.delayedCall(2000, () => {
-                            if (gravityText && gravityText.active) {
-                                gravityText.destroy();
-                            }
-                        });
-                    },
-                    loop: true
-                });
-            }
-        }
-        
-        function activateTimeWarp() {
-            timeWarpActive = true;
-            
-            // Crear overlay temporal
-            const timeOverlay = this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x9900ff, 0.2);
-            timeOverlay.setScrollFactor(0);
-            
-            // Efectos de tiempo
-            this.time.addEvent({
-                delay: 3000,
-                callback: () => {
-                    const timeEffect = Math.random();
-                    
-                    if (timeEffect < 0.33) {
-                        // Ralentizar tiempo
-                        this.physics.world.timeScale = 0.5;
-                        this.time.delayedCall(2000, () => {
-                            this.physics.world.timeScale = 1;
-                        });
-                    } else if (timeEffect < 0.66) {
-                        // Acelerar tiempo
-                        this.physics.world.timeScale = 1.5;
-                        this.time.delayedCall(2000, () => {
-                            this.physics.world.timeScale = 1;
-                        });
-                    } else {
-                        // Crear fantasma del jugador
-                        const ghost = this.add.sprite(player.x, player.y, 'player');
-                        ghost.setScale(1.5);
-                        ghost.setAlpha(0.5);
-                        ghost.setTint(0x9900ff);
-                        
-                        this.time.delayedCall(3000, () => {
-                            if (ghost && ghost.active) {
-                                ghost.destroy();
-                            }
-                        });
-                    }
-                },
-                loop: true
-            });
-        }
-    
-        // Sistema de configuraciones
-        const gameSettings = {
-            audio: { musicVolume: 70, effectsVolume: 80, audioQuality: 'medium' },
-            gameplay: { difficulty: 'normal', scrollSpeed: 1.0, audioOffset: 0, ghostMode: false },
-            display: { layout: 'horizontal', noteSize: 'medium', visualEffects: true, darkMode: false },
-            controls: { touchSensitivity: 1.0, vibration: true }
         };
         
-        let settingsMenu = null;
-        let settingsOpen = false;
-        
-        function createSettingsMenu(scene) {
-            if (settingsMenu) return;
-            
-            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const menuWidth = isMobile ? Math.min(350, gameWidth - 40) : 400;
-            const menuHeight = isMobile ? Math.min(450, gameHeight - 80) : 500;
-            
-            settingsMenu = scene.add.container(config.width/2, config.height/2);
-            settingsMenu.setScrollFactor(0).setDepth(1000);
-            
-            const bg = scene.add.rectangle(0, 0, menuWidth, menuHeight, 0x000000, 0.9);
-            bg.setStrokeStyle(2, 0x00ff00);
-            settingsMenu.add(bg);
-            
-            const title = scene.add.text(0, -Math.floor(menuHeight/2) + 30, 'CONFIGURACIONES', {
-                fontSize: isMobile ? '20px' : '24px', fill: '#00ff00', fontFamily: 'Arial'
-            }).setOrigin(0.5);
-            settingsMenu.add(title);
-            
-            const musicVol = scene.add.text(0, -150, `Música: ${gameSettings.audio.musicVolume}%`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(musicVol);
-            
-            const difficulty = scene.add.text(0, -70, `Dificultad: ${gameSettings.gameplay.difficulty}`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(difficulty);
-            
-            const speed = scene.add.text(0, -40, `Velocidad: ${gameSettings.gameplay.scrollSpeed}x`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(speed);
-            
-            const layout = scene.add.text(0, 40, `Layout: ${gameSettings.display.layout}`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(layout);
-            
-            const effects = scene.add.text(0, 70, `Efectos: ${gameSettings.display.visualEffects ? 'ON' : 'OFF'}`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(effects);
-            
-            const sensitivity = scene.add.text(0, 150, `Sensibilidad: ${gameSettings.controls.touchSensitivity}x`, {
-                fontSize: '14px', fill: '#ffffff'
-            }).setOrigin(0.5).setInteractive();
-            settingsMenu.add(sensitivity);
-            
-            const closeBtn = scene.add.rectangle(0, Math.floor(menuHeight/2) - 40, isMobile ? 120 : 100, isMobile ? 50 : 40, 0x330000);
-            closeBtn.setStrokeStyle(2, 0xff0000).setInteractive();
-            settingsMenu.add(closeBtn);
-            
-            const closeBtnText = scene.add.text(0, Math.floor(menuHeight/2) - 40, 'CERRAR', {
-                fontSize: isMobile ? '18px' : '16px', fill: '#ff0000'
-            }).setOrigin(0.5);
-            settingsMenu.add(closeBtnText);
-            
-            musicVol.on('pointerdown', () => {
-                gameSettings.audio.musicVolume = (gameSettings.audio.musicVolume + 10) % 110;
-                musicVol.setText(`Música: ${gameSettings.audio.musicVolume}%`);
-            });
-            
-            difficulty.on('pointerdown', () => {
-                const difficulties = ['easy', 'normal', 'hard', 'expert'];
-                const current = difficulties.indexOf(gameSettings.gameplay.difficulty);
-                gameSettings.gameplay.difficulty = difficulties[(current + 1) % difficulties.length];
-                difficulty.setText(`Dificultad: ${gameSettings.gameplay.difficulty}`);
-            });
-            
-            speed.on('pointerdown', () => {
-                gameSettings.gameplay.scrollSpeed = Math.round((gameSettings.gameplay.scrollSpeed + 0.25) * 100) / 100;
-                if (gameSettings.gameplay.scrollSpeed > 2) gameSettings.gameplay.scrollSpeed = 0.5;
-                speed.setText(`Velocidad: ${gameSettings.gameplay.scrollSpeed}x`);
-            });
-            
-            layout.on('pointerdown', () => {
-                gameSettings.display.layout = gameSettings.display.layout === 'horizontal' ? 'vertical' : 'horizontal';
-                layout.setText(`Layout: ${gameSettings.display.layout}`);
-            });
-            
-            effects.on('pointerdown', () => {
-                gameSettings.display.visualEffects = !gameSettings.display.visualEffects;
-                effects.setText(`Efectos: ${gameSettings.display.visualEffects ? 'ON' : 'OFF'}`);
-            });
-            
-            sensitivity.on('pointerdown', () => {
-                gameSettings.controls.touchSensitivity = Math.round((gameSettings.controls.touchSensitivity + 0.25) * 100) / 100;
-                if (gameSettings.controls.touchSensitivity > 2) gameSettings.controls.touchSensitivity = 0.5;
-                sensitivity.setText(`Sensibilidad: ${gameSettings.controls.touchSensitivity}x`);
-            });
-            
-            closeBtn.on('pointerdown', () => toggleSettings(scene));
-            closeBtnText.setInteractive().on('pointerdown', () => toggleSettings(scene));
-            settingsMenu.setVisible(false);
-        }
-        
-        function toggleSettings(scene) {
-            if (!settingsMenu) createSettingsMenu(scene);
-            settingsOpen = !settingsOpen;
-            settingsMenu.setVisible(settingsOpen);
-            settingsOpen ? scene.physics.pause() : scene.physics.resume();
-        }
-        
-        // Validación final antes de iniciar
-        if (typeof Phaser === 'undefined') {
-            console.error('Phaser no se cargó correctamente');
-            return;
-        }
-        
-        // Iniciar Phaser con manejo de errores
-        try {
-            game = new Phaser.Game(config);
-            
-            // Log de inicio para debugging
-            if (GAME_CONFIG.DEBUG) {
-                console.log(`Samy Jump v${GAME_CONFIG.VERSION} iniciado`);
-                console.log('Datos del juego:', gameData);
+        // Add custom cursor CSS
+        const cursorStyle = document.createElement('style');
+        cursorStyle.textContent = `
+            #phaserContainer {
+                cursor: url('images/samyholahola.png') 25 25, auto !important;
             }
-        } catch (error) {
-            console.error('Error iniciando el juego:', error);
-            document.getElementById('miniGameOverlay').innerHTML = 
-                '<div style="color: white; text-align: center; padding: 50px;">Error cargando el juego. Recarga la página.</div>';
+        `;
+        document.head.appendChild(cursorStyle);
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(0));
+    }
+
+    function createPhaserShootGame() {
+        document.getElementById('gameTitle').textContent = '🎯 ¡DISPARA 5 ENEMIGOS!';
+        document.getElementById('gameInfo').textContent = 'Eliminados: 0/5';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('enemy', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.kills = 0;
+                    this.enemies = this.add.group();
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x2c3e50);
+                    
+                    // Spawn enemies
+                    for (let i = 0; i < 8; i++) {
+                        const enemy = this.add.sprite(
+                            Math.random() * config.width,
+                            Math.random() * config.height,
+                            'enemy'
+                        );
+                        enemy.setScale(0.25);
+                        enemy.setTint(0xff0000);
+                        enemy.setInteractive();
+                        enemy.on('pointerdown', () => {
+                            enemy.destroy();
+                            this.kills++;
+                            document.getElementById('gameInfo').textContent = `Eliminados: ${this.kills}/5`;
+                            if (this.kills >= 5) endMicrogame(100);
+                        });
+                        this.enemies.add(enemy);
+                    }
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(phaserGame.scene.scenes[0].kills >= 3 ? 50 : 0));
+    }
+
+    function createPhaserBalanceGame() {
+        document.getElementById('gameTitle').textContent = '⚖️ ¡MANTÉN EL EQUILIBRIO!';
+        document.getElementById('gameInfo').textContent = 'Equilibrio: 50%';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('balanceIndicator', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.balance = 50;
+                    this.balanceVelocity = 0;
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x34495e);
+                    
+                    // Balance bar
+                    this.balanceBar = this.add.rectangle(config.width/2, config.height/2, 400, 20, 0x666666);
+                    this.balanceIndicator = this.add.sprite(config.width/2, config.height/2, 'balanceIndicator');
+                    this.balanceIndicator.setScale(0.2);
+                    this.balanceIndicator.setTint(0xff6b6b);
+                    
+                    this.input.on('pointermove', (pointer) => {
+                        const mouseX = (pointer.x / config.width) * 100;
+                        this.balanceVelocity += (mouseX - this.balance) * 0.02;
+                    });
+                    
+                    // Update balance
+                    this.time.addEvent({
+                        delay: 50,
+                        callback: () => {
+                            this.balanceVelocity += (Math.random() - 0.5) * 0.5;
+                            this.balance += this.balanceVelocity;
+                            this.balanceVelocity *= 0.95;
+                            this.balance = Phaser.Math.Clamp(this.balance, 0, 100);
+                            
+                            this.balanceIndicator.x = (this.balance / 100) * 400 + (config.width/2 - 200);
+                            document.getElementById('gameInfo').textContent = `Equilibrio: ${Math.round(this.balance)}%`;
+                        },
+                        loop: true
+                    });
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => {
+            const balance = phaserGame.scene.scenes[0].balance;
+            endMicrogame(balance > 30 && balance < 70 ? 100 : 25);
+        });
+    }
+
+    function createPhaserCountGame() {
+        document.getElementById('gameTitle').textContent = '🔢 ¡CUENTA LAS ESTRELLAS!';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: Math.min(container.offsetWidth, 600),
+            height: Math.min(container.offsetHeight - 100, 400),
+            parent: 'phaserContainer',
+            scene: {
+                preload: function() {
+                    this.load.image('countStar', 'images/samyholahola.png');
+                },
+                create: function() {
+                    this.correctCount = 3 + Math.floor(Math.random() * 5);
+                    
+                    // Background
+                    this.add.rectangle(config.width/2, config.height/2, config.width, config.height, 0x667eea);
+                    
+                    // Show stars briefly
+                    const stars = [];
+                    for (let i = 0; i < this.correctCount; i++) {
+                        const star = this.add.sprite(
+                            Math.random() * config.width,
+                            Math.random() * config.height,
+                            'countStar'
+                        );
+                        star.setScale(0.15);
+                        star.setTint(0xffd700);
+                        stars.push(star);
+                    }
+                    
+                    // Hide stars after 2 seconds
+                    this.time.delayedCall(2000, () => {
+                        stars.forEach(star => star.destroy());
+                        
+                        // Show number buttons
+                        for (let i = 1; i <= 8; i++) {
+                            const button = this.add.rectangle(
+                                (i - 1) * 70 + 50,
+                                config.height - 50,
+                                60,
+                                40,
+                                0x74b9ff
+                            );
+                            button.setInteractive();
+                            
+                            const text = this.add.text(button.x, button.y, i.toString(), {
+                                fontSize: '20px',
+                                fill: '#ffffff'
+                            }).setOrigin(0.5);
+                            
+                            button.on('pointerdown', () => {
+                                endMicrogame(i === this.correctCount ? 100 : 0);
+                            });
+                        }
+                    });
+                }
+            }
+        };
+        
+        phaserGame = new Phaser.Game(config);
+        startGameTimer(() => endMicrogame(0));
+    }
+
+    // Game timer helper with speed scaling
+    function startGameTimer(onComplete) {
+        let timeLeft = Math.max(3, Math.floor(5 / gameSpeed));
+        const interval = Math.max(500, Math.floor(1000 / gameSpeed));
+        
+        gameTimer = setInterval(() => {
+            timeLeft--;
+            const timeEl = document.getElementById('gameTime');
+            if (timeEl) timeEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(gameTimer);
+                onComplete();
+            }
+        }, interval);
+    }
+
+    // End microgame
+    function endMicrogame(score) {
+        cleanup();
+        
+        currentScore += score;
+        gamesCompleted++;
+        
+        if (score < 50) {
+            lives--;
+            if (lives <= 0) {
+                alert(`¡Game Over! Puntuación final: ${currentScore}`);
+                currentScore = 0;
+                gamesCompleted = 0;
+                gameSpeed = 1;
+                lives = 3;
+                saveStats();
+                createMainMenu();
+                return;
+            }
         }
-    };
-})();
+        
+        // Update best score and streak
+        if (currentScore > bestScore) {
+            bestScore = currentScore;
+        }
+        
+        if (score >= 50) {
+            streak++;
+            if (streak > maxStreak) {
+                maxStreak = streak;
+            }
+            if (score === 100) {
+                unlockAchievement('perfectionist');
+            }
+            if (streak >= 10 && !achievementsList.streaker.unlocked) {
+                unlockAchievement('streaker');
+            }
+            sounds.success();
+        } else {
+            streak = 0;
+            sounds.fail();
+        }
+        
+        checkAchievements();
+        saveStats();
+        
+        // Show result with enhanced design
+        container.innerHTML = `
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: ${score >= 50 ? 'linear-gradient(135deg, #00b894, #00cec9, #55a3ff)' : 'linear-gradient(135deg, #e17055, #d63031, #fd79a8)'}; color: white; text-align: center; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: ${score >= 50 ? 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)' : 'radial-gradient(circle at 30% 20%, rgba(0,0,0,0.2) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(0,0,0,0.1) 0%, transparent 50%)'};"></div>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: ${score >= 50 ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)' : 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)'};"></div>
+                <div style="position: relative; z-index: 2;">
+                    <div style="font-size: ${isMobile ? '80px' : '120px'}; margin-bottom: 20px; animation: ${score >= 50 ? 'bounce' : 'shake'} 0.6s ease-in-out; filter: drop-shadow(0 0 20px ${score >= 50 ? 'rgba(0,206,201,0.8)' : 'rgba(214,48,49,0.8)'});">${score >= 50 ? '🎉' : '💥'}</div>
+                    <h1 style="font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; font-size: ${isMobile ? '56px' : '84px'}; margin: 0; text-shadow: 6px 6px 12px rgba(0,0,0,0.7), 0 0 30px ${score >= 50 ? 'rgba(0,206,201,0.6)' : 'rgba(214,48,49,0.6)'}; animation: ${score >= 50 ? 'glow-success' : 'glow-fail'} 1.2s ease-in-out infinite alternate; letter-spacing: 2px;">${score >= 50 ? '¡ÉXITO!' : '¡FALLO!'}</h1>
+                    <div style="font-family: 'Arial Black', Arial, sans-serif; font-weight: bold; font-size: ${isMobile ? '32px' : '48px'}; margin: 25px 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.5); background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1)); padding: 10px 20px; border-radius: 15px; backdrop-filter: blur(10px);">+${score} PUNTOS</div>
+                    <div style="font-family: 'Arial', sans-serif; font-weight: bold; font-size: ${isMobile ? '24px' : '32px'}; opacity: 0.95; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 15px 0;">📊 Total: ${currentScore}</div>
+                    <div style="font-family: 'Arial', sans-serif; font-size: ${isMobile ? '18px' : '24px'}; margin-top: 15px; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">❤️ Vidas: ${lives} | 🎮 Juegos: ${gamesCompleted}</div>
+                </div>
+                <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 14px; opacity: 0.7;">Continuando en 2 segundos...</div>
+            </div>
+        `;
+        
+        setTimeout(() => {
+            if (continuousMode && lives > 0) {
+                if (gamesCompleted % 5 === 0) {
+                    gameSpeed = Math.min(gameSpeed + 0.1, 2.0);
+                }
+                startNextGame();
+            } else {
+                continuousMode = false;
+                createMainMenu();
+            }
+        }, 1500);
+    }
+
+    // New Minigames
+    function createMemoryGame() {
+        document.getElementById('gameTitle').textContent = '🧠 ¡MEMORIZA!';
+        document.getElementById('gameInfo').textContent = 'Observa la secuencia...';
+        
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+        let sequence = [];
+        let playerSequence = [];
+        let showingSequence = false;
+        let sequenceLength = 3;
+        
+        container.querySelector('#phaserContainer').innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 50px; height: 100%; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                ${colors.map((color, i) => `
+                    <div id="memoryBtn${i}" style="
+                        width: ${isMobile ? '80px' : '100px'}; height: ${isMobile ? '80px' : '100px'}; background: ${color};
+                        border-radius: 15px; cursor: pointer; transition: all 0.2s;
+                        display: flex; align-items: center; justify-content: center;
+                        font-size: ${isMobile ? '20px' : '24px'}; color: white; font-weight: bold;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    " onclick="memoryClick(${i})">${i + 1}</div>
+                `).join('')}
+            </div>
+        `;
+        
+        // Generate sequence
+        for (let i = 0; i < sequenceLength; i++) {
+            sequence.push(Math.floor(Math.random() * 6));
+        }
+        
+        // Show sequence
+        showingSequence = true;
+        let index = 0;
+        const showNext = () => {
+            if (index < sequence.length) {
+                const btn = document.getElementById(`memoryBtn${sequence[index]}`);
+                btn.style.transform = 'scale(1.2)';
+                btn.style.boxShadow = '0 0 30px rgba(255,255,255,0.8)';
+                sounds.collect();
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                    btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                    index++;
+                    setTimeout(showNext, 300);
+                }, 400);
+            } else {
+                showingSequence = false;
+                document.getElementById('gameInfo').textContent = 'Repite la secuencia...';
+            }
+        };
+        setTimeout(showNext, 1000);
+        
+        window.memoryClick = (btnIndex) => {
+            if (showingSequence) return;
+            sounds.click();
+            playerSequence.push(btnIndex);
+            
+            const btn = document.getElementById(`memoryBtn${btnIndex}`);
+            btn.style.transform = 'scale(0.9)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 100);
+            
+            if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
+                endMicrogame(0);
+                return;
+            }
+            
+            if (playerSequence.length === sequence.length) {
+                endMicrogame(100);
+            }
+        };
+        
+        startGameTimer(() => endMicrogame(0));
+    }
     
+    function createMathGame() {
+        document.getElementById('gameTitle').textContent = '🔢 ¡CALCULA RÁPIDO!';
+        
+        const operations = ['+', '-', '*'];
+        const op = operations[Math.floor(Math.random() * operations.length)];
+        let a, b, correctAnswer;
+        
+        if (op === '+') {
+            a = Math.floor(Math.random() * 20) + 1;
+            b = Math.floor(Math.random() * 20) + 1;
+            correctAnswer = a + b;
+        } else if (op === '-') {
+            a = Math.floor(Math.random() * 30) + 10;
+            b = Math.floor(Math.random() * a);
+            correctAnswer = a - b;
+        } else {
+            a = Math.floor(Math.random() * 10) + 2;
+            b = Math.floor(Math.random() * 10) + 2;
+            correctAnswer = a * b;
+        }
+        
+        const wrongAnswers = [
+            correctAnswer + Math.floor(Math.random() * 10) + 1,
+            correctAnswer - Math.floor(Math.random() * 10) - 1,
+            correctAnswer + Math.floor(Math.random() * 20) - 10
+        ].filter(x => x !== correctAnswer && x > 0);
+        
+        const allAnswers = [correctAnswer, ...wrongAnswers.slice(0, 3)]
+            .sort(() => Math.random() - 0.5);
+        
+        document.getElementById('gameInfo').textContent = `¿Cuánto es ${a} ${op} ${b}?`;
+        
+        container.querySelector('#phaserContainer').innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div style="font-size: ${isMobile ? '36px' : '48px'}; color: white; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                    ${a} ${op} ${b} = ?
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    ${allAnswers.map(answer => `
+                        <button onclick="mathAnswer(${answer})" style="
+                            padding: ${isMobile ? '15px 25px' : '20px 30px'}; font-size: ${isMobile ? '20px' : '24px'}; background: #74b9ff;
+                            color: white; border: none; border-radius: 15px; cursor: pointer;
+                            transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            ${answer}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        window.mathAnswer = (answer) => {
+            sounds.click();
+            endMicrogame(answer === correctAnswer ? 100 : 0);
+        };
+        
+        startGameTimer(() => endMicrogame(0));
+    }
+    
+    function createRhythmGame() {
+        document.getElementById('gameTitle').textContent = '🎵 ¡SIGUE EL RITMO!';
+        document.getElementById('gameInfo').textContent = 'Toca cuando brille...';
+        
+        let score = 0;
+        let beats = 0;
+        const maxBeats = 8;
+        
+        container.querySelector('#phaserContainer').innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div id="rhythmCircle" style="
+                    width: ${isMobile ? '150px' : '200px'}; height: ${isMobile ? '150px' : '200px'}; border-radius: 50%;
+                    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: ${isMobile ? '32px' : '48px'}; color: white; cursor: pointer;
+                    transition: all 0.1s; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                " onclick="rhythmTap()">TAP!</div>
+            </div>
+        `;
+        
+        let isActive = false;
+        let startTime = 0;
+        
+        const nextBeat = () => {
+            if (beats >= maxBeats) {
+                endMicrogame(Math.floor((score / maxBeats) * 100));
+                return;
+            }
+            
+            setTimeout(() => {
+                const circle = document.getElementById('rhythmCircle');
+                circle.style.background = 'linear-gradient(45deg, #00b894, #00cec9)';
+                circle.style.boxShadow = '0 0 50px rgba(0,206,201,0.8)';
+                circle.style.transform = 'scale(1.1)';
+                
+                isActive = true;
+                startTime = Date.now();
+                sounds.collect();
+                
+                setTimeout(() => {
+                    if (isActive) {
+                        isActive = false;
+                        circle.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a52)';
+                        circle.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                        circle.style.transform = 'scale(1)';
+                        beats++;
+                        nextBeat();
+                    }
+                }, 800);
+            }, 1000 + Math.random() * 1000);
+        };
+        
+        window.rhythmTap = () => {
+            if (isActive) {
+                const timing = Date.now() - startTime;
+                if (timing < 200) score += 3;
+                else if (timing < 400) score += 2;
+                else score += 1;
+                
+                isActive = false;
+                const circle = document.getElementById('rhythmCircle');
+                circle.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a52)';
+                circle.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                circle.style.transform = 'scale(1)';
+                
+                sounds.success();
+                beats++;
+                document.getElementById('gameInfo').textContent = `Puntos: ${score}/${maxBeats * 3}`;
+                nextBeat();
+            }
+        };
+        
+        nextBeat();
+        startGameTimer(() => endMicrogame(Math.floor((score / (maxBeats * 3)) * 100)));
+    }
+    
+    function createSimonGame() {
+        document.getElementById('gameTitle').textContent = '🗣️ ¡SIMON DICE!';
+        document.getElementById('gameInfo').textContent = 'Espera la orden...';
+        
+        const commands = [
+            { text: 'TOCA ARRIBA', key: 'ArrowUp', emoji: '⬆️' },
+            { text: 'TOCA ABAJO', key: 'ArrowDown', emoji: '⬇️' },
+            { text: 'TOCA IZQUIERDA', key: 'ArrowLeft', emoji: '⬅️' },
+            { text: 'TOCA DERECHA', key: 'ArrowRight', emoji: '➡️' },
+            { text: 'PRESIONA ESPACIO', key: 'Space', emoji: '🚀' }
+        ];
+        
+        let currentCommand = null;
+        let commandGiven = false;
+        let responded = false;
+        
+        container.querySelector('#phaserContainer').innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div id="simonCommand" style="font-size: ${isMobile ? '28px' : '36px'}; color: white; font-weight: bold; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center;">Preparate...</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: ${isMobile ? '250px' : '300px'};">
+                    <div></div>
+                    <div id="upBtn" style="padding: ${isMobile ? '15px' : '20px'}; background: #74b9ff; border-radius: 10px; text-align: center; font-size: ${isMobile ? '20px' : '24px'}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">⬆️</div>
+                    <div></div>
+                    <div id="leftBtn" style="padding: ${isMobile ? '15px' : '20px'}; background: #74b9ff; border-radius: 10px; text-align: center; font-size: ${isMobile ? '20px' : '24px'}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">⬅️</div>
+                    <div id="spaceBtn" style="padding: ${isMobile ? '15px' : '20px'}; background: #74b9ff; border-radius: 10px; text-align: center; font-size: ${isMobile ? '20px' : '24px'}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">🚀</div>
+                    <div id="rightBtn" style="padding: ${isMobile ? '15px' : '20px'}; background: #74b9ff; border-radius: 10px; text-align: center; font-size: ${isMobile ? '20px' : '24px'}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">➡️</div>
+                    <div></div>
+                    <div id="downBtn" style="padding: ${isMobile ? '15px' : '20px'}; background: #74b9ff; border-radius: 10px; text-align: center; font-size: ${isMobile ? '20px' : '24px'}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">⬇️</div>
+                    <div></div>
+                </div>
+            </div>
+        `;
+        
+        const giveCommand = () => {
+            setTimeout(() => {
+                currentCommand = commands[Math.floor(Math.random() * commands.length)];
+                document.getElementById('simonCommand').innerHTML = `${currentCommand.emoji}<br>${currentCommand.text}`;
+                document.getElementById('gameInfo').textContent = '¡Hazlo rápido!';
+                commandGiven = true;
+                responded = false;
+                sounds.collect();
+            }, 1000 + Math.random() * 2000);
+        };
+        
+        const simonKeyHandler = (e) => {
+            if (!commandGiven || responded) return;
+            
+            responded = true;
+            document.removeEventListener('keydown', simonKeyHandler);
+            
+            if (e.key === currentCommand.key || e.code === currentCommand.key) {
+                endMicrogame(100);
+            } else {
+                endMicrogame(0);
+            }
+        };
+        
+        document.addEventListener('keydown', simonKeyHandler);
+        
+        giveCommand();
+        startGameTimer(() => {
+            document.removeEventListener('keydown', simonKeyHandler);
+            endMicrogame(0);
+        });
+    }
+    
+    // Additional menu functions
+    window.showAchievements = function() {
+        cleanup();
+        const overlay = document.getElementById('samyWareOverlay');
+        if (overlay) {
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+        }
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.width = isMobile ? '100vw' : '600px';
+            gameContainer.style.height = isMobile ? '100vh' : '500px';
+        }
+        
+        const achievementsEntries = Object.entries(achievementsList).map(([id, achievement]) => `
+            <div style="display: flex; align-items: center; padding: 15px; margin: 10px 0; background: ${achievement.unlocked ? 'rgba(46, 204, 113, 0.2)' : 'rgba(149, 165, 166, 0.2)'}; border-radius: 10px; border-left: 4px solid ${achievement.unlocked ? '#2ecc71' : '#95a5a6'};">
+                <div style="font-size: 24px; margin-right: 15px;">${achievement.unlocked ? '✅' : '🔒'}</div>
+                <div>
+                    <div style="font-weight: bold; color: ${achievement.unlocked ? '#2ecc71' : '#95a5a6'};">${achievement.name}</div>
+                    <div style="font-size: 14px; color: #666; margin-top: 5px;">${achievement.desc}</div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `
+            <div style="flex: 1; padding: 20px; background: ${themes[currentTheme].bg}; overflow-y: auto;">
+                <div style="max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px;">
+                    <h2 style="text-align: center; color: #333; margin: 0 0 20px 0;">🏆 LOGROS</h2>
+                    <div style="text-align: center; margin-bottom: 20px; color: #666;">
+                        ${achievements.length}/${Object.keys(achievementsList).length} desbloqueados
+                    </div>
+                    ${achievementsEntries}
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="createMainMenu()" style="padding: 15px 30px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">← VOLVER</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+    
+    window.showThemes = function() {
+        cleanup();
+        const overlay = document.getElementById('samyWareOverlay');
+        if (overlay) {
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+        }
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.width = isMobile ? '100vw' : '600px';
+            gameContainer.style.height = isMobile ? '100vh' : '500px';
+        }
+        
+        const themesList = Object.entries(themes).map(([id, theme]) => `
+            <div onclick="selectTheme('${id}')" style="
+                padding: 20px; margin: 10px 0; background: ${theme.bg};
+                border-radius: 15px; cursor: pointer; transition: all 0.3s;
+                border: 3px solid ${currentTheme === id ? '#fff' : 'transparent'};
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="color: white; font-weight: bold; font-size: 18px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                    ${theme.name} ${currentTheme === id ? '✓' : ''}
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <div style="width: 30px; height: 30px; background: ${theme.primary}; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
+                    <div style="width: 30px; height: 30px; background: ${theme.secondary}; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `
+            <div style="flex: 1; padding: 20px; background: ${themes[currentTheme].bg}; overflow-y: auto;">
+                <div style="max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px;">
+                    <h2 style="text-align: center; color: #333; margin: 0 0 20px 0;">🎨 TEMAS</h2>
+                    ${themesList}
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="createMainMenu()" style="padding: 15px 30px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">← VOLVER</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+    
+    window.selectTheme = function(themeId) {
+        currentTheme = themeId;
+        sounds.click();
+        saveStats();
+        showThemes();
+    };
+    
+    // Make createMainMenu globally accessible
+    window.createMainMenu = createMainMenu;
+
+    // Settings menu
+    window.showSettings = function() {
+        cleanup();
+        // Center settings menu
+        const overlay = document.getElementById('samyWareOverlay');
+        if (overlay) {
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+        }
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.width = isMobile ? '100vw' : '600px';
+            gameContainer.style.height = isMobile ? '100vh' : '500px';
+        }
+        
+        container.innerHTML = `
+            <div style="flex: 1; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); overflow-y: auto;">
+                <div style="max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px;">
+                    <h2 style="text-align: center; color: #333; margin: 0 0 20px 0;">⚙️ CONFIGURACIÓN</h2>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #555; margin-bottom: 10px;">🎮 Juego</h3>
+                        <label style="display: block; margin-bottom: 10px; color: #666;">
+                            <input type="checkbox" id="soundEnabled" ${soundEnabled ? 'checked' : ''} onchange="toggleSound()" style="margin-right: 8px;"> Sonido activado
+                        </label>
+                        <label style="display: block; margin-bottom: 10px; color: #666;">
+                            <input type="checkbox" id="musicEnabled" ${musicEnabled ? 'checked' : ''} onchange="toggleMusic()" style="margin-right: 8px;"> Música activada
+                        </label>
+                        <label style="display: block; margin-bottom: 10px; color: #666;">
+                            <input type="checkbox" id="vibrationEnabled" ${isMobile ? 'checked' : ''} style="margin-right: 8px;"> Vibración (móvil)
+                        </label>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #555; margin-bottom: 10px;">👁️ Visual</h3>
+                        <label style="display: block; margin-bottom: 10px; color: #666;">
+                            <input type="checkbox" id="particleEffects" checked style="margin-right: 8px;"> Efectos de partículas
+                        </label>
+                        <label style="display: block; margin-bottom: 10px; color: #666;">
+                            <input type="checkbox" id="screenShake" checked style="margin-right: 8px;"> Vibración de pantalla
+                        </label>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #555; margin-bottom: 10px;">🎯 Dificultad</h3>
+                        <select id="difficultySelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                            <option value="easy">🟢 Fácil (6 segundos)</option>
+                            <option value="normal" selected>🟡 Normal (5 segundos)</option>
+                            <option value="hard">🔴 Difícil (4 segundos)</option>
+                        </select>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="saveSettings()" style="padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 0 10px;">✅ GUARDAR</button>
+                        <button onclick="createMainMenu()" style="padding: 15px 30px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 0 10px;">❌ CANCELAR</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+    
+    window.toggleSound = function() {
+        soundEnabled = document.getElementById('soundEnabled').checked;
+        sounds.click();
+    };
+    
+    window.toggleMusic = function() {
+        musicEnabled = document.getElementById('musicEnabled').checked;
+        sounds.click();
+    };
+    
+    window.saveSettings = function() {
+        soundEnabled = document.getElementById('soundEnabled').checked;
+        musicEnabled = document.getElementById('musicEnabled').checked;
+        saveStats();
+        sounds.success();
+        createMainMenu();
+    };
+
+    // Add CSS animations
+    if (!document.getElementById('gameAnimations')) {
+        const style = document.createElement('style');
+        style.id = 'gameAnimations';
+        style.textContent = `
+            @keyframes bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.1); } }
+            @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+            @keyframes float { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(0.5); opacity: 0; } }
+            @keyframes shake { 0%, 100% { transform: translateX(0) rotate(0deg); } 25% { transform: translateX(-8px) rotate(-2deg); } 75% { transform: translateX(8px) rotate(2deg); } }
+            @keyframes glow-success { 0% { text-shadow: 6px 6px 12px rgba(0,0,0,0.7), 0 0 25px rgba(0,184,148,0.9), 0 0 35px rgba(0,206,201,0.7); } 100% { text-shadow: 6px 6px 12px rgba(0,0,0,0.7), 0 0 40px rgba(0,206,201,1), 0 0 60px rgba(85,163,255,0.9), 0 0 80px rgba(0,184,148,0.6); } }
+            @keyframes glow-fail { 0% { text-shadow: 6px 6px 12px rgba(0,0,0,0.7), 0 0 25px rgba(225,112,85,0.9), 0 0 35px rgba(214,48,49,0.7); } 100% { text-shadow: 6px 6px 12px rgba(0,0,0,0.7), 0 0 40px rgba(214,48,49,1), 0 0 60px rgba(253,121,168,0.9), 0 0 80px rgba(225,112,85,0.6); } }
+            @keyframes slideIn { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+            @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+            .particle { position: absolute; pointer-events: none; border-radius: 50%; animation: particleFloat 2s ease-out forwards; }
+            @keyframes particleFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(0); opacity: 0; } }
+            .screen-shake { animation: screenShake 0.5s ease-in-out; }
+            @keyframes screenShake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); } 20%, 40%, 60%, 80% { transform: translateX(2px); } }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Particle effects
+    function createParticles(success) {
+        const colors = success ? ['#00b894', '#00cec9', '#55a3ff', '#ffd700'] : ['#e17055', '#d63031', '#fd79a8'];
+        const container = document.getElementById('gameContainer');
+        if (!container) return;
+        
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: 80%;
+                    width: ${Math.random() * 8 + 4}px;
+                    height: ${Math.random() * 8 + 4}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    animation-delay: ${Math.random() * 0.5}s;
+                    animation-duration: ${1.5 + Math.random()}s;
+                `;
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 3000);
+            }, i * 50);
+        }
+    }
+    
+    // Initialize
+    loadStats();
+    createMainMenu();
+    
+    // Auto-save every 30 seconds
+    setInterval(saveStats, 30000);
+    
+    // Initialize audio on first user interaction
+    document.addEventListener('click', () => {
+        if (!audioContext) initAudio();
+    }, { once: true });
+    
+})();

@@ -126,6 +126,18 @@
             transform: translateY(-2px);
         }
 
+        #backBtn {
+            background: rgba(0, 100, 255, 0.2);
+            border-color: rgba(0, 150, 255, 0.6);
+            color: #00aaff;
+        }
+
+        #backBtn:hover {
+            background: rgba(0, 150, 255, 0.3);
+            border-color: #00aaff;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+        }
+
         .video-container {
             flex: 1;
             width: 100%;
@@ -632,18 +644,19 @@
             }
 
             .player-title {
-                font-size: 16px;
+                font-size: 14px;
             }
 
             .player-btn {
-                width: 40px;
-                height: 40px;
+                width: 44px;
+                height: 44px;
                 font-size: 16px;
                 min-height: 44px;
             }
 
             .playlist-overlay {
-                max-width: 90%;
+                max-width: 100%;
+                width: 100%;
                 padding-top: 60px;
             }
 
@@ -658,22 +671,103 @@
                 height: 35px;
             }
 
-            .control-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 16px;
-                margin: 0 4px;
-                padding: 8px;
-                min-height: 44px;
-            }
-
-            .left-controls,
-            .right-controls {
-                gap: 8px;
+            .main-controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
             }
 
             .center-controls {
+                position: static;
+                transform: none;
+                order: 1;
+                gap: 12px;
+            }
+
+            .left-controls {
+                order: 2;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .right-controls {
+                order: 3;
+                justify-content: center;
                 gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .control-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 16px;
+                margin: 0;
+                min-height: 48px;
+            }
+
+            .center-controls .control-btn {
+                width: 52px;
+                height: 52px;
+            }
+
+            .play-btn {
+                width: 64px !important;
+                height: 64px !important;
+                font-size: 24px !important;
+            }
+
+            .volume-slider {
+                width: 100px;
+                height: 12px;
+                padding: 12px 0;
+                margin: -12px 0;
+            }
+
+            .progress-bar {
+                height: 14px;
+                padding: 10px 0;
+                margin: -10px 0;
+            }
+
+            .controls-container {
+                padding: 20px 15px;
+                padding-bottom: calc(25px + env(safe-area-inset-bottom));
+            }
+
+            .progress-container {
+                margin-bottom: 25px;
+                gap: 12px;
+            }
+
+            .time-display {
+                font-size: 13px;
+                min-width: 45px;
+            }
+
+            .favorites-panel {
+                width: 95%;
+                right: 2.5%;
+                max-height: 200px;
+                bottom: 120px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .player-title {
+                font-size: 12px;
+            }
+
+            .player-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .control-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 14px;
+                margin: 0;
             }
 
             .center-controls .control-btn {
@@ -684,84 +778,38 @@
             .play-btn {
                 width: 60px !important;
                 height: 60px !important;
-                font-size: 24px !important;
+                font-size: 22px !important;
             }
 
             .volume-slider {
                 width: 80px;
-                height: 12px;
-                padding: 12px 0;
-                margin: -12px 0;
             }
 
-            .progress-bar {
-                height: 12px;
-                padding: 8px 0;
-                margin: -8px 0;
+            .left-controls {
+                gap: 8px;
+            }
+
+            .right-controls {
+                gap: 6px;
+            }
+
+            .center-controls {
+                gap: 10px;
             }
 
             .controls-container {
-                padding: 20px;
+                padding: 15px 10px;
                 padding-bottom: calc(20px + env(safe-area-inset-bottom));
             }
 
             .progress-container {
                 margin-bottom: 20px;
-                gap: 15px;
+                gap: 10px;
             }
 
             .time-display {
-                font-size: 14px;
-                min-width: 50px;
-            }
-
-            .favorites-panel {
-                width: 95%;
-                right: 2.5%;
-                max-height: 150px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .player-title {
-                font-size: 14px;
-            }
-
-            .player-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-
-            .control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
-                margin: 0 2px;
-            }
-
-            .center-controls .control-btn {
-                width: 44px;
-                height: 44px;
-            }
-
-            .play-btn {
-                width: 56px !important;
-                height: 56px !important;
-                font-size: 22px !important;
-            }
-
-            .volume-slider {
-                width: 60px;
-            }
-
-            .left-controls,
-            .right-controls {
-                gap: 4px;
-            }
-
-            .center-controls {
-                gap: 6px;
+                font-size: 12px;
+                min-width: 40px;
             }
         }
 
@@ -794,6 +842,7 @@
         <div class="player-header">
             <div class="player-title glitch-effect">SONIC.EXE MEDIA PLAYER</div>
             <div class="player-controls">
+                <button class="player-btn" id="backBtn" title="Volver al Menú">←</button>
                 <button class="player-btn" id="theaterBtn" title="Modo Teatro">🎭</button>
                 <button class="player-btn" id="fullscreenBtn" title="Pantalla Completa">⛶</button>
                 <button class="player-btn" id="closeBtn">✕</button>
@@ -1614,6 +1663,12 @@
             });
 
             closeBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            // Botón de volver
+            const backBtn = document.getElementById('backBtn');
+            backBtn.addEventListener('click', () => {
                 window.location.href = 'index.html';
             });
 
