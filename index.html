@@ -528,11 +528,11 @@
                 top: 50%;
                 transform: translate(-50%, -50%);
             }
-            
+
             .mod-name {
                 font-size: 0.7rem;
             }
-            
+
             .mod-date {
                 font-size: 0.6rem;
             }
@@ -638,11 +638,11 @@
             .news-toggle {
                 font-size: 1rem;
             }
-            
+
             .mod-name {
                 font-size: 0.65rem;
             }
-            
+
             .mod-date {
                 font-size: 0.55rem;
             }
@@ -688,7 +688,7 @@
                 margin: 15px auto 30px;
                 max-height: 25vh;
             }
-            
+
             .mod-thumbnail {
                 width: 40px;
                 height: 40px;
@@ -728,6 +728,7 @@
             0% {
                 filter: drop-shadow(0 0 8px #ff6b00) drop-shadow(0 0 15px #ff6b00);
             }
+
             100% {
                 filter: drop-shadow(0 0 12px #ff6b00) drop-shadow(0 0 20px #ff6b00);
             }
@@ -747,7 +748,11 @@
         }
 
         /* Mejoras de usabilidad táctil */
-        .menu-btn, .news-toggle, .version-btn, .carousel-btn, .game-button {
+        .menu-btn,
+        .news-toggle,
+        .version-btn,
+        .carousel-btn,
+        .game-button {
             min-height: 44px;
             touch-action: manipulation;
         }
@@ -763,52 +768,95 @@
 
         /* Animaciones para el efecto especial */
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10% { transform: translateX(-10px); }
-            20% { transform: translateX(10px); }
-            30% { transform: translateX(-8px); }
-            40% { transform: translateX(8px); }
-            50% { transform: translateX(-6px); }
-            60% { transform: translateX(6px); }
-            70% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
-            90% { transform: translateX(-2px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10% {
+                transform: translateX(-10px);
+            }
+
+            20% {
+                transform: translateX(10px);
+            }
+
+            30% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(8px);
+            }
+
+            50% {
+                transform: translateX(-6px);
+            }
+
+            60% {
+                transform: translateX(6px);
+            }
+
+            70% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+
+            90% {
+                transform: translateX(-2px);
+            }
         }
 
         @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         @keyframes centerAndJump {
-            0% { 
+            0% {
                 transform: translate(0, 0) scale(1);
                 z-index: 20;
             }
-            50% { 
+
+            50% {
                 transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(2);
                 z-index: 9999;
             }
-            100% { 
+
+            100% {
                 transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(10);
                 z-index: 9999;
             }
         }
 
         @keyframes jumpscare {
-            0% { 
+            0% {
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(0.1);
             }
-            10% { 
+
+            10% {
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(5);
             }
-            90% { 
+
+            90% {
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(5);
             }
-            100% { 
+
+            100% {
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(0.1);
             }
@@ -858,7 +906,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.6.2
+                    <i class="bi bi-stars"></i> Rework v1.6.3
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -903,37 +951,46 @@
                 </div>
                 <div class="news-content" id="newsContent">
                     <div class="mods-carousel" id="newsCarousel">
-                        <a href="https://abelitogamer.github.io/BodrioCountdown/countdown.html" class="mod-item" target="_blank" rel="noopener noreferrer">
-                            <img src="images/Banner_BodrioCollectionrecortado.png" alt="Bodrio Collection" class="mod-thumbnail" loading="lazy">
+                        <a href="https://abelitogamer.github.io/BodrioCountdown/countdown.html" class="mod-item"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="images/Banner_BodrioCollectionrecortado.png" alt="Bodrio Collection"
+                                class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">🔥 Bodrio Collection</p>
                                 <p class="mod-date">Ya salio pruebalo ahora en el sitio web</p>
                             </div>
                         </a>
-                        <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank" rel="noopener noreferrer">
-                            <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop" class="mod-thumbnail" loading="lazy">
+                        <a href="https://abelitogamer.github.io/" class="mod-item" target="_blank"
+                            rel="noopener noreferrer">
+                            <img src="images/abelitoworksho.png" alt="Colaboración con AbelitoWorkshop"
+                                class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Colaboracion con AbelitoWorkshop</p>
                                 <p class="mod-date">fecha de inicio: octubre/noviembre 2024</p>
                             </div>
                         </a>
-                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic" class="mod-item">
+                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic"
+                            class="mod-item">
                             <img src="images/thrillergen.jpeg" alt="Thrillergen" class="mod-thumbnail" loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Thriller gen out now!!!</p>
                                 <p class="mod-date">juegalo en freeplay ahora!!!</p>
                             </div>
                         </a>
-                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic" class="mod-item">
-                            <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail" loading="lazy">
+                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=7&name=Vs-Sonic"
+                            class="mod-item">
+                            <img src="images/rewrite.jpg" alt="Trinity encore Coming Soon" class="mod-thumbnail"
+                                loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">Trinity encore ya disponible</p>
                                 <p class="mod-date">Juegalo en freeplay</p>
                             </div>
                         </a>
                         <!-- Spirit of Hell - Nuevo Mod -->
-                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=8&name=SPIRIT-OF-HELL" class="mod-item">
-                            <img src="images/SpiritOfHell.gif" alt="Spirit of Hell" class="mod-thumbnail" loading="lazy">
+                        <a href="https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html?mod=8&name=SPIRIT-OF-HELL"
+                            class="mod-item">
+                            <img src="images/SpiritOfHell.gif" alt="Spirit of Hell" class="mod-thumbnail"
+                                loading="lazy">
                             <div class="mod-info">
                                 <p class="mod-name">🔥 Spirit of Hell - NUEVO!</p>
                                 <p class="mod-date">KindAndFair ya disponible</p>
@@ -960,11 +1017,61 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.2</h5>
-                <button class="close-update" id="closeUpdate" aria-label="Cerrar panel de actualización">&times;</button>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.6.3</h5>
+                <button class="close-update" id="closeUpdate"
+                    aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <h4><strong>🔥 NOVEDADES v1.6.2</strong></h4>
+                <h4><strong>🔥 NOVEDADES v1.6.3</strong></h4>
+                <br>
+                <p><strong>🎵 SOUNDTEST - Nuevas Adiciones:</strong></p>
+                <ul>
+                    <li>🥛 <strong>Milk (12-34):</strong> Nueva canción de Sunky agregada al soundtest.</li>
+                    <li>🖼️ <strong>Imagen 69-69:</strong> Nuevo contenido multimedia especial agregado.</li>
+                    <li>🎮 <strong>Faker Dual Mode:</strong> Faker ahora tiene modo horizontal y vertical.</li>
+                    <li>🔗 <strong>Enlaces actualizados:</strong> Prey con enlace directo de Funky Maker.</li>
+                    <li>⚙️ <strong>Sistema mejorado:</strong> Selector de modo para canciones con múltiples layouts.
+                    </li>
+                </ul>
+                <p><strong>🆕 NUEVAS SECCIONES COMPLETAS:</strong></p>
+                <ul>
+                    <li>🎮 <strong>Executable Mania:</strong> Nueva sección completa con logo exclusivo agregada al
+                        Freeplay.</li>
+                    <li>🎵 <strong>Extras Songs:</strong> Nueva sección con 7 canciones adicionales de diferentes mods.
+                    </li>
+                </ul>
+                <br>
+                <p><strong>🔄 ACTUALIZACIONES MASIVAS DE CONTENIDO:</strong></p>
+                <ul>
+                    <li>⚡ <strong>Illegal Instruction - RENOVACIÓN COMPLETA:</strong> 12 nuevas canciones agregadas
+                        incluyendo:</li>
+                    <li>🎯 3 canciones de Duke: breakout, soulless endeavor, final frontier</li>
+                    <li>🎵 my horizon (chaotix), found you (normal cd), malediction (curse)</li>
+                    <li>🎶 perdition (apollyon), endless forest mix (majin), our horizon (chaotix)</li>
+                    <li>🎨 color crash (wechidna & mighty), my horizon(wechidna)</li>
+                    <li>🔥 <strong>Sonic.exe Rerun:</strong> Agregadas "torment" (lord x) y "time attack" (sonic.exe)
+                    </li>
+                    <li>🎭 <strong>Hit Single:</strong> Nueva canción "fake baby" (no more innocence)</li>
+                    <li>✨ <strong>Horrors Unknown:</strong> Agregada "Elements" con personaje Nantelle</li>
+                </ul>
+                <br>
+                <p><strong>🎵 EXTRAS SONGS - 7 NUEVAS CANCIONES:</strong></p>
+                <ul>
+                    <li>🎪 vessel (lordx), shlasher (Fakeout), all i have is you (Xathus)</li>
+                    <li>❓ Tarnished (???), drop and roll (diablo), for you (liz)</li>
+                    <li>👑 falter alter prime (majin, 2011x, lordx, rewrite)</li>
+                </ul>
+                <br>
+                <p><strong>🛠️ MEJORAS TÉCNICAS Y VISUALES:</strong></p>
+                <ul>
+                    <li>🖼️ Nuevo logo de Executable Mania (EXEmaniaNewlogo.png)</li>
+                    <li>📊 Contador actualizado: Ahora muestra "1 of 10" mods disponibles</li>
+                    <li>🔗 Todos los enlaces actualizados a Funky Maker Creator</li>
+                    <li>⚙️ Mejor organización y navegación de contenido</li>
+                    <li>📱 Interfaz optimizada para mejor experiencia de usuario</li>
+                </ul>
+                <br>
+                <h4><strong>🔥 NOVEDADES ANTERIORES v1.6.2</strong></h4>
                 <br>
                 <p><strong>🆕 NUEVO MOD - Spirit of Hell:</strong></p>
                 <ul>
@@ -1055,9 +1162,9 @@
     </div>
 
     <audio id="bgMusic" src="./sounds/MainMenuMusic.ogg" loop></audio>
-    <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio> 
+    <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio>
     <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio>
-    <audio id="crashSound" src="./sounds/crash.mp3"></audio> 
+    <audio id="crashSound" src="./sounds/crash.mp3"></audio>
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -1068,7 +1175,7 @@
         // Detectar Android y optimizar para conexiones lentas
         const isAndroid = /Android/i.test(navigator.userAgent);
         let newsIntervalTime = 5000; // Por defecto 5 segundos
-        
+
         if (isAndroid && 'connection' in navigator) {
             const connection = navigator.connection;
             if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
@@ -1087,17 +1194,17 @@
             const bgMusic = document.getElementById('bgMusic');
             const screenDarken = document.getElementById('screenDarken');
             const menuButtons = document.querySelectorAll('.menu-btn[data-url]');
-            
+
             // Elementos del carrusel de noticias
             const newsCarousel = document.getElementById('newsCarousel');
             const prevNewsBtn = document.getElementById('prevNews');
             const nextNewsBtn = document.getElementById('nextNews');
             const newsIndicators = document.getElementById('newsIndicators');
-            
+
             // Variables para el carrusel
             let currentNewsIndex = 0;
             let newsItems = [];
-            
+
             // Botón del minijuego
             const gameButton = document.getElementById('gameButton');
             if (gameButton) {
@@ -1112,7 +1219,7 @@
             // Inicializar el carrusel de noticias
             function initNewsCarousel() {
                 newsItems = document.querySelectorAll('.mod-item');
-                
+
                 // Crear indicadores
                 newsIndicators.innerHTML = '';
                 for (let i = 0; i < newsItems.length; i++) {
@@ -1122,28 +1229,28 @@
                     indicator.addEventListener('click', () => goToNews(i));
                     newsIndicators.appendChild(indicator);
                 }
-                
+
                 // Iniciar auto-avance
                 startAutoNews();
             }
-            
+
             // Navegar a una noticia específica
             function goToNews(index) {
                 if (index < 0) index = newsItems.length - 1;
                 if (index >= newsItems.length) index = 0;
-                
+
                 currentNewsIndex = index;
                 newsCarousel.style.transform = `translateX(-${index * 100}%)`;
-                
+
                 // Actualizar indicadores
                 document.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
                     ind.classList.toggle('active', i === index);
                 });
-                
+
                 // Reiniciar auto-avance
                 restartAutoNews();
             }
-            
+
             // Iniciar auto-avance de noticias
             function startAutoNews() {
                 if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
@@ -1151,24 +1258,24 @@
                     goToNews(currentNewsIndex + 1);
                 }, newsIntervalTime); // Usar intervalo dinámico
             }
-            
+
             // Reiniciar auto-avance
             function restartAutoNews() {
                 if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 startAutoNews();
             }
-            
+
             // Configurar eventos para los controles del carrusel
             if (prevNewsBtn && nextNewsBtn) {
                 prevNewsBtn.addEventListener('click', () => goToNews(currentNewsIndex - 1));
                 nextNewsBtn.addEventListener('click', () => goToNews(currentNewsIndex + 1));
-                
+
                 // También para eventos táctiles
                 prevNewsBtn.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     goToNews(currentNewsIndex - 1);
                 }, { passive: false });
-                
+
                 nextNewsBtn.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     goToNews(currentNewsIndex + 1);
@@ -1179,7 +1286,7 @@
             screenDarken.classList.remove('active');
 
             // Manejar el evento pageshow para detectar navegación con el botón "Atrás"
-            window.addEventListener('pageshow', function(event) {
+            window.addEventListener('pageshow', function (event) {
                 // Si la página se carga desde la caché (navegación hacia atrás)
                 if (event.persisted) {
                     // Restablecer el estado de la pantalla oscura
@@ -1189,7 +1296,7 @@
             });
 
             // También restablecer al hacer carga normal
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 screenDarken.classList.remove('active');
                 window.isNavigating = false;
             });
@@ -1200,7 +1307,7 @@
                 panel.classList.add('show');
                 panel.style.display = 'block';
             }
-            
+
             function hidePanel(panel) {
                 panel.classList.remove('show');
                 panel.classList.add('hide');
@@ -1214,24 +1321,24 @@
                 // Prevenir múltiples clics durante la navegación
                 if (window.isNavigating) return;
                 window.isNavigating = true;
-                
+
                 // Detener el carrusel de noticias
                 if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
-                
+
                 // Activar pantalla oscura
                 screenDarken.classList.add('active');
-                
+
                 // Reproducir sonido de confirmación si está disponible
                 try {
                     const sound = document.getElementById('selectSound');
                     if (sound) {
                         sound.currentTime = 0;
-                        sound.play().catch(() => {});
+                        sound.play().catch(() => { });
                     }
                 } catch (e) {
                     console.log('Error al reproducir sonido:', e);
                 }
-                
+
                 // Redirigir después de la animación
                 setTimeout(() => {
                     window.location.href = url;
@@ -1240,15 +1347,15 @@
 
             // Configurar eventos para los botones del menú
             menuButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const url = this.getAttribute('data-url');
                     if (url) {
                         redirectWithFade(url);
                     }
                 });
-                
+
                 // También manejar eventos táctiles para Android
-                button.addEventListener('touchstart', function(e) {
+                button.addEventListener('touchstart', function (e) {
                     e.preventDefault();
                     const url = this.getAttribute('data-url');
                     if (url) {
@@ -1263,7 +1370,7 @@
                 newsSection.classList.toggle('closed');
                 newsSection.classList.toggle('show');
                 newsToggleBtn.classList.toggle('opened');
-                
+
                 // Si se está abriendo, reiniciar el carrusel
                 if (isOpening) {
                     setTimeout(() => {
@@ -1273,13 +1380,13 @@
                     // Si se está cerrando, pausar el carrusel
                     if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 }
-                
+
                 // Reproducir sonido solo si está disponible
                 try {
                     const sound = isOpening ? document.getElementById('selectSound') : document.getElementById('hoverSound');
                     if (sound) {
                         sound.currentTime = 0;
-                        sound.play().catch(() => {});
+                        sound.play().catch(() => { });
                     }
                 } catch (e) {
                     console.log('Error al reproducir sonido:', e);
@@ -1291,7 +1398,7 @@
                     e.stopPropagation();
                     toggleNews();
                 });
-                
+
                 newsHeader.addEventListener('click', (e) => {
                     if (e.target === newsHeader) {
                         toggleNews();
@@ -1303,25 +1410,25 @@
             if (updateBtn) {
                 const handleUpdateClick = (e) => {
                     e.preventDefault();
-                    
+
                     // Reproducir sonido
                     const sound = document.getElementById('selectSound');
                     if (sound) {
                         sound.currentTime = 0;
-                        sound.play().catch(() => {});
+                        sound.play().catch(() => { });
                     }
-                    
+
                     showPanel(updatePanel);
                     sonicLogo.classList.remove('show');
                     sonicLogo.classList.add('hide');
                     updateBtn.disabled = true;
                     updateBtn.style.pointerEvents = 'none';
                     updateBtn.style.opacity = '0.5';
-                    
+
                     // Pausar el carrusel de noticias
                     if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
                 };
-                
+
                 updateBtn.addEventListener('mousedown', handleUpdateClick);
                 updateBtn.addEventListener('touchstart', handleUpdateClick, { passive: true });
             }
@@ -1335,7 +1442,7 @@
                     updateBtn.disabled = false;
                     updateBtn.style.pointerEvents = 'auto';
                     updateBtn.style.opacity = '1';
-                    
+
                     // Reanudar el carrusel de noticias
                     restartAutoNews();
                 });
@@ -1344,7 +1451,7 @@
             // Inicializar animaciones
             function initAnimations() {
                 sonicLogo.classList.add('show');
-                
+
                 const menuButtons = document.querySelectorAll('.menu-btn');
                 menuButtons.forEach((btn, index) => {
                     setTimeout(() => {
@@ -1364,10 +1471,10 @@
             function playBgMusic() {
                 if (bgMusic) {
                     bgMusic.volume = 0.4;
-                    
+
                     if (window.audioPlayAttempted) return;
                     window.audioPlayAttempted = true;
-                    
+
                     const createAudioButton = () => {
                         const audioBtn = document.createElement('button');
                         audioBtn.textContent = 'Activar Audio';
@@ -1383,20 +1490,20 @@
                         audioBtn.style.cursor = 'pointer';
                         audioBtn.style.fontFamily = '"Press Start 2P", cursive';
                         audioBtn.style.fontSize = '12px';
-                        
+
                         audioBtn.addEventListener('click', () => {
                             bgMusic.play().catch(e => {
                                 console.log('No se pudo reproducir el audio:', e);
                             });
                             document.body.removeChild(audioBtn);
                         });
-                        
+
                         document.body.appendChild(audioBtn);
                     };
-                    
+
                     // Intentar reproducir automáticamente
                     const playPromise = bgMusic.play();
-                    
+
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
                             console.log('Reproducción automática prevenida:', error);
@@ -1411,14 +1518,14 @@
                 playBgMusic();
                 document.body.removeEventListener('click', audioInit);
             }, { once: true });
-            
+
             // También iniciar con eventos táctiles
             document.body.addEventListener('touchstart', function audioInitTouch() {
                 playBgMusic();
                 document.body.removeEventListener('touchstart', audioInitTouch);
             }, { once: true });
         });
-        
+
         // Función para cargar Guess What
         function loadGuessWhat() {
             const script = document.createElement('script');
@@ -1431,11 +1538,11 @@
             // Prevenir múltiples activaciones
             if (window.specialEffectActive) return;
             window.specialEffectActive = true;
-            
+
             const bgMusic = document.getElementById('bgMusic');
             const gameButton = document.getElementById('gameButton');
             const allElements = document.querySelectorAll('body > *:not(.game-button)');
-            
+
             // Fase 1: Ralentizar música gradualmente
             if (bgMusic) {
                 let playbackRate = 1;
@@ -1445,40 +1552,40 @@
                         playbackRate = 0;
                         bgMusic.pause();
                         clearInterval(slowDown);
-                        
+
                         // Fase 2: Shake del sitio web (después de 1 segundo)
                         setTimeout(() => {
                             document.body.classList.add('shake-animation');
-                            
+
                             // Fase 3: Caída de elementos (después del shake)
                             setTimeout(() => {
                                 document.body.classList.remove('shake-animation');
-                                
+
                                 // Reproducir sonido de crash
                                 const crashSound = document.getElementById('crashSound');
                                 if (crashSound) {
                                     crashSound.currentTime = 0;
-                                    crashSound.play().catch(() => {});
+                                    crashSound.play().catch(() => { });
                                 }
-                                
+
                                 // Hacer caer todos los elementos excepto el botón del juego
                                 allElements.forEach((element, index) => {
                                     setTimeout(() => {
                                         element.classList.add('fall-animation');
                                     }, index * 100);
                                 });
-                                
+
                                 // Fase 4: Centrar y hacer saltar el icono (después de 1 segundo)
                                 setTimeout(() => {
                                     gameButton.classList.add('center-jump-animation');
-                                    
+
                                     // Fase 5: Jumpscare (después de 2.5 segundos)
                                     setTimeout(() => {
                                         const jumpscareDiv = document.createElement('div');
                                         jumpscareDiv.className = 'jumpscare-overlay';
                                         jumpscareDiv.innerHTML = '<img src="images/samyholahola.png" alt="Jumpscare">';
                                         document.body.appendChild(jumpscareDiv);
-                                        
+
                                         // Fase 6: Cargar minijuego (después del jumpscare)
                                         setTimeout(() => {
                                             document.body.removeChild(jumpscareDiv);
@@ -1503,9 +1610,9 @@
                         const crashSound = document.getElementById('crashSound');
                         if (crashSound) {
                             crashSound.currentTime = 0;
-                            crashSound.play().catch(() => {});
+                            crashSound.play().catch(() => { });
                         }
-                        
+
                         allElements.forEach((element, index) => {
                             setTimeout(() => {
                                 element.classList.add('fall-animation');
@@ -1518,7 +1625,7 @@
                                 jumpscareDiv.className = 'jumpscare-overlay';
                                 jumpscareDiv.innerHTML = '<img src="images/samyholahola.png" alt="Jumpscare">';
                                 document.body.appendChild(jumpscareDiv);
-                                
+
                                 setTimeout(() => {
                                     document.body.removeChild(jumpscareDiv);
                                     const script = document.createElement('script');

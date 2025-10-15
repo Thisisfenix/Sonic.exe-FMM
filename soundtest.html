@@ -591,14 +591,19 @@
 
         // Datos de las canciones de Sonic.EXE
         const songs = {
-            '02-23': { name: 'Prey', link: 'https://funkymaker.com/play/prey-sonic-exe' },
+            '02-23': { name: 'Prey', link: 'https://funkymaker.kingamescreator.com/_app/levels/01jzs1rsvcsg4et3wsg08jqht7/releases/01jzs1rsvh3qmx05b68hv1bjn9' },
             '04-20': { name: 'Too Fest', link: 'https://funkymaker.com/play/too-fest-sonic-exe' },
             '07-07': { name: 'Cycles', link: 'https://funkymaker.com/play/cycles-sonic-exe' },
             '08-21': { name: 'Chaos', link: 'https://funkymaker.com/play/chaos-sonic-exe' },
             '11-21': { name: 'Fatality', link: 'https://funkymaker.com/play/fatality-sonic-exe' },
             '12-25': { name: 'Endless', link: 'https://funkymaker.com/play/endless-sonic-exe' },
+            '12-34': { name: 'Milk', link: 'https://funkymaker.kingamescreator.com/_app/levels/01jsdf2p7ve5nwjekbxx4mc7be/releases/01jsdf2p7ymhte7r81vqcgttrk' },
             '19-63': { name: 'Round-A-bout', link: 'https://funkymaker.com/play/round-a-bout-sonic-exe' },
-            '31-13': { name: 'Faker', link: 'https://funkymaker.com/play/faker-sonic-exe' },
+            '31-13': { 
+                name: 'Faker', 
+                horizontal: 'https://funkymaker.com/play/faker-sonic-exe',
+                vertical: 'https://funkymaker.kingamescreator.com/_app/levels/01k77qc3v3g7hgp5qy25rfftz5/releases/01k77qc3v7jtbhmx1v9yt760fz'
+            },
             '66-06': { name: 'Sunshine', link: 'https://funkymaker.com/play/sunshine-sonic-exe' },
             '99-99': { name: 'I AM GOD', link: 'https://funkymaker.com/play/i-am-god-sonic-exe' },
             'personnel': { name: 'Personnel', link: 'https://funkymaker.com/play/personnel-sonic-exe' },
@@ -716,34 +721,39 @@
                 secretText = '';
             }
 
-            // Código especial 67 67 - mostrar video flash
-            if (!song && key === '67-67') {
+            // Verificar contenido multimedia especial
+            if (!song && mediaContent[key]) {
                 playSound(confirmSound);
-                showFlashVideo();
+                showMediaContent(key);
                 return;
             }
 
             if (song) {
                 playSound(confirmSound);
 
-                // Mostrar pantalla de carga
-                const loadingScreen = document.getElementById('loading-screen');
-                const loadingText = document.getElementById('loading-text');
-                loadingText.textContent = `CARGANDO ${song.name.toUpperCase()}...`;
-                loadingScreen.classList.add('show');
+                // Si la canción tiene múltiples modos, mostrar selector
+                if (song.horizontal && song.vertical) {
+                    showModeSelector(song);
+                } else {
+                    // Mostrar pantalla de carga
+                    const loadingScreen = document.getElementById('loading-screen');
+                    const loadingText = document.getElementById('loading-text');
+                    loadingText.textContent = `CARGANDO ${song.name.toUpperCase()}...`;
+                    loadingScreen.classList.add('show');
 
-                // Abrir link después de 2 segundos
-                setTimeout(() => {
-                    if (song.link) {
-                        window.open(song.link, '_blank');
-                    }
-                }, 2000);
+                    // Abrir link después de 2 segundos
+                    setTimeout(() => {
+                        if (song.link) {
+                            window.open(song.link, '_blank');
+                        }
+                    }, 2000);
 
-                // Volver a la normalidad después de 5 segundos
-                setTimeout(() => {
-                    loadingScreen.classList.remove('show');
-                    songInfo.classList.remove('show');
-                }, 5000);
+                    // Volver a la normalidad después de 5 segundos
+                    setTimeout(() => {
+                        loadingScreen.classList.remove('show');
+                        songInfo.classList.remove('show');
+                    }, 5000);
+                }
             } else {
                 playSound(errorSound);
                 songInfo.classList.remove('show');
@@ -910,38 +920,323 @@
             songInfo.classList.remove('show');
         });
 
-        // Función para mostrar video flash blanco
-        function showFlashVideo() {
-            const flashVideo = document.createElement('div');
-            flashVideo.style.cssText = `
+        // JSON de videos e imágenes por código
+        const mediaContent = {
+            '67-67': {
+                type: 'video',
+                src: 'soundtest/67.mp4',
+                vertical: true
+            },
+            '66-66': {
+                type: 'image',
+                src: 'soundtest/66.jpg',
+                sound: 'sounds/scream.ogg'
+            },
+            '13-13': {
+                type: 'video',
+                src: 'soundtest/13.mp4',
+                vertical: false
+            },
+            '31-01': {
+                type: 'image',
+                src: 'soundtest/zorraMLL.png'
+            },
+            '01-08': {
+                type: 'image',
+                src: 'soundtest/kingref.png'
+            },
+            '08-63': {
+                type: 'video',
+                src: 'soundtest/el863gritorigen.mp4',
+                vertical: false
+            },
+            '08-36': {
+                type: 'image',
+                src: 'soundtest/reallyworthy.png'
+            },
+            '69-69': {
+                type: 'image',
+                src: 'soundtest/queopinan.jpg'
+            }
+        };
+
+        // Función para mostrar selector de modo
+        function showModeSelector(song) {
+            const container = document.createElement('div');
+            container.style.cssText = `
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100vw;
                 height: 100vh;
-                background: white;
+                background: rgba(0,0,0,0.9);
                 z-index: 9999;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                color: #ffff00;
+                font-family: 'SonicCD', monospace;
             `;
-            
-            const video = document.createElement('video');
-            video.style.cssText = `
-                height: 100vh;
-                width: auto;
-                object-fit: contain;
+
+            const title = document.createElement('div');
+            title.textContent = `SELECCIONAR MODO - ${song.name.toUpperCase()}`;
+            title.style.cssText = `
+                font-size: 24px;
+                margin-bottom: 40px;
+                text-align: center;
             `;
-            video.src = 'soundtest/67.mp4';
-            video.autoplay = true;
-            video.muted = true;
-            
-            video.onended = () => {
-                document.body.removeChild(flashVideo);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+                display: flex;
+                gap: 40px;
+                flex-wrap: wrap;
+                justify-content: center;
+            `;
+
+            const horizontalBtn = document.createElement('button');
+            horizontalBtn.textContent = 'HORIZONTAL';
+            horizontalBtn.style.cssText = `
+                padding: 15px 30px;
+                font-family: 'SonicCD', monospace;
+                font-size: 18px;
+                background: #ffff00;
+                color: #000;
+                border: none;
+                cursor: pointer;
+                letter-spacing: 2px;
+            `;
+
+            const verticalBtn = document.createElement('button');
+            verticalBtn.textContent = 'VERTICAL';
+            verticalBtn.style.cssText = `
+                padding: 15px 30px;
+                font-family: 'SonicCD', monospace;
+                font-size: 18px;
+                background: #ffff00;
+                color: #000;
+                border: none;
+                cursor: pointer;
+                letter-spacing: 2px;
+            `;
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'CANCELAR';
+            cancelBtn.style.cssText = `
+                padding: 15px 30px;
+                font-family: 'SonicCD', monospace;
+                font-size: 18px;
+                background: #666;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                letter-spacing: 2px;
+                margin-top: 20px;
+            `;
+
+            horizontalBtn.onclick = () => {
+                document.body.removeChild(container);
+                openSongLink(song.horizontal, song.name);
             };
+
+            verticalBtn.onclick = () => {
+                document.body.removeChild(container);
+                openSongLink(song.vertical, song.name);
+            };
+
+            cancelBtn.onclick = () => {
+                document.body.removeChild(container);
+            };
+
+            buttonContainer.appendChild(horizontalBtn);
+            buttonContainer.appendChild(verticalBtn);
+            container.appendChild(title);
+            container.appendChild(buttonContainer);
+            container.appendChild(cancelBtn);
+            document.body.appendChild(container);
+        }
+
+        // Función para abrir enlace de canción
+        function openSongLink(link, name) {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingText = document.getElementById('loading-text');
+            loadingText.textContent = `CARGANDO ${name.toUpperCase()}...`;
+            loadingScreen.classList.add('show');
+
+            setTimeout(() => {
+                window.open(link, '_blank');
+            }, 2000);
+
+            setTimeout(() => {
+                loadingScreen.classList.remove('show');
+                songInfo.classList.remove('show');
+            }, 5000);
+        }
+
+        // Función para mostrar contenido multimedia
+        function showMediaContent(code) {
+            const media = mediaContent[code];
+            if (!media) return;
+
+            // Silenciar música de fondo
+            soundtestMusic.volume = 0;
+
+            // Crear pantalla de carga
+            const loadingContainer = document.createElement('div');
+            loadingContainer.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: black;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-family: monospace;
+                font-size: 18px;
+            `;
             
-            flashVideo.appendChild(video);
-            document.body.appendChild(flashVideo);
+            const loadingText = document.createElement('div');
+            loadingText.textContent = `CARGANDO ${media.type.toUpperCase()}...`;
+            loadingText.style.marginBottom = '20px';
+            
+            const loadingBar = document.createElement('div');
+            loadingBar.style.cssText = `
+                width: 200px;
+                height: 4px;
+                background: #333;
+                border: 1px solid white;
+                position: relative;
+                overflow: hidden;
+            `;
+            
+            const loadingProgress = document.createElement('div');
+            loadingProgress.style.cssText = `
+                width: 0%;
+                height: 100%;
+                background: white;
+                transition: width 0.3s ease;
+            `;
+            
+            loadingBar.appendChild(loadingProgress);
+            loadingContainer.appendChild(loadingText);
+            loadingContainer.appendChild(loadingBar);
+            document.body.appendChild(loadingContainer);
+            
+            // Simular progreso de carga
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 30;
+                if (progress > 100) progress = 100;
+                loadingProgress.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    setTimeout(() => {
+                        document.body.removeChild(loadingContainer);
+                        showActualContent();
+                    }, 500);
+                }
+            }, 100);
+            
+            function showActualContent() {
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: black;
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+
+                // Función para restaurar música
+                const restoreMusic = () => {
+                    soundtestMusic.volume = 0.5;
+                    document.body.removeChild(container);
+                };
+
+            // Reproducir sonido solo para imágenes
+            if (media.type === 'image' && media.sound) {
+                const audio = new Audio(media.sound);
+                audio.volume = 0.7;
+                audio.play().catch(() => {});
+            }
+
+            if (media.type === 'video') {
+                const video = document.createElement('video');
+                video.style.cssText = media.vertical ? `
+                    height: 100vh;
+                    width: auto;
+                    object-fit: contain;
+                ` : `
+                    width: 100vw;
+                    height: auto;
+                    object-fit: contain;
+                `;
+                video.src = media.src;
+                video.autoplay = true;
+                video.muted = false;
+                
+                video.onended = () => {
+                    restoreMusic();
+                };
+                
+                container.appendChild(video);
+            } else if (media.type === 'image') {
+                const img = document.createElement('img');
+                img.style.cssText = `
+                    max-width: 100vw;
+                    max-height: 100vh;
+                    object-fit: contain;
+                `;
+                img.src = media.src;
+                
+                // Botón back para Android
+                const backBtn = document.createElement('button');
+                backBtn.textContent = '← BACK';
+                backBtn.style.cssText = `
+                    position: absolute;
+                    bottom: 20px;
+                    left: 20px;
+                    padding: 10px 20px;
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    border: 2px solid white;
+                    border-radius: 5px;
+                    font-family: monospace;
+                    font-size: 16px;
+                    cursor: pointer;
+                `;
+                
+                backBtn.onclick = () => {
+                    restoreMusic();
+                };
+                
+                // También cerrar con tecla Escape o Android back
+                const handleBack = (e) => {
+                    if (e.key === 'Escape') {
+                        restoreMusic();
+                        document.removeEventListener('keydown', handleBack);
+                    }
+                };
+                document.addEventListener('keydown', handleBack);
+                
+                container.appendChild(img);
+                container.appendChild(backBtn);
+            }
+
+                document.body.appendChild(container);
+            }
         }
 
         // Sistema de cartuchos para Hog
