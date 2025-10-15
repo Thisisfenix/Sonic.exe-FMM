@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Créditos - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preload" href="sounds/Credits.ogg" as="audio" type="audio/ogg">
+    <link rel="preload" href="BG/menuBG.png" as="image">
     <style>
         :root {
             --transition-time: 0.6s;
@@ -70,43 +74,7 @@
             }
         }
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
 
-        .particle {
-            position: absolute;
-            background: var(--main-color);
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: float 15s infinite linear;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.7;
-            }
-
-            90% {
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
 
         .credits-container {
             position: fixed;
@@ -247,11 +215,14 @@
             opacity: 0;
             pointer-events: none;
             transform: translateX(100%);
+            top: 0;
+            left: 50%;
+            transform-origin: center;
         }
 
         .credit-slide.active {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateX(-50%) scale(1);
             z-index: 3;
             pointer-events: all;
             filter: none;
@@ -271,14 +242,14 @@
 
         .credit-slide.prev {
             opacity: 0.6;
-            transform: translateX(-100%) scale(0.8);
+            transform: translateX(-150%) scale(0.8);
             z-index: 2;
             filter: blur(2px);
         }
 
         .credit-slide.next {
             opacity: 0.6;
-            transform: translateX(100%) scale(0.8);
+            transform: translateX(50%) scale(0.8);
             z-index: 2;
             filter: blur(2px);
         }
@@ -317,40 +288,7 @@
             box-shadow: 0 0 15px var(--external-color);
         }
 
-        .credit-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(transparent, rgba(0, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 4s infinite;
-            z-index: 0;
-        }
 
-        .credit-card.ex-card::before {
-            background: linear-gradient(transparent, rgba(255, 85, 85, 0.1), transparent);
-        }
-
-        .credit-card.external-card::before {
-            background: linear-gradient(transparent, rgba(255, 215, 0, 0.1), transparent);
-        }
-
-        @keyframes shine {
-            0% {
-                left: -100%;
-            }
-
-            20% {
-                left: 100%;
-            }
-
-            100% {
-                left: 100%;
-            }
-        }
 
         .credit-icon-container {
             position: relative;
@@ -529,6 +467,17 @@
             white-space: nowrap;
         }
 
+        .credits-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .credits-btn:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
         .credits-btn::before {
             content: '';
             position: absolute;
@@ -622,12 +571,42 @@
         /* Ajustes para todos los móviles con navbar */
         @media (max-width: 768px) {
             .credits-container {
+                padding: 10px;
                 padding-bottom: max(20px, env(safe-area-inset-bottom), 80px);
-                height: calc(100vh - var(--safe-area-inset-top) - max(var(--safe-area-inset-bottom), 60px));
-                min-height: calc(100vh - 120px);
+                height: 100vh;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            
+            .credits-title {
+                font-size: min(2rem, 6vw);
+                margin-bottom: 15px;
+                flex-shrink: 0;
+            }
+            
+            .search-container {
+                flex-shrink: 0;
+                margin-bottom: 10px;
+            }
+            
+            .category-tabs {
+                flex-shrink: 0;
+                margin-bottom: 15px;
+            }
+            
+            .credits-slider-container {
+                flex: 1;
+                min-height: 300px;
+                max-height: 60vh;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
             }
             
             .credits-controls {
+                flex-shrink: 0;
                 margin-bottom: max(15px, env(safe-area-inset-bottom), 25px);
                 padding-bottom: max(10px, env(safe-area-inset-bottom));
             }
@@ -683,6 +662,50 @@
             box-shadow: 0 0 12px var(--main-color);
             transition: all 0.3s ease;
             font-size: min(1.2rem, 4vw);
+        }
+
+        .audio-toggle:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--main-color);
+            font-size: 1rem;
+            z-index: 100;
+            display: none;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-dark);
+            border: 2px solid var(--main-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Press Start 2P', cursive;
+            font-size: min(0.8rem, 3vw);
+            box-shadow: 0 0 8px var(--main-color);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--main-color);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .audio-toggle:hover {
@@ -801,7 +824,7 @@
         .category-tab {
             transform: translateZ(0);
             backface-visibility: hidden;
-            perspective: 1000;
+            perspective: 1000px;
         }
 
         /* Ajustes específicos para pantallas Android pequeñas */
@@ -949,16 +972,19 @@
 
 <body>
     <div class="animated-bg"></div>
-    <div class="particles" id="particles"></div>
+
 
     <div class="credits-container">
         <h1 class="credits-title">CRÉDITOS</h1>
 
-        <div class="category-tabs" id="categoryTabs">
-            <button class="category-tab active" data-category="collaborators">COLABORADORES</button>
-            <button class="category-tab external-active" data-category="externalCollaborators">COLABORADORES
-                EXTERNOS</button>
-            <button class="category-tab ex-active" data-category="exCollaborators">EX-COLABORADORES</button>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar colaborador..." aria-label="Buscar colaborador">
+        </div>
+
+        <div class="category-tabs" id="categoryTabs" role="tablist">
+            <button class="category-tab active" data-category="collaborators" role="tab" aria-selected="true" tabindex="0">COLABORADORES</button>
+            <button class="category-tab external-active" data-category="externalCollaborators" role="tab" aria-selected="false" tabindex="-1">COLABORADORES EXTERNOS</button>
+            <button class="category-tab ex-active" data-category="exCollaborators" role="tab" aria-selected="false" tabindex="-1">EX-COLABORADORES</button>
         </div>
 
         <div class="credits-slider-container">
@@ -968,19 +994,22 @@
         </div>
 
         <div class="credits-controls">
-            <button class="credits-btn" id="prevButton">← ANTERIOR</button>
+            <button class="credits-btn" id="prevButton" aria-label="Crédito anterior">← ANTERIOR</button>
 
-            <div class="progress-indicator" id="progressIndicator">
+            <div class="progress-indicator" id="progressIndicator" role="tablist" aria-label="Navegación de créditos">
                 <!-- Los indicadores de progreso se generarán dinámicamente -->
             </div>
 
-            <button class="credits-btn" id="nextButton">SIGUIENTE →</button>
+            <button class="credits-btn" id="nextButton" aria-label="Siguiente crédito">SIGUIENTE →</button>
+
+            <button class="credits-btn" id="autoplayBtn" aria-label="Activar reproducción automática">AUTO</button>
 
             <a href="index.html" class="back-button">← VOLVER</a>
         </div>
     </div>
 
-    <div class="audio-toggle" id="audioToggle">♪</div>
+    <div class="audio-toggle" id="audioToggle" aria-label="Alternar música" tabindex="0">♪</div>
+    <div class="loading-indicator" id="loadingIndicator">Cargando...</div>
 
     <!-- Audio para la música de fondo (oculto) -->
     <audio id="backgroundMusic" loop>
@@ -993,15 +1022,36 @@
         // Detectar si es un dispositivo móvil
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isAndroid = /Android/i.test(navigator.userAgent);
+        const isOperaGX = /OPR\/|Opera GX/i.test(navigator.userAgent);
+        const isLowMemory = navigator.deviceMemory && navigator.deviceMemory <= 4;
 
         // Detectar si es una pantalla pequeña
         const isSmallScreen = window.innerWidth <= 380 || window.innerHeight <= 700;
 
-        // Detectar conexión lenta en Android y ajustar animaciones
-        if (isAndroid && 'connection' in navigator) {
+        // Optimizaciones específicas para Opera GX y dispositivos de baja memoria
+        if (isOperaGX || isLowMemory) {
+            // Reducir transiciones drásticamente
+            document.documentElement.style.setProperty('--transition-time', '0.1s');
+            
+            // Deshabilitar animaciones costosas
+            const operaOptimizations = document.createElement('style');
+            operaOptimizations.textContent = `
+                .animated-bg { animation: none !important; }
+                .credits-title { animation: none !important; }
+                .credit-icon-container::after { animation: none !important; }
+                .credit-icon.loading { animation: none !important; }
+                .credits-btn::before { display: none !important; }
+                * { transition: none !important; }
+                .credit-slide { transition: opacity 0.1s ease !important; }
+            `;
+            document.head.appendChild(operaOptimizations);
+        }
+        
+        // Detectar conexión lenta y aplicar optimizaciones adicionales
+        if ('connection' in navigator) {
             const connection = navigator.connection;
             if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-                document.documentElement.style.setProperty('--transition-time', '0.3s');
+                document.documentElement.style.setProperty('--transition-time', '0.05s');
             }
         }
 
@@ -1105,29 +1155,38 @@
         let currentCategory = 'collaborators';
         let isMusicPlaying = false;
         let userInteracted = false;
-        let particles = [];
+
+        let autoplayInterval = null;
+        let isAutoplayActive = false;
+        let filteredCredits = [];
+        let searchTerm = '';
         const creditsSlider = document.getElementById('creditsSlider');
         const progressIndicator = document.getElementById('progressIndicator');
         const categoryTabs = document.getElementById('categoryTabs');
         const prevBtn = document.getElementById('prevButton');
         const nextBtn = document.getElementById('nextButton');
+        const autoplayBtn = document.getElementById('autoplayBtn');
         const backBtn = document.querySelector('.back-button');
         const audioToggle = document.getElementById('audioToggle');
         const backgroundMusic = document.getElementById('backgroundMusic');
+        const searchInput = document.getElementById('searchInput');
+        const loadingIndicator = document.getElementById('loadingIndicator');
 
         // Ajustar diseño para pantallas pequeñas
         function adjustLayoutForSmallScreens() {
-            if (isSmallScreen) {
+            if (isMobile) {
                 // Mover el botón de volver al contenedor de controles
                 const creditsControls = document.querySelector('.credits-controls');
                 if (creditsControls && !creditsControls.contains(backBtn)) {
                     creditsControls.appendChild(backBtn);
                 }
 
-                // Ajustar altura del slider
+                // Asegurar que el slider sea visible
                 const sliderContainer = document.querySelector('.credits-slider-container');
                 if (sliderContainer) {
-                    sliderContainer.style.height = 'min(380px, 50vh)';
+                    sliderContainer.style.display = 'flex';
+                    sliderContainer.style.alignItems = 'center';
+                    sliderContainer.style.justifyContent = 'center';
                 }
             }
         }
@@ -1139,38 +1198,22 @@
             }
         }
 
-        // Crear partículas de fondo con gestión de memoria
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            // Reducir cantidad de partículas especialmente en Android
-            const particleCount = isAndroid ?
-                Math.min(Math.floor(window.innerWidth / 25), 15) :
-                isMobile ?
-                Math.min(Math.floor(window.innerWidth / 20), 25) :
-                Math.min(Math.floor(window.innerWidth / 15), 40);
 
-            // Limpiar partículas existentes
-            particlesContainer.innerHTML = '';
-            particles = [];
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-
-                const size = Math.random() * (isMobile ? 3 : 4) + 2;
-                const posX = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 15;
-
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-
-                particlesContainer.appendChild(particle);
-                particles.push(particle);
+        // Filtrar créditos por búsqueda
+        function filterCredits() {
+            const credits = creditsData[currentCategory];
+            if (!searchTerm) {
+                filteredCredits = credits;
+            } else {
+                filteredCredits = credits.filter(credit => 
+                    credit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    credit.role.toLowerCase().includes(searchTerm.toLowerCase())
+                );
             }
+            currentIndex = 0;
+            clearSlides();
+            createCreditSlides();
         }
 
         // Cambiar categoría
@@ -1179,16 +1222,20 @@
 
             lightVibration();
             currentCategory = category;
+            searchTerm = '';
+            searchInput.value = '';
             currentIndex = 0;
 
             // Actualizar pestañas activas
             document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.category === category);
+                const isActive = tab.dataset.category === category;
+                tab.classList.toggle('active', isActive);
+                tab.setAttribute('aria-selected', isActive);
+                tab.setAttribute('tabindex', isActive ? '0' : '-1');
             });
 
             // Regenerar slides
-            clearSlides();
-            createCreditSlides();
+            filterCredits();
         }
 
         // Limpiar slides existentes
@@ -1199,7 +1246,7 @@
 
         // Crear slides para cada crédito
         function createCreditSlides() {
-            const credits = creditsData[currentCategory];
+            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
             const isExCategory = currentCategory === 'exCollaborators';
             const isExternalCategory = currentCategory === 'externalCollaborators';
 
@@ -1255,18 +1302,44 @@
                 const dot = document.createElement('div');
                 dot.className = `progress-dot ${isExCategory ? 'ex-dot' : ''} ${isExternalCategory ? 'external-dot' : ''}`;
                 dot.dataset.index = index;
+                dot.setAttribute('role', 'tab');
+                dot.setAttribute('aria-label', `Ir a ${credit.name}`);
+                dot.setAttribute('tabindex', index === 0 ? '0' : '-1');
                 dot.addEventListener('click', () => goToSlide(index));
+                dot.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        goToSlide(index);
+                    }
+                });
                 progressIndicator.appendChild(dot);
             });
 
             updateSlidesPosition();
         }
 
+        // Auto-play functionality
+        function toggleAutoplay() {
+            if (isAutoplayActive) {
+                clearInterval(autoplayInterval);
+                autoplayBtn.textContent = 'AUTO';
+                autoplayBtn.style.opacity = '1';
+                isAutoplayActive = false;
+            } else {
+                autoplayInterval = setInterval(() => {
+                    showNextCredit();
+                }, 3000);
+                autoplayBtn.textContent = 'STOP';
+                autoplayBtn.style.opacity = '0.7';
+                isAutoplayActive = true;
+            }
+        }
+
         // Actualizar posición de los slides
         function updateSlidesPosition() {
             const slides = document.querySelectorAll('.credit-slide');
             const dots = document.querySelectorAll('.progress-dot');
-            const credits = creditsData[currentCategory];
+            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
 
             if (credits.length === 0) return;
 
@@ -1334,7 +1407,7 @@
 
         // Mostrar crédito anterior
         function showPrevCredit() {
-            const credits = creditsData[currentCategory];
+            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
             if (credits.length <= 1) return;
 
             lightVibration();
@@ -1342,14 +1415,22 @@
             updateSlidesPosition();
         }
 
-        // Mostrar crédito siguiente
+        // Mostrar crédito siguiente con optimización para Opera GX
         function showNextCredit() {
-            const credits = creditsData[currentCategory];
+            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
             if (credits.length <= 1) return;
 
             lightVibration();
             currentIndex = (currentIndex + 1) % credits.length;
-            updateSlidesPosition();
+            
+            if (isOperaGX) {
+                // Delay para evitar sobrecarga en Opera GX
+                setTimeout(() => {
+                    updateSlidesPosition();
+                }, 10);
+            } else {
+                updateSlidesPosition();
+            }
         }
 
         // Alternar música
@@ -1386,26 +1467,46 @@
         // Event listeners para botones
         prevBtn.addEventListener('click', showPrevCredit);
         nextBtn.addEventListener('click', showNextCredit);
+        autoplayBtn.addEventListener('click', toggleAutoplay);
         audioToggle.addEventListener('click', toggleMusic);
+        
+        // Event listener para búsqueda
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            filterCredits();
+        });
+        
+        // Accesibilidad para audio toggle
+        audioToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMusic();
+            }
+        });
 
         // Event listeners para pestañas
         document.querySelectorAll('.category-tab').forEach(tab => {
             tab.addEventListener('click', () => changeCategory(tab.dataset.category));
         });
 
-        // Navegación con teclado (solo en desktop)
-        if (!isMobile) {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') {
-                    showPrevCredit();
-                } else if (e.key === 'ArrowRight') {
-                    showNextCredit();
-                } else if (e.key === ' ') {
-                    e.preventDefault();
-                    toggleMusic();
-                }
-            });
-        }
+        // Navegación con teclado mejorada
+        document.addEventListener('keydown', (e) => {
+            // Solo procesar si no estamos en un input
+            if (e.target.tagName === 'INPUT') return;
+            
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                showPrevCredit();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                showNextCredit();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                toggleMusic();
+            } else if (e.key === 'Escape') {
+                if (isAutoplayActive) toggleAutoplay();
+            }
+        });
 
         // Navegación táctil mejorada para móviles
         let touchStartX = 0;
@@ -1468,21 +1569,52 @@
             }
         }
 
-        // Inicialización
-        function initPage() {
-            adjustLayoutForSmallScreens();
-            createParticles();
-            createCreditSlides();
+        // Mostrar/ocultar indicador de carga
+        function showLoading() {
+            loadingIndicator.style.display = 'block';
+        }
+        
+        function hideLoading() {
+            loadingIndicator.style.display = 'none';
+        }
 
-            // Precargar solo imágenes críticas en móviles
-            if (isMobile) {
-                const criticalImages = creditsData.collaborators.slice(0, 3);
-                criticalImages.forEach(credit => {
-                    const img = new Image();
-                    img.src = credit.icon;
-                });
-                setTimeout(setupLazyLoading, 100);
+        // Gestión de memoria para Opera GX
+        function manageMemory() {
+            if (isOperaGX && 'gc' in window) {
+                try {
+                    window.gc();
+                } catch (e) {}
+            }
+        }
+        
+        // Inicialización optimizada
+        function initPage() {
+            showLoading();
+            adjustLayoutForSmallScreens();
+            filteredCredits = creditsData[currentCategory];
+            
+            // Crear slides con delay para Opera GX
+            if (isOperaGX) {
+                setTimeout(() => {
+                    createCreditSlides();
+                    hideLoading();
+                }, 50);
             } else {
+                createCreditSlides();
+                hideLoading();
+            }
+
+            // Precargar imágenes de forma optimizada
+            if (isMobile || isOperaGX) {
+                // Solo precargar la primera imagen
+                const firstImage = creditsData.collaborators[0];
+                if (firstImage) {
+                    const img = new Image();
+                    img.src = firstImage.icon;
+                }
+                setTimeout(setupLazyLoading, isOperaGX ? 200 : 100);
+            } else {
+                // Precargar todas las imágenes solo en navegadores estables
                 const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
                 allCredits.forEach(credit => {
                     const img = new Image();
@@ -1518,33 +1650,46 @@
             initPage();
         }
 
-        // Optimización para redimensionado de ventana
+        // Optimización para redimensionado de ventana con gestión de memoria
         let resizeTimeout;
         window.addEventListener('resize', function () {
             clearTimeout(resizeTimeout);
+            const delay = isOperaGX ? 500 : 250;
             resizeTimeout = setTimeout(function () {
                 adjustLayoutForSmallScreens();
-                createParticles();
                 updateSlidesPosition();
-            }, 250);
-        });
+                if (isOperaGX) manageMemory();
+            }, delay);
+        }, { passive: true });
 
-        // Limpiar recursos cuando la página no es visible
+        // Limpiar recursos cuando la página no es visible con optimizaciones para Opera GX
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
-                // Pausar música cuando la pestaña no está visible
+                // Pausar música y autoplay cuando la pestaña no está visible
                 if (isMusicPlaying && !backgroundMusic.paused) {
                     backgroundMusic.pause();
                 }
+                if (isAutoplayActive) {
+                    clearInterval(autoplayInterval);
+                }
+                // Gestión agresiva de memoria para Opera GX
+                if (isOperaGX) {
+                    setTimeout(manageMemory, 1000);
+                }
             } else {
-                // Reanudar música si estaba reproduciéndose
+                // Reanudar música y autoplay si estaban activos
                 if (isMusicPlaying && backgroundMusic.paused) {
                     backgroundMusic.play().catch(error => {
                         console.log('Error al reanudar música:', error);
                     });
                 }
+                if (isAutoplayActive) {
+                    autoplayInterval = setInterval(() => {
+                        showNextCredit();
+                    }, 3000);
+                }
             }
-        });
+        }, { passive: true });
 
         // Prevenir acciones por defecto en eventos táctiles para mejorar rendimiento
         document.addEventListener('touchstart', function (e) {

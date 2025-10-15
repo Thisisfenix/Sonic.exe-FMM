@@ -716,6 +716,13 @@
                 secretText = '';
             }
 
+            // Código especial 67 67 - mostrar video flash
+            if (!song && key === '67-67') {
+                playSound(confirmSound);
+                showFlashVideo();
+                return;
+            }
+
             if (song) {
                 playSound(confirmSound);
 
@@ -902,6 +909,40 @@
             loadingScreen.classList.remove('show');
             songInfo.classList.remove('show');
         });
+
+        // Función para mostrar video flash blanco
+        function showFlashVideo() {
+            const flashVideo = document.createElement('div');
+            flashVideo.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: white;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            const video = document.createElement('video');
+            video.style.cssText = `
+                height: 100vh;
+                width: auto;
+                object-fit: contain;
+            `;
+            video.src = 'soundtest/67.mp4';
+            video.autoplay = true;
+            video.muted = true;
+            
+            video.onended = () => {
+                document.body.removeChild(flashVideo);
+            };
+            
+            flashVideo.appendChild(video);
+            document.body.appendChild(flashVideo);
+        }
 
         // Sistema de cartuchos para Hog
         function collectCartridge() {
