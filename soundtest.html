@@ -201,7 +201,7 @@
             font-size: 16px;
             text-align: center;
             margin-bottom: 10px;
-            width: 200px;
+            width: 300px;
             margin: 0 auto 10px;
             display: block;
         }
@@ -519,7 +519,7 @@
     </div>
 
     <div class="virtual-keyboard" id="virtual-keyboard">
-        <input type="text" class="text-input" id="text-input" placeholder="Type here..." maxlength="10">
+        <input type="text" class="text-input" id="text-input" placeholder="Type here..." maxlength="20">
         <div class="keyboard-row">
             <button class="key-btn" data-key="q">Q</button>
             <button class="key-btn" data-key="w">W</button>
@@ -721,10 +721,18 @@
                 secretText = '';
             }
 
-            // Verificar contenido multimedia especial
+            // Verificar contenido multimedia especial por código numérico
             if (!song && mediaContent[key]) {
                 playSound(confirmSound);
                 showMediaContent(key);
+                return;
+            }
+
+            // Verificar contenido multimedia especial por teclado
+            if (!song && keyboardMediaContent[secretText.toLowerCase()]) {
+                playSound(confirmSound);
+                showKeyboardMediaContent(secretText.toLowerCase());
+                secretText = '';
                 return;
             }
 
@@ -804,7 +812,7 @@
             btn.addEventListener('click', () => {
                 playSound(selectSound);
                 const key = btn.getAttribute('data-key');
-                if (textInput.value.length < 10) {
+                if (textInput.value.length < 20) {
                     textInput.value += key;
                 }
             });
@@ -820,9 +828,9 @@
             // Capturar texto para códigos secretos
             if (e.key.length === 1 && (e.key.match(/[a-zA-Z]/) || e.key.match(/[0-9]/))) {
                 secretText += e.key;
-                // Mantener solo los últimos 10 caracteres
-                if (secretText.length > 10) {
-                    secretText = secretText.slice(-10);
+                // Mantener solo los últimos 20 caracteres
+                if (secretText.length > 20) {
+                    secretText = secretText.slice(-20);
                 }
                 return;
             }
@@ -857,7 +865,6 @@
                     secretText = ''; // Resetear texto al usar controles
                     break;
                 case 'Enter':
-                case ' ':
                     e.preventDefault();
                     playSong();
                     break;
@@ -920,7 +927,7 @@
             songInfo.classList.remove('show');
         });
 
-        // JSON de videos e imágenes por código
+        // JSON de videos e imágenes por código numérico
         const mediaContent = {
             '67-67': {
                 type: 'video',
@@ -957,7 +964,11 @@
             '69-69': {
                 type: 'image',
                 src: 'soundtest/queopinan.jpg'
-            },
+            }
+        };
+
+        // JSON de contenido multimedia por teclado
+        const keyboardMediaContent = {
             'collect my bodrios': {
                 type: 'image',
                 src: 'soundtest/mango mango mango 676767676767.png'
@@ -1082,11 +1093,26 @@
             }, 5000);
         }
 
-        // Función para mostrar contenido multimedia
+        // Función para mostrar contenido multimedia por teclado
+        function showKeyboardMediaContent(code) {
+            const media = keyboardMediaContent[code];
+            if (!media) return;
+
+            // Usar la misma lógica que showMediaContent
+            showActualMediaContent(media);
+        }
+
+        // Función para mostrar contenido multimedia por código numérico
         function showMediaContent(code) {
             const media = mediaContent[code];
             if (!media) return;
 
+            // Crear y mostrar pantalla de carga, luego mostrar contenido
+            createLoadingScreen(media, showActualMediaContent);
+        }
+
+        // Función para crear pantalla de carga
+        function createLoadingScreen(media, callback) {
             // Silenciar música de fondo
             soundtestMusic.volume = 0;
 
@@ -1147,12 +1173,14 @@
                     clearInterval(progressInterval);
                     setTimeout(() => {
                         document.body.removeChild(loadingContainer);
-                        showActualContent();
+                        callback(media);
                     }, 500);
                 }
             }, 100);
+        }
             
-            function showActualContent() {
+        // Función para mostrar el contenido multimedia actual
+        function showActualMediaContent(media) {
                 const container = document.createElement('div');
                 container.style.cssText = `
                     position: fixed;
@@ -1244,7 +1272,6 @@
             }
 
                 document.body.appendChild(container);
-            }
         }
 
         // Sistema de cartuchos para Hog
