@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Freeplay - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap CSS -->
@@ -45,49 +45,125 @@
             transition: all 0.5s ease;
         }
 
-        .mod-display-container {
-            background: rgba(0, 0, 0, 0.7);
-            border: 4px solid var(--main-red);
-            border-radius: 0;
-            box-shadow: var(--glow-effect);
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto 1rem;
-            transition: all 0.5s ease;
+        .mods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
         }
 
-        .mod-box {
+        .mod-card {
+            background: rgba(0, 0, 0, 0.8);
             border: 3px solid var(--main-red);
-            background: var(--main-bg);
-            position: relative;
+            border-radius: 10px;
             overflow: hidden;
-            height: auto;
-            min-height: 250px;
-            max-height: 50vh;
-            aspect-ratio: 16/9;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
-        .image-container {
+        .mod-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+            border-color: #fff;
+        }
+
+        .mod-card-image {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .mod-card:hover .mod-card-image {
+            filter: brightness(1.2) saturate(1.3);
+        }
+
+        .mod-card-content {
+            padding: 12px;
+        }
+
+        .mod-card-title {
+            color: var(--main-red);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            text-shadow: var(--glow-effect);
+        }
+
+        .mod-card-info {
+            color: #ccc;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+        }
+
+        .mod-card-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--main-red);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .mod-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardFadeIn 0.6s ease forwards;
+        }
+
+        .mod-card.active {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .mod-card-image-container {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mod-card-image {
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mod-image {
-            max-width: 100%;
-            max-height: 100%;
             object-fit: contain;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
             opacity: 0;
-            position: absolute;
         }
 
-        .mod-image.active {
+        .mod-card-image.loaded {
             opacity: 1;
-            z-index: 1;
+        }
+
+        .image-loader {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 0, 0, 0.3);
+            border-top: 3px solid var(--main-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         #levelCatalogContainer {
@@ -101,30 +177,9 @@
             display: none !important;
         }
 
-        .mod-title-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1.5rem 0;
-            transition: all 0.5s ease;
-            position: relative;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .mod-title {
-            color: var(--main-red);
-            text-shadow: var(--glow-effect);
-            font-size: 1.5rem;
-            transition: all 0.5s ease;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 400px;
+        .back-button-container {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .btn {
@@ -157,57 +212,72 @@
             pointer-events: none;
         }
 
-        .arrow-nav {
+
+
+
+
+        .split-view {
             display: flex;
-            justify-content: center;
-            margin-top: 10px;
-            transition: all 0.5s ease;
+            gap: 20px;
+            align-items: flex-start;
         }
 
-        .arrow {
-            font-size: 1.8rem;
-            background: rgba(0, 0, 0, 0.7);
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--main-red);
-            margin: 0 10px;
-            transition: all 0.5s ease;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            cursor: pointer;
+        .selected-mod-card {
+            flex: 0 0 300px;
+            transform: scale(1.05);
+            animation: slideToLeft 0.5s ease;
+            display: block !important;
+            opacity: 1 !important;
         }
 
-        .arrow:hover {
-            background: var(--main-red);
-            color: var(--main-bg);
-        }
-
-        .level-catalog {
+        .levels-section {
+            flex: 1;
+            animation: slideFromRight 0.5s ease;
             background: rgba(0, 0, 0, 0.9);
             border: 4px solid var(--main-red);
             padding: 20px;
+            border-radius: 10px;
             box-shadow: 0 0 30px var(--main-red);
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            transition: all 0.5s ease;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(20px);
         }
 
-        .level-catalog.showing {
-            max-height: 70vh;
-            opacity: 1;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            transform: translateY(0);
-            overflow-y: auto;
-            display: block;
+        .close-levels-btn {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            margin-bottom: 15px;
+            background: var(--main-red);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-levels-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        @keyframes slideToLeft {
+            from {
+                transform: translateX(0) scale(1);
+            }
+            to {
+                transform: translateX(0) scale(1.05);
+            }
+        }
+
+        @keyframes slideFromRight {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .level-row {
@@ -218,13 +288,14 @@
 
         .level-item {
             flex: 1;
-            padding: 15px;
-            background: rgba(255, 0, 0, 0.1);
-            border-left: 4px solid var(--main-red);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 0, 0, 0.8));
+            border: 2px solid var(--main-red);
+            border-radius: 12px;
+            padding: 0;
             transition: all 0.3s ease;
-            min-height: 120px;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
         }
 
         .level-item::before {
@@ -234,72 +305,127 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: var(--render-bg, none);
-            background-size: cover;
-            background-position: center;
-            opacity: var(--render-opacity, 0);
-            transition: opacity 0.3s ease;
-            z-index: -1;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 0, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: 1;
+        }
+
+        .level-item:hover::before {
+            transform: translateX(100%);
         }
 
         .level-item:hover {
-            background: rgba(0, 0, 0, 0.8);
-            border-left-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
+            border-color: #fff;
         }
 
-        .level-link {
+        .level-header {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .level-number {
+            display: inline-block;
+            background: var(--main-red);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .level-name {
             color: #fff;
-            text-decoration: none;
-            font-size: 1rem;
-            display: block;
-            margin-bottom: 5px;
+            font-size: 0.9rem;
+            display: inline;
+            text-shadow: 0 0 5px var(--main-red);
         }
 
-        .level-item small {
-            color: #ccc;
-            font-size: 0.7rem;
+        .level-artist {
+            color: #aaa;
+            font-size: 0.6rem;
+            margin-top: 5px;
             display: block;
-            margin-bottom: 10px;
+        }
+
+        .level-content {
+            padding: 15px;
+            position: relative;
+            z-index: 2;
         }
 
         .layout-options {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .layout-btn {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: var(--main-red);
-            border: 2px solid var(--main-red);
-            border-radius: 0;
+            border: 1px solid var(--main-red);
+            border-radius: 20px;
             font-family: 'Press Start 2P', cursive;
-            padding: 12px 15px;
-            font-size: 0.8rem;
+            padding: 8px 12px;
+            font-size: 0.6rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             flex: 1;
             text-align: center;
-            min-height: 44px;
+            min-height: 36px;
+            position: relative;
+            overflow: hidden;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
 
-        .level-catalog::-webkit-scrollbar {
-            width: 12px;
+        .layout-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
         }
 
-        .level-catalog::-webkit-scrollbar-track {
-            background: rgba(255, 0, 0, 0.1);
-            border-radius: 10px;
+        .layout-btn:hover::before {
+            left: 100%;
         }
 
-        .level-catalog::-webkit-scrollbar-thumb {
+        .layout-btn:hover {
             background: var(--main-red);
-            border-radius: 10px;
-            border: 2px solid rgba(0, 0, 0, 0.5);
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
         }
+
+        .layout-btn:active {
+            transform: scale(0.95);
+        }
+
+        .layout-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: rgba(50, 50, 50, 0.5);
+            color: #666;
+            border-color: #666;
+        }
+
+        .layout-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+
 
         @keyframes glitch {
             0% {
@@ -368,19 +494,42 @@
 
         /* Mejoras táctiles y de feedback */
         .layout-btn:active,
-        .btn:active,
-        .arrow:active {
+        .btn:active {
             transform: scale(0.95);
             background: var(--main-red);
             color: var(--main-bg);
         }
 
-        .mod-image:not(.active) {
-            filter: blur(2px);
-        }
-
         * {
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Optimizaciones para dispositivos móviles */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS Safari */
+            body {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+            }
+        }
+
+        /* Prevenir selección de texto en elementos interactivos */
+        .mod-card, .btn, .layout-btn, .close-levels-btn {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Mejorar rendimiento de animaciones */
+        .mod-card, .split-view, .levels-section {
+            will-change: transform, opacity;
+        }
+
+        /* Optimizar scroll en iOS */
+        .levels-section {
+            -webkit-overflow-scrolling: touch;
         }
 
         /* ========== ESTILOS PARA MÓVIL ========== */
@@ -392,6 +541,8 @@
             body {
                 background-size: auto 100%;
                 background-attachment: scroll;
+                padding: 0;
+                margin: 0;
             }
 
             .container-fluid.text-center {
@@ -399,126 +550,240 @@
             }
 
             .title {
-                font-size: 1.2rem !important;
+                font-size: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .back-button-container {
+                margin-bottom: 15px;
+            }
+
+            .btn {
+                padding: 8px 16px !important;
+                font-size: 0.7rem !important;
+                margin: 5px !important;
+                border-width: 2px;
+            }
+
+            /* Grid de mods adaptado para móvil */
+            .mods-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 12px;
+                padding: 12px;
+                justify-items: center;
+            }
+
+            .mod-card {
+                max-width: 240px;
+                width: 100%;
+            }
+
+            .mod-card {
+                border-width: 2px;
+            }
+
+            .mod-card-image {
+                height: 120px;
+            }
+
+            .mod-card-content {
+                padding: 10px;
+            }
+
+            .mod-card-title {
+                font-size: 0.8rem;
+            }
+
+            .mod-card-info {
+                font-size: 0.7rem;
+            }
+
+            .mod-card-badge {
+                font-size: 0.6rem;
+                padding: 3px 6px;
+            }
+
+            /* Vista dividida adaptada para móvil */
+            .split-view {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .selected-mod-card {
+                flex: none;
+                transform: scale(1);
+                max-width: 100%;
+            }
+
+            .levels-section {
+                padding: 15px;
+                border-width: 2px;
+            }
+
+            .close-levels-btn {
+                font-size: 0.7rem;
+                padding: 8px 15px;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .levels-section h3 {
+                font-size: 0.9rem;
                 margin-bottom: 0.8rem !important;
             }
 
-            .mod-display-container {
-                padding: 8px !important;
-                margin: 0 auto 0.5rem !important;
-                max-width: 95%;
+            .level-row {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 15px;
+            }
+
+            .level-item {
+                margin-bottom: 0;
                 border-width: 2px;
             }
 
-            .mod-box {
-                min-height: 150px !important;
-                max-height: 25vh !important;
-                border-width: 2px;
+            .level-header {
+                padding: 10px 12px;
             }
 
-            .mod-title-container {
-                margin: 0.8rem 0 !important;
+            .level-number {
+                font-size: 0.5rem;
+                padding: 1px 6px;
             }
 
-            .mod-title {
-                font-size: 0.8rem !important;
-                margin: 0 5px !important;
-            }
-
-            .mod-counter {
+            .level-name {
                 font-size: 0.7rem;
+            }
+
+            .level-artist {
+                font-size: 0.5rem;
+            }
+
+            .level-content {
+                padding: 12px;
+            }
+
+            .layout-options {
+                gap: 6px;
+            }
+
+            .layout-btn {
+                font-size: 0.5rem !important;
+                padding: 6px 10px !important;
+                min-height: 32px;
+                border-radius: 15px;
+            }
+
+            /* Loading spinner */
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border-width: 4px;
+            }
+
+            /* Scrollbar móvil */
+            .levels-section::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .levels-section::-webkit-scrollbar-track {
+                background: rgba(255, 0, 0, 0.1);
+            }
+
+            .levels-section::-webkit-scrollbar-thumb {
+                background: var(--main-red);
+                border-radius: 4px;
+            }
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.2rem !important;
+            }
+
+            .mods-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 10px;
+                justify-items: center;
+            }
+
+            .mod-card {
+                max-width: 280px;
+                width: 100%;
+            }
+
+            .mod-card-image {
+                height: 100px;
+            }
+
+            .mod-card-title {
+                font-size: 0.8rem;
             }
 
             .btn {
                 padding: 6px 12px !important;
                 font-size: 0.6rem !important;
-                margin: 5px !important;
-                border-width: 2px;
             }
 
-            .arrow {
-                width: 30px;
-                height: 30px;
-                font-size: 1rem;
-                margin: 0 5px;
+            .levels-section {
+                padding: 10px;
             }
 
-            /* Catálogo de niveles */
-            .level-catalog {
-                max-width: 95%;
-                padding: 10px !important;
-                border-width: 2px;
+            .close-levels-btn {
+                font-size: 0.6rem;
+                padding: 6px 12px;
             }
 
-            .level-catalog.showing {
-                max-height: 50vh !important;
+            .level-header {
+                padding: 8px 10px;
             }
 
-            .level-catalog h3 {
-                font-size: 0.8rem;
-                margin-bottom: 0.6rem !important;
-            }
-
-            .level-row {
-                flex-direction: column;
-                gap: 10px;
-                margin-bottom: 10px;
-            }
-
-            .level-item {
-                min-height: auto !important;
-                padding: 8px !important;
-                margin-bottom: 0;
-                border-left-width: 2px;
-            }
-
-            .level-link {
-                font-size: 0.7rem !important;
-            }
-
-            .level-item small {
-                font-size: 0.5rem !important;
-            }
-
-            .layout-options {
-                flex-direction: column;
-                gap: 5px;
+            .level-content {
+                padding: 10px;
             }
 
             .layout-btn {
-                font-size: 0.5rem !important;
-                padding: 4px 6px !important;
-            }
-
-            /* Loading spinner */
-            .spinner {
-                width: 30px;
-                height: 30px;
-                border-width: 3px;
+                font-size: 0.45rem !important;
+                padding: 5px 8px !important;
+                min-height: 30px;
+                border-radius: 12px;
             }
         }
 
-        /* Ajustes para pantallas muy pequeñas */
-        @media (max-width: 400px) {
-            .title {
-                font-size: 1rem !important;
+        /* Mejoras táctiles específicas para móvil */
+        @media (hover: none) and (pointer: coarse) {
+            .mod-card:hover {
+                transform: none;
             }
 
-            .btn {
-                padding: 5px 8px !important;
-                font-size: 0.5rem !important;
+            .mod-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
             }
 
-            .mod-title {
-                font-size: 0.7rem !important;
+            .layout-btn:hover {
+                background: rgba(0, 0, 0, 0.7);
+                color: var(--main-red);
             }
 
-            .level-catalog {
-                padding: 6px !important;
+            .layout-btn:active {
+                background: var(--main-red);
+                color: var(--main-bg);
+                transform: scale(0.95);
             }
 
-            .mod-box {
-                min-height: 120px !important;
+            .btn:hover {
+                background: var(--main-bg);
+                color: var(--main-red);
+            }
+
+            .btn:active {
+                background: var(--main-red);
+                color: var(--main-bg);
+                transform: scale(0.95);
             }
         }
     </style>
@@ -533,41 +798,12 @@
     <div class="container-fluid text-center py-3">
         <h1 class="title display-4 mb-4 glitch-effect">Freeplay</h1>
 
-        <div class="mod-display-container" id="modDisplayContainer">
-            <div class="mod-box mx-auto">
-                <div class="image-container h-100 w-100">
-                    <img src="images/LogoV2.png" alt="Sonic.exe" loading="lazy" class="mod-image active"
-                        id="sonicExeImg">
-                    <img src="images/rerun_logo.png" alt="Sonic.exe Rerun" loading="lazy" class="mod-image"
-                        id="sonicRerunImg">
-                    <img src="images/soniclegacy.gif" alt="Sonic Legacy" loading="lazy" class="mod-image"
-                        id="sonicLegacyImg">
-                    <img src="images/NewIIUSTLogo.png" alt="Illegal Instruction" loading="lazy" class="mod-image"
-                        id="illegalInstructionImg">
-                    <img src="images/HitSingleTitle.png" alt="Hit Single" loading="lazy" class="mod-image"
-                        id="hitSingleImg">
-                    <img src="images/VOBGameIcon.png" alt="Fanon V1.5: Horrors Unknown" loading="lazy" class="mod-image"
-                        id="fanonHorrorsImg">
-                    <img src="images/VsRewriteLogo.png" alt="Rewrite" loading="lazy" class="mod-image" id="rewriteImg">
-                    <img src="images/SpiritOfHell.gif" alt="Spirit of Hell" loading="lazy" class="mod-image" id="spiritOfHellImg">
-                    <img src="media/EXEmaniaNewlogo.png" alt="Executable Mania" loading="lazy" class="mod-image" id="executableManiaImg">
-                    <img src="" alt="Extras" loading="lazy" class="mod-image" id="ExtrasImg">
-                </div>
-            </div>
-
-            <div class="mod-title-container" id="modTitleContainer">
-                <button class="arrow btn p-0" id="prev" aria-label="Previous mod">&#9664;</button>
-                <p class="mod-title h3" id="modTitle">SONIC.EXE</p>
-                <button class="arrow btn p-0" id="next" aria-label="Next mod">&#9654;</button>
-            </div>
-
-            <div class="mod-counter" id="modCounter">1 of 10</div>
+        <div class="back-button-container">
+            <a href="index.html" class="back-button btn btn-lg px-4">Volver al menu</a>
         </div>
 
-        <div class="d-flex justify-content-center gap-3 flex-wrap mb-3" id="mainButtons">
-            <button id="showCatalog" class="mod-link btn btn-lg px-4" aria-expanded="false"
-                aria-controls="levelCatalog">SHOW LEVELS</button>
-            <a href="index.html" class="back-button btn btn-lg px-4">Volver al menu</a>
+        <div class="mods-grid" id="modsGrid">
+            <!-- Las tarjetas se generarán dinámicamente -->
         </div>
 
         <div id="levelCatalogContainer"></div>
@@ -863,6 +1099,13 @@
                                 "layouts": {
                                     "Jugar/Play": "https://www.mediafire.com/file/122gkcv8g0szm8f/Get+sonked+(1).FNMM/file"
                                 }
+                            },
+                            {
+                                "name": "Shimmy Terror",
+                                "title": "Asset",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k25w0nakc5sa3wh6npmvvxdt/releases/01k25w0nath7jb2mrzdqycj212"
+                                }
                             }
                         ]
                     },
@@ -905,14 +1148,14 @@
                     },
                     {
                         "id": "executableManiaImg",
-                        "image": "media/EXEmaniaNewlogo.png",
+                        "image": "images/EXEmaniaNewlogo.png",
                         "title": "EXECUTABLE MANIA",
                         "levels": [
                             {
-                                "name": "Coming Soon",
-                                "title": "Coming Soon",
+                                "name": "Aftersh0ck",
+                                "title": "Kn0ckback",
                                 "layouts": {
-                                    "COMING SOON": ""
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jx5v0xezepas8ga6x3r7rn1e/releases/01jx5v0xf9m6wv9knrf14gjxnk"
                                 }
                             }
                         ]
@@ -976,30 +1219,11 @@
                 ]
             };
 
-            let currentModIndex = 0;
-            const modImages = document.querySelectorAll('.mod-image');
-            const modTitle = document.getElementById('modTitle');
-            const showCatalogBtn = document.getElementById('showCatalog');
-            const modCounter = document.getElementById('modCounter');
+            const modsGrid = document.getElementById('modsGrid');
             const levelCatalogContainer = document.getElementById('levelCatalogContainer');
-            const modDisplayContainer = document.getElementById('modDisplayContainer');
-            const modTitleContainer = document.getElementById('modTitleContainer');
-            const titleElement = document.querySelector('.title');
-            const mainButtons = document.getElementById('mainButtons');
-            const prevBtn = document.getElementById('prev');
-            const nextBtn = document.getElementById('next');
-            let catalogOpen = false;
+            let selectedModIndex = -1;
 
-            function preloadImages() {
-                modsData.mods.forEach(mod => {
-                    const img = new Image();
-                    img.src = mod.image;
-                    img.onerror = () => {
-                        const domImg = document.getElementById(mod.id);
-                        if (domImg) domImg.src = 'images/placeholder.png';
-                    };
-                });
-
+            function hideLoadingSpinner() {
                 setTimeout(() => {
                     loadingSpinner.style.display = 'none';
                 }, 500);
@@ -1009,26 +1233,29 @@
                 const levelItem = document.createElement('div');
                 levelItem.className = 'level-item';
 
-                // Agregar imagen de render si existe
-                if (level.render) {
-                    levelItem.style.setProperty('--render-bg', `url('${level.render}')`);
-                    levelItem.addEventListener('mouseenter', () => {
-                        levelItem.style.setProperty('--render-opacity', '0.3');
-                    });
-                    levelItem.addEventListener('mouseleave', () => {
-                        levelItem.style.setProperty('--render-opacity', '0');
-                    });
-                }
+                // Header de la canción
+                const levelHeader = document.createElement('div');
+                levelHeader.className = 'level-header';
 
-                const levelName = document.createElement('div');
-                levelName.className = 'level-link';
-                levelName.textContent = `${levelIndex}. ${level.name}`;
+                const levelNumber = document.createElement('span');
+                levelNumber.className = 'level-number';
+                levelNumber.textContent = levelIndex.toString().padStart(2, '0');
 
-                const levelTitle = document.createElement('small');
-                levelTitle.textContent = level.title;
-                levelTitle.style.display = 'block';
-                levelTitle.style.marginBottom = '10px';
-                levelTitle.style.color = '#aaa';
+                const levelName = document.createElement('span');
+                levelName.className = 'level-name';
+                levelName.textContent = level.name.toUpperCase();
+
+                const levelArtist = document.createElement('span');
+                levelArtist.className = 'level-artist';
+                levelArtist.textContent = `vs ${level.title}`;
+
+                levelHeader.appendChild(levelNumber);
+                levelHeader.appendChild(levelName);
+                levelHeader.appendChild(levelArtist);
+
+                // Contenido de la canción
+                const levelContent = document.createElement('div');
+                levelContent.className = 'level-content';
 
                 const layoutContainer = document.createElement('div');
                 layoutContainer.className = 'layout-options';
@@ -1036,10 +1263,32 @@
                 for (const [layoutType, layoutUrl] of Object.entries(level.layouts)) {
                     const layoutBtn = document.createElement('button');
                     layoutBtn.className = 'layout-btn';
-                    layoutBtn.textContent = layoutType.toUpperCase();
+                    
+                    // Iconos para diferentes tipos de layout
+                    let icon = '▶';
+                    if (layoutType.toLowerCase().includes('vertical')) icon = '📱';
+                    if (layoutType.toLowerCase().includes('horizontal')) icon = '💻';
+                    if (layoutType.toLowerCase().includes('coming')) icon = '⏳';
+                    if (layoutType.toLowerCase().includes('old')) icon = '🕰';
+                    if (layoutType.toLowerCase().includes('new')) icon = '✨';
+                    
+                    layoutBtn.innerHTML = `${icon} ${layoutType.toUpperCase()}`;
+                    
                     layoutBtn.onclick = (e) => {
                         e.preventDefault();
-                        if (layoutUrl) {
+                        if (layoutUrl && layoutUrl.trim() !== '') {
+                            // Feedback visual
+                            layoutBtn.style.background = '#00ff00';
+                            layoutBtn.style.color = '#000';
+                            layoutBtn.textContent = '✓ ABRIENDO...';
+                            
+                            setTimeout(() => {
+                                layoutBtn.innerHTML = `${icon} ${layoutType.toUpperCase()}`;
+                                layoutBtn.style.background = '';
+                                layoutBtn.style.color = '';
+                            }, 1000);
+                            
+                            // Copiar URL y abrir
                             navigator.clipboard.writeText(layoutUrl).then(() => {
                                 console.log('URL copiada:', layoutUrl);
                             }).catch(() => {
@@ -1048,186 +1297,267 @@
                             window.open(layoutUrl, '_blank');
                         }
                     };
-                    if (!layoutUrl) layoutBtn.disabled = true;
+                    
+                    if (!layoutUrl || layoutUrl.trim() === '') {
+                        layoutBtn.disabled = true;
+                    }
+                    
                     layoutContainer.appendChild(layoutBtn);
                 }
 
-                levelItem.appendChild(levelName);
-                levelItem.appendChild(levelTitle);
-                levelItem.appendChild(layoutContainer);
+                levelContent.appendChild(layoutContainer);
+                levelItem.appendChild(levelHeader);
+                levelItem.appendChild(levelContent);
 
                 return levelItem;
             }
 
-            function generateLevelCatalogs() {
-                levelCatalogContainer.innerHTML = '';
 
+
+            function createModCards() {
+                modsGrid.innerHTML = '';
+                
                 modsData.mods.forEach((mod, index) => {
-                    const catalog = document.createElement('div');
-                    catalog.className = 'level-catalog';
-                    catalog.id = `modCatalog-${index}`;
-
-                    const title = document.createElement('h3');
-                    title.className = 'mb-4 glitch-effect';
-                    title.textContent = `${index + 1}. ${mod.title} LEVELS`;
-                    catalog.appendChild(title);
-
-                    // Crear filas de niveles (1 izquierda, 1 derecha)
+                    const card = document.createElement('div');
+                    card.className = 'mod-card';
+                    card.dataset.index = index;
+                    card.style.animationDelay = `${index * 0.1}s`;
+                    
+                    const songCount = mod.levels.length;
+                    const availableSongs = mod.levels.filter(level => 
+                        Object.values(level.layouts).some(url => url && url.trim() !== '')
+                    ).length;
+                    
+                    card.innerHTML = `
+                        <div class="mod-card-badge">${availableSongs} songs</div>
+                        <div class="mod-card-image-container">
+                            <div class="image-loader"></div>
+                            <img class="mod-card-image" alt="${mod.title}" data-src="${mod.image}">
+                        </div>
+                        <div class="mod-card-content">
+                            <div class="mod-card-title">${mod.title}</div>
+                            <div class="mod-card-info">${songCount} total levels</div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        // Remover clase active de todas las tarjetas
+                        document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
+                        // Agregar clase active a la tarjeta seleccionada
+                        card.classList.add('active');
+                        selectedModIndex = index;
+                        showModLevels(index);
+                    });
+                    
+                    modsGrid.appendChild(card);
+                    
+                    // Lazy loading de imagen
+                    setTimeout(() => {
+                        loadCardImage(card, mod.image);
+                    }, index * 100);
+                });
+            }
+            
+            function loadCardImage(card, imageSrc) {
+                const img = card.querySelector('.mod-card-image');
+                const loader = card.querySelector('.image-loader');
+                
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    img.src = imageSrc;
+                    img.classList.add('loaded');
+                    loader.style.display = 'none';
+                };
+                tempImg.onerror = () => {
+                    img.src = 'images/placeholder.png';
+                    img.classList.add('loaded');
+                    loader.style.display = 'none';
+                };
+                tempImg.src = imageSrc;
+            }
+            
+            function showModLevels(index) {
+                const selectedCard = document.querySelector(`[data-index="${index}"]`);
+                
+                if (selectedCard) {
+                    // Crear vista dividida
+                    const splitContainer = document.createElement('div');
+                    splitContainer.className = 'split-view';
+                    splitContainer.id = 'splitView';
+                    
+                    // Crear tarjeta seleccionada desde cero
+                    const cardClone = document.createElement('div');
+                    cardClone.className = 'mod-card selected-mod-card active';
+                    
+                    const mod = modsData.mods[index];
+                    const songCount = mod.levels.length;
+                    const availableSongs = mod.levels.filter(level => 
+                        Object.values(level.layouts).some(url => url && url.trim() !== '')
+                    ).length;
+                    
+                    cardClone.innerHTML = `
+                        <div class="mod-card-badge">${availableSongs} songs</div>
+                        <div class="mod-card-image-container">
+                            <img class="mod-card-image loaded" src="${mod.image}" alt="${mod.title}">
+                        </div>
+                        <div class="mod-card-content">
+                            <div class="mod-card-title">${mod.title}</div>
+                            <div class="mod-card-info">${songCount} total levels</div>
+                        </div>
+                    `;
+                    
+                    // Crear sección de niveles
+                    const levelsSection = document.createElement('div');
+                    levelsSection.className = 'levels-section';
+                    
+                    // Botón de cerrar con texto adaptativo
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'close-levels-btn';
+                    const isMobile = window.innerWidth <= 768;
+                    closeBtn.textContent = isMobile ? '✕ CERRAR' : '✕ CLOSE LEVELS';
+                    closeBtn.onclick = closeLevels;
+                    
+                    // Agregar contenido del catálogo directamente
+                    levelsSection.appendChild(closeBtn);
+                    
+                    // Agregar indicador de swipe en móviles
+                    if (isMobile) {
+                        const swipeHint = document.createElement('div');
+                        swipeHint.style.cssText = `
+                            text-align: center;
+                            font-size: 0.6rem;
+                            color: #666;
+                            margin-bottom: 10px;
+                            padding: 5px;
+                            border: 1px dashed #333;
+                            border-radius: 5px;
+                        `;
+                        swipeHint.textContent = '→ Desliza hacia la derecha para cerrar';
+                        levelsSection.appendChild(swipeHint);
+                    }
+                    
+                    // Copiar el contenido del catálogo original
+                    const catalogTitle = document.createElement('h3');
+                    catalogTitle.className = 'mb-4 glitch-effect';
+                    catalogTitle.textContent = `${index + 1}. ${modsData.mods[index].title} LEVELS`;
+                    levelsSection.appendChild(catalogTitle);
+                    
+                    // Crear filas de niveles
                     for (let i = 0; i < mod.levels.length; i += 2) {
                         const row = document.createElement('div');
                         row.className = 'level-row';
-
-                        // Nivel izquierdo
+                        
                         if (mod.levels[i]) {
                             row.appendChild(createLevelItem(mod.levels[i], i + 1));
                         }
-
-                        // Nivel derecho
+                        
                         if (mod.levels[i + 1]) {
                             row.appendChild(createLevelItem(mod.levels[i + 1], i + 2));
                         }
-
-                        catalog.appendChild(row);
+                        
+                        levelsSection.appendChild(row);
                     }
-
-                    levelCatalogContainer.appendChild(catalog);
-                });
-            }
-
-            function updateModDisplay() {
-                modImages.forEach(img => img.classList.remove('active'));
-                document.getElementById(modsData.mods[currentModIndex].id).classList.add('active');
-                modTitle.textContent = modsData.mods[currentModIndex].title;
-                modCounter.textContent = `${currentModIndex + 1} of ${modsData.mods.length}`;
-                showCatalogBtn.setAttribute('aria-controls', `modCatalog-${currentModIndex}`);
-
-                // Actualizar título de la página
-                document.title = `${currentModIndex + 1}. ${modsData.mods[currentModIndex].title} - Freeplay`;
-
+                    
+                    splitContainer.appendChild(cardClone);
+                    splitContainer.appendChild(levelsSection);
+                    
+                    // Ocultar grid original y mostrar vista dividida
+                    modsGrid.style.display = 'none';
+                    levelCatalogContainer.innerHTML = '';
+                    levelCatalogContainer.appendChild(splitContainer);
+                    levelCatalogContainer.style.display = 'block';
+                    
+                    // Scroll suave al contenido en móviles
+                    if (isMobile) {
+                        setTimeout(() => {
+                            splitContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    }
+                }
+                
                 // Actualizar URL con parámetros
                 const url = new URL(window.location);
-                url.searchParams.set('mod', currentModIndex + 1);
-                url.searchParams.set('name', modsData.mods[currentModIndex].title.replace(/\s+/g, '-'));
+                url.searchParams.set('mod', index + 1);
+                url.searchParams.set('name', modsData.mods[index].title.replace(/\s+/g, '-'));
+                window.history.pushState({}, '', url);
+            }
+            
+            function closeLevels() {
+                // Restaurar vista de grid
+                modsGrid.style.display = 'grid';
+                levelCatalogContainer.innerHTML = '';
+                
+                // Limpiar selección
+                document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
+                selectedModIndex = -1;
+                
+                // Limpiar URL
+                const url = new URL(window.location);
+                url.searchParams.delete('mod');
+                url.searchParams.delete('name');
                 window.history.replaceState({}, '', url);
+                
+                // Scroll suave al inicio en móviles
+                if (isMobileDevice()) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             }
-
-            function toggleCatalog() {
-                const currentCatalog = document.getElementById(`modCatalog-${currentModIndex}`);
-                const isShowing = currentCatalog.classList.contains('showing');
-
-                if (!isShowing) {
-                    document.querySelectorAll('.level-catalog').forEach(catalog => {
-                        catalog.classList.remove('showing');
-                    });
-                    currentCatalog.classList.add('showing');
-                    showCatalogBtn.textContent = 'CLOSE LEVELS';
-                    showCatalogBtn.classList.add('showing');
-                    showCatalogBtn.setAttribute('aria-expanded', 'true');
-
-                    modDisplayContainer.classList.add('hidden');
-                    modTitleContainer.classList.add('hidden');
-                    titleElement.classList.add('hidden');
-                    prevBtn.disabled = true;
-                    nextBtn.disabled = true;
-                    catalogOpen = true;
-                } else {
-                    currentCatalog.classList.remove('showing');
-                    showCatalogBtn.textContent = 'SHOW LEVELS';
-                    showCatalogBtn.classList.remove('showing');
-                    showCatalogBtn.setAttribute('aria-expanded', 'false');
-
-                    modDisplayContainer.classList.remove('hidden');
-                    modTitleContainer.classList.remove('hidden');
-                    titleElement.classList.remove('hidden');
-                    prevBtn.disabled = false;
-                    nextBtn.disabled = false;
-                    catalogOpen = false;
+            
+            // Leer parámetros de URL al cargar
+            function loadFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const modParam = urlParams.get('mod');
+                if (modParam) {
+                    const modIndex = parseInt(modParam) - 1;
+                    if (modIndex >= 0 && modIndex < modsData.mods.length) {
+                        setTimeout(() => {
+                            const card = document.querySelector(`[data-index="${modIndex}"]`);
+                            if (card) {
+                                card.classList.add('active');
+                                selectedModIndex = modIndex;
+                            }
+                            showModLevels(modIndex);
+                        }, 1000);
+                    }
                 }
             }
 
-            function navigateMods(direction) {
-                if (catalogOpen) return;
 
-                document.querySelectorAll('.level-catalog').forEach(catalog => {
-                    catalog.classList.remove('showing');
-                });
-                showCatalogBtn.textContent = 'SHOW LEVELS';
-                showCatalogBtn.classList.remove('showing');
-                showCatalogBtn.setAttribute('aria-expanded', 'false');
 
-                modDisplayContainer.classList.remove('hidden');
-                modTitleContainer.classList.remove('hidden');
-                titleElement.classList.remove('hidden');
-                prevBtn.disabled = false;
-                nextBtn.disabled = false;
 
-                if (direction === 'prev') {
-                    currentModIndex = (currentModIndex - 1 + modsData.mods.length) % modsData.mods.length;
-                } else {
-                    currentModIndex = (currentModIndex + 1) % modsData.mods.length;
-                }
 
-                updateModDisplay();
-            }
-
-            // Event listeners
-            document.addEventListener('click', function (e) {
-                if (e.target.id === 'showCatalog') {
-                    toggleCatalog();
-                } else if (e.target.id === 'prev') {
-                    navigateMods('prev');
-                } else if (e.target.id === 'next') {
-                    navigateMods('next');
-                }
-            });
-
-            // Navegación por teclado (PC)
+            // Navegación por teclado (PC) y botón atrás (móvil)
             document.addEventListener('keydown', function (e) {
-                if (catalogOpen) return;
-                if (e.key === 'ArrowLeft') {
+                if (e.key === 'Escape' && selectedModIndex !== -1) {
                     e.preventDefault();
-                    navigateMods('prev');
-                } else if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    navigateMods('next');
-                } else if (e.key === 'Enter') {
-                    if (document.activeElement === showCatalogBtn) {
-                        e.preventDefault();
-                        toggleCatalog();
-                    }
-                } else if (e.key === 'Escape' && catalogOpen) {
-                    e.preventDefault();
-                    toggleCatalog();
+                    closeLevels();
                 }
             });
 
-            // Swipe gestures (Android)
-            let touchStartX = 0;
-            let touchStartY = 0;
-
-            document.addEventListener('touchstart', function (e) {
-                touchStartX = e.changedTouches[0].screenX;
-                touchStartY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            document.addEventListener('touchend', function (e) {
-                if (catalogOpen) return;
-
-                const touchEndX = e.changedTouches[0].screenX;
-                const touchEndY = e.changedTouches[0].screenY;
-                const diffX = touchStartX - touchEndX;
-                const diffY = Math.abs(touchStartY - touchEndY);
-
-                // Solo swipe horizontal si el movimiento vertical es mínimo
-                if (Math.abs(diffX) > 50 && diffY < 100) {
-                    e.preventDefault();
-                    if (diffX > 0) {
-                        navigateMods('next');
-                    } else {
-                        navigateMods('prev');
-                    }
+            // Manejar botón atrás del navegador en móviles
+            window.addEventListener('popstate', function(e) {
+                if (selectedModIndex !== -1) {
+                    closeLevels();
                 }
-            }, { passive: false });
+            });
+
+            // Orientación de pantalla
+            window.addEventListener('orientationchange', function() {
+                setTimeout(() => {
+                    // Reajustar layout después del cambio de orientación
+                    if (selectedModIndex !== -1) {
+                        const splitView = document.getElementById('splitView');
+                        if (splitView && window.innerWidth <= 768) {
+                            // Forzar recálculo del layout
+                            splitView.style.display = 'none';
+                            splitView.offsetHeight; // Trigger reflow
+                            splitView.style.display = 'flex';
+                        }
+                    }
+                }, 500);
+            });
+
+
 
             // Efecto de glitch aleatorio
             setInterval(() => {
@@ -1239,6 +1569,11 @@
                     }
                 });
             }, 3000);
+
+            // Funcionalidad táctil mejorada para móviles
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let isSwiping = false;
 
             // Prevenir doble-tap zoom (Android)
             document.addEventListener('dblclick', function (e) {
@@ -1258,23 +1593,85 @@
                 e.preventDefault();
             }, { passive: false });
 
-            // Leer parámetros de URL al cargar
-            function loadFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const modParam = urlParams.get('mod');
-                if (modParam) {
-                    const modIndex = parseInt(modParam) - 1;
-                    if (modIndex >= 0 && modIndex < modsData.mods.length) {
-                        currentModIndex = modIndex;
+            // Gestos táctiles para navegación
+            document.addEventListener('touchstart', function (e) {
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    isSwiping = false;
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function (e) {
+                if (e.touches.length === 1 && !isSwiping) {
+                    const touchX = e.touches[0].clientX;
+                    const touchY = e.touches[0].clientY;
+                    const deltaX = touchX - touchStartX;
+                    const deltaY = touchY - touchStartY;
+
+                    // Detectar swipe horizontal
+                    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                        isSwiping = true;
+                        
+                        // Swipe hacia la derecha para cerrar niveles (solo en vista dividida)
+                        if (deltaX > 0 && selectedModIndex !== -1 && window.innerWidth <= 768) {
+                            closeLevels();
+                        }
+                    }
+                }
+            }, { passive: true });
+
+            // Optimización para dispositivos móviles
+            function isMobileDevice() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                       (window.innerWidth <= 768 && 'ontouchstart' in window);
+            }
+
+            // Ajustes específicos para móviles
+            if (isMobileDevice()) {
+                // Reducir animaciones en dispositivos de bajo rendimiento
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (prefersReducedMotion) {
+                    document.documentElement.style.setProperty('--animation-duration', '0.1s');
+                }
+
+                // Optimizar scroll en iOS
+                document.body.style.webkitOverflowScrolling = 'touch';
+                
+                // Mejorar rendimiento en dispositivos táctiles
+                document.addEventListener('touchstart', function() {}, { passive: true });
+            }
+
+
+
+            // Detección de capacidades del dispositivo
+            function detectDeviceCapabilities() {
+                const isMobile = isMobileDevice();
+                const isLowEnd = navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2;
+                
+                if (isMobile || isLowEnd) {
+                    // Reducir efectos visuales en dispositivos de bajo rendimiento
+                    document.documentElement.style.setProperty('--glow-effect', '0 0 3px var(--main-red)');
+                    
+                    // Desactivar algunas animaciones
+                    if (isLowEnd) {
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            .mod-card { animation: none !important; }
+                            .glitch-effect { animation: none !important; }
+                        `;
+                        document.head.appendChild(style);
                     }
                 }
             }
 
+
+
             // Inicialización
+            detectDeviceCapabilities();
+            createModCards();
+            hideLoadingSpinner();
             loadFromURL();
-            generateLevelCatalogs();
-            preloadImages();
-            updateModDisplay();
         });
     </script>
 </body>
