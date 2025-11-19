@@ -1586,7 +1586,7 @@
                 let playbackRate = 1;
                 const slowDown = setInterval(() => {
                     playbackRate -= 0.05;
-                    if (playbackRate <= 0) {
+                    if (playbackRate <= 0.25) {
                         playbackRate = 0;
                         bgMusic.pause();
                         clearInterval(slowDown);

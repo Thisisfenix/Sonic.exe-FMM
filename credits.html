@@ -288,6 +288,71 @@
             box-shadow: 0 0 15px var(--external-color);
         }
 
+        .credit-expand-arrow {
+            margin-top: 10px;
+            font-size: 1.5rem;
+            color: var(--main-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        .credit-expand-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .credit-expand-arrow.ex-arrow {
+            color: var(--ex-color);
+        }
+
+        .credit-expand-arrow.external-arrow {
+            color: var(--external-color);
+        }
+
+        .credit-extra-info {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .credit-extra-info.expanded {
+            max-height: 200px;
+        }
+
+        .credit-extra-content {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 2px solid var(--main-color);
+            margin-top: 10px;
+        }
+
+        .credit-extra-content.ex-content {
+            border-color: var(--ex-color);
+        }
+
+        .credit-extra-content.external-content {
+            border-color: var(--external-color);
+        }
+
+        .credit-extra-text {
+            font-size: min(0.8rem, 2.8vw);
+            color: var(--main-color);
+            text-shadow: 0 0 4px var(--main-color);
+            line-height: 1.4;
+        }
+
+        .credit-extra-text.ex-text {
+            color: var(--ex-color);
+            text-shadow: 0 0 4px var(--ex-color);
+        }
+
+        .credit-extra-text.external-text {
+            color: var(--external-color);
+            text-shadow: 0 0 4px var(--external-color);
+        }
+
 
 
         .credit-icon-container {
@@ -571,44 +636,104 @@
         /* Ajustes para todos los móviles con navbar */
         @media (max-width: 768px) {
             .credits-container {
-                padding: 10px;
-                padding-bottom: max(20px, env(safe-area-inset-bottom), 80px);
+                padding: 5px;
+                padding-top: max(5px, env(safe-area-inset-top));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
                 height: 100vh;
-                min-height: 100vh;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: flex-start;
+                gap: 5px;
             }
             
             .credits-title {
-                font-size: min(2rem, 6vw);
-                margin-bottom: 15px;
-                flex-shrink: 0;
+                font-size: clamp(1rem, 4.5vw, 1.5rem);
+                margin-bottom: 5px;
+                padding: 0;
             }
             
             .search-container {
-                flex-shrink: 0;
-                margin-bottom: 10px;
+                margin-bottom: 5px;
+                max-width: 100%;
+            }
+            
+            .search-input {
+                font-size: clamp(0.6rem, 2.3vw, 0.75rem);
+                padding: 5px 8px;
             }
             
             .category-tabs {
-                flex-shrink: 0;
-                margin-bottom: 15px;
+                margin-bottom: 5px;
+                gap: 4px;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+            
+            .category-tab {
+                font-size: clamp(0.5rem, 2vw, 0.7rem);
+                padding: 5px 8px;
             }
             
             .credits-slider-container {
                 flex: 1;
-                min-height: 300px;
-                max-height: 60vh;
-                margin-bottom: 15px;
-                display: flex;
-                align-items: center;
+                min-height: 250px;
+                max-height: none;
+                margin-bottom: 5px;
+            }
+            
+            .credit-slide {
+                width: min(280px, 92vw);
+            }
+            
+            .credit-card {
+                padding: 12px 10px;
+            }
+            
+            .credit-icon-container {
+                width: min(100px, 26vw);
+                height: min(100px, 26vw);
+                margin-bottom: 8px;
+            }
+            
+            .credit-name {
+                font-size: clamp(0.8rem, 3.2vw, 1rem);
+                margin-bottom: 6px;
+            }
+            
+            .credit-role {
+                font-size: clamp(0.6rem, 2.5vw, 0.85rem);
+                line-height: 1.3;
             }
             
             .credits-controls {
-                flex-shrink: 0;
-                margin-bottom: max(15px, env(safe-area-inset-bottom), 25px);
+                margin-top: 5px;
+                margin-bottom: max(10px, env(safe-area-inset-bottom));
                 padding-bottom: max(10px, env(safe-area-inset-bottom));
+                gap: 5px;
+                flex-wrap: wrap;
+            }
+            
+            .credits-btn {
+                font-size: clamp(0.6rem, 2.5vw, 0.85rem);
+                padding: 6px 8px;
+                min-width: 36px;
+            }
+            
+            #prevButton, #nextButton {
+                font-size: 1.3rem;
+                padding: 6px 10px;
+                min-width: 40px;
+            }
+            
+            .progress-indicator {
+                gap: 3px;
+                width: 100%;
+                order: 3;
+            }
+            
+            .progress-dot {
+                width: 8px;
+                height: 8px;
             }
             
             .back-button {
@@ -617,23 +742,28 @@
                 left: auto;
                 transform: none;
                 top: auto;
-                z-index: 25;
-                margin: 10px auto 0;
-                display: block;
-                width: auto;
-                text-align: center;
+                margin: 0;
+                font-size: clamp(0.6rem, 2.5vw, 0.85rem);
+                padding: 6px 10px;
             }
         }
 
-        /* Ajustes específicos para pantallas muy pequeñas con navbar */
+        /* Ajustes específicos para pantallas muy pequeñas */
         @media (max-width: 400px) {
             .credits-container {
-                padding-bottom: max(25px, env(safe-area-inset-bottom), 90px);
-                height: calc(100vh - max(var(--safe-area-inset-bottom), 70px));
+                padding: 4px;
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+                gap: 4px;
             }
             
-            .credits-controls {
-                margin-bottom: max(20px, env(safe-area-inset-bottom), 30px);
+            .credits-title {
+                font-size: clamp(0.9rem, 4vw, 1.3rem);
+                margin-bottom: 4px;
+            }
+            
+            .credit-icon-container {
+                width: min(90px, 24vw);
+                height: min(90px, 24vw);
             }
         }
 
@@ -832,8 +962,8 @@
             .credits-container {
                 justify-content: space-between;
                 padding: 10px;
-                padding-bottom: max(30px, env(safe-area-inset-bottom), 100px);
-                height: calc(100vh - max(var(--safe-area-inset-bottom), 80px));
+                padding-bottom: max(70px, env(safe-area-inset-bottom));
+                height: 100vh;
             }
 
             .credits-title {
@@ -882,7 +1012,8 @@
 
             .credits-controls {
                 margin-top: 10px;
-                margin-bottom: 10px;
+                margin-bottom: max(15px, env(safe-area-inset-bottom));
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
                 gap: 10px;
             }
 
@@ -994,13 +1125,13 @@
         </div>
 
         <div class="credits-controls">
-            <button class="credits-btn" id="prevButton" aria-label="Crédito anterior">← ANTERIOR</button>
+            <button class="credits-btn" id="prevButton" aria-label="Crédito anterior">←</button>
 
             <div class="progress-indicator" id="progressIndicator" role="tablist" aria-label="Navegación de créditos">
                 <!-- Los indicadores de progreso se generarán dinámicamente -->
             </div>
 
-            <button class="credits-btn" id="nextButton" aria-label="Siguiente crédito">SIGUIENTE →</button>
+            <button class="credits-btn" id="nextButton" aria-label="Siguiente crédito">→</button>
 
             <button class="credits-btn" id="autoplayBtn" aria-label="Activar reproducción automática">AUTO</button>
 
@@ -1055,71 +1186,96 @@
             }
         }
 
+        // Función para cargar imagen con fallback
+        function loadImageWithFallback(img, primarySrc, fallbackSrc = "icons/abelitogamer.png") {
+            img.src = primarySrc;
+            img.onerror = function() {
+                this.classList.remove('loading');
+                this.src = fallbackSrc;
+                this.onerror = function() {
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
+                };
+            };
+        }
+
         // Datos de créditos organizados por categoría
         const creditsData = {
             collaborators: [
                 {
-                    icon: "icons/20240928_015106.png",
+                    icon: "icons/ankush.png",
+                    discordId: null,
                     name: "JUST FENIX",
                     role: "Director 1 y creador del sitio web"
                 },
                 {
                     icon: "icons/20240928_015544.png",
+                    discordId: null,
                     name: "JOSIAS782",
                     role: "Director 2"
                 },
                 {
                     icon: "icons/Photoroom-20240920_221620.png",
+                    discordId: null,
                     name: "METAL SONIC",
                     role: "Colaborador 1 y subdirector (Carreo medio foro)"
                 },
                 {
                     icon: "icons/493_sin_titulo_20250721190726.png",
+                    discordId: null,
                     name: "Just Shadow",
                     role: "Colaborador 2"
                 },
                 {
                     icon: "icons/352_sin_titulo_20240917214204.png",
+                    discordId: null,
                     name: "DANI_A.Y.T",
                     role: "Colaborador 3"
                 },
                 {
                     icon: "icons/GIF_20250728_222509_052.gif",
+                    discordId: null,
                     name: "SAMYLOL",
                     role: "Colaborador 4"
                 },
                 {
                     icon: "icons/Project_Capture_141.png",
+                    discordId: null,
                     name: "LUIS LEYENDS",
                     role: "Colaborador 5"
                 },
                 {
                     icon: "icons/GIF_20250809_163049_479.gif",
+                    discordId: null,
                     name: "Takeran",
                     role: "Colaborador 6"
                 },
                 {
                     icon: "icons/GisselV2.png",
+                    discordId: null,
                     name: "Gissel",
                     role: "Colaborador 7"
                 },
                 {
                     icon: "icons/BerkayV2.png",
+                    discordId: null,
                     name: "Berkay",
                     role: "Colaborador 8"
                 },
                 {
                     icon: "icons/abel.gif",
+                    discordId: null,
                     name: "Abel_777",
                     role: "Colaborador 9"
                 },
                 {
                     icon: "icons/21_sin_titulo_20250809163031.png",
+                    discordId: null,
                     name: "Nowzuq",
                     role: "Colaborador 10"
                 },
                 {
                     icon: "icons/POM.png",
+                    discordId: null,
                     name: "Pom",
                     role: "Colaborador 11"
                 },
@@ -1128,6 +1284,8 @@
             externalCollaborators: [
                 {
                     icon: "icons/abelitogamer.png",
+                    discordId: "270347889966841859",
+                    discordUsername: "abelitogamer",
                     name: "AbelitoGamer",
                     role: "Colaborador Externo 1 - Creador de TrinityEncore"
                 }
@@ -1135,16 +1293,19 @@
             exCollaborators: [
                 {
                     icon: "icons/167_sin_titulo_20250809161409.png",
+                    discordId: null,
                     name: "Jarret",
                     role: "EX-Colaborador 1"
                 },
                 {
                     icon: "icons/215_sin_titulo_20240928080723.png",
+                    discordId: null,
                     name: "NOGALES",
                     role: "EX-Colaborador 2"
                 },
                 {
                     icon: "icons/291_sin_titulo_20240921014905.png",
+                    discordId: null,
                     name: "J1A2G3R4TU",
                     role: "EX-Colaborador 3"
                 }
@@ -1175,13 +1336,16 @@
         // Ajustar diseño para pantallas pequeñas
         function adjustLayoutForSmallScreens() {
             if (isMobile) {
-                // Mover el botón de volver al contenedor de controles
+                prevBtn.innerHTML = '←';
+                nextBtn.innerHTML = '→';
+                prevBtn.setAttribute('aria-label', 'Anterior');
+                nextBtn.setAttribute('aria-label', 'Siguiente');
+                
                 const creditsControls = document.querySelector('.credits-controls');
                 if (creditsControls && !creditsControls.contains(backBtn)) {
                     creditsControls.appendChild(backBtn);
                 }
 
-                // Asegurar que el slider sea visible
                 const sliderContainer = document.querySelector('.credits-slider-container');
                 if (sliderContainer) {
                     sliderContainer.style.display = 'flex';
@@ -1283,6 +1447,12 @@
                         </div>
                         <h2 class="credit-name ${isExCategory ? 'ex-name' : ''} ${isExternalCategory ? 'external-name' : ''}">${credit.name}${badgeHtml}</h2>
                         <p class="credit-role ${isExCategory ? 'ex-role' : ''} ${isExternalCategory ? 'external-role' : ''}">${credit.role}</p>
+                        <div class="credit-expand-arrow ${isExCategory ? 'ex-arrow' : ''} ${isExternalCategory ? 'external-arrow' : ''}">▼</div>
+                        <div class="credit-extra-info">
+                            <div class="credit-extra-content ${isExCategory ? 'ex-content' : ''} ${isExternalCategory ? 'external-content' : ''}">
+                                <p class="credit-extra-text ${isExCategory ? 'ex-text' : ''} ${isExternalCategory ? 'external-text' : ''}">PRÓXIMAMENTE</p>
+                            </div>
+                        </div>
                     </div>
                 `;
 
@@ -1295,6 +1465,56 @@
                     this.classList.remove('loading');
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI3NSIgY3k9Ijc1IiByPSI3NSIgZmlsbD0iIzBhMmM0MiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIj4lM0Y8L3RleHQ+Cjwvc3ZnPgo=';
                 };
+                
+                if (credit.discordId) {
+                    const methods = [
+                        `https://cdn.discordapp.com/avatars/${credit.discordId}?size=256`,
+                        `https://discordlookup.mesalytic.moe/v1/user/${credit.discordId}`,
+                        credit.icon
+                    ];
+                    
+                    let methodIndex = 0;
+                    const tryNextMethod = () => {
+                        if (methodIndex === 1) {
+                            fetch(methods[methodIndex])
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.avatar && data.avatar.link) {
+                                    loadImageWithFallback(img, data.avatar.link, methods[2]);
+                                } else {
+                                    img.src = methods[2];
+                                }
+                            })
+                            .catch(() => img.src = methods[2]);
+                        } else {
+                            img.src = methods[methodIndex];
+                            img.onerror = () => {
+                                methodIndex++;
+                                if (methodIndex < methods.length) {
+                                    tryNextMethod();
+                                } else {
+                                    img.src = 'icons/abelitogamer.png';
+                                }
+                            };
+                        }
+                    };
+                    tryNextMethod();
+                } else {
+                    img.onerror = function () {
+                        this.classList.remove('loading');
+                        loadImageWithFallback(this, 'icons/abelitogamer.png');
+                    };
+                }
+
+                // Añadir evento de clic a la flecha
+                const arrow = slide.querySelector('.credit-expand-arrow');
+                const extraInfo = slide.querySelector('.credit-extra-info');
+                arrow.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    arrow.classList.toggle('expanded');
+                    extraInfo.classList.toggle('expanded');
+                    lightVibration();
+                });
 
                 creditsSlider.appendChild(slide);
 
