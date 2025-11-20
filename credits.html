@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="storage-access=()">
     <title>Créditos - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,12 +15,12 @@
     <style>
         :root {
             --transition-time: 0.6s;
-            --main-color: #00FFFF;
+            --main-color: #00E5E5;
             --secondary-color: #FF00FF;
             --text-color: #FFFFFF;
-            --bg-dark: rgba(0, 0, 0, 0.8);
-            --ex-color: #FF5555;
-            --external-color: #FFD700;
+            --bg-dark: rgba(0, 0, 0, 0.9);
+            --ex-color: #FF6666;
+            --external-color: #FFE033;
             --bg-gradient: linear-gradient(45deg, #000014, #001428);
             --safe-area-inset-top: env(safe-area-inset-top, 0px);
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -74,8 +75,6 @@
             }
         }
 
-
-
         .credits-container {
             position: fixed;
             top: var(--safe-area-inset-top);
@@ -85,11 +84,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 15px;
             padding-bottom: max(15px, var(--safe-area-inset-bottom), 60px);
             z-index: 1;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .credits-title {
@@ -154,6 +154,17 @@
             white-space: nowrap;
         }
 
+        .category-tab:focus {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 3px;
+            z-index: 10;
+        }
+
+        .category-tab:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
         .category-tab.active {
             background: var(--main-color);
             color: #000;
@@ -186,9 +197,10 @@
             position: relative;
             width: 100%;
             max-width: min(1200px, 95vw);
-            height: min(450px, 55vh);
+            height: auto;
+            max-height: 80vh;
             margin-bottom: 20px;
-            overflow: hidden;
+            overflow: visible;
             touch-action: pan-y;
         }
 
@@ -197,18 +209,27 @@
             height: 100%;
             position: relative;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
+            padding-top: 20px;
+            transition: opacity 0.3s ease;
+        }
+
+        .credits-slider.transitioning {
+            opacity: 0.3;
+            pointer-events: none;
         }
 
         .credit-slide {
             position: absolute;
             width: min(320px, 85vw);
-            height: 100%;
+            height: auto;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
             transition: all var(--transition-time) cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1;
             backface-visibility: hidden;
@@ -278,6 +299,60 @@
             transition: transform 0.1s;
         }
 
+        .credit-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--main-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            border: 1px solid var(--main-color);
+            box-shadow: 0 0 10px var(--main-color);
+            z-index: 100;
+        }
+
+        .credit-card:hover .credit-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .credit-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--main-color);
+        }
+
+        .ex-card .credit-tooltip {
+            color: var(--ex-color);
+            border-color: var(--ex-color);
+            box-shadow: 0 0 10px var(--ex-color);
+        }
+
+        .ex-card .credit-tooltip::after {
+            border-top-color: var(--ex-color);
+        }
+
+        .external-card .credit-tooltip {
+            color: var(--external-color);
+            border-color: var(--external-color);
+            box-shadow: 0 0 10px var(--external-color);
+        }
+
+        .external-card .credit-tooltip::after {
+            border-top-color: var(--external-color);
+        }
+
         .credit-card.ex-card {
             border-color: var(--ex-color);
             box-shadow: 0 0 15px var(--ex-color);
@@ -295,6 +370,14 @@
             cursor: pointer;
             transition: transform 0.3s ease;
             user-select: none;
+            background: transparent;
+            border: none;
+            padding: 5px;
+        }
+
+        .credit-expand-arrow:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
         }
 
         .credit-expand-arrow.expanded {
@@ -317,7 +400,7 @@
         }
 
         .credit-extra-info.expanded {
-            max-height: 200px;
+            max-height: 500px;
         }
 
         .credit-extra-content {
@@ -352,8 +435,6 @@
             color: var(--external-color);
             text-shadow: 0 0 4px var(--external-color);
         }
-
-
 
         .credit-icon-container {
             position: relative;
@@ -509,7 +590,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-top: 15px;
+            margin-top: auto;
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
@@ -566,7 +647,17 @@
         }
 
         .credits-btn:active {
-            transform: translateY(0);
+            transform: scale(0.95);
+            box-shadow: 0 0 10px var(--main-color);
+        }
+
+        .credits-btn.clicked {
+            animation: btnPulse 0.3s ease;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .progress-indicator {
@@ -585,6 +676,15 @@
             border: 1px solid var(--main-color);
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .progress-dot:hover {
+            transform: scale(1.3);
+            opacity: 1;
+        }
+
+        .progress-dot:active {
+            transform: scale(0.9);
         }
 
         .progress-dot.active {
@@ -650,16 +750,6 @@
                 font-size: clamp(1rem, 4.5vw, 1.5rem);
                 margin-bottom: 5px;
                 padding: 0;
-            }
-            
-            .search-container {
-                margin-bottom: 5px;
-                max-width: 100%;
-            }
-            
-            .search-input {
-                font-size: clamp(0.6rem, 2.3vw, 0.75rem);
-                padding: 5px 8px;
             }
             
             .category-tabs {
@@ -810,34 +900,6 @@
             display: none;
         }
 
-        .search-container {
-            position: relative;
-            margin-bottom: 15px;
-            max-width: 300px;
-            width: 100%;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--bg-dark);
-            border: 2px solid var(--main-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-family: 'Press Start 2P', cursive;
-            font-size: min(0.8rem, 3vw);
-            box-shadow: 0 0 8px var(--main-color);
-        }
-
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 0 15px var(--main-color);
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
         .audio-toggle:hover {
             transform: scale(1.1);
             background: var(--main-color);
@@ -865,77 +927,25 @@
             user-select: none;
         }
 
-        /* Estilos específicos para dispositivos muy pequeños */
+        /* Estilos específicos para dispositivos muy pequeños - consolidado */
         @media (max-width: 360px) {
-            .credits-title {
-                font-size: 1.2rem;
-                margin-bottom: 15px;
-            }
-
-            .category-tab {
-                font-size: 0.6rem;
-                padding: 6px 10px;
-            }
-
-            .credit-name {
-                font-size: 1rem;
-            }
-
-            .credit-role {
-                font-size: 0.7rem;
-            }
-
-            .credits-btn {
-                font-size: 0.7rem;
-                padding: 8px 12px;
-            }
-
-            .back-button {
-                font-size: 0.7rem;
-                padding: 8px 12px;
-            }
+            .credits-title { font-size: 1.2rem; margin-bottom: 15px; }
+            .category-tab { font-size: 0.6rem; padding: 6px 10px; }
+            .credit-name { font-size: 1rem; }
+            .credit-role { font-size: 0.7rem; }
+            .credits-btn, .back-button { font-size: 0.7rem; padding: 8px 12px; }
         }
 
-        /* Estilos para orientación horizontal en móviles */
+        /* Estilos para orientación horizontal en móviles - consolidado */
         @media (max-height: 500px) and (orientation: landscape) {
-            .credits-container {
-                justify-content: flex-start;
-                padding-top: 5px;
-                overflow-y: auto;
-            }
-
-            .credits-title {
-                font-size: 1.5rem;
-                margin: 5px 0 10px;
-            }
-
-            .category-tabs {
-                margin-bottom: 10px;
-            }
-
-            .credits-slider-container {
-                height: 70vh;
-                margin-bottom: 10px;
-            }
-
-            .credit-icon-container {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 10px;
-            }
-
-            .credit-name {
-                font-size: 1rem;
-                margin-bottom: 5px;
-            }
-
-            .credit-role {
-                font-size: 0.7rem;
-            }
-
-            .credits-controls {
-                margin-top: 10px;
-            }
+            .credits-container { justify-content: flex-start; padding-top: 5px; overflow-y: auto; }
+            .credits-title { font-size: 1.5rem; margin: 5px 0 10px; }
+            .category-tabs { margin-bottom: 10px; }
+            .credits-slider-container { height: 70vh; margin-bottom: 10px; }
+            .credit-icon-container { width: 80px; height: 80px; margin-bottom: 10px; }
+            .credit-name { font-size: 1rem; margin-bottom: 5px; }
+            .credit-role { font-size: 0.7rem; }
+            .credits-controls { margin-top: 10px; }
         }
 
         /* Para dispositivos con notch o áreas seguras especiales */
@@ -1104,38 +1114,33 @@
 <body>
     <div class="animated-bg"></div>
 
-
     <div class="credits-container">
         <h1 class="credits-title">CRÉDITOS</h1>
 
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Buscar colaborador..." aria-label="Buscar colaborador">
+        <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="Categorías de colaboradores">
+            <button class="category-tab active" data-category="collaborators" role="tab" aria-selected="true" aria-controls="creditsSlider" tabindex="0">COLABORADORES</button>
+            <button class="category-tab external-active" data-category="externalCollaborators" role="tab" aria-selected="false" aria-controls="creditsSlider" tabindex="-1">COLABORADORES EXTERNOS</button>
+            <button class="category-tab ex-active" data-category="exCollaborators" role="tab" aria-selected="false" aria-controls="creditsSlider" tabindex="-1">EX-COLABORADORES</button>
         </div>
 
-        <div class="category-tabs" id="categoryTabs" role="tablist">
-            <button class="category-tab active" data-category="collaborators" role="tab" aria-selected="true" tabindex="0">COLABORADORES</button>
-            <button class="category-tab external-active" data-category="externalCollaborators" role="tab" aria-selected="false" tabindex="-1">COLABORADORES EXTERNOS</button>
-            <button class="category-tab ex-active" data-category="exCollaborators" role="tab" aria-selected="false" tabindex="-1">EX-COLABORADORES</button>
-        </div>
-
-        <div class="credits-slider-container">
+        <div class="credits-slider-container" role="region" aria-label="Tarjetas de créditos" aria-live="polite">
             <div class="credits-slider" id="creditsSlider">
                 <!-- Los créditos se generarán dinámicamente con JavaScript -->
             </div>
         </div>
 
-        <div class="credits-controls">
-            <button class="credits-btn" id="prevButton" aria-label="Crédito anterior">←</button>
+        <div class="credits-controls" role="group" aria-label="Controles de navegación">
+            <button class="credits-btn" id="prevButton" aria-label="Navegar al crédito anterior" title="Crédito anterior">←</button>
 
-            <div class="progress-indicator" id="progressIndicator" role="tablist" aria-label="Navegación de créditos">
+            <div class="progress-indicator" id="progressIndicator" role="tablist" aria-label="Indicadores de progreso de créditos">
                 <!-- Los indicadores de progreso se generarán dinámicamente -->
             </div>
 
-            <button class="credits-btn" id="nextButton" aria-label="Siguiente crédito">→</button>
+            <button class="credits-btn" id="nextButton" aria-label="Navegar al siguiente crédito" title="Siguiente crédito">→</button>
 
-            <button class="credits-btn" id="autoplayBtn" aria-label="Activar reproducción automática">AUTO</button>
+            <button class="credits-btn" id="autoplayBtn" aria-label="Activar o desactivar reproducción automática" aria-pressed="false" title="Reproducción automática">AUTO</button>
 
-            <a href="index.html" class="back-button">← VOLVER</a>
+            <a href="index.html" class="back-button" aria-label="Volver a la página principal" title="Volver">← VOLVER</a>
         </div>
     </div>
 
@@ -1150,13 +1155,27 @@
     </audio>
 
     <script>
-        // Detectar si es un dispositivo móvil
+        // ============================================
+        // CONSTANTES DE CONFIGURACIÓN
+        // ============================================
+        const CONFIG = {
+            AUTOPLAY_INTERVAL: 3000,
+            CATEGORY_TRANSITION_DELAY: 150,
+            BUTTON_FEEDBACK_DURATION: 300,
+            VIBRATION_DURATION: 10,
+            MUSIC_VOLUME: 0.7,
+            LAZY_LOAD_MARGIN: { mobile: '100px', desktop: '50px' },
+            IMAGE_BATCH_SIZE: 3,
+            OPERA_GX_DELAY: 10
+        };
+
+        // ============================================
+        // DETECCIÓN DE DISPOSITIVO Y NAVEGADOR
+        // ============================================
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isAndroid = /Android/i.test(navigator.userAgent);
         const isOperaGX = /OPR\/|Opera GX/i.test(navigator.userAgent);
         const isLowMemory = navigator.deviceMemory && navigator.deviceMemory <= 4;
-
-        // Detectar si es una pantalla pequeña
         const isSmallScreen = window.innerWidth <= 380 || window.innerHeight <= 700;
 
         // Optimizaciones específicas para Opera GX y dispositivos de baja memoria
@@ -1186,15 +1205,25 @@
             }
         }
 
-        // Función para cargar imagen con fallback
-        function loadImageWithFallback(img, primarySrc, fallbackSrc = "icons/abelitogamer.png") {
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        
+        const FALLBACK_ICON = "icons/abelitogamer.png";
+        const PLACEHOLDER_SVG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
+        
+        /**
+         * Carga imagen con sistema de fallback en cascada
+         * @param {HTMLImageElement} img - Elemento de imagen
+         * @param {string} primarySrc - URL principal
+         * @param {string} fallbackSrc - URL de respaldo
+         */
+        function loadImageWithFallback(img, primarySrc, fallbackSrc = FALLBACK_ICON) {
             img.src = primarySrc;
             img.onerror = function() {
                 this.classList.remove('loading');
                 this.src = fallbackSrc;
-                this.onerror = function() {
-                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
-                };
+                this.onerror = () => this.src = PLACEHOLDER_SVG;
             };
         }
 
@@ -1203,79 +1232,69 @@
             collaborators: [
                 {
                     icon: "icons/ankush.png",
-                    discordId: null,
                     name: "JUST FENIX",
-                    role: "Director 1 y creador del sitio web"
+                    role: "Director 1 y creador del sitio web",
+                    description: "pendejos todos"
                 },
                 {
                     icon: "icons/20240928_015544.png",
-                    discordId: null,
                     name: "JOSIAS782",
                     role: "Director 2"
                 },
                 {
                     icon: "icons/Photoroom-20240920_221620.png",
-                    discordId: null,
                     name: "METAL SONIC",
                     role: "Colaborador 1 y subdirector (Carreo medio foro)"
                 },
                 {
                     icon: "icons/493_sin_titulo_20250721190726.png",
-                    discordId: null,
                     name: "Just Shadow",
                     role: "Colaborador 2"
                 },
                 {
                     icon: "icons/352_sin_titulo_20240917214204.png",
-                    discordId: null,
                     name: "DANI_A.Y.T",
                     role: "Colaborador 3"
                 },
                 {
                     icon: "icons/GIF_20250728_222509_052.gif",
-                    discordId: null,
                     name: "SAMYLOL",
                     role: "Colaborador 4"
                 },
                 {
                     icon: "icons/Project_Capture_141.png",
-                    discordId: null,
                     name: "LUIS LEYENDS",
                     role: "Colaborador 5"
                 },
                 {
                     icon: "icons/GIF_20250809_163049_479.gif",
-                    discordId: null,
                     name: "Takeran",
-                    role: "Colaborador 6"
+                    role: "Colaborador 6",
+                    description: "tengo femboy"
                 },
                 {
                     icon: "icons/GisselV2.png",
-                    discordId: null,
                     name: "Gissel",
                     role: "Colaborador 7"
                 },
                 {
-                    icon: "icons/BerkayV2.png",
-                    discordId: null,
-                    name: "Berkay",
-                    role: "Colaborador 8"
+                    icon: "icons/abel.gif",
+                    name: "Abel_777",
+                    role: "Colaborador 8",
+                    description: "El colaborador de la izquierda no ha hecho la tercera canción de fanon"
                 },
                 {
-                    icon: "icons/abel.gif",
-                    discordId: null,
-                    name: "Abel_777",
+                    icon: "icons/BerkayV2.png",
+                    name: "Berkay",
                     role: "Colaborador 9"
                 },
                 {
                     icon: "icons/21_sin_titulo_20250809163031.png",
-                    discordId: null,
                     name: "Nowzuq",
                     role: "Colaborador 10"
                 },
                 {
                     icon: "icons/POM.png",
-                    discordId: null,
                     name: "Pom",
                     role: "Colaborador 11"
                 },
@@ -1284,8 +1303,6 @@
             externalCollaborators: [
                 {
                     icon: "icons/abelitogamer.png",
-                    discordId: "270347889966841859",
-                    discordUsername: "abelitogamer",
                     name: "AbelitoGamer",
                     role: "Colaborador Externo 1 - Creador de TrinityEncore"
                 }
@@ -1293,45 +1310,60 @@
             exCollaborators: [
                 {
                     icon: "icons/167_sin_titulo_20250809161409.png",
-                    discordId: null,
                     name: "Jarret",
                     role: "EX-Colaborador 1"
                 },
                 {
                     icon: "icons/215_sin_titulo_20240928080723.png",
-                    discordId: null,
                     name: "NOGALES",
                     role: "EX-Colaborador 2"
                 },
                 {
                     icon: "icons/291_sin_titulo_20240921014905.png",
-                    discordId: null,
                     name: "J1A2G3R4TU",
                     role: "EX-Colaborador 3"
                 }
             ]
         }
 
+        // ============================================
+        // ESTADO DE LA APLICACIÓN
+        // ============================================
         let currentIndex = 0;
         let currentCategory = 'collaborators';
         let isMusicPlaying = false;
         let userInteracted = false;
-
         let autoplayInterval = null;
         let isAutoplayActive = false;
-        let filteredCredits = [];
-        let searchTerm = '';
-        const creditsSlider = document.getElementById('creditsSlider');
-        const progressIndicator = document.getElementById('progressIndicator');
-        const categoryTabs = document.getElementById('categoryTabs');
-        const prevBtn = document.getElementById('prevButton');
-        const nextBtn = document.getElementById('nextButton');
-        const autoplayBtn = document.getElementById('autoplayBtn');
-        const backBtn = document.querySelector('.back-button');
-        const audioToggle = document.getElementById('audioToggle');
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        const searchInput = document.getElementById('searchInput');
-        const loadingIndicator = document.getElementById('loadingIndicator');
+        let imageObserver = null;
+
+        // ============================================
+        // REFERENCIAS DOM
+        // ============================================
+        const DOM = {
+            slider: document.getElementById('creditsSlider'),
+            progressIndicator: document.getElementById('progressIndicator'),
+            categoryTabs: document.getElementById('categoryTabs'),
+            prevBtn: document.getElementById('prevButton'),
+            nextBtn: document.getElementById('nextButton'),
+            autoplayBtn: document.getElementById('autoplayBtn'),
+            backBtn: document.querySelector('.back-button'),
+            audioToggle: document.getElementById('audioToggle'),
+            backgroundMusic: document.getElementById('backgroundMusic'),
+            loadingIndicator: document.getElementById('loadingIndicator')
+        };
+        
+        // Aliases para compatibilidad
+        const creditsSlider = DOM.slider;
+        const progressIndicator = DOM.progressIndicator;
+        const categoryTabs = DOM.categoryTabs;
+        const prevBtn = DOM.prevBtn;
+        const nextBtn = DOM.nextBtn;
+        const autoplayBtn = DOM.autoplayBtn;
+        const backBtn = DOM.backBtn;
+        const audioToggle = DOM.audioToggle;
+        const backgroundMusic = DOM.backgroundMusic;
+        const loadingIndicator = DOM.loadingIndicator;
 
         // Ajustar diseño para pantallas pequeñas
         function adjustLayoutForSmallScreens() {
@@ -1355,62 +1387,66 @@
             }
         }
 
-        // Vibración táctil ligera (solo Android)
-        function lightVibration() {
+        /**
+         * Proporciona feedback háptico en dispositivos Android
+         */
+        const lightVibration = () => {
             if (isAndroid && navigator.vibrate) {
-                navigator.vibrate(10); // 10ms muy suave
+                navigator.vibrate(CONFIG.VIBRATION_DURATION);
             }
-        }
+        };
 
 
 
-        // Filtrar créditos por búsqueda
-        function filterCredits() {
-            const credits = creditsData[currentCategory];
-            if (!searchTerm) {
-                filteredCredits = credits;
-            } else {
-                filteredCredits = credits.filter(credit => 
-                    credit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    credit.role.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            }
-            currentIndex = 0;
-            clearSlides();
-            createCreditSlides();
-        }
-
-        // Cambiar categoría
-        function changeCategory(category) {
-            if (category === currentCategory) return;
-
-            lightVibration();
-            currentCategory = category;
-            searchTerm = '';
-            searchInput.value = '';
-            currentIndex = 0;
-
-            // Actualizar pestañas activas
+        // ============================================
+        // GESTIÓN DE CATEGORÍAS
+        // ============================================
+        
+        /**
+         * Actualiza el estado visual de las pestañas de categoría
+         * @param {string} activeCategory - Categoría activa
+         */
+        const updateCategoryTabs = (activeCategory) => {
             document.querySelectorAll('.category-tab').forEach(tab => {
-                const isActive = tab.dataset.category === category;
+                const isActive = tab.dataset.category === activeCategory;
                 tab.classList.toggle('active', isActive);
                 tab.setAttribute('aria-selected', isActive);
                 tab.setAttribute('tabindex', isActive ? '0' : '-1');
             });
+        };
+        
+        /**
+         * Cambia la categoría activa con transición suave
+         * @param {string} category - Nueva categoría
+         */
+        function changeCategory(category) {
+            if (category === currentCategory) return;
 
-            // Regenerar slides
-            filterCredits();
+            lightVibration();
+            creditsSlider.classList.add('transitioning');
+            
+            setTimeout(() => {
+                currentCategory = category;
+                currentIndex = 0;
+                updateCategoryTabs(category);
+                clearSlides();
+                createCreditSlides();
+                
+                setTimeout(() => creditsSlider.classList.remove('transitioning'), 50);
+            }, CONFIG.CATEGORY_TRANSITION_DELAY);
         }
 
-        // Limpiar slides existentes
-        function clearSlides() {
+        /**
+         * Limpia todos los slides y indicadores de progreso
+         */
+        const clearSlides = () => {
             creditsSlider.innerHTML = '';
             progressIndicator.innerHTML = '';
-        }
+        };
 
         // Crear slides para cada crédito
         function createCreditSlides() {
-            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
+            const credits = creditsData[currentCategory];
             const isExCategory = currentCategory === 'exCollaborators';
             const isExternalCategory = currentCategory === 'externalCollaborators';
 
@@ -1440,17 +1476,21 @@
                 if (isExCategory) badgeHtml = '<span class="ex-badge">EX</span>';
                 if (isExternalCategory) badgeHtml = '<span class="external-badge">EXTERNO</span>';
 
+                const categoryLabel = isExCategory ? 'Ex-Colaborador' : (isExternalCategory ? 'Colaborador Externo' : 'Colaborador');
+                const tooltipText = `${categoryLabel} - Click para más info`;
+                
                 slide.innerHTML = `
-                    <div class="credit-card ${isExCategory ? 'ex-card' : ''} ${isExternalCategory ? 'external-card' : ''}">
+                    <div class="credit-card ${isExCategory ? 'ex-card' : ''} ${isExternalCategory ? 'external-card' : ''}" role="article" aria-label="Tarjeta de ${credit.name}">
+                        <div class="credit-tooltip">${tooltipText}</div>
                         <div class="credit-icon-container ${isExCategory ? 'ex-icon-container' : ''} ${isExternalCategory ? 'external-icon-container' : ''}">
-                            <img src="${credit.icon}" alt="${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} ${isExternalCategory ? 'external-icon' : ''} loading" loading="lazy">
+                            <img src="${credit.icon}" alt="Foto de perfil de ${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} ${isExternalCategory ? 'external-icon' : ''} loading" loading="lazy">
                         </div>
                         <h2 class="credit-name ${isExCategory ? 'ex-name' : ''} ${isExternalCategory ? 'external-name' : ''}">${credit.name}${badgeHtml}</h2>
                         <p class="credit-role ${isExCategory ? 'ex-role' : ''} ${isExternalCategory ? 'external-role' : ''}">${credit.role}</p>
-                        <div class="credit-expand-arrow ${isExCategory ? 'ex-arrow' : ''} ${isExternalCategory ? 'external-arrow' : ''}">▼</div>
-                        <div class="credit-extra-info">
+                        <button class="credit-expand-arrow ${isExCategory ? 'ex-arrow' : ''} ${isExternalCategory ? 'external-arrow' : ''}" aria-label="Expandir información adicional" aria-expanded="false">▼</button>
+                        <div class="credit-extra-info" aria-hidden="true">
                             <div class="credit-extra-content ${isExCategory ? 'ex-content' : ''} ${isExternalCategory ? 'external-content' : ''}">
-                                <p class="credit-extra-text ${isExCategory ? 'ex-text' : ''} ${isExternalCategory ? 'external-text' : ''}">PRÓXIMAMENTE</p>
+                                <p class="credit-extra-text ${isExCategory ? 'ex-text' : ''} ${isExternalCategory ? 'external-text' : ''}">${credit.description || 'PRÓXIMAMENTE'}</p>
                             </div>
                         </div>
                     </div>
@@ -1465,55 +1505,26 @@
                     this.classList.remove('loading');
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI3NSIgY3k9Ijc1IiByPSI3NSIgZmlsbD0iIzBhMmM0MiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIj4lM0Y8L3RleHQ+Cjwvc3ZnPgo=';
                 };
-                
-                if (credit.discordId) {
-                    const methods = [
-                        `https://cdn.discordapp.com/avatars/${credit.discordId}?size=256`,
-                        `https://discordlookup.mesalytic.moe/v1/user/${credit.discordId}`,
-                        credit.icon
-                    ];
-                    
-                    let methodIndex = 0;
-                    const tryNextMethod = () => {
-                        if (methodIndex === 1) {
-                            fetch(methods[methodIndex])
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.avatar && data.avatar.link) {
-                                    loadImageWithFallback(img, data.avatar.link, methods[2]);
-                                } else {
-                                    img.src = methods[2];
-                                }
-                            })
-                            .catch(() => img.src = methods[2]);
-                        } else {
-                            img.src = methods[methodIndex];
-                            img.onerror = () => {
-                                methodIndex++;
-                                if (methodIndex < methods.length) {
-                                    tryNextMethod();
-                                } else {
-                                    img.src = 'icons/abelitogamer.png';
-                                }
-                            };
-                        }
-                    };
-                    tryNextMethod();
-                } else {
-                    img.onerror = function () {
-                        this.classList.remove('loading');
-                        loadImageWithFallback(this, 'icons/abelitogamer.png');
-                    };
-                }
 
-                // Añadir evento de clic a la flecha
+                // Añadir evento de clic a la flecha con accesibilidad
                 const arrow = slide.querySelector('.credit-expand-arrow');
                 const extraInfo = slide.querySelector('.credit-extra-info');
                 arrow.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    arrow.classList.toggle('expanded');
+                    const isExpanded = arrow.classList.toggle('expanded');
                     extraInfo.classList.toggle('expanded');
+                    arrow.setAttribute('aria-expanded', isExpanded);
+                    extraInfo.setAttribute('aria-hidden', !isExpanded);
+                    arrow.setAttribute('aria-label', isExpanded ? 'Contraer información adicional' : 'Expandir información adicional');
                     lightVibration();
+                });
+                
+                // Soporte de teclado para la flecha
+                arrow.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        arrow.click();
+                    }
                 });
 
                 creditsSlider.appendChild(slide);
@@ -1538,28 +1549,39 @@
             updateSlidesPosition();
         }
 
-        // Auto-play functionality
+        // ============================================
+        // AUTOPLAY
+        // ============================================
+        
+        /**
+         * Alterna el modo de reproducción automática
+         */
         function toggleAutoplay() {
+            const states = {
+                active: { text: 'STOP', opacity: '0.7', pressed: 'true', label: 'Desactivar reproducción automática' },
+                inactive: { text: 'AUTO', opacity: '1', pressed: 'false', label: 'Activar reproducción automática' }
+            };
+            
             if (isAutoplayActive) {
                 clearInterval(autoplayInterval);
-                autoplayBtn.textContent = 'AUTO';
-                autoplayBtn.style.opacity = '1';
                 isAutoplayActive = false;
             } else {
-                autoplayInterval = setInterval(() => {
-                    showNextCredit();
-                }, 3000);
-                autoplayBtn.textContent = 'STOP';
-                autoplayBtn.style.opacity = '0.7';
+                autoplayInterval = setInterval(showNextCredit, CONFIG.AUTOPLAY_INTERVAL);
                 isAutoplayActive = true;
             }
+            
+            const state = states[isAutoplayActive ? 'active' : 'inactive'];
+            autoplayBtn.textContent = state.text;
+            autoplayBtn.style.opacity = state.opacity;
+            autoplayBtn.setAttribute('aria-pressed', state.pressed);
+            autoplayBtn.setAttribute('aria-label', state.label);
         }
 
         // Actualizar posición de los slides
         function updateSlidesPosition() {
             const slides = document.querySelectorAll('.credit-slide');
             const dots = document.querySelectorAll('.progress-dot');
-            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
+            const credits = creditsData[currentCategory];
 
             if (credits.length === 0) return;
 
@@ -1593,8 +1615,20 @@
 
             // Actualizar indicadores
             dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentIndex);
+                const isActive = index === currentIndex;
+                dot.classList.toggle('active', isActive);
+                dot.setAttribute('aria-selected', isActive);
+                dot.setAttribute('tabindex', isActive ? '0' : '-1');
             });
+
+            // Anunciar cambio a lectores de pantalla
+            const activeSlide = slides[currentIndex];
+            if (activeSlide) {
+                const creditName = activeSlide.querySelector('.credit-name');
+                if (creditName) {
+                    creditsSlider.setAttribute('aria-label', `Mostrando crédito ${currentIndex + 1} de ${credits.length}: ${creditName.textContent}`);
+                }
+            }
 
             // Actualizar estado de botones
             updateButtonStates();
@@ -1625,33 +1659,27 @@
             updateSlidesPosition();
         }
 
-        // Mostrar crédito anterior
-        function showPrevCredit() {
-            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
+        // ============================================
+        // NAVEGACIÓN DE CRÉDITOS
+        // ============================================
+        
+        /**
+         * Navega entre créditos (anterior/siguiente)
+         * @param {number} direction - Dirección: -1 para anterior, 1 para siguiente
+         */
+        function navigateCredit(direction) {
+            const credits = creditsData[currentCategory];
             if (credits.length <= 1) return;
 
             lightVibration();
-            currentIndex = (currentIndex - 1 + credits.length) % credits.length;
-            updateSlidesPosition();
-        }
-
-        // Mostrar crédito siguiente con optimización para Opera GX
-        function showNextCredit() {
-            const credits = filteredCredits.length > 0 ? filteredCredits : creditsData[currentCategory];
-            if (credits.length <= 1) return;
-
-            lightVibration();
-            currentIndex = (currentIndex + 1) % credits.length;
+            currentIndex = (currentIndex + direction + credits.length) % credits.length;
             
-            if (isOperaGX) {
-                // Delay para evitar sobrecarga en Opera GX
-                setTimeout(() => {
-                    updateSlidesPosition();
-                }, 10);
-            } else {
-                updateSlidesPosition();
-            }
+            const updateFn = () => updateSlidesPosition();
+            isOperaGX ? setTimeout(updateFn, CONFIG.OPERA_GX_DELAY) : updateFn();
         }
+
+        const showPrevCredit = () => navigateCredit(-1);
+        const showNextCredit = () => navigateCredit(1);
 
         // Alternar música
         function toggleMusic() {
@@ -1684,16 +1712,37 @@
             }
         }
 
-        // Event listeners para botones
-        prevBtn.addEventListener('click', showPrevCredit);
-        nextBtn.addEventListener('click', showNextCredit);
-        autoplayBtn.addEventListener('click', toggleAutoplay);
-        audioToggle.addEventListener('click', toggleMusic);
-        
-        // Event listener para búsqueda
-        searchInput.addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            filterCredits();
+        /**
+         * Añade animación de feedback visual a un botón
+         * @param {HTMLElement} button - Botón a animar
+         */
+        const addButtonFeedback = (button) => {
+            button.classList.add('clicked');
+            setTimeout(() => button.classList.remove('clicked'), CONFIG.BUTTON_FEEDBACK_DURATION);
+        };
+
+        // Consolidar event listeners usando delegación de eventos
+        const eventHandlers = {
+            click: {
+                prevButton: showPrevCredit,
+                nextButton: showNextCredit,
+                autoplayBtn: toggleAutoplay,
+                audioToggle: toggleMusic
+            }
+        };
+
+        // Event delegation para botones
+        document.addEventListener('click', (e) => {
+            const handler = eventHandlers.click[e.target.id];
+            if (handler) {
+                addButtonFeedback(e.target);
+                handler();
+            }
+            
+            // Manejar tabs de categoría
+            if (e.target.classList.contains('category-tab')) {
+                changeCategory(e.target.dataset.category);
+            }
         });
         
         // Accesibilidad para audio toggle
@@ -1704,27 +1753,57 @@
             }
         });
 
-        // Event listeners para pestañas
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', () => changeCategory(tab.dataset.category));
-        });
-
-        // Navegación con teclado mejorada
+        // Navegación con teclado mejorada y accesible
         document.addEventListener('keydown', (e) => {
             // Solo procesar si no estamos en un input
             if (e.target.tagName === 'INPUT') return;
             
+            // Navegación en tabs de categoría
+            if (e.target.classList.contains('category-tab')) {
+                const tabs = Array.from(document.querySelectorAll('.category-tab'));
+                const currentIndex = tabs.indexOf(e.target);
+                let nextTab;
+                
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    nextTab = tabs[currentIndex - 1] || tabs[tabs.length - 1];
+                } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    nextTab = tabs[currentIndex + 1] || tabs[0];
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    nextTab = tabs[0];
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    nextTab = tabs[tabs.length - 1];
+                }
+                
+                if (nextTab) {
+                    nextTab.focus();
+                    nextTab.click();
+                }
+                return;
+            }
+            
+            // Navegación global
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 showPrevCredit();
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 showNextCredit();
-            } else if (e.key === ' ') {
+            } else if (e.key === ' ' && e.target.tagName !== 'BUTTON') {
                 e.preventDefault();
                 toggleMusic();
             } else if (e.key === 'Escape') {
                 if (isAutoplayActive) toggleAutoplay();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                const credits = creditsData[currentCategory];
+                goToSlide(credits.length - 1);
             }
         });
 
@@ -1762,41 +1841,47 @@
             }
         }, { passive: true });
 
-        // Lazy loading para móviles
+        // ============================================
+        // LAZY LOADING DE IMÁGENES
+        // ============================================
+        
+        /**
+         * Configura lazy loading para imágenes con IntersectionObserver
+         */
         function setupLazyLoading() {
-            if ('IntersectionObserver' in window && isMobile) {
-                const imageObserver = new IntersectionObserver((entries) => {
+            if (!('IntersectionObserver' in window)) return;
+            
+            if (!imageObserver) {
+                const handleIntersection = (entries) => {
                     entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            if (img.dataset.src) {
-                                img.src = img.dataset.src;
-                                img.removeAttribute('data-src');
-                            }
-                            img.classList.remove('loading');
-                            imageObserver.unobserve(img);
+                        if (!entry.isIntersecting) return;
+                        
+                        const img = entry.target;
+                        const src = img.dataset.src || img.getAttribute('data-src');
+                        if (src) {
+                            img.src = src;
+                            img.removeAttribute('data-src');
                         }
+                        img.classList.remove('loading');
+                        imageObserver.unobserve(img);
                     });
-                }, { rootMargin: '50px' });
+                };
                 
-                document.querySelectorAll('.credit-icon').forEach(img => {
-                    if (img.src && !img.dataset.src) {
-                        img.dataset.src = img.src;
-                        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSI3NSIgcj0iNzUiIGZpbGw9IiMwYTJjNDIiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+JTNGPC90ZXh0Pgo8L3N2Zz4K';
-                        imageObserver.observe(img);
-                    }
+                imageObserver = new IntersectionObserver(handleIntersection, { 
+                    rootMargin: CONFIG.LAZY_LOAD_MARGIN[isMobile ? 'mobile' : 'desktop'],
+                    threshold: 0.01
                 });
             }
+            
+            document.querySelectorAll('.credit-icon[data-src], .credit-icon.loading')
+                .forEach(img => imageObserver.observe(img));
         }
 
-        // Mostrar/ocultar indicador de carga
-        function showLoading() {
-            loadingIndicator.style.display = 'block';
-        }
-        
-        function hideLoading() {
-            loadingIndicator.style.display = 'none';
-        }
+        /**
+         * Control del indicador de carga
+         */
+        const showLoading = () => loadingIndicator.style.display = 'block';
+        const hideLoading = () => loadingIndicator.style.display = 'none';
 
         // Gestión de memoria para Opera GX
         function manageMemory() {
@@ -1807,11 +1892,36 @@
             }
         }
         
+        // Gestión de almacenamiento compatible con Partitioned Cookies
+        const StorageManager = {
+            setItem: (key, value) => {
+                try {
+                    sessionStorage.setItem(key, value);
+                } catch (e) {
+                    console.warn('sessionStorage no disponible:', e);
+                }
+            },
+            getItem: (key) => {
+                try {
+                    return sessionStorage.getItem(key);
+                } catch (e) {
+                    console.warn('sessionStorage no disponible:', e);
+                    return null;
+                }
+            },
+            removeItem: (key) => {
+                try {
+                    sessionStorage.removeItem(key);
+                } catch (e) {
+                    console.warn('sessionStorage no disponible:', e);
+                }
+            }
+        };
+
         // Inicialización optimizada
         function initPage() {
             showLoading();
             adjustLayoutForSmallScreens();
-            filteredCredits = creditsData[currentCategory];
             
             // Crear slides con delay para Opera GX
             if (isOperaGX) {
@@ -1825,22 +1935,37 @@
             }
 
             // Precargar imágenes de forma optimizada
-            if (isMobile || isOperaGX) {
-                // Solo precargar la primera imagen
-                const firstImage = creditsData.collaborators[0];
-                if (firstImage) {
-                    const img = new Image();
-                    img.src = firstImage.icon;
+            const preloadImages = () => {
+                if (isMobile || isOperaGX) {
+                    // Solo precargar imágenes visibles
+                    const firstImage = creditsData.collaborators[0];
+                    if (firstImage) {
+                        const img = new Image();
+                        img.src = firstImage.icon;
+                    }
+                    requestIdleCallback(() => setupLazyLoading(), { timeout: 2000 });
+                } else {
+                    // Precargar en lotes para no bloquear el hilo principal
+                    const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
+                    let index = 0;
+                    const batchSize = 3;
+                    
+                    const loadBatch = () => {
+                        const batch = allCredits.slice(index, index + batchSize);
+                        batch.forEach(credit => {
+                            const img = new Image();
+                            img.src = credit.icon;
+                        });
+                        index += batchSize;
+                        if (index < allCredits.length) {
+                            requestIdleCallback(loadBatch, { timeout: 1000 });
+                        }
+                    };
+                    requestIdleCallback(loadBatch, { timeout: 500 });
                 }
-                setTimeout(setupLazyLoading, isOperaGX ? 200 : 100);
-            } else {
-                // Precargar todas las imágenes solo en navegadores estables
-                const allCredits = [...creditsData.collaborators, ...creditsData.externalCollaborators, ...creditsData.exCollaborators];
-                allCredits.forEach(credit => {
-                    const img = new Image();
-                    img.src = credit.icon;
-                });
-            }
+            };
+            
+            preloadImages();
 
             // Configurar música
             backgroundMusic.volume = 0.7;
@@ -1911,37 +2036,42 @@
             }
         }, { passive: true });
 
-        // Prevenir acciones por defecto en eventos táctiles para mejorar rendimiento
-        document.addEventListener('touchstart', function (e) {
-            if (e.target === creditsSlider || e.target.closest('.credit-card')) {
-                // Prevenir scroll en otros casos
-                if (e.touches.length > 1) {
-                    e.preventDefault(); // Prevenir zoom
+        // Limpiar recursos antes de navegar
+        window.addEventListener('beforeunload', function () {
+            if (autoplayInterval) clearInterval(autoplayInterval);
+            if (backgroundMusic) {
+                backgroundMusic.pause();
+                backgroundMusic.src = '';
+            }
+            if (imageObserver) imageObserver.disconnect();
+        });
+
+        // Consolidar eventos táctiles para mejor rendimiento
+        if (isMobile) {
+            let lastTouchY = 0;
+            
+            document.addEventListener('touchstart', (e) => {
+                lastTouchY = e.touches[0].clientY;
+                
+                // Prevenir zoom con múltiples toques
+                if (e.touches.length > 1 && (e.target === creditsSlider || e.target.closest('.credit-card'))) {
+                    e.preventDefault();
                 }
-            }
-        }, { passive: false });
+            }, { passive: false });
 
-        // Prevenir zoom con doble toque
-        document.addEventListener('dblclick', function (e) {
-            e.preventDefault();
-        }, { passive: false });
-
-        // Prevenir el pull-to-refresh en dispositivos móviles
-        let lastTouchY = 0;
-        document.addEventListener('touchstart', function (e) {
-            lastTouchY = e.touches[0].clientY;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', function (e) {
-            const touchY = e.touches[0].clientY;
-            const touchX = e.touches[0].clientX;
-
-            // Prevenir pull-to-refresh cuando se está en la parte superior de la página
-            if (touchY > lastTouchY && window.scrollY === 0) {
-                e.preventDefault();
-            }
-            lastTouchY = touchY;
-        }, { passive: false });
+            document.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                
+                // Prevenir pull-to-refresh
+                if (touchY > lastTouchY && window.scrollY === 0) {
+                    e.preventDefault();
+                }
+                lastTouchY = touchY;
+            }, { passive: false });
+            
+            // Prevenir zoom con doble toque
+            document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+        }
     </script>
 </body>
 

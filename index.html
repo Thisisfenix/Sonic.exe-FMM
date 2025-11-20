@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SONIC.EXE MENU</title>
+    <title>Menú - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -906,7 +906,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.7.0
+                    <i class="bi bi-stars"></i> Rework v1.7.1
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -1010,12 +1010,58 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.7.0</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.7.1</h5>
                 <button class="close-update" id="closeUpdate"
                     aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <h4><strong>🔥 NOVEDADES v1.7.0 - FREEPLAY MINIREWORK</strong></h4>
+                <h4><strong>🔥 NOVEDADES v1.7.1 - MEJORAS UX/ACCESIBILIDAD Y RENDIMIENTO</strong></h4>
+                <br>
+                <p><strong>📺 EXTRAS.HTML - MEJORAS MULTIMEDIA:</strong></p>
+                <ul>
+                    <li>👆 <strong>Detección de gestos móviles:</strong> Swipe con umbral de velocidad (0.3 mínimo) para navegación fluida.</li>
+                    <li>⚠️ <strong>Manejo de errores:</strong> Timeout de 10 segundos con SVG de error para medios que fallan.</li>
+                    <li>🔊 <strong>Limpieza de audio:</strong> Suspend/resume de AudioContext para liberar memoria cuando no está en uso.</li>
+                    <li>⚡ <strong>Lazy loading:</strong> Carga perezosa de miniaturas con IntersectionObserver.</li>
+                </ul>
+                <br>
+                <p><strong>🎵 SOUNDTEST.HTML - UX/ACCESIBILIDAD:</strong></p>
+                <ul>
+                    <li>♿ <strong>Atributos ARIA:</strong> Agregados a todos los botones para mejor accesibilidad.</li>
+                    <li>👁️ <strong>Indicador visual de código:</strong> Muestra el texto mientras escribes con animación pulse.</li>
+                    <li>📊 <strong>Historial de códigos:</strong> Panel desplegable en lado izquierdo con códigos reproducidos.</li>
+                    <li>⏱️ <strong>Countdown Mania:</strong> Timer visual de 15 minutos en la parte superior.</li>
+                </ul>
+                <br>
+                <p><strong>⚡ SOUNDTEST.HTML - RENDIMIENTO:</strong></p>
+                <ul>
+                    <li>💾 <strong>Precaching de medios:</strong> Carga anticipada de códigos cercanos.</li>
+                    <li>🎬 <strong>Lazy loading de videos:</strong> Preload='metadata' para optimizar carga.</li>
+                    <li>🧹 <strong>Limpieza de memoria:</strong> Cleanup automático al cerrar medios.</li>
+                </ul>
+                <br>
+                <p><strong>📱 SOUNDTEST.HTML - MÓVIL:</strong></p>
+                <ul>
+                    <li>👆 <strong>Gestos swipe:</strong> Cambio de PGM/DA con umbral de velocidad.</li>
+                    <li>📳 <strong>Vibración táctil:</strong> Feedback de 50ms estándar, [50,30,50]ms para play.</li>
+                    <li>⌨️ <strong>Teclado virtual mejorado:</strong> scrollIntoView y gestión de blur.</li>
+                </ul>
+                <br>
+                <p><strong>🐛 SOUNDTEST.HTML - CORRECCIONES:</strong></p>
+                <ul>
+                    <li>✅ <strong>Códigos sin guiones:</strong> Soporte para personnel, hog, mania.</li>
+                    <li>💾 <strong>Persistencia localStorage:</strong> Desbloqueos, Mania status e historial guardados.</li>
+                    <li>⏰ <strong>Timer Mania:</strong> Auto-desbloqueo a 00:00 después de 15 minutos.</li>
+                </ul>
+                <br>
+                <p><strong>📖 STORYMODE.HTML - UX/ACCESIBILIDAD:</strong></p>
+                <ul>
+                    <li>♿ <strong>ARIA labels:</strong> Agregados a navegación y botones de acción.</li>
+                    <li>✨ <strong>Contador mejorado:</strong> Borde más brillante con efecto glow y titleGlow animation.</li>
+                    <li>📳 <strong>Vibración táctil:</strong> Feedback en todas las interacciones (50ms navegación, [50,30,50]ms play).</li>
+                </ul>
+                <br>
+                <h4><strong>🔥 NOVEDADES ANTERIORES v1.7.0 - FREEPLAY MINIREWORK</strong></h4>
                 <br>
                 <p><strong>🎮 FREEPLAY - REDISEÑO COMPLETO:</strong></p>
                 <ul>
@@ -1033,13 +1079,6 @@
                 <ul>
                     <li>👻 <strong>Horrors Unknown:</strong> "Shimmy Terror" vs Asset agregada.</li>
                     <li>⚡ <strong>Executable Mania:</strong> "Aftersh0ck" vs Kn0ckback agregada.</li>
-                </ul>
-                <br>
-                <p><strong>🔮 PRÓXIMAMENTE v1.7.1 - MAJOR UPDATE:</strong></p>
-                <ul>
-                    <li>🎮 <strong>Nuevas secciones completas</strong> de mods populares.</li>
-                    <li>🎨 <strong>Rediseño visual completo</strong> de otras secciones.</li>
-                    <li>⚙️ <strong>Nuevas funcionalidades</strong> y mejoras de rendimiento.</li>
                 </ul>
                 <br>
                 <h4><strong>🔥 NOVEDADES ANTERIORES v1.6.3 mini update 1</strong></h4>

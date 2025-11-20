@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic.exe | Modo Historia</title>
+    <title>Modo Historia - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -45,7 +45,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 15px;
+            padding: 10px;
         }
 
         /* Contenedor principal */
@@ -55,18 +55,18 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         /* Imagen del mod con altura controlada */
         .mod-image-container {
             width: 100%;
             height: 0;
-            padding-bottom: 35%; /* Proporción más compacta */
+            padding-bottom: 30%; /* Proporción más compacta */
             position: relative;
-            border: 3px solid var(--blood-red);
+            border: 2px solid var(--blood-red);
             box-shadow: 0 0 15px var(--blood-red);
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
         }
 
@@ -77,6 +77,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background-color: rgba(0, 0, 0, 0.3);
+            transition: opacity 0.4s ease-in-out;
         }
 
         /* Efecto glitch */
@@ -98,13 +100,14 @@
         /* Panel de información unificado */
         .info-panel {
             background: rgba(0, 0, 0, 0.85);
-            border: 3px solid var(--blood-red);
+            border: 2px solid var(--blood-red);
             box-shadow: 0 0 15px var(--blood-red);
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 6px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
+            transition: all 0.4s ease-in-out;
         }
 
         /* Navegación entre mods */
@@ -114,24 +117,26 @@
             align-items: center;
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid var(--neon-yellow);
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 8px 10px;
+            border-radius: 4px;
         }
 
         .nav-btn {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid var(--neon-yellow);
             color: var(--neon-yellow);
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
             border-radius: 50%;
             cursor: pointer;
             flex-shrink: 0;
+            min-height: 44px;
+            min-width: 44px;
         }
 
         .nav-btn:hover {
@@ -140,16 +145,21 @@
             box-shadow: 0 0 8px var(--neon-yellow);
         }
 
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
         .mod-title {
             color: var(--neon-yellow);
             text-shadow: 1px 1px 0 var(--blood-red);
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-align: center;
             flex-grow: 1;
-            margin: 0 10px;
+            margin: 0 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: opacity 0.3s ease-in-out;
         }
 
         /* Contenedor unificado para personaje y botones */
@@ -157,7 +167,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
         }
 
         /* Sección del personaje */
@@ -165,32 +175,38 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
         .character-label {
             color: var(--sonic-blue);
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             text-shadow: 0 0 4px var(--sonic-blue);
         }
 
         .character-display {
-            width: 120px;
-            height: 120px;
-            border: 3px solid var(--neon-yellow);
-            border-radius: 8px;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--neon-yellow);
+            border-radius: 6px;
             box-shadow: 0 0 15px var(--neon-yellow);
             background-size: cover;
             background-position: center;
             position: relative;
             overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.4s ease-in-out, background-image 0.4s ease-in-out;
+        }
+
+        .character-display.loading {
+            opacity: 0.5;
         }
 
         /* Botones de acción */
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 8px;
             width: 100%;
             flex-wrap: wrap;
         }
@@ -198,16 +214,17 @@
         .action-btn {
             border: 2px solid var(--neon-yellow);
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            padding: 10px 15px;
-            font-size: 0.9rem;
+            padding: 8px 12px;
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
-            min-width: 120px;
+            min-width: 100px;
+            min-height: 44px;
             flex-grow: 1;
         }
 
@@ -218,31 +235,75 @@
         /* Contador de mods */
         .mod-counter {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: rgba(0, 0, 0, 0.8);
             color: var(--neon-yellow);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            border: 1px solid var(--neon-yellow);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            border: 2px solid var(--neon-yellow);
+            box-shadow: 0 0 10px var(--neon-yellow);
+            font-weight: bold;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .mod-title {
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 1px 1px 0 var(--blood-red), 0 0 5px var(--neon-yellow); }
+            50% { text-shadow: 1px 1px 0 var(--blood-red), 0 0 15px var(--neon-yellow); }
+        }
+        
+        /* Transición suave para info-panel */
+        .info-panel {
+            animation: panelEnter 0.5s ease-out;
+        }
+        
+        @keyframes panelEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
 
 
-        /* Animación de entrada */
+        /* Animación de entrada suave */
         .mod-enter {
-            animation: modEnter 0.5s ease-out;
+            animation: modEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes modEnter {
             from {
                 opacity: 0;
-                transform: translateX(30px);
+                transform: scale(0.95) translateX(20px);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: scale(1) translateX(0);
+            }
+        }
+        
+        /* Transición suave para personaje */
+        .character-enter {
+            animation: charEnter 0.5s ease-out;
+        }
+        
+        @keyframes charEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
@@ -257,6 +318,10 @@
             color: white;
             box-shadow: 0 0 15px var(--blood-red);
             transform: translateY(-2px);
+        }
+
+        .play-btn:active {
+            transform: scale(0.95);
         }
 
         .menu-btn {
@@ -313,6 +378,26 @@
         }
 
         /* Media queries para pantallas más grandes */
+        @media (min-width: 500px) {
+            .mod-image-container {
+                padding-bottom: 35%;
+            }
+            
+            .mod-title {
+                font-size: 0.95rem;
+            }
+            
+            .character-display {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .action-btn {
+                font-size: 0.85rem;
+                min-width: 110px;
+            }
+        }
+        
         @media (min-width: 768px) {
             .mod-image-container {
                 padding-bottom: 40%;
@@ -346,12 +431,63 @@
 
         /* Ajustes para pantallas muy pequeñas */
         @media (max-width: 400px) {
+            body {
+                padding: 8px;
+            }
+            
+            .main-container {
+                gap: 6px;
+            }
+            
+            .mod-image-container {
+                padding-bottom: 28%;
+                border: 2px solid var(--blood-red);
+            }
+            
+            .info-panel {
+                padding: 8px;
+                gap: 8px;
+            }
+            
+            .mod-navigation {
+                padding: 6px 8px;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                min-height: 48px;
+                min-width: 48px;
+                font-size: 0.8rem;
+            }
+            
+            .mod-title {
+                font-size: 0.7rem;
+                margin: 0 6px;
+            }
+            
+            .character-display {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .character-label {
+                font-size: 0.6rem;
+            }
+            
             .action-buttons {
-                flex-direction: column;
+                gap: 6px;
             }
             
             .action-btn {
-                width: 100%;
+                padding: 6px 10px;
+                font-size: 0.7rem;
+                min-width: 90px;
+                min-height: 48px;
+            }
+            
+            .action-btn i {
+                margin-right: 4px;
             }
         }
     </style>
@@ -371,15 +507,15 @@
         <div class="info-panel">
             <!-- Navegación entre mods -->
             <div class="mod-navigation">
-                <button id="prevButton" class="nav-btn">
+                <button id="prevButton" class="nav-btn" aria-label="Mod anterior" title="Mod anterior">
                     <i class="bi bi-arrow-left"></i>
                 </button>
                 
                 <div style="display: flex; align-items: center; flex-grow: 1; justify-content: center; overflow: hidden;">
-                    <div id="modTitle" class="mod-title">TOO SLOW</div>
+                    <div id="modTitle" class="mod-title" role="status" aria-live="polite">TOO SLOW</div>
                 </div>
                 
-                <button id="nextButton" class="nav-btn">
+                <button id="nextButton" class="nav-btn" aria-label="Siguiente mod" title="Siguiente mod">
                     <i class="bi bi-arrow-right"></i>
                 </button>
             </div>
@@ -394,10 +530,10 @@
 
                 <!-- Botones de acción -->
                 <div class="action-buttons">
-                    <button id="playButton" class="action-btn play-btn">
+                    <button id="playButton" class="action-btn play-btn" aria-label="Jugar mod actual" title="Jugar">
                         <i class="bi bi-play-fill me-2"></i> JUGAR
                     </button>
-                    <a href="index.html" class="action-btn menu-btn">
+                    <a href="index.html" class="action-btn menu-btn" aria-label="Volver al menú principal" title="Menú">
                         <i class="bi bi-house-door me-2"></i> MENÚ
                     </a>
                 </div>
@@ -447,7 +583,7 @@
                 name: 'TOO SLOW',
                 image: 'images/Too_Slow_Artwork.png',
                 characterGif: 'images/Boyfriend.gif',
-                playUrl: '',
+                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt',
                 description: 'Enfrenta a Sonic.exe en esta batalla épica de ritmo donde la velocidad es clave.'
             },
             {
@@ -455,7 +591,7 @@
                 name: "YOU CAN'T RUN",
                 image: 'images/You-cant-runfp.png',
                 characterGif: 'images/Boyfriend.gif',
-                playUrl: '',
+                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt',
                 description: 'Escapa del terror en esta frenética persecución musical llena de adrenalina.'
             },
             {
@@ -467,14 +603,45 @@
                 description: 'Enfrenta a los tres terrores en esta batalla triple de supervivencia.'
             }
         ];
+        
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
 
-        // Precargar imágenes críticas
+        // Cache de imágenes precargadas
+        const imageCache = new Map();
+        
+        // Precargar imágenes críticas con manejo de errores
         mods.forEach(mod => {
             const img = new Image();
+            img.onerror = () => console.warn('Error cargando imagen: ' + mod.image);
             img.src = mod.image;
+            imageCache.set(mod.id + '-main', img);
             const gif = new Image();
+            gif.onerror = () => console.warn('Error cargando GIF: ' + mod.characterGif);
             gif.src = mod.characterGif;
+            imageCache.set(mod.id + '-char', gif);
         });
+        
+        // Precargar siguiente/anterior mod
+        function precacheAdjacentMods() {
+            const nextIdx = (currentModIndex + 1) % mods.length;
+            const prevIdx = (currentModIndex - 1 + mods.length) % mods.length;
+            
+            [nextIdx, prevIdx].forEach(idx => {
+                const mod = mods[idx];
+                if (!imageCache.has(mod.id + '-main-preload')) {
+                    const img = new Image();
+                    img.src = mod.image;
+                    imageCache.set(mod.id + '-main-preload', img);
+                }
+            });
+        }
 
         // Variables de estado
         let currentModIndex = 0;
@@ -512,17 +679,47 @@
         function updateDisplay() {
             const currentMod = mods[currentModIndex];
             
-            DOM.modImage.classList.add('mod-enter');
-            setTimeout(() => DOM.modImage.classList.remove('mod-enter'), 500);
+            // Fade out
+            DOM.modImage.style.opacity = '0';
+            DOM.characterDisplay.style.opacity = '0';
+            DOM.modTitle.style.opacity = '0';
             
-            DOM.modImage.src = currentMod.image;
-            DOM.modImage.alt = currentMod.name;
-            DOM.characterDisplay.style.backgroundImage = `url('${currentMod.characterGif}')`;
-            DOM.modTitle.textContent = currentMod.name;
-            
-            updateCounter();
-            showGlitchEffect();
-            lightVibration();
+            setTimeout(() => {
+                // Cambiar contenido
+                DOM.modImage.src = currentMod.image;
+                DOM.modImage.alt = currentMod.name;
+                DOM.modImage.onerror = () => {
+                    console.error('Error cargando imagen: ' + currentMod.image);
+                    DOM.modImage.style.opacity = '1';
+                };
+                DOM.modImage.onload = () => {
+                    DOM.modImage.style.opacity = '1';
+                };
+                DOM.modTitle.textContent = currentMod.name;
+                
+                // Lazy load personaje
+                DOM.characterDisplay.classList.add('loading');
+                const charImg = new Image();
+                charImg.onload = () => {
+                    DOM.characterDisplay.style.backgroundImage = 'url(' + currentMod.characterGif + ')';
+                    DOM.characterDisplay.classList.remove('loading');
+                    DOM.characterDisplay.style.opacity = '1';
+                };
+                charImg.onerror = () => {
+                    console.error('Error cargando GIF: ' + currentMod.characterGif);
+                    DOM.characterDisplay.classList.remove('loading');
+                    DOM.characterDisplay.style.opacity = '1';
+                };
+                charImg.src = currentMod.characterGif;
+                
+                // Fade in titulo
+                DOM.modTitle.style.opacity = '1';
+                
+                updateCounter();
+                showGlitchEffect();
+                lightVibration();
+                precacheAdjacentMods();
+            }, 150);
             
             // Reproducir sonido de scroll
             const scrollSound = document.getElementById('scrollSound');
@@ -537,9 +734,11 @@
             if (!counter) {
                 counter = document.createElement('div');
                 counter.className = 'mod-counter';
+                counter.setAttribute('aria-label', `Mod ${currentModIndex + 1} de ${mods.length}`);
                 document.querySelector('.mod-image-container').appendChild(counter);
             }
             counter.textContent = `${currentModIndex + 1}/${mods.length}`;
+            counter.setAttribute('aria-label', `Mod ${currentModIndex + 1} de ${mods.length}`);
         }
 
         function updateDescription() {
@@ -549,6 +748,11 @@
         // Función para manejar el botón Jugar
         function playMod() {
             const currentMod = mods[currentModIndex];
+            
+            if (!isValidUrl(currentMod.playUrl)) {
+                alert('Este mod no está disponible en este momento.');
+                return;
+            }
             
             // Reproducir sonido de confirmación
             const confirmSound = document.getElementById('confirmSound');
@@ -574,30 +778,37 @@
             const touchEndX = e.changedTouches[0].screenX;
             const diff = touchStartX - touchEndX;
             
-            if (Math.abs(diff) > 50) {
+            if (Math.abs(diff) > 30) {
                 if (diff > 0) {
                     currentModIndex = (currentModIndex + 1) % mods.length;
                 } else {
                     currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
                 }
+                if (navigator.vibrate) navigator.vibrate(50);
                 updateDisplay();
+                precacheAdjacentMods();
             }
         }, { passive: true });
 
         // Event Listeners
         DOM.prevButton.addEventListener('click', () => {
             currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+            if (navigator.vibrate) navigator.vibrate(50);
             updateDisplay();
             enableAudio();
+            precacheAdjacentMods();
         });
 
         DOM.nextButton.addEventListener('click', () => {
             currentModIndex = (currentModIndex + 1) % mods.length;
+            if (navigator.vibrate) navigator.vibrate(50);
             updateDisplay();
             enableAudio();
+            precacheAdjacentMods();
         });
 
         DOM.playButton.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
             enableAudio();
             playMod();
         });
@@ -606,13 +817,18 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
                 currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
+                if (navigator.vibrate) navigator.vibrate(50);
                 updateDisplay();
+                precacheAdjacentMods();
             }
             if (e.key === 'ArrowRight') {
                 currentModIndex = (currentModIndex + 1) % mods.length;
+                if (navigator.vibrate) navigator.vibrate(50);
                 updateDisplay();
+                precacheAdjacentMods();
             }
             if (e.key === 'Enter') {
+                if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
                 playMod();
             }
         });

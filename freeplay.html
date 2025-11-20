@@ -28,6 +28,22 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: url('BG/backgroundlool.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            will-change: transform;
+            transform: translateY(var(--parallax-y, 0));
         }
 
         .container-fluid.text-center {
@@ -52,6 +68,12 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 15px;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .mods-grid.hiding {
+            opacity: 0;
+            transform: scale(0.95);
         }
 
         .mod-card {
@@ -109,6 +131,86 @@
             border-radius: 12px;
             font-size: 0.7rem;
             font-weight: bold;
+            z-index: 3;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            z-index: 3;
+            animation: pulse 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.fade-out {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .status-badge.new {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .status-badge.updated {
+            background: #ffaa00;
+            color: #000;
+            box-shadow: 0 0 10px #ffaa00;
+        }
+
+        .status-badge.popular {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.6);
+            pointer-events: none;
+            animation: ripple 0.6s ease-out;
+        }
+
+        .btn-clicked {
+            animation: shake 0.3s ease;
+        }
+
+        .card-clicked {
+            animation: cardPulse 0.4s ease;
+        }
+
+        @keyframes cardPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.95); }
         }
 
         .mod-card {
@@ -211,15 +313,16 @@
             cursor: not-allowed;
             pointer-events: none;
         }
-
-
-
-
-
         .split-view {
             display: flex;
             gap: 20px;
             align-items: flex-start;
+            animation: fadeInSplit 0.5s ease;
+        }
+
+        @keyframes fadeInSplit {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .selected-mod-card {
@@ -424,9 +527,6 @@
             transform: none;
             box-shadow: none;
         }
-
-
-
         @keyframes glitch {
             0% {
                 text-shadow: 2px 0 red, -2px 0 cyan;
@@ -511,6 +611,7 @@
             body {
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
+                user-select: none;
             }
         }
 
@@ -799,7 +900,7 @@
         <h1 class="title display-4 mb-4 glitch-effect">Freeplay</h1>
 
         <div class="back-button-container">
-            <a href="index.html" class="back-button btn btn-lg px-4">Volver al menu</a>
+            <a href="index.html" class="back-button btn btn-lg px-4" id="backBtn">Volver al menu</a>
         </div>
 
         <div class="mods-grid" id="modsGrid">
@@ -821,6 +922,7 @@
                         "id": "sonicExeImg",
                         "image": "images/LogoV2.png",
                         "title": "SONIC.EXE",
+                        "status": "updated",
                         "levels": [
                             {
                                 "name": "Milk",
@@ -849,6 +951,7 @@
                         "id": "sonicRerunImg",
                         "image": "images/rerun_logo.png",
                         "title": "SONIC.EXE RERUN",
+                        "status": "new",
                         "levels": [
                             {
                                 "name": "Redolled",
@@ -910,6 +1013,7 @@
                         "id": "illegalInstructionImg",
                         "image": "images/NewIIUSTLogo.png",
                         "title": "ILLEGAL INSTRUCTION",
+                        "status": "popular",
                         "levels": [
                             {
                                 "name": "breakout",
@@ -1029,6 +1133,7 @@
                         "id": "fanonHorrorsImg",
                         "image": "images/VOBGameIcon.png",
                         "title": "HORRORS UNKNOWN",
+                        "status": "popular",
                         "levels": [
                             {
                                 "name": "Scratchin",
@@ -1150,6 +1255,7 @@
                         "id": "executableManiaImg",
                         "image": "images/EXEmaniaNewlogo.png",
                         "title": "EXECUTABLE MANIA",
+                        "status": "new",
                         "levels": [
                             {
                                 "name": "Aftersh0ck",
@@ -1223,6 +1329,70 @@
             const levelCatalogContainer = document.getElementById('levelCatalogContainer');
             let selectedModIndex = -1;
 
+            // Sistema de badges vistos
+            function getViewedBadges() {
+                const viewed = localStorage.getItem('viewedBadges');
+                return viewed ? JSON.parse(viewed) : [];
+            }
+
+            function markBadgeAsViewed(modId) {
+                const viewed = getViewedBadges();
+                if (!viewed.includes(modId)) {
+                    viewed.push(modId);
+                    localStorage.setItem('viewedBadges', JSON.stringify(viewed));
+                }
+            }
+
+            function isBadgeViewed(modId) {
+                return getViewedBadges().includes(modId);
+            }
+
+            // Sistema de caché de imágenes
+            const imageCache = new Map();
+
+            function preloadImage(src) {
+                return new Promise((resolve, reject) => {
+                    if (imageCache.has(src)) {
+                        resolve(imageCache.get(src));
+                        return;
+                    }
+                    const img = new Image();
+                    img.onload = () => {
+                        imageCache.set(src, img.src);
+                        resolve(img.src);
+                    };
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            }
+
+            // Intersection Observer para lazy loading
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        const src = img.dataset.src;
+                        if (src) {
+                            preloadImage(src).then(cachedSrc => {
+                                img.src = cachedSrc;
+                                img.classList.add('loaded');
+                                const loader = img.parentElement.querySelector('.image-loader');
+                                if (loader) loader.style.display = 'none';
+                            }).catch(() => {
+                                img.src = 'images/placeholder.png';
+                                img.classList.add('loaded');
+                                const loader = img.parentElement.querySelector('.image-loader');
+                                if (loader) loader.style.display = 'none';
+                            });
+                        }
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px',
+                threshold: 0.01
+            });
+
             function hideLoadingSpinner() {
                 setTimeout(() => {
                     loadingSpinner.style.display = 'none';
@@ -1277,15 +1447,24 @@
                     layoutBtn.onclick = (e) => {
                         e.preventDefault();
                         if (layoutUrl && layoutUrl.trim() !== '') {
-                            // Feedback visual
+                            // Efecto ripple
+                            createRipple(e, layoutBtn);
+                            
+                            // Animación de click
+                            layoutBtn.classList.add('btn-clicked');
+                            
+                            // Feedback visual mejorado
                             layoutBtn.style.background = '#00ff00';
                             layoutBtn.style.color = '#000';
+                            layoutBtn.style.transform = 'scale(0.95)';
                             layoutBtn.textContent = '✓ ABRIENDO...';
                             
                             setTimeout(() => {
                                 layoutBtn.innerHTML = `${icon} ${layoutType.toUpperCase()}`;
                                 layoutBtn.style.background = '';
                                 layoutBtn.style.color = '';
+                                layoutBtn.style.transform = '';
+                                layoutBtn.classList.remove('btn-clicked');
                             }, 1000);
                             
                             // Copiar URL y abrir
@@ -1316,7 +1495,6 @@
 
             function createModCards() {
                 modsGrid.innerHTML = '';
-                
                 modsData.mods.forEach((mod, index) => {
                     const card = document.createElement('div');
                     card.className = 'mod-card';
@@ -1328,7 +1506,11 @@
                         Object.values(level.layouts).some(url => url && url.trim() !== '')
                     ).length;
                     
+                    const showBadge = mod.status && !isBadgeViewed(mod.id);
+                    const statusBadge = showBadge ? `<div class="status-badge ${mod.status}">${mod.status.toUpperCase()}</div>` : '';
+                    
                     card.innerHTML = `
+                        ${statusBadge}
                         <div class="mod-card-badge">${availableSongs} songs</div>
                         <div class="mod-card-image-container">
                             <div class="image-loader"></div>
@@ -1340,7 +1522,22 @@
                         </div>
                     `;
                     
-                    card.addEventListener('click', () => {
+                    card.addEventListener('click', (e) => {
+                        // Efecto ripple
+                        createRipple(e, card);
+                        
+                        // Animación de click
+                        card.classList.add('card-clicked');
+                        setTimeout(() => card.classList.remove('card-clicked'), 400);
+                        
+                        // Ocultar badge si existe
+                        const badge = card.querySelector('.status-badge');
+                        if (badge && !isBadgeViewed(mod.id)) {
+                            badge.classList.add('fade-out');
+                            markBadgeAsViewed(mod.id);
+                            setTimeout(() => badge.remove(), 300);
+                        }
+                        
                         // Remover clase active de todas las tarjetas
                         document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
                         // Agregar clase active a la tarjeta seleccionada
@@ -1351,39 +1548,27 @@
                     
                     modsGrid.appendChild(card);
                     
-                    // Lazy loading de imagen
-                    setTimeout(() => {
-                        loadCardImage(card, mod.image);
-                    }, index * 100);
+                    // Observar imagen para lazy loading
+                    const img = card.querySelector('.mod-card-image');
+                    if (img) imageObserver.observe(img);
                 });
-            }
-            
-            function loadCardImage(card, imageSrc) {
-                const img = card.querySelector('.mod-card-image');
-                const loader = card.querySelector('.image-loader');
                 
-                const tempImg = new Image();
-                tempImg.onload = () => {
-                    img.src = imageSrc;
-                    img.classList.add('loaded');
-                    loader.style.display = 'none';
-                };
-                tempImg.onerror = () => {
-                    img.src = 'images/placeholder.png';
-                    img.classList.add('loaded');
-                    loader.style.display = 'none';
-                };
-                tempImg.src = imageSrc;
+                // Precargar primeras 3 imágenes inmediatamente
+                modsData.mods.slice(0, 3).forEach(mod => {
+                    if (mod.image) preloadImage(mod.image);
+                });
             }
             
             function showModLevels(index) {
                 const selectedCard = document.querySelector(`[data-index="${index}"]`);
                 
                 if (selectedCard) {
-                    // Crear vista dividida
-                    const splitContainer = document.createElement('div');
-                    splitContainer.className = 'split-view';
-                    splitContainer.id = 'splitView';
+                    modsGrid.classList.add('hiding');
+                    
+                    setTimeout(() => {
+                        const splitContainer = document.createElement('div');
+                        splitContainer.className = 'split-view';
+                        splitContainer.id = 'splitView';
                     
                     // Crear tarjeta seleccionada desde cero
                     const cardClone = document.createElement('div');
@@ -1395,10 +1580,16 @@
                         Object.values(level.layouts).some(url => url && url.trim() !== '')
                     ).length;
                     
+                    const statusBadge = mod.status ? `<div class="status-badge ${mod.status}">${mod.status.toUpperCase()}</div>` : '';
+                    
+                    // Usar imagen cacheada si está disponible
+                    const imgSrc = imageCache.has(mod.image) ? imageCache.get(mod.image) : mod.image;
+                    
                     cardClone.innerHTML = `
+                        ${statusBadge}
                         <div class="mod-card-badge">${availableSongs} songs</div>
                         <div class="mod-card-image-container">
-                            <img class="mod-card-image loaded" src="${mod.image}" alt="${mod.title}">
+                            <img class="mod-card-image loaded" src="${imgSrc}" alt="${mod.title}">
                         </div>
                         <div class="mod-card-content">
                             <div class="mod-card-title">${mod.title}</div>
@@ -1415,7 +1606,14 @@
                     closeBtn.className = 'close-levels-btn';
                     const isMobile = window.innerWidth <= 768;
                     closeBtn.textContent = isMobile ? '✕ CERRAR' : '✕ CLOSE LEVELS';
-                    closeBtn.onclick = closeLevels;
+                    closeBtn.onclick = (e) => {
+                        createRipple(e, closeBtn);
+                        closeBtn.classList.add('btn-clicked');
+                        setTimeout(() => {
+                            closeBtn.classList.remove('btn-clicked');
+                            closeLevels();
+                        }, 200);
+                    };
                     
                     // Agregar contenido del catálogo directamente
                     levelsSection.appendChild(closeBtn);
@@ -1458,21 +1656,21 @@
                         levelsSection.appendChild(row);
                     }
                     
-                    splitContainer.appendChild(cardClone);
-                    splitContainer.appendChild(levelsSection);
+                        splitContainer.appendChild(cardClone);
+                        splitContainer.appendChild(levelsSection);
+                        
+                        modsGrid.style.display = 'none';
+                        modsGrid.classList.remove('hiding');
+                        levelCatalogContainer.innerHTML = '';
+                        levelCatalogContainer.appendChild(splitContainer);
+                        levelCatalogContainer.style.display = 'block';
                     
-                    // Ocultar grid original y mostrar vista dividida
-                    modsGrid.style.display = 'none';
-                    levelCatalogContainer.innerHTML = '';
-                    levelCatalogContainer.appendChild(splitContainer);
-                    levelCatalogContainer.style.display = 'block';
-                    
-                    // Scroll suave al contenido en móviles
-                    if (isMobile) {
-                        setTimeout(() => {
-                            splitContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 100);
-                    }
+                        if (isMobile) {
+                            setTimeout(() => {
+                                splitContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 100);
+                        }
+                    }, 400);
                 }
                 
                 // Actualizar URL con parámetros
@@ -1483,9 +1681,14 @@
             }
             
             function closeLevels() {
-                // Restaurar vista de grid
-                modsGrid.style.display = 'grid';
+                // Limpiar contenedor de niveles primero
                 levelCatalogContainer.innerHTML = '';
+                levelCatalogContainer.style.display = 'none';
+                
+                // Restaurar vista de grid con forzado de reflow
+                modsGrid.style.display = 'none';
+                modsGrid.offsetHeight; // Forzar reflow
+                modsGrid.style.display = 'grid';
                 
                 // Limpiar selección
                 document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
@@ -1521,11 +1724,6 @@
                     }
                 }
             }
-
-
-
-
-
             // Navegación por teclado (PC) y botón atrás (móvil)
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && selectedModIndex !== -1) {
@@ -1536,7 +1734,8 @@
 
             // Manejar botón atrás del navegador en móviles
             window.addEventListener('popstate', function(e) {
-                if (selectedModIndex !== -1) {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (!urlParams.has('mod') && selectedModIndex !== -1) {
                     closeLevels();
                 }
             });
@@ -1556,9 +1755,6 @@
                     }
                 }, 500);
             });
-
-
-
             // Efecto de glitch aleatorio
             setInterval(() => {
                 document.querySelectorAll('.glitch-effect').forEach(el => {
@@ -1641,8 +1837,26 @@
                 // Mejorar rendimiento en dispositivos táctiles
                 document.addEventListener('touchstart', function() {}, { passive: true });
             }
-
-
+            // Función para crear efecto ripple
+            function createRipple(event, element) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                
+                const rect = element.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = event.clientX - rect.left - size / 2;
+                const y = event.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                element.style.position = 'relative';
+                element.style.overflow = 'hidden';
+                element.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            }
 
             // Detección de capacidades del dispositivo
             function detectDeviceCapabilities() {
@@ -1664,8 +1878,33 @@
                     }
                 }
             }
+            // Feedback visual para botón de volver
+            const backBtn = document.getElementById('backBtn');
+            if (backBtn) {
+                backBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    createRipple(e, backBtn);
+                    backBtn.classList.add('btn-clicked');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 300);
+                });
+            }
 
-
+            // Efecto parallax
+            let ticking = false;
+            document.documentElement.style.setProperty('--parallax-y', '0px');
+            
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const scrolled = window.pageYOffset;
+                        document.documentElement.style.setProperty('--parallax-y', scrolled * 0.3 + 'px');
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
 
             // Inicialización
             detectDeviceCapabilities();

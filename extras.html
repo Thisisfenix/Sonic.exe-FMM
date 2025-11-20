@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SONIC.EXE MEDIA PLAYER</title>
+    <title>Extras - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <style>
         :root {
@@ -834,6 +834,46 @@
                 height: 10px;
             }
         }
+
+        /* Indicador de carga */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .loading-indicator.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 0, 0, 0.2);
+            border-top: 4px solid var(--blood-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .loading-text {
+            color: var(--blood-red);
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -851,65 +891,69 @@
 
         <div class="video-container">
             <div class="media-wrapper">
-                <video id="mediaElement" preload="auto" playsinline webkit-playsinline></video>
-                <div class="audio-visualizer" id="audioVisualizer"></div>
+                <video id="mediaElement" preload="auto" playsinline webkit-playsinline aria-label="Reproductor de medios"></video>
+                <div class="audio-visualizer" id="audioVisualizer" aria-hidden="true"></div>
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">CARGANDO...</div>
+                </div>
             </div>
 
-            <div class="playlist-overlay" id="playlistOverlay">
+            <div class="playlist-overlay" id="playlistOverlay" role="dialog" aria-label="Lista de reproducción">
                 <div class="playlist-header">
                     <div>CREEPYPASTA VIDEOS</div>
-                    <div class="playlist-close" id="playlistClose">✕</div>
+                    <div class="playlist-close" id="playlistClose" role="button" aria-label="Cerrar lista de reproducción" tabindex="0">✕</div>
                 </div>
-                <div id="playlistItemsContainer"></div>
+                <div id="playlistItemsContainer" role="list"></div>
             </div>
 
             <!-- Solo Favoritos -->
-            <div class="favorites-panel" id="favoritesPanel">
+            <div class="favorites-panel" id="favoritesPanel" role="dialog" aria-label="Panel de favoritos">
                 <div class="favorites-header">FAVORITOS</div>
-                <div id="favoritesContent"></div>
+                <div id="favoritesContent" role="list"></div>
             </div>
         </div>
 
         <div class="controls-container">
             <div class="progress-container">
-                <div class="time-display" id="currentTime">0:00</div>
-                <div class="progress-bar" id="progressBar">
+                <div class="time-display" id="currentTime" aria-label="Tiempo actual">0:00</div>
+                <div class="progress-bar" id="progressBar" role="slider" aria-label="Barra de progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
                     <div class="progress-filled" id="progressFilled"></div>
                 </div>
-                <div class="time-display" id="durationTime">0:00</div>
+                <div class="time-display" id="durationTime" aria-label="Duración total">0:00</div>
             </div>
 
             <div class="main-controls">
                 <div class="left-controls">
-                    <button class="control-btn" id="volumeBtn">
+                    <button class="control-btn" id="volumeBtn" aria-label="Silenciar/Activar sonido">
                         <i class="fas fa-volume-up"></i>
                     </button>
-                    <div class="volume-slider" id="volumeSlider">
+                    <div class="volume-slider" id="volumeSlider" role="slider" aria-label="Control de volumen" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" tabindex="0">
                         <div class="volume-filled" id="volumeFilled"></div>
                     </div>
-                    <button class="control-btn" id="speedBtn" title="Velocidad">1x</button>
+                    <button class="control-btn" id="speedBtn" title="Velocidad" aria-label="Cambiar velocidad de reproducción">1x</button>
                 </div>
 
                 <div class="center-controls">
-                    <button class="control-btn" id="seek-10" title="-10s">⏪</button>
-                    <button class="control-btn" id="prevBtn">
+                    <button class="control-btn" id="seek-10" title="-10s" aria-label="Retroceder 10 segundos">⏪</button>
+                    <button class="control-btn" id="prevBtn" aria-label="Medio anterior">
                         <i class="fas fa-step-backward"></i>
                     </button>
-                    <button class="control-btn play-btn" id="playBtn">
+                    <button class="control-btn play-btn" id="playBtn" aria-label="Reproducir/Pausar">
                         <i class="fas fa-play"></i>
                     </button>
-                    <button class="control-btn" id="nextBtn">
+                    <button class="control-btn" id="nextBtn" aria-label="Siguiente medio">
                         <i class="fas fa-step-forward"></i>
                     </button>
-                    <button class="control-btn" id="seek+10" title="+10s">⏩</button>
+                    <button class="control-btn" id="seek+10" title="+10s" aria-label="Avanzar 10 segundos">⏩</button>
                 </div>
 
                 <div class="right-controls">
-                    <button class="control-btn" id="loopBtn" title="Bucle">🔁</button>
-                    <button class="control-btn" id="shuffleBtn" title="Aleatorio">🔀</button>
-                    <button class="control-btn" id="favoriteBtn" title="Favorito">♥</button>
-                    <button class="control-btn" id="favoritesListBtn" title="Ver Favoritos">📜</button>
-                    <button class="control-btn" id="playlistBtn">
+                    <button class="control-btn" id="loopBtn" title="Bucle" aria-label="Activar/Desactivar bucle" aria-pressed="false">🔁</button>
+                    <button class="control-btn" id="shuffleBtn" title="Aleatorio" aria-label="Activar/Desactivar aleatorio" aria-pressed="false">🔀</button>
+                    <button class="control-btn" id="favoriteBtn" title="Favorito" aria-label="Agregar/Quitar de favoritos" aria-pressed="false">♥</button>
+                    <button class="control-btn" id="favoritesListBtn" title="Ver Favoritos" aria-label="Mostrar lista de favoritos">📜</button>
+                    <button class="control-btn" id="playlistBtn" aria-label="Mostrar/Ocultar lista de reproducción">
                         <i class="fas fa-list"></i>
                     </button>
                 </div>
@@ -1061,6 +1105,7 @@
             let audioContext, analyser, dataArray;
             let favorites = JSON.parse(localStorage.getItem('sonicExeFavorites') || '[]');
             let history = JSON.parse(localStorage.getItem('sonicExeHistory') || '[]');
+            let visualizerAnimationId = null;
 
             // Elementos DOM adicionales
             const theaterBtn = document.getElementById('theaterBtn');
@@ -1073,6 +1118,7 @@
             const favoritesListBtn = document.getElementById('favoritesListBtn');
             const favoritesPanel = document.getElementById('favoritesPanel');
             const favoritesContent = document.getElementById('favoritesContent');
+            const loadingIndicator = document.getElementById('loadingIndicator');
             const seekBtns = {
                 '-10': document.getElementById('seek-10'),
                 '+10': document.getElementById('seek+10')
@@ -1085,8 +1131,12 @@
                 mediaItems.forEach((item, index) => {
                     const playlistItem = document.createElement('div');
                     playlistItem.className = 'playlist-item';
+                    playlistItem.setAttribute('role', 'listitem');
+                    playlistItem.setAttribute('tabindex', '0');
+                    playlistItem.setAttribute('aria-label', `${item.type === 'video' ? 'Video' : 'Imagen'}: ${item.title}`);
                     if (index === currentMediaIndex) {
                         playlistItem.classList.add('active');
+                        playlistItem.setAttribute('aria-current', 'true');
                     }
                     playlistItem.dataset.index = index;
 
@@ -1096,6 +1146,7 @@
                         placeholder.innerHTML = '📹';
                         placeholder.dataset.src = item.src;
                         placeholder.dataset.type = 'video';
+                        placeholder.setAttribute('aria-hidden', 'true');
 
                         playlistItem.appendChild(placeholder);
                         playlistItem.innerHTML += `<span>${item.title}</span>`;
@@ -1105,6 +1156,7 @@
                         placeholder.innerHTML = '🖼️';
                         placeholder.dataset.src = item.src;
                         placeholder.dataset.type = 'image';
+                        placeholder.setAttribute('aria-hidden', 'true');
 
                         playlistItem.appendChild(placeholder);
                         playlistItem.innerHTML += `<span>${item.title}</span>`;
@@ -1113,6 +1165,14 @@
                     playlistItem.addEventListener('click', () => {
                         loadMedia(index);
                         playlistOverlay.classList.remove('show');
+                    });
+
+                    playlistItem.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            loadMedia(index);
+                            playlistOverlay.classList.remove('show');
+                        }
                     });
 
                     playlistItemsContainer.appendChild(playlistItem);
@@ -1168,23 +1228,34 @@
                     const video = document.createElement('video');
                     video.src = src;
                     video.muted = true;
-                    video.style.width = '50px';
-                    video.style.height = '30px';
-                    video.style.objectFit = 'cover';
-                    video.style.border = '1px solid var(--blood-red)';
-                    video.style.borderRadius = '4px';
-                    video.style.filter = 'drop-shadow(0 0 3px var(--blood-red))';
-                    video.style.transition = 'all 0.3s ease';
+                    video.preload = 'metadata';
                     video.currentTime = 0.5;
 
                     video.addEventListener('loadeddata', () => {
-                        placeholder.replaceWith(video);
-                    });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 50;
+                        canvas.height = 30;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, 50, 30);
+
+                        const img = document.createElement('img');
+                        img.src = canvas.toDataURL();
+                        img.style.width = '50px';
+                        img.style.height = '30px';
+                        img.style.objectFit = 'cover';
+                        img.style.border = '1px solid var(--blood-red)';
+                        img.style.borderRadius = '4px';
+                        img.style.filter = 'drop-shadow(0 0 3px var(--blood-red))';
+                        img.style.transition = 'all 0.3s ease';
+
+                        placeholder.replaceWith(img);
+                        video.src = '';
+                    }, { once: true });
 
                     video.addEventListener('error', () => {
                         placeholder.innerHTML = '❌';
                         placeholder.style.color = '#ff6b6b';
-                    });
+                    }, { once: true });
                 } else {
                     const img = document.createElement('img');
                     img.style.width = '50px';
@@ -1221,7 +1292,13 @@
 
             // Actualizar visualizador
             function updateVisualizer() {
-                if (!analyser || !dataArray || audioVisualizer.style.display === 'none') return;
+                if (!analyser || !dataArray || audioVisualizer.style.display === 'none' || !isPlaying) {
+                    if (visualizerAnimationId) {
+                        cancelAnimationFrame(visualizerAnimationId);
+                        visualizerAnimationId = null;
+                    }
+                    return;
+                }
                 try {
                     analyser.getByteFrequencyData(dataArray);
                     const bars = audioVisualizer.querySelectorAll('.audio-bar');
@@ -1229,6 +1306,7 @@
                         const height = (dataArray[i] / 255) * 50;
                         bar.style.height = Math.max(2, height) + 'px';
                     });
+                    visualizerAnimationId = requestAnimationFrame(updateVisualizer);
                 } catch (error) {
                     // Silenciar errores del visualizador
                 }
@@ -1288,12 +1366,14 @@
                 isLooping = !isLooping;
                 mediaElement.loop = isLooping;
                 loopBtn.classList.toggle('active', isLooping);
+                loopBtn.setAttribute('aria-pressed', isLooping);
             }
 
             // Aleatorio
             function toggleShuffle() {
                 isShuffling = !isShuffling;
                 shuffleBtn.classList.toggle('active', isShuffling);
+                shuffleBtn.setAttribute('aria-pressed', isShuffling);
             }
 
             // Favoritos
@@ -1303,9 +1383,11 @@
                 if (index === -1) {
                     favorites.push(currentMedia);
                     favoriteBtn.classList.add('active');
+                    favoriteBtn.setAttribute('aria-pressed', 'true');
                 } else {
                     favorites.splice(index, 1);
                     favoriteBtn.classList.remove('active');
+                    favoriteBtn.setAttribute('aria-pressed', 'false');
                 }
                 localStorage.setItem('sonicExeFavorites', JSON.stringify(favorites));
             }
@@ -1359,40 +1441,71 @@
                     currentMediaIndex = index;
                     const media = mediaItems[index];
 
-                    mediaElement.pause();
-                    mediaElement.src = '';
-                    mediaElement.load();
+                    isPlaying = false;
+                    if (!mediaElement.paused) {
+                        mediaElement.pause();
+                    }
                     mediaElement.removeAttribute('poster');
 
-                    // Efecto de carga
+                    // Mostrar indicador de carga
+                    loadingIndicator.classList.add('show');
                     mediaElement.style.filter = 'blur(2px) brightness(0.5)';
 
+                    const hideLoading = () => {
+                        loadingIndicator.classList.remove('show');
+                        mediaElement.style.filter = 'none';
+                    };
+
+                    const showError = () => {
+                        hideLoading();
+                        mediaElement.poster = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" fill="%23ff0000" font-size="20"%3E%E2%9D%8C Error%3C/text%3E%3C/svg%3E';
+                    };
+
                     if (media.type === 'video') {
-                        mediaElement.src = media.src;
                         mediaElement.style.display = 'block';
                         mediaElement.controls = false;
                         mediaElement.preload = 'metadata';
 
-                        mediaElement.addEventListener('loadeddata', () => {
-                            mediaElement.style.filter = 'none';
-                        }, { once: true });
+                        const timeout = setTimeout(showError, 10000);
 
+                        const onLoad = () => {
+                            clearTimeout(timeout);
+                            hideLoading();
+                        };
+
+                        const onError = (e) => {
+                            if (mediaElement.src && mediaElement.src !== window.location.href) {
+                                clearTimeout(timeout);
+                                showError();
+                            }
+                        };
+
+                        mediaElement.addEventListener('loadedmetadata', onLoad, { once: true });
+                        mediaElement.addEventListener('error', onError, { once: true });
+                        mediaElement.src = media.src;
                         mediaElement.load();
                     } else {
                         const tempImg = new Image();
+                        const timeout = setTimeout(() => {
+                            tempImg.src = '';
+                            showError();
+                        }, 10000);
+
                         tempImg.onload = () => {
+                            clearTimeout(timeout);
+                            hideLoading();
                             mediaElement.poster = media.src;
-                            mediaElement.style.filter = 'none';
                         };
+
                         tempImg.onerror = () => {
-                            mediaElement.poster = 'media/default-thumb.jpg';
-                            mediaElement.style.filter = 'none';
+                            clearTimeout(timeout);
+                            showError();
                         };
+
                         tempImg.src = media.src;
                         mediaElement.style.display = 'block';
                     }
 
-                    isPlaying = false;
                     updatePlayButton();
                     updatePlaylistActiveItem(index);
                     addToHistory(media);
@@ -1400,6 +1513,7 @@
                     // Actualizar favorito
                     const isFavorite = favorites.some(f => f.src === media.src);
                     favoriteBtn.classList.toggle('active', isFavorite);
+                    favoriteBtn.setAttribute('aria-pressed', isFavorite);
 
                     // Configurar audio context para visualizador
                     if (media.type === 'video') {
@@ -1411,7 +1525,13 @@
             // Actualizar ítem activo en playlist
             function updatePlaylistActiveItem(index) {
                 document.querySelectorAll('.playlist-item').forEach((item, i) => {
-                    item.classList.toggle('active', i === index);
+                    const isActive = i === index;
+                    item.classList.toggle('active', isActive);
+                    if (isActive) {
+                        item.setAttribute('aria-current', 'true');
+                    } else {
+                        item.removeAttribute('aria-current');
+                    }
                 });
 
                 // Precargar thumbnails cercanos cuando cambia el elemento activo
@@ -1425,15 +1545,26 @@
                 const media = mediaItems[currentMediaIndex];
 
                 if (media.type === 'video') {
-                    mediaElement.play()
-                        .then(() => {
-                            isPlaying = true;
-                            updatePlayButton();
-                        })
-                        .catch(error => {
-                            console.error("Error al reproducir:", error);
-                            mediaElement.controls = true;
-                        });
+                    if (audioContext && audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                    const playPromise = mediaElement.play();
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                isPlaying = true;
+                                updatePlayButton();
+                                if (analyser && !visualizerAnimationId) {
+                                    updateVisualizer();
+                                }
+                            })
+                            .catch(error => {
+                                if (error.name !== 'AbortError') {
+                                    console.error("Error al reproducir:", error);
+                                    mediaElement.controls = true;
+                                }
+                            });
+                    }
                 } else {
                     isPlaying = false;
                     updatePlayButton();
@@ -1447,6 +1578,13 @@
                 }
                 isPlaying = false;
                 updatePlayButton();
+                if (visualizerAnimationId) {
+                    cancelAnimationFrame(visualizerAnimationId);
+                    visualizerAnimationId = null;
+                }
+                if (audioContext && audioContext.state === 'running') {
+                    audioContext.suspend();
+                }
             }
 
             // Alternar play/pause
@@ -1492,11 +1630,12 @@
                     progressFilled.style.width = `${percent}%`;
                     currentTimeDisplay.textContent = formatTime(mediaElement.currentTime);
                     durationTimeDisplay.textContent = formatTime(mediaElement.duration);
-                    updateVisualizer();
+                    progressBar.setAttribute('aria-valuenow', Math.round(percent));
                 } else {
                     progressFilled.style.width = '0%';
                     currentTimeDisplay.textContent = '0:00';
                     durationTimeDisplay.textContent = media.type === 'video' ? '0:00' : '--:--';
+                    progressBar.setAttribute('aria-valuenow', '0');
                 }
             }
 
@@ -1504,13 +1643,17 @@
             function updateVolume() {
                 const percent = mediaElement.volume * 100;
                 volumeFilled.style.width = `${percent}%`;
+                volumeSlider.setAttribute('aria-valuenow', Math.round(percent));
 
                 if (mediaElement.volume === 0) {
                     volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    volumeBtn.setAttribute('aria-label', 'Activar sonido');
                 } else if (mediaElement.volume < 0.5) {
                     volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+                    volumeBtn.setAttribute('aria-label', 'Silenciar');
                 } else {
                     volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    volumeBtn.setAttribute('aria-label', 'Silenciar');
                 }
             }
 
@@ -1520,9 +1663,11 @@
 
                 if (media.type === 'video') {
                     playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+                    playBtn.setAttribute('aria-label', isPlaying ? 'Pausar' : 'Reproducir');
                     playBtn.style.opacity = '1';
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playBtn.setAttribute('aria-label', 'Reproducir');
                     playBtn.style.opacity = '0.5';
                 }
             }
@@ -1772,10 +1917,12 @@
             // Gestos táctiles para cambiar video
             let touchStartX = 0;
             let touchStartY = 0;
+            let touchStartTime = 0;
 
             mediaElement.addEventListener('touchstart', (e) => {
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
             });
 
             mediaElement.addEventListener('touchend', (e) => {
@@ -1783,8 +1930,10 @@
                 const touchEndY = e.changedTouches[0].clientY;
                 const deltaX = touchEndX - touchStartX;
                 const deltaY = touchEndY - touchStartY;
+                const deltaTime = Date.now() - touchStartTime;
+                const velocity = Math.abs(deltaX) / deltaTime;
 
-                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50 && velocity > 0.3) {
                     if (deltaX > 0) {
                         playPrev();
                     } else {

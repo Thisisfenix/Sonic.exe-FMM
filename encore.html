@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic.exe | Encore</title>
+    <title>Encore - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -203,6 +203,32 @@
             transform: scale(0.95);
         }
 
+        .action-btn.clicked {
+            animation: btnPulse 0.3s ease;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #555, #777);
+        }
+
+        .mod-image-container.transitioning {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-btn:focus,
+        .action-btn:focus {
+            outline: 2px solid var(--encore-magenta);
+            outline-offset: 2px;
+        }
+
         /* Contador de mods */
         .mod-counter {
             position: absolute;
@@ -232,8 +258,6 @@
                 transform: translateX(0);
             }
         }
-
-
 
         /* Loading Overlay */
         .loading-overlay {
@@ -265,6 +289,16 @@
         @keyframes pulse {
             0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
         }
 
         /* Efectos especiales */
@@ -386,29 +420,29 @@
         </div>
 
         <!-- Panel de información unificado -->
-        <div class="info-panel">
+        <div class="info-panel" role="region" aria-label="Información del mod">
             <!-- Navegación entre mods -->
-            <div class="mod-navigation">
-                <button id="prevButton" class="nav-btn">
-                    <i class="bi bi-arrow-left"></i>
+            <div class="mod-navigation" role="group" aria-label="Navegación de mods">
+                <button id="prevButton" class="nav-btn" aria-label="Mod anterior" title="Anterior">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 </button>
                 
                 <div style="display: flex; align-items: center; flex-grow: 1; justify-content: center; overflow: hidden;">
-                    <div id="modTitle" class="mod-title">TOO SLOW</div>
+                    <div id="modTitle" class="mod-title" role="heading" aria-level="2" aria-live="polite">TOO SLOW</div>
                 </div>
                 
-                <button id="nextButton" class="nav-btn">
-                    <i class="bi bi-arrow-right"></i>
+                <button id="nextButton" class="nav-btn" aria-label="Siguiente mod" title="Siguiente">
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </button>
             </div>
 
             <!-- Botones de acción debajo del título -->
-            <div class="action-buttons">
-                <button id="downloadButton" class="action-btn">
-                    <i class="bi bi-download me-2"></i> DESCARGAR
+            <div class="action-buttons" role="group" aria-label="Acciones del mod">
+                <button id="downloadButton" class="action-btn" aria-label="Descargar mod actual" title="Descargar">
+                    <i class="bi bi-download me-2" aria-hidden="true"></i> DESCARGAR
                 </button>
-                <a href="index.html" class="action-btn">
-                    <i class="bi bi-house-door me-2"></i> MENÚ
+                <a href="index.html" class="action-btn" aria-label="Volver al menú principal" title="Menú">
+                    <i class="bi bi-house-door me-2" aria-hidden="true"></i> MENÚ
                 </a>
             </div>
         </div>
@@ -503,25 +537,49 @@
         // Función para actualizar la interfaz
         function updateDisplay() {
             const currentMod = mods[currentModIndex];
+            const imageContainer = document.querySelector('.mod-image-container');
             
-            DOM.modImage.classList.add('mod-enter');
-            setTimeout(() => DOM.modImage.classList.remove('mod-enter'), 500);
+            // Transición suave
+            imageContainer.classList.add('transitioning');
             
-            DOM.modImage.src = currentMod.image;
-            DOM.modImage.alt = currentMod.name;
-            DOM.modTitle.textContent = currentMod.name;
-            
-            updateCounter();
-            showGlitchEffect();
-            lightVibration();
-            
-            // Reproducir sonido de scroll
-            const scrollSound = document.getElementById('scrollSound');
-            if (scrollSound) {
-                scrollSound.currentTime = 0;
-                scrollSound.play().catch(() => {});
-            }
+            setTimeout(() => {
+                DOM.modImage.classList.add('mod-enter');
+                setTimeout(() => DOM.modImage.classList.remove('mod-enter'), 500);
+                
+                // Actualizar contenido
+                DOM.modImage.src = currentMod.image;
+                DOM.modImage.alt = `Imagen de ${currentMod.name}`;
+                DOM.modTitle.textContent = currentMod.name;
+                
+                // Actualizar estado del botón de descarga
+                if (currentMod.downloadUrl === '#') {
+                    DOM.downloadButton.disabled = true;
+                    DOM.downloadButton.title = 'Descarga no disponible';
+                } else {
+                    DOM.downloadButton.disabled = false;
+                    DOM.downloadButton.title = 'Descargar';
+                }
+                
+                updateCounter();
+                showGlitchEffect();
+                lightVibration();
+                
+                imageContainer.classList.remove('transitioning');
+                
+                // Reproducir sonido de scroll
+                const scrollSound = document.getElementById('scrollSound');
+                if (scrollSound) {
+                    scrollSound.currentTime = 0;
+                    scrollSound.play().catch(() => {});
+                }
+            }, 150);
         }
+        
+        // Manejo de errores en carga de imágenes
+        DOM.modImage.onerror = function() {
+            console.warn('Error al cargar imagen:', this.src);
+            this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23000" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" fill="%2300ffff" font-family="monospace" font-size="20"%3EIMAGEN NO DISPONIBLE%3C/text%3E%3C/svg%3E';
+        };
 
         function updateCounter() {
             let counter = document.querySelector('.mod-counter');
@@ -537,6 +595,12 @@
         function downloadMod() {
             const currentMod = mods[currentModIndex];
             
+            // Validar si hay URL de descarga
+            if (currentMod.downloadUrl === '#') {
+                showNotification('DESCARGA NO DISPONIBLE', 'error');
+                return;
+            }
+            
             // Reproducir sonido de confirmación
             const confirmSound = document.getElementById('confirmSound');
             if (confirmSound) {
@@ -544,14 +608,42 @@
                 confirmSound.play().catch(() => {});
             }
             
+            // Feedback visual
+            DOM.downloadButton.classList.add('clicked');
+            setTimeout(() => DOM.downloadButton.classList.remove('clicked'), 300);
+            
             DOM.loadingOverlay.style.display = 'flex';
             
             setTimeout(() => {
-                if (currentMod.downloadUrl !== '#') {
-                    window.open(currentMod.downloadUrl, '_blank');
-                }
+                window.open(currentMod.downloadUrl, '_blank');
                 DOM.loadingOverlay.style.display = 'none';
             }, 1000);
+        }
+        
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'error' ? 'rgba(255, 0, 0, 0.9)' : 'rgba(0, 255, 255, 0.9)'};
+                color: white;
+                padding: 15px 30px;
+                border-radius: 8px;
+                font-size: 0.8rem;
+                z-index: 10000;
+                box-shadow: 0 0 20px ${type === 'error' ? '#ff0000' : '#00ffff'};
+                animation: slideDown 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 2000);
         }
 
         // Swipe gestures para móvil
@@ -616,21 +708,34 @@
             }
         }
 
+        // Precargar imágenes de mods
+        function preloadImages() {
+            mods.forEach((mod, index) => {
+                if (index === 0) return; // Primera imagen ya se carga
+                const img = new Image();
+                img.src = mod.image;
+            });
+        }
+        
         // Inicialización
         updateDisplay();
         startAutoGlitch();
+        preloadImages();
         
         // Iniciar audio después de cualquier interacción del usuario
+        let audioEnabled = false;
         const enableAudio = () => {
+            if (audioEnabled) return;
+            audioEnabled = true;
             initAudio();
-            document.removeEventListener('click', enableAudio);
-            document.removeEventListener('touchstart', enableAudio);
-            document.removeEventListener('keydown', enableAudio);
+            ['click', 'touchstart', 'keydown'].forEach(event => {
+                document.removeEventListener(event, enableAudio);
+            });
         };
         
-        document.addEventListener('click', enableAudio);
-        document.addEventListener('touchstart', enableAudio);
-        document.addEventListener('keydown', enableAudio);
+        ['click', 'touchstart', 'keydown'].forEach(event => {
+            document.addEventListener(event, enableAudio);
+        });
         
         if (isMobile) {
             DOM.modImage.loading = 'lazy';

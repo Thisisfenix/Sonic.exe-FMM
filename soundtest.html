@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOUND TEST</title>
+    <title>Sound Test - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <style>
         @font-face {
@@ -101,6 +101,17 @@
 
         .control-btn:active {
             background: #999900;
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-pulse {
+            animation: pulse 0.3s ease;
         }
 
         .separator {
@@ -131,6 +142,7 @@
 
         .action-btn:active {
             background: #999900;
+            transform: scale(0.95);
         }
 
         .song-info {
@@ -147,6 +159,141 @@
 
         .song-info.show {
             opacity: 1;
+        }
+
+        .code-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffff00;
+            padding: 8px 15px;
+            font-size: 14px;
+            color: #ffff00;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .code-indicator.show {
+            opacity: 1;
+        }
+
+        .history-panel {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            border-right: 2px solid #ffff00;
+            transition: left 0.3s;
+            overflow-y: auto;
+            z-index: 10000;
+        }
+
+        .history-panel.show {
+            left: 0;
+        }
+
+        .history-header {
+            padding: 15px;
+            background: #ffff00;
+            color: #000;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+        }
+
+        .history-close {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-close:hover {
+            opacity: 0.7;
+        }
+
+        .history-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #333;
+            color: #ffff00;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: #222;
+        }
+
+        .history-toggle {
+            position: fixed;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffff00;
+            color: #ffff00;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 9999;
+        }
+
+        @media (max-width: 520px) {
+            .history-panel {
+                width: 200px;
+            }
+
+            .history-item {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+
+            .history-toggle {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+        }
+
+        .mania-timer {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffff00;
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #ffff00;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 9998;
+        }
+
+        .mania-timer.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 520px) {
+            .mania-timer {
+                font-size: 10px;
+                padding: 6px 12px;
+            }
         }
 
         .virtual-keyboard {
@@ -473,6 +620,18 @@
 </head>
 
 <body>
+    <button class="history-toggle" id="history-toggle">📜</button>
+    
+    <div class="history-panel" id="history-panel">
+        <div class="history-header">
+            HISTORIAL
+            <button class="history-close" id="history-close">✕</button>
+        </div>
+        <div id="history-content"></div>
+    </div>
+    
+    <div class="mania-timer" id="mania-timer">MANIA: 00:00</div>
+    
     <div class="soundtest-screen">
         <div class="title">SOUND TEST</div>
 
@@ -507,6 +666,8 @@
         <div class="song-info" id="song-info">
             <div id="song-name"></div>
         </div>
+        
+        <div class="code-indicator" id="code-indicator"></div>
         
         <div class="music-prompt" id="music-prompt" style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #ffff00; opacity: 0.7; cursor: pointer;">
             Click para reproducir música
@@ -588,6 +749,9 @@
     <script>
         let pgmValue = 0;
         let daValue = 0;
+        const mediaCache = {};
+        let currentMediaElement = null;
+        let codeHistory = JSON.parse(localStorage.getItem('sonicExeCodeHistory') || '[]');
 
         // Datos de las canciones de Sonic.EXE
         const songs = {
@@ -622,6 +786,8 @@
         const daDisplay = document.getElementById('da-display');
         const songInfo = document.getElementById('song-info');
         const songName = document.getElementById('song-name');
+        const codeIndicator = document.getElementById('code-indicator');
+        const maniaTimer = document.getElementById('mania-timer');
 
         // Sonidos
         const selectSound = document.getElementById('select-sound');
@@ -638,6 +804,33 @@
         function updateDisplay() {
             pgmDisplay.textContent = pgmValue.toString().padStart(2, '0');
             daDisplay.textContent = daValue.toString().padStart(2, '0');
+            preloadNearbyMedia();
+        }
+
+        // Precargar medios cercanos
+        function preloadNearbyMedia() {
+            const currentCode = `${pgmValue.toString().padStart(2, '0')}-${daValue.toString().padStart(2, '0')}`;
+            const nearbyCodes = [
+                currentCode,
+                `${((pgmValue + 1) % 100).toString().padStart(2, '0')}-${daValue.toString().padStart(2, '0')}`,
+                `${pgmValue.toString().padStart(2, '0')}-${((daValue + 1) % 100).toString().padStart(2, '0')}`
+            ];
+
+            nearbyCodes.forEach(code => {
+                const media = mediaContent[code];
+                if (media && !mediaCache[code]) {
+                    if (media.type === 'video') {
+                        const video = document.createElement('video');
+                        video.preload = 'metadata';
+                        video.src = media.src;
+                        mediaCache[code] = video;
+                    } else if (media.type === 'image') {
+                        const img = new Image();
+                        img.src = media.src;
+                        mediaCache[code] = img;
+                    }
+                }
+            });
         }
 
         // Cambiar valores
@@ -646,6 +839,8 @@
             pgmValue = (pgmValue + delta + 100) % 100;
             updateDisplay();
             songInfo.classList.remove('show');
+            document.getElementById(delta > 0 ? 'pgm-up' : 'pgm-down').classList.add('btn-pulse');
+            setTimeout(() => document.getElementById(delta > 0 ? 'pgm-up' : 'pgm-down').classList.remove('btn-pulse'), 300);
         }
 
         function changeDA(delta) {
@@ -653,14 +848,77 @@
             daValue = (daValue + delta + 100) % 100;
             updateDisplay();
             songInfo.classList.remove('show');
+            document.getElementById(delta > 0 ? 'da-up' : 'da-down').classList.add('btn-pulse');
+            setTimeout(() => document.getElementById(delta > 0 ? 'da-up' : 'da-down').classList.remove('btn-pulse'), 300);
         }
 
         // Variables para desbloqueos especiales
         let secretText = '';
-        let cartridgesCollected = 0;
-        let startTime = Date.now();
-        let maniaUnlocked = false;
-        let horizonToggle = false; // Para alternar entre My Horizon y Our Horizon
+        const savedProgress = JSON.parse(localStorage.getItem('sonicExeProgress') || '{}');
+        let cartridgesCollected = savedProgress.cartridges || 0;
+        let startTime = savedProgress.startTime || Date.now();
+        let maniaUnlocked = savedProgress.maniaUnlocked || false;
+        let horizonToggle = false;
+
+        // Actualizar contador de Mania
+        function updateManiaTimer() {
+            const elapsed = Date.now() - startTime;
+            if (elapsed >= 900000 && !maniaUnlocked) {
+                maniaUnlocked = true;
+                saveProgress();
+                maniaTimer.classList.remove('show');
+                return;
+            }
+            if (maniaUnlocked) {
+                maniaTimer.classList.remove('show');
+                return;
+            }
+            const remaining = Math.max(0, 900000 - elapsed);
+            const minutes = Math.floor(remaining / 60000);
+            const seconds = Math.floor((remaining % 60000) / 1000);
+            maniaTimer.textContent = `MANIA: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            maniaTimer.classList.add('show');
+        }
+
+        // Guardar progreso
+        function saveProgress() {
+            localStorage.setItem('sonicExeProgress', JSON.stringify({
+                cartridges: cartridgesCollected,
+                startTime: startTime,
+                maniaUnlocked: maniaUnlocked
+            }));
+        }
+
+        // Agregar al historial
+        function addToHistory(code, name) {
+            const entry = { code, name, time: Date.now() };
+            codeHistory = codeHistory.filter(h => h.code !== code);
+            codeHistory.unshift(entry);
+            codeHistory = codeHistory.slice(0, 20);
+            localStorage.setItem('sonicExeCodeHistory', JSON.stringify(codeHistory));
+            updateHistoryPanel();
+        }
+
+        // Actualizar panel de historial
+        function updateHistoryPanel() {
+            const content = document.getElementById('history-content');
+            content.innerHTML = '';
+            codeHistory.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.textContent = `${entry.code} - ${entry.name}`;
+                item.onclick = () => {
+                    if (entry.code.includes('-')) {
+                        const [pgm, da] = entry.code.split('-');
+                        pgmValue = parseInt(pgm);
+                        daValue = parseInt(da);
+                        updateDisplay();
+                    }
+                    document.getElementById('history-panel').classList.remove('show');
+                };
+                content.appendChild(item);
+            });
+        }
 
         // Reproducir canción
         function playSong() {
@@ -724,6 +982,8 @@
             // Verificar contenido multimedia especial por código numérico
             if (!song && mediaContent[key]) {
                 playSound(confirmSound);
+                if (navigator.vibrate) navigator.vibrate(200);
+                addToHistory(key, `Media: ${mediaContent[key].type}`);
                 showMediaContent(key);
                 return;
             }
@@ -731,13 +991,18 @@
             // Verificar contenido multimedia especial por teclado
             if (!song && keyboardMediaContent[secretText.toLowerCase()]) {
                 playSound(confirmSound);
-                showKeyboardMediaContent(secretText.toLowerCase());
+                if (navigator.vibrate) navigator.vibrate(200);
+                const mediaName = secretText.toLowerCase();
+                addToHistory(mediaName, `Keyboard: ${mediaName}`);
+                showKeyboardMediaContent(mediaName);
                 secretText = '';
                 return;
             }
 
             if (song) {
                 playSound(confirmSound);
+                if (navigator.vibrate) navigator.vibrate(200);
+                addToHistory(key, song.name);
 
                 // Si la canción tiene múltiples modos, mostrar selector
                 if (song.horizontal && song.vertical) {
@@ -768,14 +1033,30 @@
             }
         }
 
+        // Agregar atributos ARIA
+        document.getElementById('pgm-up').setAttribute('aria-label', 'Aumentar PGM');
+        document.getElementById('pgm-down').setAttribute('aria-label', 'Disminuir PGM');
+        document.getElementById('da-up').setAttribute('aria-label', 'Aumentar DA');
+        document.getElementById('da-down').setAttribute('aria-label', 'Disminuir DA');
+        document.getElementById('play-btn').setAttribute('aria-label', 'Reproducir código');
+        document.getElementById('keyboard-btn').setAttribute('aria-label', 'Abrir teclado virtual');
+        document.getElementById('back-btn').setAttribute('aria-label', 'Volver al menú');
+        pgmDisplay.setAttribute('aria-live', 'polite');
+        daDisplay.setAttribute('aria-live', 'polite');
+
         // Event listeners
         document.getElementById('pgm-up').addEventListener('click', () => changePGM(1));
         document.getElementById('pgm-down').addEventListener('click', () => changePGM(-1));
         document.getElementById('da-up').addEventListener('click', () => changeDA(1));
         document.getElementById('da-down').addEventListener('click', () => changeDA(-1));
-        document.getElementById('play-btn').addEventListener('click', playSong);
+        document.getElementById('play-btn').addEventListener('click', () => {
+            document.getElementById('play-btn').classList.add('btn-pulse');
+            setTimeout(() => document.getElementById('play-btn').classList.remove('btn-pulse'), 300);
+            playSong();
+        });
         document.getElementById('back-btn').addEventListener('click', () => {
             playSound(selectSound);
+            document.getElementById('back-btn').classList.add('btn-pulse');
             setTimeout(() => window.location.href = 'index.html', 200);
         });
 
@@ -785,14 +1066,21 @@
 
         document.getElementById('keyboard-btn').addEventListener('click', () => {
             playSound(selectSound);
+            document.getElementById('keyboard-btn').classList.add('btn-pulse');
+            setTimeout(() => document.getElementById('keyboard-btn').classList.remove('btn-pulse'), 300);
             virtualKeyboard.classList.add('show');
-            textInput.focus();
+            setTimeout(() => {
+                textInput.focus();
+                textInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         });
 
         document.getElementById('close-keyboard').addEventListener('click', () => {
             playSound(selectSound);
             virtualKeyboard.classList.remove('show');
             secretText = textInput.value;
+            textInput.blur();
+            window.scrollTo(0, 0);
         });
 
         document.getElementById('clear-btn').addEventListener('click', () => {
@@ -804,6 +1092,8 @@
             playSound(selectSound);
             virtualKeyboard.classList.remove('show');
             secretText = textInput.value;
+            textInput.blur();
+            window.scrollTo(0, 0);
             playSong();
         });
 
@@ -821,7 +1111,17 @@
         // Actualizar secretText cuando se escribe en el input
         textInput.addEventListener('input', () => {
             secretText = textInput.value;
+            showCodeIndicator();
         });
+
+        // Mostrar indicador de código
+        function showCodeIndicator() {
+            if (secretText) {
+                codeIndicator.textContent = `CODE: ${secretText.toUpperCase()}`;
+                codeIndicator.classList.add('show');
+                setTimeout(() => codeIndicator.classList.remove('show'), 2000);
+            }
+        }
 
         // Controles de teclado
         document.addEventListener('keydown', (e) => {
@@ -832,6 +1132,7 @@
                 if (secretText.length > 20) {
                     secretText = secretText.slice(-20);
                 }
+                showCodeIndicator();
                 return;
             }
 
@@ -1056,11 +1357,13 @@
 
             horizontalBtn.onclick = () => {
                 document.body.removeChild(container);
+                addToHistory(`${song.name} (H)`, song.name);
                 openSongLink(song.horizontal, song.name);
             };
 
             verticalBtn.onclick = () => {
                 document.body.removeChild(container);
+                addToHistory(`${song.name} (V)`, song.name);
                 openSongLink(song.vertical, song.name);
             };
 
@@ -1195,9 +1498,17 @@
                     justify-content: center;
                 `;
 
-                // Función para restaurar música
+                // Función para restaurar música y liberar memoria
                 const restoreMusic = () => {
                     soundtestMusic.volume = 0.5;
+                    if (currentMediaElement) {
+                        if (currentMediaElement.tagName === 'VIDEO') {
+                            currentMediaElement.pause();
+                            currentMediaElement.src = '';
+                            currentMediaElement.load();
+                        }
+                        currentMediaElement = null;
+                    }
                     document.body.removeChild(container);
                 };
 
@@ -1219,9 +1530,14 @@
                     height: auto;
                     object-fit: contain;
                 `;
+                video.preload = 'metadata';
                 video.src = media.src;
-                video.autoplay = true;
                 video.muted = false;
+                currentMediaElement = video;
+                
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(() => {});
+                }, { once: true });
                 
                 video.onended = () => {
                     restoreMusic();
@@ -1236,6 +1552,7 @@
                     object-fit: contain;
                 `;
                 img.src = media.src;
+                currentMediaElement = img;
                 
                 // Botón back para Android
                 const backBtn = document.createElement('button');
@@ -1277,6 +1594,7 @@
         // Sistema de cartuchos para Hog
         function collectCartridge() {
             cartridgesCollected++;
+            saveProgress();
             playSound(confirmSound);
             songName.textContent = `CARTUCHO ENCONTRADO! (${cartridgesCollected}/5)`;
             songInfo.classList.add('show');
@@ -1301,8 +1619,9 @@
         // Timer para Mania (15 minutos)
         setInterval(() => {
             const timeElapsed = Date.now() - startTime;
-            if (timeElapsed >= 900000 && !maniaUnlocked) { // 15 minutos
+            if (timeElapsed >= 900000 && !maniaUnlocked) {
                 maniaUnlocked = true;
+                saveProgress();
                 playSound(confirmSound);
                 songName.textContent = 'CARTA DE SEGA: TAILS ASIGNADO COMO COMPAÑERO';
                 songInfo.classList.add('show');
@@ -1311,7 +1630,7 @@
                     setTimeout(() => songInfo.classList.remove('show'), 3000);
                 }, 3000);
             }
-        }, 60000); // Verificar cada minuto
+        }, 1000);
 
         // Música de fondo del soundtest
         const soundtestMusic = document.getElementById('soundtest-music');
@@ -1334,8 +1653,64 @@
         document.addEventListener('keydown', startMusic, { once: true });
         musicPrompt.addEventListener('click', startMusic);
 
+        // Toggle historial
+        document.getElementById('history-toggle').addEventListener('click', () => {
+            document.getElementById('history-panel').classList.toggle('show');
+        });
+
+        document.getElementById('history-close').addEventListener('click', () => {
+            document.getElementById('history-panel').classList.remove('show');
+        });
+
+        // Gestos de swipe para móviles
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartTime = Date.now();
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const deltaTime = Date.now() - touchStartTime;
+            const velocity = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / deltaTime;
+
+            if (velocity > 0.5 && Math.abs(deltaX) > 50) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX > 0) {
+                        changeDA(1);
+                    } else {
+                        changeDA(-1);
+                    }
+                }
+            } else if (velocity > 0.5 && Math.abs(deltaY) > 50) {
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    if (deltaY > 0) {
+                        changePGM(-1);
+                    } else {
+                        changePGM(1);
+                    }
+                }
+            }
+        });
+
         // Inicialización
         updateDisplay();
+        preloadNearbyMedia();
+        updateHistoryPanel();
+        setInterval(updateManiaTimer, 1000);
+        updateManiaTimer();
+        if (cartridgesCollected >= 5) {
+            songName.textContent = 'HOG YA DESBLOQUEADO';
+            songInfo.classList.add('show');
+            setTimeout(() => songInfo.classList.remove('show'), 2000);
+        }
     </script>
 </body>
 
