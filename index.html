@@ -894,6 +894,78 @@
         .special-effect-active {
             pointer-events: none;
         }
+
+        /* Copos de nieve navideños */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            font-size: 1em;
+            animation: snowfall linear infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px));
+                opacity: 0;
+            }
+        }
+
+        /* Luces navideñas */
+        .christmas-lights {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            z-index: 2;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+            will-change: opacity;
+        }
+
+        .light.red { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        .light.green { background: #00ff00; box-shadow: 0 0 10px #00ff00; }
+        .light.blue { background: #0000ff; box-shadow: 0 0 10px #0000ff; }
+        .light.yellow { background: #ffff00; box-shadow: 0 0 10px #ffff00; }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* Optimizaciones móviles para efectos navideños */
+        @media (max-width: 600px) {
+            .snowflake {
+                font-size: 0.8em;
+            }
+            
+            .christmas-lights {
+                height: 15px;
+            }
+            
+            .light {
+                width: 8px;
+                height: 8px;
+                box-shadow: 0 0 5px currentColor;
+            }
+        }
     </style>
 </head>
 
@@ -906,7 +978,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.7.1
+                    <i class="bi bi-stars"></i> Rework v1.7.2
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -1010,12 +1082,26 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.7.1</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.7.2</h5>
                 <button class="close-update" id="closeUpdate"
                     aria-label="Cerrar panel de actualización">&times;</button>
             </div>
             <div class="update-content">
-                <h4><strong>🔥 NOVEDADES v1.7.1 - MEJORAS UX/ACCESIBILIDAD Y RENDIMIENTO</strong></h4>
+                <h4><strong>🎄 NOVEDADES v1.7.2 - ESPECIAL NAVIDEÑO</strong></h4>
+                <br>
+                <p><strong>🎅 EFECTOS NAVIDEÑOS TEMPORALES:</strong></p>
+                <ul>
+                    <li>❄️ <strong>Copos de nieve:</strong> Animación de copos cayendo solo durante diciembre.</li>
+                    <li>🎵 <strong>Música navideña:</strong> Canción especial christmas.ogg que se activa automáticamente en diciembre.</li>
+                    <li>💡 <strong>Luces navideñas:</strong> Luces de colores parpadeantes en la parte superior de la página.</li>
+                    <li>🎄 <strong>Botón temático:</strong> El botón de versión cambia a "🎄 Rework v1.7.2 - Navidad" en diciembre.</li>
+                    <li>📰 <strong>Noticia especial:</strong> Se agrega automáticamente una noticia "🎄 ¡Llegó la Navidad!" al carrusel.</li>
+                    <li>🧹 <strong>Limpieza automática:</strong> Todos los efectos desaparecen automáticamente después de diciembre.</li>
+                    <li>📁 <strong>Código modular:</strong> Efectos navideños organizados en archivo separado js/christmas.js.</li>
+                    <li>📱 <strong>Optimización móvil:</strong> Copos y luces adaptados para dispositivos móviles.</li>
+                </ul>
+                <br>
+                <h4><strong>🔥 NOVEDADES ANTERIORES v1.7.1 - MEJORAS UX/ACCESIBILIDAD Y RENDIMIENTO</strong></h4>
                 <br>
                 <p><strong>📺 EXTRAS.HTML - MEJORAS MULTIMEDIA:</strong></p>
                 <ul>
@@ -1239,12 +1325,15 @@
     </div>
 
     <audio id="bgMusic" src="./sounds/MainMenuMusic.ogg" loop></audio>
+    <audio id="christmasMusic" src="./sounds/christmas.ogg" loop></audio>
     <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio>
     <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio>
     <audio id="crashSound" src="./sounds/crash.mp3"></audio>
 
     <!-- Scripts -->
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/christmas.js"></script>
     <script>
         // Variable global para controlar el estado de navegación
         window.isNavigating = false;
@@ -1525,6 +1614,10 @@
                 });
             }
 
+            // Inicializar efectos navideños
+            window.christmasEffects = new ChristmasEffects();
+            window.christmasEffects.init();
+
             // Inicializar animaciones
             function initAnimations() {
                 sonicLogo.classList.add('show');
@@ -1540,14 +1633,21 @@
                     newsSection.classList.add('show');
                     // Inicializar el carrusel después de que se muestre la sección de noticias
                     initNewsCarousel();
+                    // Los efectos navideños ya se inicializaron arriba
                 }, menuButtons.length * 120 + 500);
             }
             initAnimations();
 
             // Reproducir música de fondo - Versión mejorada
             function playBgMusic() {
-                if (bgMusic) {
-                    bgMusic.volume = 0.4;
+                // Verificar si es diciembre
+                const currentDate = new Date();
+                const isDecember = currentDate.getMonth() === 11; // Diciembre es el mes 11 (0-indexado)
+                
+                const activeMusic = window.christmasEffects.getActiveMusic() || bgMusic;
+                
+                if (activeMusic) {
+                    activeMusic.volume = 0.4;
 
                     if (window.audioPlayAttempted) return;
                     window.audioPlayAttempted = true;
@@ -1569,7 +1669,7 @@
                         audioBtn.style.fontSize = '12px';
 
                         audioBtn.addEventListener('click', () => {
-                            bgMusic.play().catch(e => {
+                            activeMusic.play().catch(e => {
                                 console.log('No se pudo reproducir el audio:', e);
                             });
                             document.body.removeChild(audioBtn);
@@ -1579,7 +1679,7 @@
                     };
 
                     // Intentar reproducir automáticamente
-                    const playPromise = bgMusic.play();
+                    const playPromise = activeMusic.play();
 
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
@@ -1617,17 +1717,23 @@
             window.specialEffectActive = true;
 
             const bgMusic = document.getElementById('bgMusic');
+            const christmasMusic = document.getElementById('christmasMusic');
             const gameButton = document.getElementById('gameButton');
             const allElements = document.querySelectorAll('body > *:not(.game-button)');
+            
+            // Determinar qué música está sonando
+            const currentDate = new Date();
+            const isDecember = currentDate.getMonth() === 11;
+            const activeMusic = window.christmasEffects.getActiveMusic() || bgMusic;
 
             // Fase 1: Ralentizar música gradualmente
-            if (bgMusic) {
+            if (activeMusic) {
                 let playbackRate = 1;
                 const slowDown = setInterval(() => {
                     playbackRate -= 0.05;
                     if (playbackRate <= 0.25) {
                         playbackRate = 0;
-                        bgMusic.pause();
+                        activeMusic.pause();
                         clearInterval(slowDown);
 
                         // Fase 2: Shake del sitio web (después de 1 segundo)
@@ -1645,11 +1751,13 @@
                                     crashSound.play().catch(() => { });
                                 }
 
-                                // Hacer caer todos los elementos excepto el botón del juego
+                                // Hacer caer todos los elementos excepto el botón del juego y los copos de nieve
                                 allElements.forEach((element, index) => {
-                                    setTimeout(() => {
-                                        element.classList.add('fall-animation');
-                                    }, index * 100);
+                                    if (!element.classList.contains('snowflake')) {
+                                        setTimeout(() => {
+                                            element.classList.add('fall-animation');
+                                        }, index * 100);
+                                    }
                                 });
 
                                 // Fase 4: Centrar y hacer saltar el icono (después de 1 segundo)
@@ -1667,7 +1775,7 @@
                                         setTimeout(() => {
                                             document.body.removeChild(jumpscareDiv);
                                             const script = document.createElement('script');
-                                            script.src = 'js/minigame.js';
+                                            script.src = 'js/minigame-standalone.js';
                                             document.head.appendChild(script);
                                         }, 1500);
                                     }, 2500);
@@ -1675,7 +1783,7 @@
                             }, 500);
                         }, 1000);
                     } else {
-                        bgMusic.playbackRate = playbackRate;
+                        activeMusic.playbackRate = playbackRate;
                     }
                 }, 100);
             } else {
@@ -1706,7 +1814,7 @@
                                 setTimeout(() => {
                                     document.body.removeChild(jumpscareDiv);
                                     const script = document.createElement('script');
-                                    script.src = 'js/minigame.js';
+                                    script.src = 'js/minigame-standalone.js';
                                     document.head.appendChild(script);
                                 }, 1500);
                             }, 2500);

@@ -15,7 +15,7 @@ Funky Maker Mobile (FNMM) es un juego de ritmo desarrollado por **King Games Cre
 Este proyecto es **no oficial** y no está afiliado, asociado, autorizado, respaldado o de ninguna manera conectado oficialmente con:
 
 - **SEGA** o **Sonic Team** (propietarios de Sonic The Hedgehog)
-- **King Games Creator** (creadores de Funky Maker Mobile)
+- **King Games Creator** (creador de Funky Maker Mobile)
 - **Friday Night Funkin'** o sus desarrolladores
 - Los **creadores originales** de Sonic.EXE
 
@@ -29,8 +29,10 @@ La colección incluye mods de diversas variantes de Sonic.EXE:
 - Sonic Legacy
 - Illegal Instruction
 - Hit Single
-- Fanon V1.5: Horrors Unknown
+- Horrors Unknown
 - Vs Sonic Rewrite
+- Spirit of Hell
+- Executable Mania
 - Canciones extras
 
 ## 🎮 Cómo Jugar los Mods
@@ -38,9 +40,17 @@ La colección incluye mods de diversas variantes de Sonic.EXE:
 1. Descarga **Funky Maker Mobile** desde Google Play Store
 2. Accede a la sección "Freeplay" en nuestro sitio web
 3. Selecciona el mod de Sonic.EXE que deseas jugar
-4. Elige el diseño (layout) preferido (vertical/horizontal)
+4. Elige entre las opciones disponibles:
+   - **📱 Vertical**: Optimizado para móviles en posición vertical
+   - **💻 Horizontal**: Optimizado para tablets o móviles horizontales
+   - **▶ Jugar/Play**: Versión estándar del nivel
+   - **🕰 Old/New**: Versiones antigua y nueva del mismo nivel
 5. Serás redirigido a Funkymaker para jugar el nivel
 6. ¡Disfruta de la experiencia Sonic.EXE en Funky Maker Mobile!
+
+## 🎄 Características Especiales
+
+En diciembre el sitio se pone navideño con nieve cayendo, música navideña y luces de colores. ¡Perfecto para jugar los mods en época navideña! 🎅
 
 ## 📋 Créditos y Agradecimientos
 
@@ -57,3 +67,5 @@ La colección incluye mods de diversas variantes de Sonic.EXE:
 *Este proyecto es solo para fines educativos y de entretenimiento. Soporta a los creadores oficiales descargando Funky maker mobile desde Google Play Store.*
 
 *Si eres propietario de algún contenido y deseas que sea eliminado, por favor contacta con nosotros.*
+
+Discord: thisisankush
