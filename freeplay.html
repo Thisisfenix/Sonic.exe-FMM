@@ -216,6 +216,9 @@
         .mod-card {
             opacity: 0;
             transform: translateY(30px);
+        }
+        
+        .mod-card.animate-in {
             animation: cardFadeIn 0.6s ease forwards;
         }
 
@@ -257,6 +260,10 @@
         }
 
         @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1563,9 +1570,25 @@
                     
                     modsGrid.appendChild(card);
                     
+                    // Activar animación de aparición
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                    }, index * 100);
+                    
                     // Observar imagen para lazy loading
                     const img = card.querySelector('.mod-card-image');
-                    if (img) imageObserver.observe(img);
+                    if (img) {
+                        imageObserver.observe(img);
+                        // Fallback: cargar imagen inmediatamente si hay problemas
+                        setTimeout(() => {
+                            if (!img.classList.contains('loaded') && img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.classList.add('loaded');
+                                const loader = img.parentElement.querySelector('.image-loader');
+                                if (loader) loader.style.display = 'none';
+                            }
+                        }, 2000);
+                    }
                 });
                 
                 // Precargar primeras 3 imágenes inmediatamente
@@ -1926,6 +1949,16 @@
             createModCards();
             hideLoadingSpinner();
             loadFromURL();
+            
+            // Debug: Verificar que las tarjetas se crearon
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.mod-card');
+                console.log('Tarjetas creadas:', cards.length);
+                if (cards.length === 0) {
+                    console.error('No se crearon tarjetas. Reintentando...');
+                    createModCards();
+                }
+            }, 1000);
         });
     </script>
 </body>
