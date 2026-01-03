@@ -20,206 +20,73 @@
         body {
             color: #fff;
             font-family: 'Press Start 2P', cursive;
-            text-shadow: var(--glow-effect), 0 0 20px var(--main-red);
+            text-shadow: var(--glow-effect);
             background: url('BG/backgroundlool.png') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background: url('BG/backgroundlool.png') no-repeat center center;
-            background-size: cover;
-            z-index: -1;
-            will-change: transform;
-            transform: translateY(var(--parallax-y, 0));
-        }
-
-        .container-fluid.text-center {
-            padding-top: 2rem;
-            padding-bottom: 1rem !important;
-            flex: 1;
-            transition: all 0.5s ease;
+        .container-fluid {
+            padding: 2rem 1rem;
         }
 
         .title {
             color: var(--main-red);
             text-shadow: 0 0 15px var(--main-red);
             font-size: 2.5rem;
-            margin-bottom: 1.5rem !important;
-            transition: all 0.5s ease;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: var(--main-bg);
+            color: var(--main-red);
+            border: 3px solid var(--main-red);
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            padding: 10px 25px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--main-red);
+            color: var(--main-bg);
+            text-decoration: none;
         }
 
         .mods-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 15px;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 15px;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        .mods-grid.hiding {
-            opacity: 0;
-            transform: scale(0.95);
         }
 
         .mod-card {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             border: 3px solid var(--main-red);
             border-radius: 10px;
-            overflow: hidden;
+            display: flex;
+            align-items: center;
+            min-height: 100px;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
         }
 
         .mod-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
             border-color: #fff;
-        }
-
-        .mod-card-image {
-            width: 100%;
-            height: 140px;
-            object-fit: contain;
-            background: rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .mod-card:hover .mod-card-image {
-            filter: brightness(1.2) saturate(1.3);
-        }
-
-        .mod-card-content {
-            padding: 12px;
-        }
-
-        .mod-card-title {
-            color: var(--main-red);
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            text-shadow: var(--glow-effect);
-        }
-
-        .mod-card-info {
-            color: #ccc;
-            font-size: 0.7rem;
-            margin-bottom: 8px;
-        }
-
-        .mod-card-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--main-red);
-            color: #000;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            z-index: 3;
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            z-index: 3;
-            animation: pulse 2s ease-in-out infinite;
-            transition: all 0.3s ease;
-        }
-
-        .status-badge.fade-out {
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        .status-badge.new {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 10px #00ff00;
-        }
-
-        .status-badge.updated {
-            background: #ffaa00;
-            color: #000;
-            box-shadow: 0 0 10px #ffaa00;
-        }
-
-        .status-badge.popular {
-            background: #ff00ff;
-            color: #000;
-            box-shadow: 0 0 10px #ff00ff;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 0, 0, 0.6);
-            pointer-events: none;
-            animation: ripple 0.6s ease-out;
-        }
-
-        .btn-clicked {
-            animation: shake 0.3s ease;
-        }
-
-        .card-clicked {
-            animation: cardPulse 0.4s ease;
-        }
-
-        @keyframes cardPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(0.95); }
-        }
-
-        .mod-card {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        
-        .mod-card.animate-in {
-            animation: cardFadeIn 0.6s ease forwards;
         }
 
         .mod-card.active {
@@ -227,134 +94,163 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
-        .mod-card-image-container {
-            position: relative;
-            width: 100%;
-            height: 140px;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .mod-card-image {
-            width: 100%;
-            height: 100%;
+            width: 120px;
+            height: 80px;
             object-fit: contain;
-            transition: all 0.3s ease;
-            opacity: 0;
+            background: rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
         }
 
-        .mod-card-image.loaded {
-            opacity: 1;
+        .mod-card-content {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .image-loader {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255, 0, 0, 0.3);
-            border-top: 3px solid var(--main-red);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .mod-info {
+            flex: 1;
         }
 
-        @keyframes cardFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #levelCatalogContainer {
-            margin-bottom: 0;
-        }
-
-        .level-catalog:not(.showing) {
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            display: none !important;
-        }
-
-        .back-button-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background: var(--main-bg);
+        .mod-card-title {
             color: var(--main-red);
-            border: 3px solid var(--main-red);
-            border-radius: 0;
-            font-family: 'Press Start 2P', cursive;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 10px 25px;
-            margin: 10px;
-            transition: all 0.3s;
+            font-size: 1rem;
+            margin-bottom: 5px;
             text-shadow: var(--glow-effect);
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            min-height: 44px;
         }
 
-        .btn:hover {
-            background: var(--main-red);
-            color: var(--main-bg);
-            box-shadow: 0 0 20px var(--main-red);
+        .mod-card-info {
+            color: #ccc;
+            font-size: 0.7rem;
         }
 
-        .btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
+        .mod-stats {
+            text-align: right;
+            color: #fff;
+            font-size: 0.8rem;
         }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 130px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            z-index: 3;
+        }
+
+        .status-badge.new {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .status-badge.updated {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .status-badge.popular {
+            background: #ff00ff;
+            color: #000;
+        }
+
         .split-view {
             display: flex;
             gap: 20px;
             align-items: flex-start;
-            animation: fadeInSplit 0.5s ease;
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slideInFromRight 0.5s ease forwards;
         }
 
-        @keyframes fadeInSplit {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes slideInFromRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .selected-mod-card {
-            flex: 0 0 300px;
-            transform: scale(1.05);
-            animation: slideToLeft 0.5s ease;
-            display: block !important;
-            opacity: 1 !important;
+        .split-view.closing {
+            animation: slideOutToRight 0.4s ease forwards;
+        }
+
+        @keyframes slideOutToRight {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
         }
 
         .levels-section {
             flex: 1;
-            animation: slideFromRight 0.5s ease;
             background: rgba(0, 0, 0, 0.9);
             border: 4px solid var(--main-red);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 30px var(--main-red);
+        }
+
+        .selected-mod-card {
+            min-height: 300px;
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            flex-shrink: 0;
+            background: rgba(255, 0, 0, 0.1);
+            border: 3px solid #fff;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .mod-info-panel {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 3px solid var(--main-red);
+        }
+
+        .mod-icon {
+            font-size: 4rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .mod-name-display {
+            font-size: 0.8rem;
+            color: var(--main-red);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .selected-mod-card .mod-card-content {
+            padding: 0;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .selected-mod-card .mod-card-title {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .selected-mod-card .mod-card-info {
+            font-size: 0.6rem;
         }
 
         .close-levels-btn {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            margin-bottom: 15px;
             background: var(--main-red);
             color: #000;
             border: none;
@@ -362,32 +258,7 @@
             font-family: 'Press Start 2P', cursive;
             font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-levels-btn:hover {
-            background: #fff;
-            transform: scale(1.05);
-        }
-
-        @keyframes slideToLeft {
-            from {
-                transform: translateX(0) scale(1);
-            }
-            to {
-                transform: translateX(0) scale(1.05);
-            }
-        }
-
-        @keyframes slideFromRight {
-            from {
-                transform: translateX(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            margin-bottom: 15px;
         }
 
         .level-row {
@@ -398,76 +269,16 @@
 
         .level-item {
             flex: 1;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 0, 0, 0.8));
-            border: 2px solid var(--main-red);
-            border-radius: 12px;
-            padding: 0;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
-        }
-
-        .level-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 0, 0.1) 50%, transparent 70%);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-            z-index: 1;
-        }
-
-        .level-item:hover::before {
-            transform: translateX(100%);
-        }
-
-        .level-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
-            border-color: #fff;
-        }
-
-        .level-header {
             background: rgba(255, 0, 0, 0.1);
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-
-        .level-number {
-            display: inline-block;
-            background: var(--main-red);
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            margin-right: 8px;
+            border: 2px solid var(--main-red);
+            border-radius: 10px;
+            padding: 15px;
         }
 
         .level-name {
             color: #fff;
-            font-size: 0.9rem;
-            display: inline;
-            text-shadow: 0 0 5px var(--main-red);
-        }
-
-        .level-artist {
-            color: #aaa;
-            font-size: 0.6rem;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .level-content {
-            padding: 15px;
-            position: relative;
-            z-index: 2;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
         }
 
         .layout-options {
@@ -477,424 +288,177 @@
         }
 
         .layout-btn {
-            background: rgba(0, 0, 0, 0.8);
+            background: var(--main-bg);
             color: var(--main-red);
             border: 1px solid var(--main-red);
-            border-radius: 20px;
-            font-family: 'Press Start 2P', cursive;
+            border-radius: 5px;
             padding: 8px 12px;
             font-size: 0.6rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            flex: 1;
-            text-align: center;
-            min-height: 36px;
-            position: relative;
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        .layout-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .layout-btn:hover::before {
-            left: 100%;
+            transition: all 0.3s;
+            font-family: 'Press Start 2P', cursive;
         }
 
         .layout-btn:hover {
             background: var(--main-red);
-            color: #000;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            color: var(--main-bg);
         }
 
-        .layout-btn:active {
-            transform: scale(0.95);
-        }
-
-        .layout-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            background: rgba(50, 50, 50, 0.5);
-            color: #666;
-            border-color: #666;
-        }
-
-        .layout-btn:disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
-        @keyframes glitch {
-            0% {
-                text-shadow: 2px 0 red, -2px 0 cyan;
-            }
-
-            25% {
-                text-shadow: -2px 0 red, 2px 0 cyan;
-            }
-
-            50% {
-                text-shadow: 2px 0 red, -2px 0 cyan;
-            }
-
-            75% {
-                text-shadow: -2px 0 red, 2px 0 cyan;
-            }
-
-            100% {
-                text-shadow: 2px 0 red, -2px 0 cyan;
-            }
-        }
-
-        .glitch-effect {
-            animation: glitch 0.5s linear infinite;
-        }
-
+        /* Loading Spinner */
         .loading-spinner {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
 
         .spinner {
-            border: 5px solid rgba(255, 0, 0, 0.3);
-            border-radius: 50%;
-            border-top: 5px solid var(--main-red);
             width: 50px;
             height: 50px;
+            border: 3px solid rgba(255, 0, 0, 0.3);
+            border-top: 3px solid var(--main-red);
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .hidden {
+        /* Animations */
+        .mod-card {
             opacity: 0;
-            pointer-events: none;
-            transform: translateY(-20px);
-            display: none;
+            transform: translateY(20px);
         }
 
-        /* Mejoras táctiles y de feedback */
-        .layout-btn:active,
-        .btn:active {
+        .mod-card.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+
+        .mods-grid.hiding {
+            opacity: 0;
             transform: scale(0.95);
+            transition: all 0.4s ease;
+        }
+
+        .card-clicked {
+            transform: scale(0.98) !important;
+            transition: transform 0.2s ease !important;
+        }
+
+        .btn-clicked {
+            transform: scale(0.95) !important;
+            transition: transform 0.2s ease !important;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Level styling improvements */
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .level-number {
             background: var(--main-red);
-            color: var(--main-bg);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
         }
 
-        * {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+        .level-artist {
+            color: #999;
+            font-size: 0.6rem;
+            font-style: italic;
         }
 
-        /* Optimizaciones para dispositivos móviles */
-        @supports (-webkit-touch-callout: none) {
-            /* iOS Safari */
-            body {
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                user-select: none;
-            }
+        .level-content {
+            margin-top: 10px;
         }
 
-        /* Prevenir selección de texto en elementos interactivos */
-        .mod-card, .btn, .layout-btn, .close-levels-btn {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+        .mod-card-badge {
+            background: var(--main-red);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
-        /* Mejorar rendimiento de animaciones */
-        .mod-card, .split-view, .levels-section {
-            will-change: transform, opacity;
-        }
-
-        /* Optimizar scroll en iOS */
-        .levels-section {
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* ========== ESTILOS PARA MÓVIL ========== */
         @media (max-width: 768px) {
-            :root {
-                --glow-effect: 0 0 5px var(--main-red);
-            }
-
-            body {
-                background-size: auto 100%;
-                background-attachment: scroll;
-                padding: 0;
-                margin: 0;
-            }
-
-            .container-fluid.text-center {
-                padding: 0.5rem !important;
-            }
-
             .title {
-                font-size: 1.5rem !important;
-                margin-bottom: 1rem !important;
+                font-size: 1.5rem;
             }
-
-            .back-button-container {
-                margin-bottom: 15px;
-            }
-
-            .btn {
-                padding: 8px 16px !important;
-                font-size: 0.7rem !important;
-                margin: 5px !important;
-                border-width: 2px;
-            }
-
-            /* Grid de mods adaptado para móvil */
-            .mods-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 12px;
-                padding: 12px;
-                justify-items: center;
-            }
-
+            
             .mod-card {
-                max-width: 240px;
-                width: 100%;
-            }
-
-            .mod-card {
-                border-width: 2px;
-            }
-
-            .mod-card-image {
-                height: 120px;
-            }
-
-            .mod-card-content {
-                padding: 10px;
-            }
-
-            .mod-card-title {
-                font-size: 0.8rem;
-            }
-
-            .mod-card-info {
-                font-size: 0.7rem;
-            }
-
-            .mod-card-badge {
-                font-size: 0.6rem;
-                padding: 3px 6px;
-            }
-
-            /* Vista dividida adaptada para móvil */
-            .split-view {
                 flex-direction: column;
-                gap: 15px;
+                text-align: center;
             }
-
-            .selected-mod-card {
-                flex: none;
-                transform: scale(1);
-                max-width: 100%;
-            }
-
-            .levels-section {
-                padding: 15px;
-                border-width: 2px;
-            }
-
-            .close-levels-btn {
-                font-size: 0.7rem;
-                padding: 8px 15px;
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            .levels-section h3 {
-                font-size: 0.9rem;
-                margin-bottom: 0.8rem !important;
-            }
-
-            .level-row {
-                flex-direction: column;
-                gap: 12px;
-                margin-bottom: 15px;
-            }
-
-            .level-item {
-                margin-bottom: 0;
-                border-width: 2px;
-            }
-
-            .level-header {
-                padding: 10px 12px;
-            }
-
-            .level-number {
-                font-size: 0.5rem;
-                padding: 1px 6px;
-            }
-
-            .level-name {
-                font-size: 0.7rem;
-            }
-
-            .level-artist {
-                font-size: 0.5rem;
-            }
-
-            .level-content {
-                padding: 12px;
-            }
-
-            .layout-options {
-                gap: 6px;
-            }
-
-            .layout-btn {
-                font-size: 0.5rem !important;
-                padding: 6px 10px !important;
-                min-height: 32px;
-                border-radius: 15px;
-            }
-
-            /* Loading spinner */
-            .spinner {
-                width: 40px;
-                height: 40px;
-                border-width: 4px;
-            }
-
-            /* Scrollbar móvil */
-            .levels-section::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            .levels-section::-webkit-scrollbar-track {
-                background: rgba(255, 0, 0, 0.1);
-            }
-
-            .levels-section::-webkit-scrollbar-thumb {
-                background: var(--main-red);
-                border-radius: 4px;
-            }
-        }
-
-        /* Ajustes para pantallas muy pequeñas */
-        @media (max-width: 480px) {
-            .title {
-                font-size: 1.2rem !important;
-            }
-
-            .mods-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-                padding: 10px;
-                justify-items: center;
-            }
-
-            .mod-card {
-                max-width: 280px;
-                width: 100%;
-            }
-
+            
             .mod-card-image {
+                width: 100%;
                 height: 100px;
             }
-
-            .mod-card-title {
-                font-size: 0.8rem;
+            
+            .mod-card-content {
+                flex-direction: column;
+                gap: 10px;
             }
-
-            .btn {
-                padding: 6px 12px !important;
-                font-size: 0.6rem !important;
+            
+            .status-badge {
+                left: 10px;
             }
-
-            .levels-section {
-                padding: 10px;
+            
+            .split-view {
+                flex-direction: column;
             }
-
-            .close-levels-btn {
-                font-size: 0.6rem;
-                padding: 6px 12px;
-            }
-
-            .level-header {
-                padding: 8px 10px;
-            }
-
-            .level-content {
-                padding: 10px;
-            }
-
-            .layout-btn {
-                font-size: 0.45rem !important;
-                padding: 5px 8px !important;
-                min-height: 30px;
-                border-radius: 12px;
-            }
-        }
-
-        /* Mejoras táctiles específicas para móvil */
-        @media (hover: none) and (pointer: coarse) {
-            .mod-card:hover {
-                transform: none;
-            }
-
-            .mod-card:active {
-                transform: scale(0.98);
-                transition: transform 0.1s ease;
-            }
-
-            .layout-btn:hover {
-                background: rgba(0, 0, 0, 0.7);
-                color: var(--main-red);
-            }
-
-            .layout-btn:active {
-                background: var(--main-red);
-                color: var(--main-bg);
-                transform: scale(0.95);
-            }
-
-            .btn:hover {
-                background: var(--main-bg);
-                color: var(--main-red);
-            }
-
-            .btn:active {
-                background: var(--main-red);
-                color: var(--main-bg);
-                transform: scale(0.95);
+            
+            .level-row {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
+
 </head>
 
 <body>
@@ -934,7 +498,7 @@
                         "levels": [
                             {
                                 "name": "Milk",
-                                "title": "sunky",
+                                "title": "Sunky",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jsdf2p7ve5nwjekbxx4mc7be/releases/01jsdf2p7ymhte7r81vqcgttrk"
                                 }
@@ -948,7 +512,7 @@
                             },
                             {
                                 "name": "Cycles Encore",
-                                "title": "LordX",
+                                "title": "Lord X",
                                 "layouts": {
                                     "Jugar/Play": "https://drive.google.com/file/d/1VwACThhkjt6mKqB8Nru2IMda6bTi5yxG/view?usp=drivesdk"
                                 }
@@ -964,7 +528,7 @@
                             {
                                 "name": "Redolled",
                                 "render": "renders/redolled.png",
-                                "title": "Tails doll",
+                                "title": "Tails Doll",
                                 "layouts": {
                                     "old": "https://funkymaker.kingamescreator.com/_app/levels/01jn7e311yce4gtwt87yk0en8k/releases/01jn7e3121wn0fk0jhhe6bk3cv",
                                     "new": "https://funkymaker.kingamescreator.com/_app/levels/01jn9ph56pwf4kq7cxf22dayt7/releases/01jn9ph56s2bhyfgmdpknqr78j"
@@ -980,14 +544,14 @@
                             },
                             {
                                 "name": "torment",
-                                "title": "lord x",
+                                "title": "Lord X",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k5n5csrab0g91kvdyw9bfcjt/releases/01k5n5csrdsyn2vbwwqbyq8083"
                                 }
                             },
                             {
                                 "name": "time attack",
-                                "title": "sonic(sonic.exe)",
+                                "title": "Sonic (Sonic.exe)",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k7jxcvqwc7zz8yepgcsrg2er/releases/01k7jxcvqyhpp54eqj6j7wtxc4"
                                 }
@@ -1025,84 +589,84 @@
                         "levels": [
                             {
                                 "name": "breakout",
-                                "title": "duke",
+                                "title": "Duke",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k11s7mage2d4cdr4nztky98j/releases/01k11s7mare0wgfc2t2rac9jf1"
                                 }
                             },
                             {
                                 "name": "soulless endeavor",
-                                "title": "duke",
+                                "title": "Duke",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jed43291dt8b2rszb8f7zjfx/releases/01k12940kc4rayk0a3hkkkcdc0"
                                 }
                             },
                             {
                                 "name": "final frontier",
-                                "title": "duke",
+                                "title": "Duke",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k13zww342n79qqpwj89jyxhv/releases/01k13zww37j1vmnsrftt589khe"
                                 }
                             },
                             {
                                 "name": "my horizon",
-                                "title": "chaotix",
+                                "title": "Chaotix",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k16smr1xtx5zqh75mkkrtnh2/releases/01k16smr20v9tdf95qz841zhrt"
                                 }
                             },
                             {
                                 "name": "found you",
-                                "title": "normal cd",
+                                "title": "Normal CD",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19d0t61tsjw5cyqfpd40zw4/releases/01k19d0t6akdymvd3zaax2hg9c"
                                 }
                             },
                             {
                                 "name": "malediction",
-                                "title": "curse",
+                                "title": "Curse",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19drbdg6nh2jxevm8nx8a78/releases/01k19drbe6jkef00s6gbp1vnsc"
                                 }
                             },
                             {
                                 "name": "perdition",
-                                "title": "apollyon",
+                                "title": "Apollyon",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19tvrrmdaj2nggw3nfz2vwt/releases/01k19tvrs4v9xr7f79s405afjk"
                                 }
                             },
                             {
                                 "name": "Hog",
-                                "title": "hog",
+                                "title": "Hog",
                                 "layouts": {
                                     "COMING SOON": ""
                                 }
                             },
                             {
                                 "name": "endless forest mix",
-                                "title": "majin",
+                                "title": "Majin",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1cg2qyt4wakykspfntm3hp3/releases/01k1cg2qyye0km71t905cdqwn5"
                                 }
                             },
                             {
                                 "name": "our horizon",
-                                "title": "chaotix",
+                                "title": "Chaotix",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1cg2qyt4wakykspfntm3hp3/releases/01k1cg2qyye0km71t905cdqwn5"
                                 }
                             },
                             {
                                 "name": "color crash",
-                                "title": "wechidna & mighty",
+                                "title": "Wechidna & Mighty",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k25tkccbdp53trdxq2k32vtx/releases/01k25tkccgbf2pz76rr1pnsvsy"
                                 }
                             },
                             {
                                 "name": "my horizon(wechidna)",
-                                "title": "wechidna",
+                                "title": "Wechidna",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1v7r7zbgajq5cz3nr4n6vxc/releases/01k1v7r7zjp2c6xskmvtd17wyc"
                                 }
@@ -1130,7 +694,7 @@
                             },
                             {
                                 "name": "fake baby",
-                                "title": "no more innocence",
+                                "title": "No More Innocence",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k2bgyp3zedxqtmkr960ztz0w/releases/01k2bgyp45tx4zs9m1f9j8mbb5"
                                 }
@@ -1237,7 +801,7 @@
                             },
                             {
                                 "name": "Trinity Encore",
-                                "title": "majin/2011X/lordX/Rewrite",
+                                "title": "Majin/2011X/Lord X/Rewrite",
                                 "layouts": {
                                     "Play/Jugar": "https://funkymaker.kingamescreator.com/_app/levels/01k4hhspcwrc3g2zvw8f1xn3wf/releases/01k4hhspcy72wjx4fbs9je8prt"
                                 }
@@ -1251,7 +815,7 @@
                         "levels": [
                             {
                                 "name": "KindAndFair",
-                                "title": "Sonic?(Exeller)",
+                                "title": "Sonic? (Exeller)",
                                 "render": "",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k3pd4w6yptktvd00bq72hppb/releases/01k4wahcf78axa8fdj355634tz"
@@ -1276,12 +840,12 @@
                     },
                     {
                         "id": "ExtrasImg",
-                        "image": "",
+                        "image": "images/extras-icon.png",
                         "title": "Extras Songs",
                         "levels": [
                             {
                                 "name": "vessel",
-                                "title": "lordx",
+                                "title": "Lord X",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jpc1hssabqzejk5jpcfgq308/releases/01jpc1hsseqfsa5t8yw20nv31f"
                                 }
@@ -1309,35 +873,35 @@
                             },
                             {
                                 "name": "drop and roll",
-                                "title": "diablo",
+                                "title": "Diablo",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jecw0z0spnj6c838dhsqg4jz/releases/01jecw100czk08kxdc6newk0pr"
                                 }
                             },
                             {
                                 "name": "for you",
-                                "title": "liz",
+                                "title": "Liz",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jecwtp1dxtqvg6jb77qz0xyh/releases/01jecwtq11e34gt8dyetht86fz"
                                 }
                             },
                             {
                                 "name": "falter alter prime",
-                                "title": "majin, 2011x, lordx, rewrite",
+                                "title": "Majin, 2011X, Lord X, Rewrite",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jfmy5r505t9zpnwk8mfk7gh6/releases/01jfmy5r55mc4vnhgk75smpkd6"
                                 }
                             },
                             {
                                 "name": "Endless cycles",
-                                "title": "LordX",
+                                "title": "Lord X",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k4hhspcwrc3g2zvw8f1xn3wf/releases/01k4hhspcy72wjx4fbs9je8prt"
                                 }
                             },
                             {
                                 "name": "Undefined demise",
-                                "title": "LordX",
+                                "title": "Lord X",
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01kacg4jrpp45c6q8n94tfwra1/releases/01kacg4jrsa5djy0g28dg00pes"
                                 }
@@ -1369,50 +933,31 @@
                 return getViewedBadges().includes(modId);
             }
 
-            // Sistema de caché de imágenes
-            const imageCache = new Map();
-
+            // Sistema de caché de imágenes simplificado
             function preloadImage(src) {
-                return new Promise((resolve, reject) => {
-                    if (imageCache.has(src)) {
-                        resolve(imageCache.get(src));
-                        return;
-                    }
+                return new Promise((resolve) => {
                     const img = new Image();
-                    img.onload = () => {
-                        imageCache.set(src, img.src);
-                        resolve(img.src);
-                    };
-                    img.onerror = reject;
+                    img.onload = () => resolve(img.src);
+                    img.onerror = () => resolve(src); // Fallback
                     img.src = src;
                 });
             }
 
-            // Intersection Observer para lazy loading
-            const imageObserver = new IntersectionObserver((entries, observer) => {
+            // Intersection Observer simplificado
+            const imageObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
                         const src = img.dataset.src;
                         if (src) {
-                            preloadImage(src).then(cachedSrc => {
-                                img.src = cachedSrc;
-                                img.classList.add('loaded');
-                                const loader = img.parentElement.querySelector('.image-loader');
-                                if (loader) loader.style.display = 'none';
-                            }).catch(() => {
-                                img.src = 'images/placeholder.png';
-                                img.classList.add('loaded');
-                                const loader = img.parentElement.querySelector('.image-loader');
-                                if (loader) loader.style.display = 'none';
-                            });
+                            img.src = src;
+                            img.classList.add('loaded');
+                            const loader = img.parentElement.querySelector('.image-loader');
+                            if (loader) loader.style.display = 'none';
                         }
-                        observer.unobserve(img);
+                        imageObserver.unobserve(img);
                     }
                 });
-            }, {
-                rootMargin: '50px',
-                threshold: 0.01
             });
 
             function hideLoadingSpinner() {
@@ -1532,15 +1077,17 @@
                     const statusBadge = showBadge ? `<div class="status-badge ${mod.status}">${mod.status.toUpperCase()}</div>` : '';
                     
                     card.innerHTML = `
+                        <img class="mod-card-image" src="${mod.image}" alt="${mod.title}">
                         ${statusBadge}
-                        <div class="mod-card-badge">${availableSongs} songs</div>
-                        <div class="mod-card-image-container">
-                            <div class="image-loader"></div>
-                            <img class="mod-card-image" alt="${mod.title}" data-src="${mod.image}">
-                        </div>
                         <div class="mod-card-content">
-                            <div class="mod-card-title">${mod.title}</div>
-                            <div class="mod-card-info">${songCount} total levels</div>
+                            <div class="mod-info">
+                                <div class="mod-card-title">${mod.title}</div>
+                                <div class="mod-card-info">${songCount} total levels</div>
+                            </div>
+                            <div class="mod-stats">
+                                <div>${availableSongs} songs</div>
+                                <div style="font-size: 0.6rem; color: #999;">disponibles</div>
+                            </div>
                         </div>
                     `;
                     
@@ -1571,29 +1118,17 @@
                     modsGrid.appendChild(card);
                     
                     // Activar animación de aparición
-                    setTimeout(() => {
+                    requestAnimationFrame(() => {
                         card.classList.add('animate-in');
-                    }, index * 100);
-                    
-                    // Observar imagen para lazy loading
-                    const img = card.querySelector('.mod-card-image');
-                    if (img) {
-                        imageObserver.observe(img);
-                        // Fallback: cargar imagen inmediatamente si hay problemas
-                        setTimeout(() => {
-                            if (!img.classList.contains('loaded') && img.dataset.src) {
-                                img.src = img.dataset.src;
-                                img.classList.add('loaded');
-                                const loader = img.parentElement.querySelector('.image-loader');
-                                if (loader) loader.style.display = 'none';
-                            }
-                        }, 2000);
-                    }
+                    });
                 });
                 
-                // Precargar primeras 3 imágenes inmediatamente
-                modsData.mods.slice(0, 3).forEach(mod => {
-                    if (mod.image) preloadImage(mod.image);
+                // Precargar primeras 2 imágenes inmediatamente
+                modsData.mods.slice(0, 2).forEach(mod => {
+                    if (mod.image) {
+                        const img = new Image();
+                        img.src = mod.image;
+                    }
                 });
             }
             
@@ -1620,19 +1155,20 @@
                     
                     const statusBadge = mod.status ? `<div class="status-badge ${mod.status}">${mod.status.toUpperCase()}</div>` : '';
                     
-                    // Usar imagen cacheada si está disponible
-                    const imgSrc = imageCache.has(mod.image) ? imageCache.get(mod.image) : mod.image;
+                    // Usar imagen directamente o fallback
+                    const imgSrc = mod.image || 'images/default-mod.png';
                     
                     cardClone.innerHTML = `
-                        ${statusBadge}
-                        <div class="mod-card-badge">${availableSongs} songs</div>
-                        <div class="mod-card-image-container">
-                            <img class="mod-card-image loaded" src="${imgSrc}" alt="${mod.title}">
+                        <div class="mod-info-panel">
+                            <div class="mod-icon">🎵</div>
+                            <div class="mod-name-display">${mod.title}</div>
                         </div>
                         <div class="mod-card-content">
                             <div class="mod-card-title">${mod.title}</div>
-                            <div class="mod-card-info">${songCount} total levels</div>
+                            <div class="mod-card-info">${songCount} niveles totales</div>
+                            <div class="mod-card-badge">${availableSongs} disponibles</div>
                         </div>
+                        ${statusBadge}
                     `;
                     
                     // Crear sección de niveles
@@ -1719,28 +1255,41 @@
             }
             
             function closeLevels() {
-                // Limpiar contenedor de niveles primero
-                levelCatalogContainer.innerHTML = '';
-                levelCatalogContainer.style.display = 'none';
-                
-                // Restaurar vista de grid con forzado de reflow
-                modsGrid.style.display = 'none';
-                modsGrid.offsetHeight; // Forzar reflow
-                modsGrid.style.display = 'grid';
-                
-                // Limpiar selección
-                document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
-                selectedModIndex = -1;
-                
-                // Limpiar URL
-                const url = new URL(window.location);
-                url.searchParams.delete('mod');
-                url.searchParams.delete('name');
-                window.history.replaceState({}, '', url);
-                
-                // Scroll suave al inicio en móviles
-                if (isMobileDevice()) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                const splitView = document.getElementById('splitView');
+                if (splitView) {
+                    splitView.classList.add('closing');
+                    
+                    setTimeout(() => {
+                        // Limpiar contenedor de niveles
+                        levelCatalogContainer.innerHTML = '';
+                        levelCatalogContainer.style.display = 'none';
+                        
+                        // Restaurar vista de grid con animación
+                        modsGrid.style.display = 'flex';
+                        modsGrid.style.opacity = '0';
+                        modsGrid.style.transform = 'scale(0.95)';
+                        
+                        setTimeout(() => {
+                            modsGrid.style.opacity = '1';
+                            modsGrid.style.transform = 'scale(1)';
+                            modsGrid.style.transition = 'all 0.4s ease';
+                        }, 50);
+                        
+                        // Limpiar selección
+                        document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
+                        selectedModIndex = -1;
+                        
+                        // Limpiar URL
+                        const url = new URL(window.location);
+                        url.searchParams.delete('mod');
+                        url.searchParams.delete('name');
+                        window.history.replaceState({}, '', url);
+                        
+                        // Scroll suave al inicio en móviles
+                        if (isMobileDevice()) {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    }, 400);
                 }
             }
             
@@ -1793,16 +1342,15 @@
                     }
                 }, 500);
             });
-            // Efecto de glitch aleatorio
+            // Efecto de glitch simplificado
             setInterval(() => {
-                document.querySelectorAll('.glitch-effect').forEach(el => {
-                    if (Math.random() > 0.7) {
-                        el.classList.remove('glitch-effect');
-                        void el.offsetWidth;
-                        el.classList.add('glitch-effect');
-                    }
-                });
-            }, 3000);
+                const elements = document.querySelectorAll('.glitch-effect');
+                if (elements.length > 0 && Math.random() > 0.8) {
+                    const el = elements[Math.floor(Math.random() * elements.length)];
+                    el.style.animation = 'none';
+                    setTimeout(() => el.style.animation = '', 10);
+                }
+            }, 5000);
 
             // Funcionalidad táctil mejorada para móviles
             let touchStartX = 0;
@@ -1929,15 +1477,13 @@
                 });
             }
 
-            // Efecto parallax
+            // Efecto parallax simplificado
             let ticking = false;
-            document.documentElement.style.setProperty('--parallax-y', '0px');
-            
             window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
+                if (!ticking && window.innerWidth > 768) {
+                    requestAnimationFrame(() => {
                         const scrolled = window.pageYOffset;
-                        document.documentElement.style.setProperty('--parallax-y', scrolled * 0.3 + 'px');
+                        document.documentElement.style.setProperty('--parallax-y', scrolled * 0.2 + 'px');
                         ticking = false;
                     });
                     ticking = true;
@@ -1949,16 +1495,6 @@
             createModCards();
             hideLoadingSpinner();
             loadFromURL();
-            
-            // Debug: Verificar que las tarjetas se crearon
-            setTimeout(() => {
-                const cards = document.querySelectorAll('.mod-card');
-                console.log('Tarjetas creadas:', cards.length);
-                if (cards.length === 0) {
-                    console.error('No se crearon tarjetas. Reintentando...');
-                    createModCards();
-                }
-            }, 1000);
         });
     </script>
 </body>
