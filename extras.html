@@ -1213,6 +1213,78 @@
             }
         }
 
+        /* Aura GOTY */
+        @keyframes gotyAura {
+            0%   { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffa500, 0 0 60px #ff6600; }
+            25%  { box-shadow: 0 0 25px #ff00ff, 0 0 50px #aa00ff, 0 0 80px #ff0099; }
+            50%  { box-shadow: 0 0 20px #00ffff, 0 0 40px #0099ff, 0 0 60px #0000ff; }
+            75%  { box-shadow: 0 0 25px #00ff88, 0 0 50px #00ff00, 0 0 80px #aaff00; }
+            100% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffa500, 0 0 60px #ff6600; }
+        }
+
+        @keyframes gotyPulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.01); }
+        }
+
+        .goty-frame {
+            animation: gotyAura 2.5s ease-in-out infinite, gotyPulse 3s ease-in-out infinite;
+            border-radius: 4px;
+        }
+
+        /* Modo sin efectos (epilépticos) */
+        .goty-frame.safe-mode {
+            animation: none;
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        .goty-badge {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700);
+            color: #000;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px #ffd700, 0 0 30px #ff8c00;
+            white-space: nowrap;
+            z-index: 10;
+            animation: gotyAura 2.5s ease-in-out infinite;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .goty-badge.safe-mode {
+            animation: none;
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .goty-epilepsy-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,215,0,0.5);
+            color: rgba(255,215,0,0.8);
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 10;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .goty-epilepsy-btn:hover {
+            background: rgba(0,0,0,0.9);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
         /* Ajustes para dispositivos con notch */
         @supports(padding: max(0px)) {
             .player-container {
@@ -1535,7 +1607,8 @@
                 { src: 'media/58.jpg', title: 'que dijiste de mi mama (comentario de berkay)', type: 'image' },
                 { src: 'media/59.jpg', title: 'simp de gf tenia que ser (comentario de samylol)', type: 'image' },
                 { src: 'media/60.jpg', title: 'Fuera de mi cerro', type: 'image' },
-                { src: 'media/61.jpg', title: 'Bwa :3', type: 'image' }
+                { src: 'media/61.jpg', title: 'Bwa :3', type: 'image' },
+                { src: 'media/67.png', title: '🏆 MEME OF THE YEAR 🏆', type: 'image', goty: true }
             ];
             // Elementos del DOM
             const mediaElement = document.getElementById('mediaElement');
@@ -2013,6 +2086,38 @@
                     updatePlayButton();
                     updatePlaylistActiveItem(index);
                     addToHistory(media);
+
+                    // Aura MOTY
+                    const existingBadge = document.querySelector('.goty-badge');
+                    const existingBtn = document.querySelector('.goty-epilepsy-btn');
+                    if (existingBadge) existingBadge.remove();
+                    if (existingBtn) existingBtn.remove();
+                    if (media.goty) {
+                        mediaElement.classList.add('goty-frame');
+                        const wrapper = document.querySelector('.media-wrapper');
+
+                        const badge = document.createElement('div');
+                        badge.className = 'goty-badge';
+                        badge.textContent = '🏆 MEME OF THE YEAR 🏆';
+                        wrapper.appendChild(badge);
+
+                        // Botón modo epiléptico
+                        let safeMode = true;
+                        mediaElement.classList.add('safe-mode');
+                        badge.classList.add('safe-mode');
+                        const epilepsyBtn = document.createElement('button');
+                        epilepsyBtn.className = 'goty-epilepsy-btn';
+                        epilepsyBtn.textContent = '✨ Activar efectos';
+                        epilepsyBtn.addEventListener('click', () => {
+                            safeMode = !safeMode;
+                            mediaElement.classList.toggle('safe-mode', safeMode);
+                            badge.classList.toggle('safe-mode', safeMode);
+                            epilepsyBtn.textContent = safeMode ? '✨ Activar efectos' : '⚠️ Modo sin efectos';
+                        });
+                        wrapper.appendChild(epilepsyBtn);
+                    } else {
+                        mediaElement.classList.remove('goty-frame', 'safe-mode');
+                    }
 
                     // Actualizar favorito
                     const isFavorite = favorites.some(f => f.src === media.src);

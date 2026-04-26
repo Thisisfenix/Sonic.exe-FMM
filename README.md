@@ -9,6 +9,7 @@ Funky Maker Mobile (FNMM) es un juego de ritmo desarrollado por **King Games Cre
 🔗 **Enlaces oficiales**:
 - [Sitio web del creador](https://kingamescreator.com/)
 - [Funky Maker Mobile en Google Play](https://play.google.com/store/apps/details?id=com.kingamescreator.fnmm&hl=es_MX&pli=1)
+- [Funky Maker Mobile en App Store (iOS)](https://apps.apple.com/es/app/funky-maker-mobile/id6761866418)
 
 ## ⚠️ Aviso Legal
 
@@ -37,7 +38,7 @@ La colección incluye mods de diversas variantes de Sonic.EXE:
 
 ## 🎮 Cómo Jugar los Mods
 
-1. Descarga **Funky Maker Mobile** desde Google Play Store
+1. Descarga **Funky Maker Mobile** desde Google Play Store o App Store (iOS)
 2. Accede a la sección "Freeplay" en nuestro sitio web
 3. Selecciona el mod de Sonic.EXE que deseas jugar
 4. Elige entre las opciones disponibles:
@@ -64,7 +65,7 @@ En diciembre el sitio se pone navideño con nieve cayendo, música navideña y l
 - [Sitio Web Principal](https://thisisfenix.github.io/Sonic.exe-FMM/)
 - [Freeplay Mods](https://thisisfenix.github.io/Sonic.exe-FMM/freeplay.html)
 
-*Este proyecto es solo para fines educativos y de entretenimiento. Soporta a los creadores oficiales descargando Funky maker mobile desde Google Play Store.*
+*Este proyecto es solo para fines educativos y de entretenimiento. Soporta a los creadores oficiales descargando Funky Maker Mobile desde [Google Play Store](https://play.google.com/store/apps/details?id=com.kingamescreator.fnmm&hl=es_MX&pli=1) o [App Store](https://apps.apple.com/es/app/funky-maker-mobile/id6761866418).*
 
 *Si eres propietario de algún contenido y deseas que sea eliminado, por favor contacta con nosotros.*
 
