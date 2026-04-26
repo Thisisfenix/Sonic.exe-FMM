@@ -18,7 +18,7 @@
             margin: 0;
             padding: 0;
             background-color: #000;
-            background-image: url('BG/indexBG.png');
+            background-image: url('Assets/BG/indexBG.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -450,6 +450,67 @@
 
         .update-content::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 255, 255, 0.8);
+        }
+
+        /* Botón ver updates anteriores */
+        .show-older-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 8px;
+            color: rgba(0, 255, 255, 0.7);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .show-older-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #0ff;
+            color: #0ff;
+        }
+
+        .older-updates {
+            display: none;
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .older-updates.visible {
+            display: block;
+        }
+        .loading-updates {
+            text-align: center;
+            padding: 40px 20px;
+            color: #0ff;
+            font-size: 1.1rem;
+        }
+
+        .loading-updates p {
+            margin: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .error-loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #ff4444;
+            font-size: 1.1rem;
+        }
+
+        .error-loading p {
+            margin: 10px 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         .update-panel.show {
@@ -978,7 +1039,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.7.3
+                    <i class="bi bi-stars"></i> Rework v1.8.0
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -1082,251 +1143,15 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN v1.7.3</h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN <span id="currentVersionSpan">v1.8.0</span></h5>
                 <button class="close-update" id="closeUpdate"
                     aria-label="Cerrar panel de actualización">&times;</button>
             </div>
-            <div class="update-content">
-                <h4><strong>🔄 NOVEDADES v1.7.3 - ACTUALIZACIÓN DE EQUIPO</strong></h4>
-                <br>
-                <p><strong>👥 CAMBIOS EN EL EQUIPO:</strong></p>
-                <ul>
-                    <li>📋 <strong>Pom y Nowzuq:</strong> Movidos a la sección de ex-colaboradores en créditos.</li>
-                </ul>
-                <br>
-                <h4><strong>🎄 NOVEDADES ANTERIORES v1.7.2 - ESPECIAL NAVIDEÑO</strong></h4>
-                <br>
-                <p><strong>🎅 EFECTOS NAVIDEÑOS TEMPORALES:</strong></p>
-                <ul>
-                    <li>❄️ <strong>Copos de nieve:</strong> Animación de copos cayendo solo durante diciembre.</li>
-                    <li>🎵 <strong>Música navideña:</strong> Canción especial christmas.ogg que se activa automáticamente en diciembre.</li>
-                    <li>💡 <strong>Luces navideñas:</strong> Luces de colores parpadeantes en la parte superior de la página.</li>
-                    <li>🎄 <strong>Botón temático:</strong> El botón de versión cambia a "🎄 Rework v1.7.2 - Navidad" en diciembre.</li>
-                    <li>📰 <strong>Noticia especial:</strong> Se agrega automáticamente una noticia "🎄 ¡Llegó la Navidad!" al carrusel.</li>
-                    <li>🧹 <strong>Limpieza automática:</strong> Todos los efectos desaparecen automáticamente después de diciembre.</li>
-                    <li>📁 <strong>Código modular:</strong> Efectos navideños organizados en archivo separado js/christmas.js.</li>
-                    <li>📱 <strong>Optimización móvil:</strong> Copos y luces adaptados para dispositivos móviles.</li>
-                </ul>
-                <br>
-                <h4><strong>🔥 NOVEDADES ANTERIORES v1.7.1 - MEJORAS UX/ACCESIBILIDAD Y RENDIMIENTO</strong></h4>
-                <br>
-                <p><strong>📺 EXTRAS.HTML - MEJORAS MULTIMEDIA:</strong></p>
-                <ul>
-                    <li>👆 <strong>Detección de gestos móviles:</strong> Swipe con umbral de velocidad (0.3 mínimo) para navegación fluida.</li>
-                    <li>⚠️ <strong>Manejo de errores:</strong> Timeout de 10 segundos con SVG de error para medios que fallan.</li>
-                    <li>🔊 <strong>Limpieza de audio:</strong> Suspend/resume de AudioContext para liberar memoria cuando no está en uso.</li>
-                    <li>⚡ <strong>Lazy loading:</strong> Carga perezosa de miniaturas con IntersectionObserver.</li>
-                </ul>
-                <br>
-                <p><strong>🎵 SOUNDTEST.HTML - UX/ACCESIBILIDAD:</strong></p>
-                <ul>
-                    <li>♿ <strong>Atributos ARIA:</strong> Agregados a todos los botones para mejor accesibilidad.</li>
-                    <li>👁️ <strong>Indicador visual de código:</strong> Muestra el texto mientras escribes con animación pulse.</li>
-                    <li>📊 <strong>Historial de códigos:</strong> Panel desplegable en lado izquierdo con códigos reproducidos.</li>
-                    <li>⏱️ <strong>Countdown Mania:</strong> Timer visual de 15 minutos en la parte superior.</li>
-                </ul>
-                <br>
-                <p><strong>⚡ SOUNDTEST.HTML - RENDIMIENTO:</strong></p>
-                <ul>
-                    <li>💾 <strong>Precaching de medios:</strong> Carga anticipada de códigos cercanos.</li>
-                    <li>🎬 <strong>Lazy loading de videos:</strong> Preload='metadata' para optimizar carga.</li>
-                    <li>🧹 <strong>Limpieza de memoria:</strong> Cleanup automático al cerrar medios.</li>
-                </ul>
-                <br>
-                <p><strong>📱 SOUNDTEST.HTML - MÓVIL:</strong></p>
-                <ul>
-                    <li>👆 <strong>Gestos swipe:</strong> Cambio de PGM/DA con umbral de velocidad.</li>
-                    <li>📳 <strong>Vibración táctil:</strong> Feedback de 50ms estándar, [50,30,50]ms para play.</li>
-                    <li>⌨️ <strong>Teclado virtual mejorado:</strong> scrollIntoView y gestión de blur.</li>
-                </ul>
-                <br>
-                <p><strong>🐛 SOUNDTEST.HTML - CORRECCIONES:</strong></p>
-                <ul>
-                    <li>✅ <strong>Códigos sin guiones:</strong> Soporte para personnel, hog, mania.</li>
-                    <li>💾 <strong>Persistencia localStorage:</strong> Desbloqueos, Mania status e historial guardados.</li>
-                    <li>⏰ <strong>Timer Mania:</strong> Auto-desbloqueo a 00:00 después de 15 minutos.</li>
-                </ul>
-                <br>
-                <p><strong>📖 STORYMODE.HTML - UX/ACCESIBILIDAD:</strong></p>
-                <ul>
-                    <li>♿ <strong>ARIA labels:</strong> Agregados a navegación y botones de acción.</li>
-                    <li>✨ <strong>Contador mejorado:</strong> Borde más brillante con efecto glow y titleGlow animation.</li>
-                    <li>📳 <strong>Vibración táctil:</strong> Feedback en todas las interacciones (50ms navegación, [50,30,50]ms play).</li>
-                </ul>
-                <br>
-                <h4><strong>🔥 NOVEDADES ANTERIORES v1.7.0 - FREEPLAY MINIREWORK</strong></h4>
-                <br>
-                <p><strong>🎮 FREEPLAY - REDISEÑO COMPLETO:</strong></p>
-                <ul>
-                    <li>🎨 <strong>Nuevo diseño de tarjetas:</strong> Sistema moderno de grid con tarjetas compactas y elegantes.</li>
-                    <li>📱 <strong>Optimización móvil:</strong> Tarjetas centradas y responsivas para dispositivos móviles.</li>
-                    <li>✨ <strong>Split-view dinámico:</strong> Vista dividida con tarjeta seleccionada y lista de niveles.</li>
-                    <li>🎵 <strong>Tarjetas de canciones rediseñadas:</strong> Nuevo diseño moderno con headers, badges y botones pill.</li>
-                    <li>🔄 <strong>Animaciones fluidas:</strong> Transiciones suaves y efectos visuales mejorados.</li>
-                    <li>📏 <strong>Tamaños optimizados:</strong> Tarjetas más compactas sin perder funcionalidad.</li>
-                    <li>🎯 <strong>Navegación mejorada:</strong> Gestos swipe para móviles y navegación por teclado.</li>
-                    <li>⚡ <strong>Rendimiento optimizado:</strong> Código limpio y eliminación de funciones obsoletas.</li>
-                </ul>
-                <br>
-                <p><strong>🎵 NUEVAS CANCIONES AGREGADAS:</strong></p>
-                <ul>
-                    <li>👻 <strong>Horrors Unknown:</strong> "Shimmy Terror" vs Asset agregada.</li>
-                    <li>⚡ <strong>Executable Mania:</strong> "Aftersh0ck" vs Kn0ckback agregada.</li>
-                </ul>
-                <br>
-                <h4><strong>🔥 NOVEDADES ANTERIORES v1.6.3 mini update 1</strong></h4>
-                <br>
-                <p><strong>🔧 HOTFIX 1 - Correcciones Críticas:</strong></p>
-                <ul>
-                    <li>🛠️ <strong>SoundTest:</strong> Corregido error de sintaxis JavaScript que impedía el funcionamiento.</li>
-                    <li>⌨️ <strong>SoundTest:</strong> Separación correcta entre códigos numéricos (00-00) y códigos de teclado.</li>
-                    <li>📝 <strong>SoundTest:</strong> Ampliada caja de texto para códigos largos (20 caracteres).</li>
-                    <li>🎯 <strong>SoundTest:</strong> Removido SPACE como activador, ahora solo ENTER funciona.</li>
-                </ul>
-                <br>
-                <p><strong>📺 EXTRAS - Nuevos Medios:</strong></p>
-                <ul>
-                    <li>🖼️ <strong>Nuevas imágenes y videos:</strong> Más contenido multimedia agregado al reproductor.</li>
-                    <li>🎬 <strong>Colección expandida:</strong> La galería de extras continúa creciendo.</li>
-                    <li>🔑 <strong>SoundTest:</strong> Nuevos secretos desbloqueables. Pista: "¿Qué abren las...?"</li>
-                    <li>🥭 <strong>SoundTest:</strong> Contenido especial oculto. Pista: "Recolecta mis..."</li>
-                </ul>
-                <br>
-                <h4><strong>🔥 NOVEDADES ANTERIORES v1.6.3</strong></h4>
-                <br>
-                <p><strong>🎵 SOUNDTEST - Nuevas Adiciones:</strong></p>
-                <ul>
-                    <li>🥛 <strong>Milk (12-34):</strong> Nueva canción de Sunky agregada al soundtest.</li>
-                    <li>🖼️ <strong>Imagen 69-69:</strong> Nuevo contenido multimedia especial agregado.</li>
-                    <li>🎮 <strong>Faker Dual Mode:</strong> Faker ahora tiene modo horizontal y vertical.</li>
-                    <li>🔗 <strong>Enlaces actualizados:</strong> Prey con enlace directo de Funky Maker.</li>
-                    <li>⚙️ <strong>Sistema mejorado:</strong> Selector de modo para canciones con múltiples layouts.
-                    </li>
-                </ul>
-                <p><strong>🆕 NUEVAS SECCIONES COMPLETAS:</strong></p>
-                <ul>
-                    <li>🎮 <strong>Executable Mania:</strong> Nueva sección completa con logo exclusivo agregada al
-                        Freeplay.</li>
-                    <li>🎵 <strong>Extras Songs:</strong> Nueva sección con 7 canciones adicionales de diferentes mods.
-                    </li>
-                </ul>
-                <br>
-                <p><strong>🔄 ACTUALIZACIONES MASIVAS DE CONTENIDO:</strong></p>
-                <ul>
-                    <li>⚡ <strong>Illegal Instruction - RENOVACIÓN COMPLETA:</strong> 12 nuevas canciones agregadas
-                        incluyendo:</li>
-                    <li>🎯 3 canciones de Duke: breakout, soulless endeavor, final frontier</li>
-                    <li>🎵 my horizon (chaotix), found you (normal cd), malediction (curse)</li>
-                    <li>🎶 perdition (apollyon), endless forest mix (majin), our horizon (chaotix)</li>
-                    <li>🎨 color crash (wechidna & mighty), my horizon(wechidna)</li>
-                    <li>🔥 <strong>Sonic.exe Rerun:</strong> Agregadas "torment" (lord x) y "time attack" (sonic.exe)
-                    </li>
-                    <li>🎭 <strong>Hit Single:</strong> Nueva canción "fake baby" (no more innocence)</li>
-                    <li>✨ <strong>Horrors Unknown:</strong> Agregada "Elements" con personaje Nantelle</li>
-                </ul>
-                <br>
-                <p><strong>🎵 EXTRAS SONGS - 7 NUEVAS CANCIONES:</strong></p>
-                <ul>
-                    <li>🎪 vessel (lordx), shlasher (Fakeout), all i have is you (Xathus)</li>
-                    <li>❓ Tarnished (???), drop and roll (diablo), for you (liz)</li>
-                    <li>👑 falter alter prime (majin, 2011x, lordx, rewrite)</li>
-                </ul>
-                <br>
-                <p><strong>🛠️ MEJORAS TÉCNICAS Y VISUALES:</strong></p>
-                <ul>
-                    <li>🖼️ Nuevo logo de Executable Mania (EXEmaniaNewlogo.png)</li>
-                    <li>📊 Contador actualizado: Ahora muestra "1 of 10" mods disponibles</li>
-                    <li>🔗 Todos los enlaces actualizados a Funky Maker Creator</li>
-                    <li>⚙️ Mejor organización y navegación de contenido</li>
-                    <li>📱 Interfaz optimizada para mejor experiencia de usuario</li>
-                </ul>
-                <br>
-                <h4><strong>🔥 NOVEDADES ANTERIORES v1.6.2</strong></h4>
-                <br>
-                <p><strong>🆕 NUEVO MOD - Spirit of Hell:</strong></p>
-                <ul>
-                    <li>👹 <strong>Nuevo mod completo:</strong> Spirit of Hell agregado al Freeplay.</li>
-                    <li>🎵 <strong>Nivel disponible:</strong> KindAndFair vs Sonic?(Exeller).</li>
-                    <li>🎨 <strong>Logo animado:</strong> GIF exclusivo para el mod Spirit of Hell.</li>
-                    <li>🖼️ <strong>Sistema de renders:</strong> Imágenes de fondo al pasar mouse sobre niveles.</li>
-                    <li>🎮 <strong>Integración completa:</strong> Navegación, contador y catálogo actualizados.</li>
-                    <li>📊 <strong>Contador actualizado:</strong> Ahora muestra "1 of 9" mods disponibles.</li>
-                </ul>
-                <br>
-                <h4><strong>🎆 NOVEDADES ANTERIORES v1.6.1 + HOTFIX 2</strong></h4>
-                <br>
-                <p><strong>🎮 HOTFIX 2 - Nuevas Funciones y Optimizaciones:</strong></p>
-                <ul>
-                    <li>🕹️ <strong>Minijuego Samy Jump:</strong> Juego completo integrado en el menú principal.</li>
-                    <li>🎯 Sistema de juego con mecánicas de salto y esquivar obstáculos.</li>
-                    <li>🎨 3 temas visuales disponibles: Clásico, Neón y Retro.</li>
-                    <li>🔊 Efectos de sonido y música de fondo integrados.</li>
-                    <li>📊 Sistema de estadísticas con puntuación máxima guardada.</li>
-                    <li>⚙️ Menú de configuración con opciones de sonido y dificultad.</li>
-                    <li>✨ Efectos de partículas y animaciones fluidas.</li>
-                    <li>🎪 Animación especial de entrada con efectos visuales únicos.</li>
-                    <li>📺 <strong>Media Player (Extras):</strong> Reorganización completa para móviles.</li>
-                    <li>🎮 Botones más grandes y táctiles (48x48px) para mejor accesibilidad.</li>
-                    <li>⬅️ Nuevo botón "Volver" azul distintivo en la esquina superior.</li>
-                    <li>🎯 Controles centrales (play/pause) reposicionados en diseño vertical.</li>
-                    <li>📊 Barras de progreso y volumen ampliadas para manipulación táctil.</li>
-                    <li>📋 Playlist ocupa pantalla completa en dispositivos móviles.</li>
-                    <li>⭐ Panel de favoritos reposicionado para evitar conflictos.</li>
-                    <li>📐 Espaciado optimizado entre botones para dedos.</li>
-                    <li>📱 Optimización completa para dispositivos móviles y PC.</li>
-                </ul>
-                <p><strong>🔧 HOTFIX 1 - Adaptación Móvil:</strong></p>
-                <ul>
-                    <li>🎮 Minijuego Samy Jump: Configuración de escala adaptativa para móviles.</li>
-                    <li>🎵 Encore: Contenedores responsivos y botones táctiles optimizados.</li>
-                    <li>📺 Media Player (Extras): Controles más grandes y interfaz móvil mejorada.</li>
-                    <li>🎹 SoundTest: Teclado virtual optimizado y controles táctiles de 44px mínimo.</li>
-                    <li>🔙 Créditos: Botón de volver restaurado y visible en todas las resoluciones.</li>
-                </ul>
-                <p><strong>🎵 Encore Section:</strong></p>
-                <ul>
-                    <li>🎨 Diseño completamente reworkeado con tema Encore único.</li>
-                    <li>🔵 Nueva paleta de colores: azul, púrpura, cian y magenta neón.</li>
-                    <li>⚡ Efectos glitch automáticos y aleatorios mejorados.</li>
-                    <li>🖼️ Contenedor de imagen redimensionado a 880x495px para mejor visualización.</li>
-                    <li>🎯 Botones de navegación agrandados (40x40px) para mejor usabilidad.</li>
-                    <li>📊 Contador de mods rediseñado y más visible.</li>
-                    <li>📱 Panel de información ajustado al mismo ancho que la imagen.</li>
-                    <li>🎮 Controles táctiles mejorados con gestos swipe para móviles.</li>
-                    <li>🔊 Integración completa de efectos de sonido Encore.</li>
-                </ul>
-                <p><strong>🎵 Sound Test:</strong></p>
-                <ul>
-                    <li>🎹 Teclado virtual completo con números y ENTER para Android.</li>
-                    <li>🎵 20 canciones disponibles con códigos únicos.</li>
-                    <li>🔓 6 sistemas de desbloqueo especiales diferentes con mecánicas únicas.</li>
-                    <li>🎯 Sistema de recolección de cartuchos con probabilidades aleatorias.</li>
-                    <li>⏰ Desbloqueos por tiempo de permanencia en el soundtest.</li>
-                    <li>🔤 Códigos secretos de texto para canciones ocultas.</li>
-                    <li>🔄 Sistema de alternancia para códigos duplicados.</li>
-                    <li>🎶 Música de fondo con activación por interacción del usuario.</li>
-                    <li>🔊 Efectos de sonido integrados para navegación y confirmación.</li>
-                </ul>
-                <p><strong>🎮 Menú Principal:</strong></p>
-                <ul>
-                    <li>🕹️ Nuevo minijuego completo accesible desde la imagen de Samy.</li>
-                    <li>🎯 Sistema de juego interactivo con mecánicas únicas.</li>
-                    <li>📱 Optimización completa para dispositivos móviles y PC.</li>
-                    <li>🔊 Efectos de sonido y música integrados en el minijuego.</li>
-                </ul>
-                <br>
-                <p><strong>📋 Novedades anteriores v1.6.0 Hotfix3:</strong></p>
-                <ul>
-                    <li>🔊 Arreglado sonido del botón de actualizaciones.</li>
-                    <li>🔥 Añadida noticia sobre Bodrio Collection ya disponible.</li>
-                    <li>🎵 Cambiada música de fondo del menú principal a MainMenuMusic.ogg.</li>
-                    <li>🎶 Story Mode: Nueva música de fondo (storymodemenumusic.ogg).</li>
-                    <li>🔊 Story Mode: Sonidos de navegación y confirmación añadidos.</li>
-                    <li>👥 Actualización de créditos: Jarret movido a ex-colaboradores.</li>
-                    <li>🎵 AbelitoGamer ahora aparece como creador de TrinityEncore.</li>
-                    <li>🧹 Limpieza general: Eliminado Mart de créditos.</li>
-                    <li>⚙️ Mejoras en inicialización de audio sin botones molestos.</li>
-                </ul>
+            <div class="update-content" id="updateContent">
+                <!-- El contenido se cargará dinámicamente desde updates.json -->
+                <div class="loading-updates">
+                    <p>🔄 Cargando actualizaciones...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1578,6 +1403,80 @@
                     }
                 });
             }
+
+            // Función para cargar actualizaciones desde JSON
+            async function loadUpdates() {
+                try {
+                    const response = await fetch('Assets/data/updates.json');
+                    const data = await response.json();
+
+                    // Actualizar versión en el título y botón
+                    const currentVersionSpan = document.getElementById('currentVersionSpan');
+                    if (currentVersionSpan) currentVersionSpan.textContent = data.currentVersion;
+                    const updateBtn = document.getElementById('updateBtn');
+                    if (updateBtn) updateBtn.innerHTML = `<i class="bi bi-stars"></i> Rework ${data.currentVersion}`;
+
+                    const updateContent = document.getElementById('updateContent');
+
+                    // Función para renderizar una update
+                    const renderUpdate = (update) => {
+                        let html = `<h4><strong>🔄 NOVEDADES ${update.version} - ${update.title}</strong></h4><br>`;
+                        update.sections.forEach(section => {
+                            html += `<p><strong>${section.title}:</strong></p><ul>`;
+                            section.items.forEach(item => {
+                                html += `<li>${item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`;
+                            });
+                            html += '</ul><br>';
+                        });
+                        return html;
+                    };
+
+                    // Solo mostrar la versión actual
+                    let html = renderUpdate(data.updates[0]);
+
+                    // Botón para ver anteriores (si hay más)
+                    if (data.updates.length > 1) {
+                        html += `<button class="show-older-btn" id="showOlderBtn">📜 VER ACTUALIZACIONES ANTERIORES ▼</button>`;
+                        html += `<div class="older-updates" id="olderUpdates">`;
+                        data.updates.slice(1).forEach(update => {
+                            html += `<h4><strong>🔥 ${update.version} - ${update.title}</strong></h4><br>`;
+                            update.sections.forEach(section => {
+                                html += `<p><strong>${section.title}:</strong></p><ul>`;
+                                section.items.forEach(item => {
+                                    html += `<li>${item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`;
+                                });
+                                html += '</ul><br>';
+                            });
+                        });
+                        html += `</div>`;
+                    }
+
+                    updateContent.innerHTML = html;
+
+                    // Toggle del botón
+                    const showOlderBtn = document.getElementById('showOlderBtn');
+                    const olderUpdates = document.getElementById('olderUpdates');
+                    if (showOlderBtn) {
+                        showOlderBtn.addEventListener('click', () => {
+                            const isVisible = olderUpdates.classList.toggle('visible');
+                            showOlderBtn.textContent = isVisible
+                                ? '📜 OCULTAR ACTUALIZACIONES ANTERIORES ▲'
+                                : '📜 VER ACTUALIZACIONES ANTERIORES ▼';
+                        });
+                    }
+
+                } catch (error) {
+                    console.error('Error cargando actualizaciones:', error);
+                    document.getElementById('updateContent').innerHTML = `
+                        <div class="error-loading">
+                            <p>❌ Error cargando actualizaciones</p>
+                            <p>Por favor, recarga la página.</p>
+                        </div>`;
+                }
+            }
+
+            // Cargar actualizaciones al inicializar
+            loadUpdates();
 
             // Botón de rework - Versión mejorada para Android
             if (updateBtn) {

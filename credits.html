@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="preload" href="sounds/Credits.ogg" as="audio" type="audio/ogg">
-    <link rel="preload" href="BG/menuBG.png" as="image">
+    <link rel="preload" href="Assets/BG/menuBG.png" as="image">
     <style>
         :root {
             --transition-time: 0.6s;
@@ -59,7 +59,7 @@
             height: 100%;
             background:
                 linear-gradient(rgba(30, 30, 50, 0.7), rgba(30, 30, 50, 0.7)),
-                url('BG/menuBG.png') repeat-x;
+                url('Assets/BG/menuBG.png') repeat-x;
             background-size: auto 100%;
             z-index: -2;
             animation: bgScroll 30s linear infinite;
@@ -230,15 +230,17 @@
             align-items: center;
             justify-content: center;
             overflow-y: auto;
-            transition: all var(--transition-time) cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1;
             backface-visibility: hidden;
             opacity: 0;
             pointer-events: none;
-            transform: translateX(100%);
             top: 0;
             left: 50%;
-            transform-origin: center;
+            transform: translateX(-50%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        opacity 0.4s ease,
+                        filter 0.4s ease,
+                        scale 0.4s ease;
         }
 
         .credit-slide.active {
@@ -247,32 +249,40 @@
             z-index: 3;
             pointer-events: all;
             filter: none;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { 
-                opacity: 0; 
-                transform: translateX(0) translateY(20px) scale(1); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateX(0) translateY(0) scale(1); 
-            }
         }
 
         .credit-slide.prev {
-            opacity: 0.6;
-            transform: translateX(-150%) scale(0.8);
+            opacity: 0.55;
+            transform: translateX(-150%) scale(0.82);
             z-index: 2;
             filter: blur(2px);
+            pointer-events: none;
         }
 
         .credit-slide.next {
-            opacity: 0.6;
-            transform: translateX(50%) scale(0.8);
+            opacity: 0.55;
+            transform: translateX(50%) scale(0.82);
             z-index: 2;
             filter: blur(2px);
+            pointer-events: none;
+        }
+
+        /* Sale por la izquierda (prev que ya no es visible) */
+        .credit-slide.gone-left {
+            opacity: 0;
+            transform: translateX(-260%) scale(0.7);
+            z-index: 1;
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        /* Sale por la derecha (next que ya no es visible) */
+        .credit-slide.gone-right {
+            opacity: 0;
+            transform: translateX(160%) scale(0.7);
+            z-index: 1;
+            filter: blur(4px);
+            pointer-events: none;
         }
 
         .credit-card {
@@ -289,14 +299,44 @@
             cursor: pointer;
         }
 
+        .credit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+            z-index: 1;
+        }
+
         .credit-card:hover {
             box-shadow: 0 0 20px var(--main-color);
             transform: translateY(-2px);
         }
 
+        .credit-card:hover::before {
+            left: 100%;
+        }
+
         .credit-card:active {
             transform: scale(0.98) translateY(-2px);
             transition: transform 0.1s;
+        }
+
+        /* Efecto de pulso para indicar que es clickeable */
+        .credit-card[data-credit-card] {
+            animation: subtlePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { 
+                box-shadow: 0 0 15px var(--main-color);
+            }
+            50% { 
+                box-shadow: 0 0 20px var(--main-color), 0 0 25px rgba(0, 229, 229, 0.3);
+            }
         }
 
         .credit-tooltip {
@@ -1289,13 +1329,19 @@
                     name: "Berkay",
                     role: "Colaborador 9"
                 },
+                {
+                    icon: "icons/POM.png",
+                    name: "Pom",
+                    role: "Colaborador 10"
+                },
 
             ],
             externalCollaborators: [
                 {
                     icon: "icons/abelitogamer.png",
                     name: "AbelitoGamer",
-                    role: "Colaborador Externo 1 - Creador de TrinityEncore"
+                    role: "Colaborador Externo 1 - Creador de TrinityEncore",
+                    description: "<img src='Assets/Creditos/OyeSicierto.png' alt='OyeSicierto' style='max-width:100%;border-radius:8px;margin-top:6px;'>"
                 }
             ],
             exCollaborators: [
@@ -1315,14 +1361,9 @@
                     role: "EX-Colaborador 3"
                 },
                 {
-                    icon: "icons/POM.png",
-                    name: "Pom",
-                    role: "EX-Colaborador 4"
-                },
-                {
                     icon: "icons/21_sin_titulo_20250809163031.png",
                     name: "Nowzuq",
-                    role: "EX-Colaborador 5"
+                    role: "EX-Colaborador 4"
                 }
             ]
         }
@@ -1481,8 +1522,8 @@
                 const tooltipText = `${categoryLabel} - Click para más info`;
                 
                 slide.innerHTML = `
-                    <div class="credit-card ${isExCategory ? 'ex-card' : ''} ${isExternalCategory ? 'external-card' : ''}" role="article" aria-label="Tarjeta de ${credit.name}">
-                        <div class="credit-tooltip">${tooltipText}</div>
+                    <div class="credit-card ${isExCategory ? 'ex-card' : ''} ${isExternalCategory ? 'external-card' : ''}" role="article" aria-label="Tarjeta de ${credit.name}" data-credit-card>
+                        <div class="credit-tooltip">Click para reproducir música - ${categoryLabel}</div>
                         <div class="credit-icon-container ${isExCategory ? 'ex-icon-container' : ''} ${isExternalCategory ? 'external-icon-container' : ''}">
                             <img src="${credit.icon}" alt="Foto de perfil de ${credit.name}" class="credit-icon ${isExCategory ? 'ex-icon' : ''} ${isExternalCategory ? 'external-icon' : ''} loading" loading="lazy">
                         </div>
@@ -1506,6 +1547,29 @@
                     this.classList.remove('loading');
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI3NSIgY3k9Ijc1IiByPSI3NSIgZmlsbD0iIzBhMmM0MiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIj4lM0Y8L3RleHQ+Cjwvc3ZnPgo=';
                 };
+
+                // Añadir evento de clic a toda la tarjeta para reproducir música
+                const creditCard = slide.querySelector('[data-credit-card]');
+                creditCard.addEventListener('click', (e) => {
+                    // Solo si no se hizo clic en la flecha de expansión
+                    if (!e.target.classList.contains('credit-expand-arrow')) {
+                        if (!userInteracted) {
+                            userInteracted = true;
+                            document.body.classList.add('user-interacted');
+                        }
+                        // Solo iniciar música si no está sonando, no pararla
+                        if (!isMusicPlaying) {
+                            toggleMusic();
+                        }
+                        lightVibration();
+                        
+                        // Efecto visual de feedback
+                        creditCard.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            creditCard.style.transform = '';
+                        }, 150);
+                    }
+                });
 
                 // Añadir evento de clic a la flecha con accesibilidad
                 const arrow = slide.querySelector('.credit-expand-arrow');
@@ -1652,12 +1716,41 @@
             }
         }
 
-        // Ir a slide específico
+        // Ir a slide específico — misma lógica de transición CSS
         function goToSlide(index) {
             if (index === currentIndex) return;
+            const direction = index > currentIndex ? 1 : -1;
+            // Reusar navigateCredit avanzando paso a paso si hay salto grande,
+            // o simplemente forzar la dirección correcta
+            const credits = creditsData[currentCategory];
+            const slides = document.querySelectorAll('.credit-slide');
+            const prevIndex = (currentIndex - 1 + credits.length) % credits.length;
+            const nextIndex = (currentIndex + 1) % credits.length;
+
+            slides.forEach(s => s.classList.remove('active', 'prev', 'next', 'gone-left', 'gone-right'));
+
+            if (direction > 0) {
+                if (slides[prevIndex]) slides[prevIndex].classList.add('gone-left');
+            } else {
+                if (slides[nextIndex]) slides[nextIndex].classList.add('gone-right');
+            }
 
             currentIndex = index;
-            updateSlidesPosition();
+            if (slides[currentIndex]) slides[currentIndex].classList.add('active');
+
+            const newPrev = (currentIndex - 1 + credits.length) % credits.length;
+            const newNext = (currentIndex + 1) % credits.length;
+            if (slides[newPrev]) slides[newPrev].classList.add('prev');
+            if (slides[newNext]) slides[newNext].classList.add('next');
+
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                const isActive = i === currentIndex;
+                dot.classList.toggle('active', isActive);
+                dot.setAttribute('aria-selected', isActive);
+                dot.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+
+            updateButtonStates();
         }
 
         // ============================================
@@ -1665,18 +1758,51 @@
         // ============================================
         
         /**
-         * Navega entre créditos (anterior/siguiente)
-         * @param {number} direction - Dirección: -1 para anterior, 1 para siguiente
+         * Navega entre créditos — la transición CSS hace todo el trabajo
+         * @param {number} direction - -1 anterior, 1 siguiente
          */
         function navigateCredit(direction) {
             const credits = creditsData[currentCategory];
             if (credits.length <= 1) return;
 
             lightVibration();
-            currentIndex = (currentIndex + direction + credits.length) % credits.length;
-            
-            const updateFn = () => updateSlidesPosition();
-            isOperaGX ? setTimeout(updateFn, CONFIG.OPERA_GX_DELAY) : updateFn();
+
+            const slides = document.querySelectorAll('.credit-slide');
+
+            // Calcular índices
+            const prevIndex = (currentIndex - 1 + credits.length) % credits.length;
+            const nextIndex = (currentIndex + 1) % credits.length;
+
+            // Quitar todas las clases de posición
+            slides.forEach(s => s.classList.remove('active', 'prev', 'next', 'gone-left', 'gone-right'));
+
+            if (direction > 0) {
+                // → Siguiente: prev se va a la izquierda, current baja a prev, next sube a active
+                if (slides[prevIndex])   slides[prevIndex].classList.add('gone-left');
+                if (slides[currentIndex]) slides[currentIndex].classList.add('prev');
+                currentIndex = nextIndex;
+                if (slides[currentIndex]) slides[currentIndex].classList.add('active');
+                const newNext = (currentIndex + 1) % credits.length;
+                if (slides[newNext] && newNext !== prevIndex) slides[newNext].classList.add('next');
+            } else {
+                // ← Anterior: next se va a la derecha, current baja a next, prev sube a active
+                if (slides[nextIndex])   slides[nextIndex].classList.add('gone-right');
+                if (slides[currentIndex]) slides[currentIndex].classList.add('next');
+                currentIndex = prevIndex;
+                if (slides[currentIndex]) slides[currentIndex].classList.add('active');
+                const newPrev = (currentIndex - 1 + credits.length) % credits.length;
+                if (slides[newPrev] && newPrev !== nextIndex) slides[newPrev].classList.add('prev');
+            }
+
+            // Actualizar dots
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                const isActive = i === currentIndex;
+                dot.classList.toggle('active', isActive);
+                dot.setAttribute('aria-selected', isActive);
+                dot.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+
+            updateButtonStates();
         }
 
         const showPrevCredit = () => navigateCredit(-1);
@@ -1808,38 +1934,95 @@
             }
         });
 
-        // Navegación táctil mejorada para móviles
+        // Navegación táctil con arrastre en tiempo real
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchDeltaX = 0;
+        let isSwiping = false;
+        let swipeDecided = false; // si ya decidimos si es swipe horizontal o scroll
+
+        function getSlidesForDrag() {
+            const credits = creditsData[currentCategory];
+            const prevIndex = (currentIndex - 1 + credits.length) % credits.length;
+            const nextIndex = (currentIndex + 1) % credits.length;
+            const slides = document.querySelectorAll('.credit-slide');
+            return {
+                active: slides[currentIndex],
+                prev:   slides[prevIndex],
+                next:   slides[nextIndex]
+            };
+        }
+
+        function applyDragOffset(delta) {
+            const { active, prev, next } = getSlidesForDrag();
+            // Desactivar transition mientras arrastramos para que sea instantáneo
+            [active, prev, next].forEach(s => {
+                if (s) s.style.transition = 'none';
+            });
+
+            const pct = (delta / window.innerWidth) * 100;
+
+            if (active) active.style.transform = `translateX(calc(-50% + ${delta}px)) scale(1)`;
+            if (prev)   prev.style.transform   = `translateX(calc(-150% + ${delta}px)) scale(0.82)`;
+            if (next)   next.style.transform   = `translateX(calc(50% + ${delta}px)) scale(0.82)`;
+        }
+
+        function resetDragOffset() {
+            const { active, prev, next } = getSlidesForDrag();
+            // Restaurar transition para que vuelvan suavemente
+            [active, prev, next].forEach(s => {
+                if (s) {
+                    s.style.transition = '';
+                    s.style.transform  = '';
+                }
+            });
+        }
 
         creditsSlider.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+            touchStartX  = e.touches[0].clientX;
+            touchStartY  = e.touches[0].clientY;
+            touchDeltaX  = 0;
+            isSwiping    = false;
+            swipeDecided = false;
         }, { passive: true });
 
         creditsSlider.addEventListener('touchmove', (e) => {
-            // Prevenir scroll vertical durante el swipe horizontal
-            if (Math.abs(e.changedTouches[0].screenX - touchStartX) >
-                Math.abs(e.changedTouches[0].screenY - touchStartY)) {
-                e.preventDefault();
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+
+            if (!swipeDecided) {
+                if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return; // aún no se mueve suficiente
+                swipeDecided = true;
+                isSwiping = Math.abs(dx) > Math.abs(dy);
             }
+
+            if (!isSwiping) return; // es scroll vertical, no interferir
+
+            e.preventDefault();
+            touchDeltaX = dx;
+            applyDragOffset(dx);
         }, { passive: false });
 
-        creditsSlider.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const touchEndY = e.changedTouches[0].screenY;
+        creditsSlider.addEventListener('touchend', () => {
+            if (!isSwiping) return;
 
-            const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
+            resetDragOffset();
 
-            // Solo considerar como swipe si el movimiento horizontal es mayor que el vertical
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
-                if (diffX > 0) {
+            const threshold = window.innerWidth * 0.2; // 20% de la pantalla
+
+            if (Math.abs(touchDeltaX) > threshold) {
+                if (navigator.vibrate) navigator.vibrate([30, 10, 30]);
+                if (touchDeltaX > 0) {
                     showPrevCredit();
                 } else {
                     showNextCredit();
                 }
             }
+            // Si no llegó al umbral, las tarjetas ya volvieron solas con resetDragOffset
+
+            touchDeltaX  = 0;
+            isSwiping    = false;
+            swipeDecided = false;
         }, { passive: true });
 
         // ============================================

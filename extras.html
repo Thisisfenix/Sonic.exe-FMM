@@ -216,18 +216,45 @@
             align-items: center;
             transition: all 0.3s;
             font-size: 14px;
+            border-radius: 8px;
+            margin: 4px 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .playlist-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, rgba(255, 0, 0, 0.3), transparent);
+            transition: width 0.3s ease;
         }
 
         .playlist-item:hover {
-            background-color: #300000;
+            background-color: rgba(48, 0, 0, 0.8);
             color: var(--blood-red);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
+
+        .playlist-item:hover::before {
+            width: 4px;
         }
 
         .playlist-item.active {
-            background-color: #300000;
+            background-color: rgba(48, 0, 0, 0.9);
             color: var(--blood-red);
             font-weight: bold;
-            border-left: 3px solid var(--blood-red);
+            border-left: 4px solid var(--blood-red);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .playlist-item.active::before {
+            width: 4px;
+            background: var(--blood-red);
         }
 
         .playlist-item img,
@@ -303,10 +330,12 @@
             overflow: hidden;
             transition: height 0.2s ease;
             border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .progress-bar:hover {
             height: 8px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 0 10px rgba(255, 0, 0, 0.3);
         }
 
         .progress-filled {
@@ -315,10 +344,30 @@
             left: 0;
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0, #ffffff);
             border-radius: 3px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
             transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .progress-filled::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .progress-bar:hover .progress-filled::after {
+            opacity: 1;
         }
 
         .main-controls {
@@ -335,7 +384,19 @@
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .center-controls:hover {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 0, 0, 0.3);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 0, 0, 0.2);
         }
 
         .control-btn {
@@ -355,6 +416,7 @@
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .control-btn::before {
@@ -371,8 +433,13 @@
         .control-btn:hover {
             background: rgba(255, 0, 0, 0.15);
             border-color: var(--blood-red);
-            box-shadow: var(--glow-soft);
-            transform: translateY(-2px);
+            box-shadow: var(--glow-soft), 0 4px 16px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .control-btn:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .control-btn:hover::before {
@@ -380,10 +447,49 @@
         }
 
         .control-btn.active {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 0, 0, 0.25);
             border-color: var(--blood-red);
-            box-shadow: var(--glow-red);
+            box-shadow: var(--glow-red), 0 4px 16px rgba(255, 0, 0, 0.2);
             color: #ffffff;
+        }
+
+        /* Botones de navegación específicos (anterior/siguiente) */
+        #prevBtn, #nextBtn {
+            width: 40px;
+            height: 40px;
+            background: rgba(51, 0, 0, 0.9) !important;
+            border: 2px solid rgba(255, 0, 0, 0.4) !important;
+            border-radius: 50% !important;
+            color: #ffffff;
+            font-size: 14px;
+            margin: 0 2px;
+        }
+
+        #prevBtn:hover, #nextBtn:hover {
+            background: rgba(255, 0, 0, 0.2) !important;
+            border-color: var(--blood-red) !important;
+            transform: translateY(-1px) scale(1.05) !important;
+        }
+
+        /* Botones de seek (±10s) */
+        #seek-10, 
+        button[id="seek+10"] {
+            width: 36px !important;
+            height: 36px !important;
+            background: rgba(51, 0, 0, 0.7) !important;
+            border: 1px solid rgba(255, 0, 0, 0.3) !important;
+            border-radius: 8px !important;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        #seek-10:hover, 
+        button[id="seek+10"]:hover {
+            background: rgba(255, 0, 0, 0.15) !important;
+            border-color: rgba(255, 0, 0, 0.6) !important;
+            color: #ffffff;
+            transform: translateY(-1px) !important;
         }
 
         .right-controls {
@@ -393,19 +499,45 @@
         }
 
         .play-btn {
-            font-size: 18px;
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 0, 0, 0.1) !important;
-            border: 2px solid rgba(255, 0, 0, 0.5) !important;
+            font-size: 16px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 0, 0, 0.15) !important;
+            border: 2px solid rgba(255, 0, 0, 0.6) !important;
             border-radius: 50% !important;
-            box-shadow: var(--glow-red), inset 0 0 20px rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4), inset 0 0 15px rgba(255, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin: 0 4px;
+        }
+
+        .play-btn::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .play-btn:hover {
-            background: rgba(255, 0, 0, 0.2) !important;
+            background: rgba(255, 0, 0, 0.25) !important;
             border-color: var(--blood-red) !important;
             transform: scale(1.05) !important;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .play-btn:hover::after {
+            opacity: 1;
+        }
+
+        .play-btn:active {
+            transform: scale(0.98) !important;
         }
 
         .left-controls {
@@ -426,10 +558,12 @@
             border: 1px solid rgba(255, 0, 0, 0.2);
             padding: 8px 0;
             margin: -8px 0;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
         }
 
         .volume-slider:hover {
             height: 10px;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 0, 0, 0.3);
         }
 
         .volume-filled {
@@ -438,9 +572,29 @@
             left: 0;
             height: 100%;
             width: 100%;
-            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0, #ffffff);
             border-radius: 2px;
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .volume-filled::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 2px 3px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .volume-slider:hover .volume-filled::after {
+            opacity: 1;
         }
 
         /* Efectos de glitch modernos */
@@ -500,7 +654,55 @@
             pointer-events: auto;
         }
 
-        /* Visualizador de audio */
+        /* Mejoras adicionales para la experiencia visual */
+        .player-header {
+            background: rgba(51, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 0, 0, 0.6);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container {
+            flex: 1;
+            width: 100%;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Efecto de partículas sutiles */
+        .player-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 0, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+            animation: particleFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { opacity: 0.3; transform: translateY(0px); }
+            50% { opacity: 0.1; transform: translateY(-10px); }
+        }
+
+        /* Mejora del visualizador de audio */
         .audio-visualizer {
             position: absolute;
             bottom: 0;
@@ -511,16 +713,18 @@
             align-items: end;
             justify-content: center;
             gap: 2px;
-            opacity: 0.7;
+            opacity: 0.8;
             pointer-events: none;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
         }
 
         .audio-bar {
             width: 4px;
-            background: var(--blood-red);
+            background: linear-gradient(to top, var(--blood-red), rgba(255, 100, 100, 0.8));
             min-height: 2px;
             transition: height 0.1s;
-            box-shadow: 0 0 5px var(--blood-red);
+            box-shadow: 0 0 8px var(--blood-red);
+            border-radius: 2px 2px 0 0;
         }
 
         /* Modo teatro */
@@ -594,7 +798,7 @@
 
 
 
-        /* Solo favoritos */
+        /* Panel de favoritos mejorado */
         .favorites-panel {
             position: absolute;
             bottom: 80px;
@@ -606,75 +810,135 @@
             overflow-y: auto;
             display: none;
             z-index: 25;
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.3);
         }
 
         .favorites-panel.show {
             display: block;
+            animation: slideInFromBottom 0.3s ease-out;
         }
 
         .favorites-header {
-            padding: 8px;
-            background: var(--blood-red);
+            padding: 12px;
+            background: linear-gradient(135deg, var(--blood-red), var(--dark-red));
             color: #000;
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 10px 10px 0 0;
         }
 
         .favorite-item {
-            padding: 6px 8px;
-            border-bottom: 1px solid #300000;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(48, 0, 0, 0.5);
             cursor: pointer;
-            font-size: 10px;
+            font-size: 12px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .favorite-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--blood-red);
+            transition: width 0.3s ease;
         }
 
         .favorite-item:hover {
-            background: #300000;
+            background: rgba(48, 0, 0, 0.8);
             color: var(--blood-red);
+            padding-left: 16px;
+        }
+
+        .favorite-item:hover::before {
+            width: 3px;
+        }
+
+        .favorite-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 10px 10px;
         }
 
 
+
+        /* Responsive Design Mejorado */
+        @media (max-width: 1024px) {
+            .player-container {
+                height: var(--app-height);
+            }
+            
+            .playlist-overlay {
+                max-width: 350px;
+            }
+            
+            .volume-slider {
+                width: 100px;
+            }
+        }
 
         @media (max-width: 768px) {
             .player-container {
                 height: var(--app-height);
             }
 
+            .player-header {
+                padding: 16px 20px;
+            }
+
             .player-title {
-                font-size: 14px;
+                font-size: 16px;
+                font-weight: 700;
             }
 
             .player-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 16px;
-                min-height: 44px;
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+                min-height: 48px;
+                border-radius: 12px;
             }
 
             .playlist-overlay {
                 max-width: 100%;
                 width: 100%;
-                padding-top: 60px;
+                padding-top: 70px;
+            }
+
+            .playlist-header {
+                padding: 16px;
+                font-size: 16px;
             }
 
             .playlist-item {
-                padding: 15px;
-                font-size: 14px;
-                min-height: 60px;
+                padding: 18px 16px;
+                font-size: 15px;
+                min-height: 70px;
+                border-radius: 8px;
+                margin: 4px 8px;
             }
 
-            .playlist-item img {
-                width: 50px;
-                height: 35px;
+            .playlist-item img,
+            .playlist-item video {
+                width: 60px;
+                height: 40px;
+                border-radius: 6px;
             }
 
             .main-controls {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
                 align-items: center;
+                padding: 10px 0;
             }
 
             .center-controls {
@@ -682,55 +946,186 @@
                 transform: none;
                 order: 1;
                 gap: 12px;
+                background: rgba(0, 0, 0, 0.4);
+                padding: 12px 20px;
+                border-radius: 30px;
+                backdrop-filter: blur(15px);
+                border: 2px solid rgba(255, 0, 0, 0.3);
             }
 
             .left-controls {
                 order: 2;
                 justify-content: center;
-                gap: 10px;
+                gap: 12px;
+                width: 100%;
+                max-width: 300px;
             }
 
             .right-controls {
                 order: 3;
                 justify-content: center;
-                gap: 8px;
+                gap: 10px;
                 flex-wrap: wrap;
+                width: 100%;
+                max-width: 350px;
             }
 
             .control-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 16px;
+                width: 54px;
+                height: 54px;
+                font-size: 18px;
                 margin: 0;
-                min-height: 48px;
+                min-height: 54px;
+                border-radius: 14px;
+                border-width: 2px;
             }
 
             .center-controls .control-btn {
-                width: 52px;
-                height: 52px;
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+
+            #prevBtn, #nextBtn {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 16px !important;
+            }
+
+            #seek-10, 
+            button[id="seek+10"] {
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 12px !important;
+                border-radius: 10px !important;
             }
 
             .play-btn {
-                width: 64px !important;
-                height: 64px !important;
-                font-size: 24px !important;
+                width: 72px !important;
+                height: 72px !important;
+                font-size: 28px !important;
+                border-width: 3px !important;
+            }
+
+            .volume-slider {
+                width: 120px;
+                height: 16px;
+                padding: 16px 0;
+                margin: -16px 0;
+                border-radius: 8px;
+            }
+
+            .progress-bar {
+                height: 18px;
+                padding: 14px 0;
+                margin: -14px 0;
+                border-radius: 9px;
+            }
+
+            .controls-container {
+                padding: 25px 20px;
+                padding-bottom: calc(30px + env(safe-area-inset-bottom));
+            }
+
+            .progress-container {
+                margin-bottom: 30px;
+                gap: 16px;
+            }
+
+            .time-display {
+                font-size: 14px;
+                min-width: 50px;
+                font-weight: 600;
+            }
+
+            .favorites-panel {
+                width: 95%;
+                right: 2.5%;
+                max-height: 250px;
+                bottom: 140px;
+                border-radius: 12px;
+            }
+
+            .favorite-item {
+                padding: 12px 16px;
+                font-size: 14px;
+                border-radius: 8px;
+                margin: 4px 8px;
+            }
+        }
+        
+        
+        @media (max-width: 480px) {
+            .player-header {
+                padding: 12px 16px;
+            }
+
+            .player-title {
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .player-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+                border-radius: 10px;
+            }
+
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+                margin: 0;
+                border-radius: 12px;
+            }
+
+            .center-controls .control-btn {
+                width: 56px;
+                height: 56px;
+                font-size: 18px;
+            }
+
+            #prevBtn, #nextBtn {
+                width: 46px !important;
+                height: 46px !important;
+                font-size: 15px !important;
+            }
+
+            #seek-10, 
+            button[id="seek+10"] {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 11px !important;
+            }
+
+            .play-btn {
+                width: 68px !important;
+                height: 68px !important;
+                font-size: 26px !important;
             }
 
             .volume-slider {
                 width: 100px;
-                height: 12px;
-                padding: 12px 0;
-                margin: -12px 0;
+                height: 14px;
             }
 
-            .progress-bar {
-                height: 14px;
-                padding: 10px 0;
-                margin: -10px 0;
+            .left-controls {
+                gap: 10px;
+                max-width: 280px;
+            }
+
+            .right-controls {
+                gap: 8px;
+                max-width: 320px;
+            }
+
+            .center-controls {
+                gap: 14px;
             }
 
             .controls-container {
-                padding: 20px 15px;
+                padding: 20px 16px;
                 padding-bottom: calc(25px + env(safe-area-inset-bottom));
             }
 
@@ -744,41 +1139,60 @@
                 min-width: 45px;
             }
 
-            .favorites-panel {
-                width: 95%;
-                right: 2.5%;
-                max-height: 200px;
-                bottom: 120px;
+            .progress-bar {
+                height: 16px;
+                padding: 12px 0;
+                margin: -12px 0;
+            }
+
+            .playlist-item {
+                padding: 16px 14px;
+                font-size: 14px;
+                min-height: 65px;
+            }
+
+            .playlist-item img,
+            .playlist-item video {
+                width: 55px;
+                height: 36px;
             }
         }
-        
-        @media (max-width: 480px) {
+
+        /* Mejoras para dispositivos extra pequeños */
+        @media (max-width: 360px) {
             .player-title {
                 font-size: 12px;
             }
 
-            .player-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
-            }
-
             .control-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 14px;
-                margin: 0;
+                width: 46px;
+                height: 46px;
+                font-size: 15px;
             }
 
             .center-controls .control-btn {
-                width: 48px;
-                height: 48px;
+                width: 52px;
+                height: 52px;
+                font-size: 17px;
+            }
+
+            #prevBtn, #nextBtn {
+                width: 42px !important;
+                height: 42px !important;
+                font-size: 14px !important;
+            }
+
+            #seek-10, 
+            button[id="seek+10"] {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 10px !important;
             }
 
             .play-btn {
-                width: 60px !important;
-                height: 60px !important;
-                font-size: 22px !important;
+                width: 64px !important;
+                height: 64px !important;
+                font-size: 24px !important;
             }
 
             .volume-slider {
@@ -786,30 +1200,16 @@
             }
 
             .left-controls {
-                gap: 8px;
+                max-width: 250px;
             }
 
             .right-controls {
-                gap: 6px;
-            }
-
-            .center-controls {
-                gap: 10px;
+                max-width: 280px;
             }
 
             .controls-container {
-                padding: 15px 10px;
-                padding-bottom: calc(20px + env(safe-area-inset-bottom));
-            }
-
-            .progress-container {
-                margin-bottom: 20px;
-                gap: 10px;
-            }
-
-            .time-display {
-                font-size: 12px;
-                min-width: 40px;
+                padding: 18px 12px;
+                padding-bottom: calc(22px + env(safe-area-inset-bottom));
             }
         }
 
@@ -835,7 +1235,93 @@
             }
         }
 
-        /* Indicador de carga */
+        /* Efectos táctiles mejorados */
+        @media (hover: none) and (pointer: coarse) {
+            .control-btn:hover {
+                transform: none;
+            }
+            
+            .control-btn:active {
+                transform: scale(0.95);
+                background: rgba(255, 0, 0, 0.25);
+            }
+            
+            .play-btn:active {
+                transform: scale(0.95) !important;
+            }
+            
+            .playlist-item:hover {
+                transform: none;
+            }
+            
+            .playlist-item:active {
+                background-color: rgba(48, 0, 0, 0.9);
+                transform: scale(0.98);
+            }
+        }
+
+        /* Animaciones de entrada */
+        @keyframes slideInFromBottom {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .controls-container {
+            animation: slideInFromBottom 0.5s ease-out;
+        }
+
+        .playlist-overlay.show {
+            animation: slideInFromRight 0.3s ease-out;
+        }
+
+        .control-btn {
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        .control-btn:nth-child(1) { animation-delay: 0.1s; }
+        .control-btn:nth-child(2) { animation-delay: 0.2s; }
+        .control-btn:nth-child(3) { animation-delay: 0.3s; }
+        .control-btn:nth-child(4) { animation-delay: 0.4s; }
+        .control-btn:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Mejoras de accesibilidad */
+        .control-btn:focus,
+        .player-btn:focus,
+        .progress-bar:focus,
+        .volume-slider:focus {
+            outline: 2px solid var(--blood-red);
+            outline-offset: 2px;
+        }
+
+        /* Indicador de carga mejorado */
         .loading-indicator {
             position: absolute;
             top: 50%;
@@ -844,35 +1330,47 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--blood-red);
+            backdrop-filter: blur(10px);
         }
 
         .loading-indicator.show {
             display: flex;
+            animation: fadeInScale 0.3s ease-out;
         }
 
         .loading-spinner {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border: 4px solid rgba(255, 0, 0, 0.2);
             border-top: 4px solid var(--blood-red);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
         }
 
         .loading-text {
             color: var(--blood-red);
-            font-size: 14px;
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-            letter-spacing: 1px;
+            font-size: 16px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            letter-spacing: 2px;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
@@ -977,102 +1475,67 @@
 
             // Datos de medios
             const mediaItems = [
-                { src: 'media/1.png', title: 'AYOOOO', type: 'image' },
-                { src: 'media/2.mp4', title: 'ese bf XDDDD', type: 'video' },
-                { src: 'media/3.png', title: 'when biologia', type: 'image' },
-                { src: 'media/4.mp4', title: 'Homero Vas a recoltalte', type: 'video' },
-                { src: 'media/5.png', title: 'EYYYYY', type: 'image' },
-                { src: 'media/6.png', title: 'When AYYYY', type: 'image' },
-                { src: 'media/7.mp4', title: 'Mi impresora WEEEE', type: 'video' },
-                { src: 'media/8.mp4', title: 'Forsaken en PIllarCagada', type: 'video' },
-                { src: 'media/9.mp4', title: 'JojoMeme que', type: 'video' },
-                { src: 'media/10.png', title: 'Pero Angg', type: 'image' },
-                { src: 'media/11.mp4', title: 'Die Of Death meme', type: 'video' },
-                { src: 'media/12.mp4', title: 'Bro que esta jugando', type: 'video' },
-                { src: 'media/12+1.mp4', title: 'Another Die Of Death meme', type: 'video' },
-                { src: 'media/14.jpeg', title: 'Luigi', type: 'image' },
-                { src: 'media/16.png', title: 'Nooo mi Jugo', type: 'image' },
-                { src: 'media/17.png', title: 'King Siendo King', type: 'image' },
-                { src: 'media/18.gif', title: 'pero John Doe', type: 'image' },
-                { src: 'media/19.png', title: 'Mensaje para ti', type: 'image' },
-                { src: 'media/20.png', title: 'Pero no te habias visto bien caros', type: 'image' },
-                { src: 'media/21.mp4', title: 'Samy pendeja no chambea', type: 'video' },
-                { src: 'media/22.jpg', title: 'Un verdadero cumpleaños', type: 'image' },
-                { src: 'media/23.jpg', title: 'Domi vamo al baño', type: 'image' },
-                { src: 'media/24.jpg', title: 'Origenes Deibi vamo al baño', type: 'image' },
-                { src: 'media/25.jpg', title: 'Pero Copito', type: 'image' },
-                { src: 'media/26.png', title: 'Pero Not break heart', type: 'image' },
-                { src: 'media/27.png', title: 'Deltapadre', type: 'image' },
-                { src: 'media/28.png', title: 'ya pero como te gusta?', type: 'image' },
-                { src: 'media/29.png', title: 'MANGO MANGO', type: 'image' },
-                { src: 'media/30.jpg', title: 'El Woody', type: 'image' },
-                { src: 'media/31.mp4', title: 'Miku?', type: 'video' },
-                { src: 'media/32.mp4', title: 'top 5 me vale verga', type: 'video' },
-                { src: 'media/33.mp4', title: 'Pinche tallota alv', type: 'video' },
-                { src: 'media/34.mp4', title: 'que leyenda miedo we', type: 'video' },
-                { src: 'media/35.mp4', title: 'Video 35', type: 'video' },
-                { src: 'media/36.mp4', title: 'ridinginmycar', type: 'video' },
-                { src: 'media/37.mp4', title: 'pelea durisima', type: 'video' },
-                { src: 'media/38.png', title: 'when', type: 'image' },
-                { src: 'media/39.png', title: 'La historia del polnito aykriko', type: 'image' },
-                { src: 'media/40.mp4', title: 'Ay wey que miedo D:', type: 'video' },
-                { src: 'media/41.mp4', title: 'DeidadX lanzando temazos', type: 'video' },
-                { src: 'media/42.mp4', title: 'Ya pero cuanto cuestan', type: 'video' },
-                { src: 'media/43.mp4', title: 'Gissel haciendo legendary', type: 'video' },
-                { src: 'media/44.png', title: 'When eres samy', type: 'image' },
-                { src: 'media/45.png', title: 'la addicion del tiktok es peor que de la paja jajalol', type: 'image' },
-                { src: 'media/46.png', title: 'bien duro mi webo', type: 'image' },
-                { src: 'media/47.png', title: 'sonrisas bien durisimas', type: 'image' },
-                { src: 'media/48.png', title: 'los humores de los animes actuales es tocar teterras', type: 'image' },
-                { src: 'media/49.png', title: 'no duro nada', type: 'image' },
-                { src: 'media/50.png', title: 'Humor del cabronn', type: 'image' },
-                { src: 'media/51.png', title: 'Freaky x calling you', type: 'image' },
-                { src: 'media/52.png', title: 'Sale eclipsito', type: 'image' },
-                { src: 'media/53.png', title: '############', type: 'image' },
-                { src: 'media/54.png', title: 'Tremenda obra', type: 'image' },
-                { src: 'media/55.png', title: 'Here i come', type: 'image' },
-                { src: 'media/56.png', title: 'SEMEN', type: 'image' },
-                { src: 'media/57.jpeg', title: 'aura farming', type: 'image' },
-                { src: 'media/58.mp4', title: 'Se preparo', type: 'video' },
-                { src: 'media/59.png', title: 'Weege', type: 'image' },
-                { src: 'media/60.png', title: 'Te quiero mucho', type: 'image' },
-                { src: 'media/61.png', title: 'sadilla', type: 'image' },
-                { src: 'media/62.png', title: 'si bro es verdad digo que', type: 'image' },
-                { src: 'media/63.png', title: 'muestra tu ano', type: 'image' },
-                { src: 'media/mario 64.png', title: 'Kristino puso QUEEEEEEEEEEEEEEEE', type: 'image' },
-                { src: 'media/65.png', title: 'Calmate anna somos tu amigos', type: 'image' },
-                { src: 'media/66.jpg', title: 'why...', type: 'image' },
-                { src: 'media/68 llaves.png', title: 'collect my llaves', type: 'image' },
-                { src: 'media/69696969696969.png', title: 'Manda fotochilito que miedo wey', type: 'image' },
-                { src: 'media/70.png', title: 'Manda tu anus', type: 'image' },
-                { src: 'media/71.png', title: 'Pero carosGPT', type: 'image' },
-                { src: 'media/72.mp4', title: 'Perdon mama...', type: 'video' },
-                { src: 'media/73.jpg', title: 'eeeeee', type: 'image' },
-                { src: 'media/74.mp4', title: 'bro jason se fue de midsaken para irse a fortnite', type: 'video' },
-                { src: 'media/75.jpg', title: 'Que le hicieron a sonic malditos', type: 'image' },
-                { src: 'media/76.jpg', title: 'el primer sonic.exe be like', type: 'image' },
-                { src: 'media/77.mp4', title: 'emotiza de golossos', type: 'video' },
-                { src: 'media/78.jpg', title: 'Media 78', type: 'Llaves' },
-                { src: 'media/79.jpg', title: 'Media 79', type: 'que?' },
-                { src: 'media/80.png', title: 'Media 80', type: 'que miedo wey' },
-                { src: 'media/81.jpg', title: 'Media 81', type: 'Supuestamente :eyes:' },
-                { src: 'media/82.png', title: 'Media 82', type: 'wait what???' },
-                { src: 'media/83.mp4', title: 'Media 83', type: 'gyattt' },
-                { src: 'media/84.png', title: 'Media 84', type: 'abelito deja a la menor' },
-                { src: 'media/85.png', title: 'Media 85', type: 'tu nivel basura brother' },
-                { src: 'media/86.jpg', title: 'Media 86', type: 'Legacy menu' },
-                { src: 'media/87.jpg', title: 'Media 87', type: 'Obvio eh que' },
-                { src: 'media/88.png', title: 'Media 88', type: 'Ya lo mataste' },
-                { src: 'media/89.jpg', title: 'Media 89', type: '._. Tocame' },
-                { src: 'media/90.jpg', title: 'Media 90', type: 'te voy a besar' },
-                { src: 'media/Screenshot_20250724_172547_Discord.png', title: 'ki ki ki ma ma ma (comentario de justaguy)', type: 'image' },
-                { src: 'media/Screenshot_20250724_172600_Discord.jpg', title: 'auch (comentario de abel)', type: 'image' },
-                { src: 'media/Screenshot_20250724_172610_Discord.jpg', title: 'cuidado wey (comentario de cacaran digo takeran)', type: 'image' },
-                { src: 'media/Screenshot_20250724_172621_Discord.jpg', title: 'level sent to rewiev (comentario de nowzuq)', type: 'image' },
-                { src: 'media/Screenshot_20250724_172858_Discord.jpg', title: 'que dijiste de mi mama (comentario de berkay)', type: 'image' },
-                { src: 'media/Screenshot_20250724_213901_Discord.jpg', title: 'simp de gf tenia que ser (comentario de samylol)', type: 'image' },
-                { src: 'media/Screenshot_20250724_213915_Discord.jpg', title: 'eh si (comentario de thejarret)', type: 'image' },
-                { src: 'media/Screenshot_20250724_213944_Discord.jpg', title: 'bwa (comentario de gissel)', type: 'image' },
+                { src: 'media/1.png', title: 'Broo', type: 'image' },
+                { src: 'media/2.mp4', title: 'Morty correr', type: 'video' },
+                { src: 'media/3.png', title: 'When te vale verga', type: 'image' },
+                { src: 'media/4.jpeg', title: 'Luigi', type: 'image' },
+                { src: 'media/5.png', title: 'Mijugo wey', type: 'image' },
+                { src: 'media/6.gif', title: 'pero John Doe', type: 'image' },
+                { src: 'media/7.png', title: 'El extraterrestre', type: 'image' },
+                { src: 'media/8.png', title: 'La caras', type: 'image' },
+                { src: 'media/9.mp4', title: 'Samy poniendose a chambear', type: 'video' },
+                { src: 'media/10.jpg', title: 'broo el mejor byrthday', type: 'image' },
+                { src: 'media/11.jpg', title: 'Vamo al baño', type: 'image' },
+                { src: 'media/12.jpg', title: 'Vamo al baño old', type: 'image' },
+                { src: 'media/13.png', title: 'Como tegusta eh?', type: 'image' },
+                { src: 'media/14.png', title: 'Mango Mango', type: 'image' },
+                { src: 'media/15.mp4', title: 'eh nothing...', type: 'video' },
+                { src: 'media/16.mp4', title: 'Top me vale verga', type: 'video' },
+                { src: 'media/17.mp4', title: 'Domi vamo al baño', type: 'video' },
+                { src: 'media/18.mp4', title: 'Una leyenda cuenta', type: 'video' },
+                { src: 'media/19.png', title: 'Broooo', type: 'image' },
+                { src: 'media/20.png', title: 'El mejor meme de la pagina', type: 'image' },
+                { src: 'media/21.mp4', title: 'Historia de la pornografia', type: 'video' },
+                { src: 'media/22.mp4', title: 'Homero recoltalte', type: 'video' },
+                { src: 'media/23.png', title: 'Lord Deidad', type: 'image' },
+                { src: 'media/24.png', title: 'No hace nada', type: 'image' },
+                { src: 'media/25.png', title: 'Tiktok me controla la mente', type: 'image' },
+                { src: 'media/26.png', title: 'Webo duro', type: 'image' },
+                { src: 'media/27.png', title: 'Sonrisas eh...', type: 'image' },
+                { src: 'media/28.png', title: 'Humor promedio de anime', type: 'image' },
+                { src: 'media/29.png', title: 'Cuanto Duro wey', type: 'image' },
+                { src: 'media/30.png', title: 'Humor Normal bro XD', type: 'image' },
+                { src: 'media/31.png', title: 'Lord Deidad', type: 'image' },
+                { src: 'media/32.png', title: 'Sonic que escribes', type: 'image' },
+                { src: 'media/33.png', title: 'Chaquetas 2011x (asimelachaqueteo)', type: 'image' },
+                { src: 'media/34.mp4', title: 'Semen XD', type: 'video' },
+                { src: 'media/35.png', title: 'Se preparo', type: 'image' },
+                { src: 'media/36.jpg', title: '100% REAL NO FEIK', type: 'image' },
+                { src: 'media/37.png', title: 'Gissel Que haces wey', type: 'image' },
+                { src: 'media/38.mp4', title: 'Tipos de llaves', type: 'video' },
+                { src: 'media/39.png', title: 'bro banned por printer im crying', type: 'image' },
+                { src: 'media/40.mp4', title: 'Caros al descrubir que cubick es trans', type: 'video' },
+                { src: 'media/41.jpg', title: 'Lo siento Mama...', type: 'image' },
+                { src: 'media/42.jpg', title: 'Trans Mans sas snas sans lo dijebien?', type: 'image' },
+                { src: 'media/43.jpg', title: 'Que le hicieron a sonic Malditos', type: 'image' },
+                { src: 'media/44.mp4', title: 'Tipico sonic.exe game ahhh', type: 'video' },
+                { src: 'media/45.jpg', title: 'Golossos', type: 'image' },
+                { src: 'media/46.mp4', title: 'Turbo: Keys', type: 'video' },
+                { src: 'media/47.png', title: 'Pero 0_0', type: 'image' },
+                { src: 'media/48.jpg', title: 'Tu nivel ascooo', type: 'image' },
+                { src: 'media/49.jpg', title: 'Sonic.exe old page', type: 'image' },
+                { src: 'media/50.png', title: 'Del odio al amor ft Hailroberto', type: 'image' },
+                { src: 'media/51.jpg', title: 'Ya se murio', type: 'image' },
+                { src: 'media/52.jpg', title: '._.Tocame', type: 'image' },
+                { src: 'media/53.png', title: 'A ver si es cierto :3', type: 'image' },
+                { src: 'media/54.png', title: 'sason from bodriosaken', type: 'image' },
+                { src: 'media/55.jpg', title: 'Soy veganaaaaaaaaaaa', type: 'image' },
+                { src: 'media/56.jpg', title: 'Pero Take dejate de mamadas', type: 'image' },
+                { src: 'media/57.jpg', title: 'pero nowzuq', type: 'image' },
+                { src: 'media/58.jpg', title: 'que dijiste de mi mama (comentario de berkay)', type: 'image' },
+                { src: 'media/59.jpg', title: 'simp de gf tenia que ser (comentario de samylol)', type: 'image' },
+                { src: 'media/60.jpg', title: 'Fuera de mi cerro', type: 'image' },
+                { src: 'media/61.jpg', title: 'Bwa :3', type: 'image' }
             ];
             // Elementos del DOM
             const mediaElement = document.getElementById('mediaElement');
@@ -1437,16 +1900,44 @@
             }
 
             // Cargar medio
+            // Limpiar estado del reproductor
+            function cleanupMediaState() {
+                // Detener cualquier reproducción
+                if (!mediaElement.paused) {
+                    mediaElement.pause();
+                }
+                
+                // Limpiar visualizador
+                if (visualizerAnimationId) {
+                    cancelAnimationFrame(visualizerAnimationId);
+                    visualizerAnimationId = null;
+                }
+                
+                // Suspender audio context
+                if (audioContext && audioContext.state === 'running') {
+                    audioContext.suspend();
+                }
+                
+                // Resetear estado
+                isPlaying = false;
+                mediaElement.currentTime = 0;
+            }
+
             function loadMedia(index) {
                 if (index >= 0 && index < mediaItems.length) {
                     currentMediaIndex = index;
                     const media = mediaItems[index];
 
-                    isPlaying = false;
-                    if (!mediaElement.paused) {
-                        mediaElement.pause();
-                    }
+                    // Limpiar completamente el estado anterior
+                    cleanupMediaState();
+                    
+                    // Limpiar completamente el elemento de video
                     mediaElement.removeAttribute('poster');
+                    mediaElement.src = '';
+                    mediaElement.load(); // Esto limpia el buffer del video
+                    
+                    // Resetear el elemento para el nuevo tipo de media
+                    mediaElement.controls = false;
 
                     // Mostrar indicador de carga
                     loadingIndicator.classList.add('show');
@@ -1463,9 +1954,13 @@
                     };
 
                     if (media.type === 'video') {
+                        // Configurar para video
                         mediaElement.style.display = 'block';
                         mediaElement.controls = false;
                         mediaElement.preload = 'metadata';
+                        
+                        // Limpiar cualquier poster anterior
+                        mediaElement.removeAttribute('poster');
 
                         const timeout = setTimeout(showError, 10000);
 
@@ -1483,9 +1978,15 @@
 
                         mediaElement.addEventListener('loadedmetadata', onLoad, { once: true });
                         mediaElement.addEventListener('error', onError, { once: true });
-                        mediaElement.src = media.src;
-                        mediaElement.load();
+                        
+                        // Pequeño delay para asegurar que el elemento esté limpio
+                        setTimeout(() => {
+                            mediaElement.src = media.src;
+                            mediaElement.load();
+                        }, 100);
+                        
                     } else {
+                        // Configurar para imagen
                         const tempImg = new Image();
                         const timeout = setTimeout(() => {
                             tempImg.src = '';
@@ -1495,6 +1996,8 @@
                         tempImg.onload = () => {
                             clearTimeout(timeout);
                             hideLoading();
+                            // Asegurar que no hay src de video antes de poner el poster
+                            mediaElement.src = '';
                             mediaElement.poster = media.src;
                         };
 
@@ -1516,9 +2019,9 @@
                     favoriteBtn.classList.toggle('active', isFavorite);
                     favoriteBtn.setAttribute('aria-pressed', isFavorite);
 
-                    // Configurar audio context para visualizador
+                    // Configurar audio context para visualizador solo para videos
                     if (media.type === 'video') {
-                        setTimeout(setupAudioContext, 100);
+                        setTimeout(setupAudioContext, 300);
                     }
                 }
             }
@@ -1564,17 +2067,26 @@
                                     console.error("Error al reproducir:", error);
                                     mediaElement.controls = true;
                                 }
+                                isPlaying = false;
+                                updatePlayButton();
                             });
                     }
                 } else {
+                    // Para imágenes, no hay reproducción, solo mostrar
                     isPlaying = false;
                     updatePlayButton();
+                    // Detener cualquier visualizador que pueda estar corriendo
+                    if (visualizerAnimationId) {
+                        cancelAnimationFrame(visualizerAnimationId);
+                        visualizerAnimationId = null;
+                    }
                 }
             }
 
             // Pausar medio
             function pauseMedia() {
-                if (mediaItems[currentMediaIndex].type === 'video') {
+                const media = mediaItems[currentMediaIndex];
+                if (media && media.type === 'video' && !mediaElement.paused) {
                     mediaElement.pause();
                 }
                 isPlaying = false;
@@ -1755,6 +2267,10 @@
             mediaElement.addEventListener('ended', () => {
                 isPlaying = false;
                 updatePlayButton();
+                // Auto-play siguiente si no está en loop
+                if (!isLooping) {
+                    playNext();
+                }
             });
             mediaElement.addEventListener('play', () => {
                 isPlaying = true;
@@ -1940,13 +2456,6 @@
                     } else {
                         playNext();
                     }
-                }
-            });
-
-            // Auto-play siguiente en shuffle
-            mediaElement.addEventListener('ended', () => {
-                if (!isLooping) {
-                    playNext();
                 }
             });
 

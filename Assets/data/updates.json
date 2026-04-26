@@ -1,0 +1,353 @@
+{
+  "currentVersion": "v1.8.0",
+  "updates": [
+    {
+      "version": "v1.8.0",
+      "title": "REGRESO DE POM Y MEJORAS GENERALES",
+      "date": "2025-01-26",
+      "sections": [
+        {
+          "title": "👥 CAMBIOS EN EL EQUIPO",
+          "items": [
+            "🎉 **Pom regresa:** Pom vuelve como colaborador activo.",
+            "📋 **Créditos actualizados:** La sección de colaboradores ya incluye a Pom de nuevo."
+          ]
+        },
+        {
+          "title": "🎨 CRÉDITOS",
+          "items": [
+            "🎵 **Música más fácil:** Toca cualquier parte de las tarjetas para reproducir la música.",
+            "✨ **Animaciones nuevas:** Las tarjetas se deslizan suavemente al cambiar de persona.",
+            "📱 **Arrastre en móviles:** Puedes arrastrar las tarjetas con el dedo para cambiar entre colaboradores.",
+            "💫 **Tarjetas laterales:** Ahora puedes ver quién viene antes y después mientras navegas.",
+            "🖼️ **AbelitoGamer:** Ahora tiene una imagen sorpresa en su tarjeta, toca la flecha para verla."
+          ]
+        },
+        {
+          "title": "🎬 REPRODUCTOR DE EXTRAS",
+          "items": [
+            "🎮 **Controles rediseñados:** Los botones de play, anterior y siguiente ahora se ven mejor y no se tapan entre sí.",
+            "📱 **Mejor en móviles:** Los botones son más grandes y fáciles de tocar.",
+            "✨ **Nuevo diseño:** Los controles centrales tienen un fondo oscuro que los agrupa visualmente."
+          ]
+        },
+        {
+          "title": "🗂️ ORGANIZACIÓN DEL SITIO",
+          "items": [
+            "📁 **Carpeta Assets:** Las imágenes de fondo, fuentes y datos se movieron a una carpeta organizada.",
+            "📋 **Historial de updates:** Las actualizaciones ahora se guardan en un archivo separado y tienen botón para ver las anteriores."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.7.3",
+      "title": "ACTUALIZACIÓN DE EQUIPO",
+      "date": "2024-12-20",
+      "sections": [
+        {
+          "title": "👥 CAMBIOS EN EL EQUIPO",
+          "items": [
+            "📋 **Pom y Nowzuq:** Movidos a la sección de ex-colaboradores en créditos."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.7.2",
+      "title": "ESPECIAL NAVIDEÑO",
+      "date": "2024-12-15",
+      "sections": [
+        {
+          "title": "🎅 EFECTOS NAVIDEÑOS TEMPORALES",
+          "items": [
+            "❄️ **Copos de nieve:** Animación de copos cayendo solo durante diciembre.",
+            "🎵 **Música navideña:** Canción especial christmas.ogg que se activa automáticamente en diciembre.",
+            "💡 **Luces navideñas:** Luces de colores parpadeantes en la parte superior de la página.",
+            "🎄 **Botón temático:** El botón de versión cambia a \"🎄 Rework v1.7.2 - Navidad\" en diciembre.",
+            "📰 **Noticia especial:** Se agrega automáticamente una noticia \"🎄 ¡Llegó la Navidad!\" al carrusel.",
+            "🧹 **Limpieza automática:** Todos los efectos desaparecen automáticamente después de diciembre.",
+            "📁 **Código modular:** Efectos navideños organizados en archivo separado js/christmas.js.",
+            "📱 **Optimización móvil:** Copos y luces adaptados para dispositivos móviles."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.7.1",
+      "title": "MEJORAS UX/ACCESIBILIDAD Y RENDIMIENTO",
+      "date": "2024-11-20",
+      "sections": [
+        {
+          "title": "📺 EXTRAS.HTML - MEJORAS MULTIMEDIA",
+          "items": [
+            "👆 **Detección de gestos móviles:** Swipe con umbral de velocidad (0.3 mínimo) para navegación fluida.",
+            "⚠️ **Manejo de errores:** Timeout de 10 segundos con SVG de error para medios que fallan.",
+            "🔊 **Limpieza de audio:** Suspend/resume de AudioContext para liberar memoria cuando no está en uso.",
+            "⚡ **Lazy loading:** Carga perezosa de miniaturas con IntersectionObserver."
+          ]
+        },
+        {
+          "title": "🎵 SOUNDTEST.HTML - UX/ACCESIBILIDAD",
+          "items": [
+            "♿ **Atributos ARIA:** Agregados a todos los botones para mejor accesibilidad.",
+            "👁️ **Indicador visual de código:** Muestra el texto mientras escribes con animación pulse.",
+            "📊 **Historial de códigos:** Panel desplegable en lado izquierdo con códigos reproducidos.",
+            "⏱️ **Countdown Mania:** Timer visual de 15 minutos en la parte superior."
+          ]
+        },
+        {
+          "title": "⚡ SOUNDTEST.HTML - RENDIMIENTO",
+          "items": [
+            "💾 **Precaching de medios:** Carga anticipada de códigos cercanos.",
+            "🎬 **Lazy loading de videos:** Preload='metadata' para optimizar carga.",
+            "🧹 **Limpieza de memoria:** Cleanup automático al cerrar medios."
+          ]
+        },
+        {
+          "title": "📱 SOUNDTEST.HTML - MÓVIL",
+          "items": [
+            "👆 **Gestos swipe:** Cambio de PGM/DA con umbral de velocidad.",
+            "📳 **Vibración táctil:** Feedback de 50ms estándar, [50,30,50]ms para play.",
+            "⌨️ **Teclado virtual mejorado:** scrollIntoView y gestión de blur."
+          ]
+        },
+        {
+          "title": "🐛 SOUNDTEST.HTML - CORRECCIONES",
+          "items": [
+            "✅ **Códigos sin guiones:** Soporte para personnel, hog, mania.",
+            "💾 **Persistencia localStorage:** Desbloqueos, Mania status e historial guardados.",
+            "⏰ **Timer Mania:** Auto-desbloqueo a 00:00 después de 15 minutos."
+          ]
+        },
+        {
+          "title": "📖 STORYMODE.HTML - UX/ACCESIBILIDAD",
+          "items": [
+            "♿ **ARIA labels:** Agregados a navegación y botones de acción.",
+            "✨ **Contador mejorado:** Borde más brillante con efecto glow y titleGlow animation.",
+            "📳 **Vibración táctil:** Feedback en todas las interacciones (50ms navegación, [50,30,50]ms play)."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.7.0",
+      "title": "FREEPLAY MINIREWORK",
+      "date": "2024-10-15",
+      "sections": [
+        {
+          "title": "🎮 FREEPLAY - REDISEÑO COMPLETO",
+          "items": [
+            "🎨 **Nuevo diseño de tarjetas:** Sistema moderno de grid con tarjetas compactas y elegantes.",
+            "📱 **Optimización móvil:** Tarjetas centradas y responsivas para dispositivos móviles.",
+            "✨ **Split-view dinámico:** Vista dividida con tarjeta seleccionada y lista de niveles.",
+            "🎵 **Tarjetas de canciones rediseñadas:** Nuevo diseño moderno con headers, badges y botones pill.",
+            "🔄 **Animaciones fluidas:** Transiciones suaves y efectos visuales mejorados.",
+            "📏 **Tamaños optimizados:** Tarjetas más compactas sin perder funcionalidad.",
+            "🎯 **Navegación mejorada:** Gestos swipe para móviles y navegación por teclado.",
+            "⚡ **Rendimiento optimizado:** Código limpio y eliminación de funciones obsoletas."
+          ]
+        },
+        {
+          "title": "🎵 NUEVAS CANCIONES AGREGADAS",
+          "items": [
+            "👻 **Horrors Unknown:** \"Shimmy Terror\" vs Asset agregada.",
+            "⚡ **Executable Mania:** \"Aftersh0ck\" vs Kn0ckback agregada."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.6.3",
+      "title": "SOUNDTEST Y CONTENIDO MASIVO",
+      "date": "2024-09-10",
+      "sections": [
+        {
+          "title": "🔧 HOTFIX 1 - Correcciones Críticas",
+          "items": [
+            "🛠️ **SoundTest:** Corregido error de sintaxis JavaScript que impedía el funcionamiento.",
+            "⌨️ **SoundTest:** Separación correcta entre códigos numéricos (00-00) y códigos de teclado.",
+            "📝 **SoundTest:** Ampliada caja de texto para códigos largos (20 caracteres).",
+            "🎯 **SoundTest:** Removido SPACE como activador, ahora solo ENTER funciona."
+          ]
+        },
+        {
+          "title": "🎵 SOUNDTEST - Nuevas Adiciones",
+          "items": [
+            "🥛 **Milk (12-34):** Nueva canción de Sunky agregada al soundtest.",
+            "🖼️ **Imagen 69-69:** Nuevo contenido multimedia especial agregado.",
+            "🎮 **Faker Dual Mode:** Faker ahora tiene modo horizontal y vertical.",
+            "🔗 **Enlaces actualizados:** Prey con enlace directo de Funky Maker.",
+            "⚙️ **Sistema mejorado:** Selector de modo para canciones con múltiples layouts."
+          ]
+        },
+        {
+          "title": "🆕 NUEVAS SECCIONES COMPLETAS",
+          "items": [
+            "🎮 **Executable Mania:** Nueva sección completa con logo exclusivo agregada al Freeplay.",
+            "🎵 **Extras Songs:** Nueva sección con 7 canciones adicionales de diferentes mods."
+          ]
+        },
+        {
+          "title": "🔄 ACTUALIZACIONES MASIVAS DE CONTENIDO",
+          "items": [
+            "⚡ **Illegal Instruction - RENOVACIÓN COMPLETA:** 12 nuevas canciones agregadas incluyendo:",
+            "🎯 3 canciones de Duke: breakout, soulless endeavor, final frontier",
+            "🎵 my horizon (chaotix), found you (normal cd), malediction (curse)",
+            "🎶 perdition (apollyon), endless forest mix (majin), our horizon (chaotix)",
+            "🎨 color crash (wechidna & mighty), my horizon(wechidna)",
+            "🔥 **Sonic.exe Rerun:** Agregadas \"torment\" (lord x) y \"time attack\" (sonic.exe)",
+            "🎭 **Hit Single:** Nueva canción \"fake baby\" (no more innocence)",
+            "✨ **Horrors Unknown:** Agregada \"Elements\" con personaje Nantelle"
+          ]
+        },
+        {
+          "title": "🎵 EXTRAS SONGS - 7 NUEVAS CANCIONES",
+          "items": [
+            "🎪 vessel (lordx), shlasher (Fakeout), all i have is you (Xathus)",
+            "❓ Tarnished (???), drop and roll (diablo), for you (liz)",
+            "👑 falter alter prime (majin, 2011x, lordx, rewrite)"
+          ]
+        },
+        {
+          "title": "📺 EXTRAS - Nuevos Medios",
+          "items": [
+            "🖼️ **Nuevas imágenes y videos:** Más contenido multimedia agregado al reproductor.",
+            "🎬 **Colección expandida:** La galería de extras continúa creciendo.",
+            "🔑 **SoundTest:** Nuevos secretos desbloqueables. Pista: \"¿Qué abren las...?\"",
+            "🥭 **SoundTest:** Contenido especial oculto. Pista: \"Recolecta mis...\""
+          ]
+        },
+        {
+          "title": "🛠️ MEJORAS TÉCNICAS Y VISUALES",
+          "items": [
+            "🖼️ Nuevo logo de Executable Mania (EXEmaniaNewlogo.png)",
+            "📊 Contador actualizado: Ahora muestra \"1 of 10\" mods disponibles",
+            "🔗 Todos los enlaces actualizados a Funky Maker Creator",
+            "⚙️ Mejor organización y navegación de contenido",
+            "📱 Interfaz optimizada para mejor experiencia de usuario"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.6.2",
+      "title": "SPIRIT OF HELL",
+      "date": "2024-08-25",
+      "sections": [
+        {
+          "title": "🆕 NUEVO MOD - Spirit of Hell",
+          "items": [
+            "👹 **Nuevo mod completo:** Spirit of Hell agregado al Freeplay.",
+            "🎵 **Nivel disponible:** KindAndFair vs Sonic?(Exeller).",
+            "🎨 **Logo animado:** GIF exclusivo para el mod Spirit of Hell.",
+            "🖼️ **Sistema de renders:** Imágenes de fondo al pasar mouse sobre niveles.",
+            "🎮 **Integración completa:** Navegación, contador y catálogo actualizados.",
+            "📊 **Contador actualizado:** Ahora muestra \"1 of 9\" mods disponibles."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.6.1",
+      "title": "MINIJUEGO Y OPTIMIZACIONES",
+      "date": "2024-08-01",
+      "sections": [
+        {
+          "title": "🎮 HOTFIX 2 - Nuevas Funciones y Optimizaciones",
+          "items": [
+            "🕹️ **Minijuego Samy Jump:** Juego completo integrado en el menú principal.",
+            "🎯 Sistema de juego con mecánicas de salto y esquivar obstáculos.",
+            "🎨 3 temas visuales disponibles: Clásico, Neón y Retro.",
+            "🔊 Efectos de sonido y música de fondo integrados.",
+            "📊 Sistema de estadísticas con puntuación máxima guardada.",
+            "⚙️ Menú de configuración con opciones de sonido y dificultad.",
+            "✨ Efectos de partículas y animaciones fluidas.",
+            "🎪 Animación especial de entrada con efectos visuales únicos."
+          ]
+        },
+        {
+          "title": "📺 Media Player (Extras) - Reorganización Móvil",
+          "items": [
+            "🎮 Botones más grandes y táctiles (48x48px) para mejor accesibilidad.",
+            "⬅️ Nuevo botón \"Volver\" azul distintivo en la esquina superior.",
+            "🎯 Controles centrales (play/pause) reposicionados en diseño vertical.",
+            "📊 Barras de progreso y volumen ampliadas para manipulación táctil.",
+            "📋 Playlist ocupa pantalla completa en dispositivos móviles.",
+            "⭐ Panel de favoritos reposicionado para evitar conflictos.",
+            "📐 Espaciado optimizado entre botones para dedos.",
+            "📱 Optimización completa para dispositivos móviles y PC."
+          ]
+        },
+        {
+          "title": "🔧 HOTFIX 1 - Adaptación Móvil",
+          "items": [
+            "🎮 Minijuego Samy Jump: Configuración de escala adaptativa para móviles.",
+            "🎵 Encore: Contenedores responsivos y botones táctiles optimizados.",
+            "📺 Media Player (Extras): Controles más grandes y interfaz móvil mejorada.",
+            "🎹 SoundTest: Teclado virtual optimizado y controles táctiles de 44px mínimo.",
+            "🔙 Créditos: Botón de volver restaurado y visible en todas las resoluciones."
+          ]
+        },
+        {
+          "title": "🎵 Encore Section",
+          "items": [
+            "🎨 Diseño completamente reworkeado con tema Encore único.",
+            "🔵 Nueva paleta de colores: azul, púrpura, cian y magenta neón.",
+            "⚡ Efectos glitch automáticos y aleatorios mejorados.",
+            "🖼️ Contenedor de imagen redimensionado a 880x495px para mejor visualización.",
+            "🎯 Botones de navegación agrandados (40x40px) para mejor usabilidad.",
+            "📊 Contador de mods rediseñado y más visible.",
+            "📱 Panel de información ajustado al mismo ancho que la imagen.",
+            "🎮 Controles táctiles mejorados con gestos swipe para móviles.",
+            "🔊 Integración completa de efectos de sonido Encore."
+          ]
+        },
+        {
+          "title": "🎵 Sound Test",
+          "items": [
+            "🎹 Teclado virtual completo con números y ENTER para Android.",
+            "🎵 20 canciones disponibles con códigos únicos.",
+            "🔓 6 sistemas de desbloqueo especiales diferentes con mecánicas únicas.",
+            "🎯 Sistema de recolección de cartuchos con probabilidades aleatorias.",
+            "⏰ Desbloqueos por tiempo de permanencia en el soundtest.",
+            "🔤 Códigos secretos de texto para canciones ocultas.",
+            "🔄 Sistema de alternancia para códigos duplicados.",
+            "🎶 Música de fondo con activación por interacción del usuario.",
+            "🔊 Efectos de sonido integrados para navegación y confirmación."
+          ]
+        },
+        {
+          "title": "🎮 Menú Principal",
+          "items": [
+            "🕹️ Nuevo minijuego completo accesible desde la imagen de Samy.",
+            "🎯 Sistema de juego interactivo con mecánicas únicas.",
+            "📱 Optimización completa para dispositivos móviles y PC.",
+            "🔊 Efectos de sonido y música integrados en el minijuego."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "v1.6.0",
+      "title": "HOTFIX 3 - CORRECCIONES Y MEJORAS",
+      "date": "2024-07-15",
+      "sections": [
+        {
+          "title": "📋 Novedades v1.6.0 Hotfix3",
+          "items": [
+            "🔊 Arreglado sonido del botón de actualizaciones.",
+            "🔥 Añadida noticia sobre Bodrio Collection ya disponible.",
+            "🎵 Cambiada música de fondo del menú principal a MainMenuMusic.ogg.",
+            "🎶 Story Mode: Nueva música de fondo (storymodemenumusic.ogg).",
+            "🔊 Story Mode: Sonidos de navegación y confirmación añadidos.",
+            "👥 Actualización de créditos: Jarret movido a ex-colaboradores.",
+            "🎵 AbelitoGamer ahora aparece como creador de TrinityEncore.",
+            "🧹 Limpieza general: Eliminado Mart de créditos.",
+            "⚙️ Mejoras en inicialización de audio sin botones molestos."
+          ]
+        }
+      ]
+    }
+  ]
+}
