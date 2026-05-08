@@ -1,0 +1,133 @@
+/* Estilos base */
+.sonic-body {
+    background-color: #000;
+    background-image: url('../BG/backgroundST.png');
+    background-size: cover;
+    background-position: center;
+    font-family: 'Press Start 2P', cursive;
+    color: #00a2ff;
+}
+
+.sonic-cd-container {
+    width: 320px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 3px solid #00a2ff;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto scanline */
+.scanline {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.7), transparent);
+    animation: scan 3s linear infinite;
+    z-index: 1;
+}
+
+@keyframes scan {
+    0% { top: -2px; }
+    100% { top: 100%; }
+}
+
+/* Texto estilo Sonic CD */
+.sonic-title {
+    font-size: 1.8rem;
+    color: #00a2ff;
+    text-shadow: 0 0 10px #00a2ff;
+    letter-spacing: 2px;
+}
+
+.sonic-subtitle {
+    font-size: 0.8rem;
+    color: #fff;
+    padding: 0 20px;
+}
+
+/* Display numérico */
+.sonic-display {
+    margin: 25px 0;
+}
+
+.sonic-digit-group {
+    width: 100px;
+}
+
+.sonic-digit-label {
+    font-size: 0.8rem;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.sonic-digit {
+    font-size: 2rem;
+    color: #00ff00;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 2px solid #00a2ff;
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.sonic-separator {
+    font-size: 2rem;
+    color: #00a2ff;
+    height: 60px;
+}
+
+/* Botones */
+.sonic-arrow-btn {
+    color: #00a2ff;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00a2ff;
+    min-width: 30px;
+}
+
+.sonic-arrow-btn:hover {
+    color: #00ff00;
+    border-color: #00ff00;
+}
+
+.sonic-btn-play {
+    background-color: #00a2ff;
+    color: #000;
+    font-weight: bold;
+    border: none;
+}
+
+.sonic-btn-play:hover {
+    background-color: #00c3ff;
+    box-shadow: 0 0 10px #00a2ff;
+}
+
+.sonic-btn-back {
+    background-color: transparent;
+    color: #00a2ff;
+    border: 1px solid #00a2ff;
+}
+
+.sonic-btn-back:hover {
+    color: #ff5555;
+    border-color: #ff5555;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .sonic-cd-container {
+        width: 280px;
+        padding: 15px;
+    }
+    
+    .sonic-title {
+        font-size: 1.5rem;
+    }
+    
+    .sonic-digit {
+        font-size: 1.8rem;
+    }
+    
+    .sonic-separator {
+        font-size: 1.8rem;
+    }
+}

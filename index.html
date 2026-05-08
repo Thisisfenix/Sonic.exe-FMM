@@ -7,7 +7,7 @@
     <title>Menú - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Fuente pixelada -->
@@ -1028,6 +1028,8 @@
             }
         }
     </style>
+    <!-- Intro (se ejecuta antes que todo) -->
+    <script src="Assets/js/intro.js"></script>
 </head>
 
 <body>
@@ -1039,7 +1041,7 @@
         <div class="hud-top">
             <div class="version-btn" id="versionBtnContainer">
                 <button id="updateBtn" aria-label="Mostrar panel de actualización">
-                    <i class="bi bi-stars"></i> Rework v1.8.0
+                    <i class="bi bi-stars"></i> Rework ...
                 </button>
             </div>
             <div class="sonic-logo show" id="sonicLogo">
@@ -1122,14 +1124,6 @@
                                 <p class="mod-date">KindAndFair ya disponible</p>
                             </div>
                         </a>
-                        <!-- Guess What - Halloween Special -->
-                        <a href="javascript:void(0)" class="mod-item" onclick="loadGuessWhat()">
-                            <img src="images/guesswhat.png" alt="Guess What" class="mod-thumbnail" loading="lazy">
-                            <div class="mod-info">
-                                <p class="mod-name">🎃 Guess What?</p>
-                                <p class="mod-date">31 de Octubre - Halloween</p>
-                            </div>
-                        </a>
                     </div>
                     <div class="carousel-controls">
                         <button class="carousel-btn" id="prevNews" aria-label="Noticia anterior">&lt;</button>
@@ -1143,7 +1137,7 @@
         <!-- Panel de actualización -->
         <div class="update-panel hide" id="updatePanel" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
             <div class="update-header">
-                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN <span id="currentVersionSpan">v1.8.0</span></h5>
+                <h5 id="updateTitle"><i class="bi bi-patch-check-fill"></i> ACTUALIZACIÓN <span id="currentVersionSpan">...</span></h5>
                 <button class="close-update" id="closeUpdate"
                     aria-label="Cerrar panel de actualización">&times;</button>
             </div>
@@ -1163,9 +1157,9 @@
     <audio id="crashSound" src="./sounds/crash.mp3"></audio>
 
     <!-- Scripts -->
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/achievements.js"></script>
-    <script src="js/christmas.js"></script>
+    <script src="Assets/js/bootstrap.bundle.min.js"></script>
+    <script src="Assets/js/achievements.js"></script>
+    <script src="Assets/js/christmas.js"></script>
     <script>
         // Variable global para controlar el estado de navegación
         window.isNavigating = false;
@@ -1609,12 +1603,7 @@
             }, { once: true });
         });
 
-        // Función para cargar Guess What
-        function loadGuessWhat() {
-            const script = document.createElement('script');
-            script.src = 'js/guessWhat.js';
-            document.head.appendChild(script);
-        }
+
 
         // Función para cargar el minijuego con animación especial
         function startMiniGame() {
@@ -1681,7 +1670,7 @@
                                         setTimeout(() => {
                                             document.body.removeChild(jumpscareDiv);
                                             const script = document.createElement('script');
-                                            script.src = 'js/minigame-standalone.js';
+                                            script.src = 'Assets/js/minigame-standalone.js';
                                             document.head.appendChild(script);
                                         }, 1500);
                                     }, 2500);
@@ -1720,7 +1709,7 @@
                                 setTimeout(() => {
                                     document.body.removeChild(jumpscareDiv);
                                     const script = document.createElement('script');
-                                    script.src = 'js/minigame-standalone.js';
+                                    script.src = 'Assets/js/minigame-standalone.js';
                                     document.head.appendChild(script);
                                 }, 1500);
                             }, 2500);
