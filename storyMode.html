@@ -3,865 +3,682 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modo Historia - Sonic.exe</title>
+    <title>Story Mode - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-    <!-- Fuente personalizada -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* Reset y estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Sonic.exe Theme */
-        :root {
-            --blood-red: #d10000;
-            --dark-red: #6a0000;
-            --neon-yellow: #f5f500;
-            --sonic-dark: #0a0a20;
-            --sonic-blue: #0066ff;
-            --glitch-purple: #b300ff;
-        }
-
-        body {
-            font-family: 'Press Start 2P', cursive;
+            width: 100%; height: 100%;
+            overflow: hidden;
             background: url('Assets/BG/storymodeBG.gif') no-repeat center center fixed;
             background-size: cover;
-            color: white;
-            min-height: 100vh;
-            text-shadow: 0 0 5px var(--blood-red);
+            font-family: 'Press Start 2P', cursive;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 10px;
+            justify-content: center;
         }
 
-        /* Contenedor principal */
-        .main-container {
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        /* Imagen del mod con altura controlada */
-        .mod-image-container {
-            width: 100%;
-            height: 0;
-            padding-bottom: 30%; /* Proporción más compacta */
+        /* ── Escena principal ── */
+        .scene {
             position: relative;
-            border: 2px solid var(--blood-red);
-            box-shadow: 0 0 15px var(--blood-red);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .mod-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background-color: rgba(0, 0, 0, 0.3);
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        /* Efecto glitch */
-        .glitch-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('Assets/BG/StaticNoise.gif') no-repeat center center;
-            background-size: cover;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 2;
-            transition: opacity 0.3s;
-            mix-blend-mode: screen;
-        }
-
-        /* Panel de información unificado */
-        .info-panel {
-            background: rgba(0, 0, 0, 0.85);
-            border: 2px solid var(--blood-red);
-            box-shadow: 0 0 15px var(--blood-red);
-            border-radius: 6px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: all 0.4s ease-in-out;
-        }
-
-        /* Navegación entre mods */
-        .mod-navigation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid var(--neon-yellow);
-            padding: 8px 10px;
-            border-radius: 4px;
-        }
-
-        .nav-btn {
-            width: 36px;
-            height: 36px;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid var(--neon-yellow);
-            color: var(--neon-yellow);
-            font-size: 0.9rem;
-            transition: all 0.2s;
+        }
+
+        /* ── Flecha lateral ── */
+        .arrow-btn {
+            position: absolute;
+            top: 15%;
+            width: 96px;
+            height: 170px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+            padding: 0;
+            z-index: 20;
+            transition: transform 0.15s;
+        }
+
+        .arrow-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 0 6px #e8547a);
+        }
+
+        .arrow-btn.left  { left: 26%; top: 15%; transform: none; }
+        .arrow-btn.right { right: 27.5%; top: 15%; transform: none; }
+
+        .arrow-btn:hover img  { filter: drop-shadow(0 0 14px #ff80a0) brightness(1.3); }
+        .arrow-btn.left:active  { transform: scale(0.9); }
+        .arrow-btn.right:active { transform: scale(0.9); }
+
+        /* ── Contenedor de la caja ── */
+        .box-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 56.25vw;
+            max-height: 100vh;
+            max-width: 177.78vh;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Caja roja — capa base, full wrapper */
+        .red-box {
+            position: absolute;
+            inset: 0;
+            width: 100%; height: 100%;
+            object-fit: fill;
+            z-index: 1;
+        }
+
+        /* Caja gris — entre roja y amarilla */
+        .grey-box {
+            position: absolute;
+            inset: 0;
+            width: 100%; height: 100%;
+            object-fit: fill;
+            z-index: 2;
+        }
+
+        /* BF — delante del grey, detrás del yellow, dentro del tronco de la T */
+        .bf-layer {
+            position: absolute;
+            z-index: 4;
+            bottom: 33.5%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bf-img {
+            height: auto;
+            width: clamp(100px, 14vw, 200px);
+            object-fit: contain;
+            image-rendering: pixelated;
+            animation: bfIdle 0.6s ease-in-out infinite alternate;
+        }
+
+        /* Caja amarilla — encima del BF */
+        .yellow-box {
+            position: absolute;
+            inset: 0;
+            width: 100%; height: 100%;
+            object-fit: fill;
+            z-index: 5;
+        }
+
+        /* ── Contenido dentro de la caja ── */
+        /* Posicionado en % para que escale con el wrapper 16:9 */
+        .box-content {
+            position: absolute;
+            left: 29.5%;
+            top: 12%;
+            width: 40%;
+            height: 78%;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Zona superior: imagen del mod */
+        .mod-art {
+            width: 68%;
+            align-self: center;
+            height: 32%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+        }
+
+        /* Estática encima del artwork */
+        .static-layer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 68%;
+            height: 32%;
+            background: url('Assets/StoryMode/StoryModeStatic.gif') center/cover;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.15s ease;
+        }
+
+        .bf-img {
+            height: auto;
+            width: clamp(100px, 14vw, 200px);
+            object-fit: contain;
+            image-rendering: pixelated;
+            animation: bfIdle 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes bfIdle {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-6px); }
+        }
+
+        /* ── Nombre del mod (debajo de la caja) ── */
+        .mod-name-row {
+            position: fixed;
+            bottom: 13.5%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* Flechitas decorativas del nombre */
+        .name-arrow {
+            width: 0; height: 0;
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            flex-shrink: 0;
+        }
+        .name-arrow.left  { border-right: 18px solid #f5f500; }
+        .name-arrow.right { border-left:  18px solid #f5f500; }
+
+        .mod-name-text {
+            color: #f5f500;
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            text-shadow: 3px 3px 0 #000, 0 0 14px #f5f500;
+            letter-spacing: 3px;
+            transition: opacity 0.25s;
+        }
+
+        /* Botón ? */
+        .info-btn {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #f5f500;
+            color: #f5f500;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
-            min-height: 44px;
-            min-width: 44px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 6px #f5f500;
+        }
+        .info-btn:hover {
+            background: rgba(245,245,0,0.2);
+            box-shadow: 0 0 14px #f5f500;
         }
 
-        .nav-btn:hover {
-            transform: scale(1.1);
-            background: rgba(245, 245, 0, 0.2);
-            box-shadow: 0 0 8px var(--neon-yellow);
-        }
-
-        .nav-btn:active {
-            transform: scale(0.95);
-        }
-
-        .mod-title {
-            color: var(--neon-yellow);
-            text-shadow: 1px 1px 0 var(--blood-red);
-            font-size: 0.85rem;
-            text-align: center;
-            flex-grow: 1;
-            margin: 0 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        /* Contenedor unificado para personaje y botones */
-        .game-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Sección del personaje */
-        .character-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .character-label {
-            color: var(--sonic-blue);
-            font-size: 0.65rem;
-            text-shadow: 0 0 4px var(--sonic-blue);
-        }
-
-        .character-display {
-            width: 100px;
-            height: 100px;
-            border: 2px solid var(--neon-yellow);
-            border-radius: 6px;
-            box-shadow: 0 0 15px var(--neon-yellow);
-            background-size: cover;
-            background-position: center;
+        /* Infobox */
+        .info-wrap {
             position: relative;
-            overflow: hidden;
-            background-color: rgba(0, 0, 0, 0.5);
-            transition: opacity 0.4s ease-in-out, background-image 0.4s ease-in-out;
-        }
-
-        .character-display.loading {
-            opacity: 0.5;
-        }
-
-        /* Botones de acción */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            border: 2px solid var(--neon-yellow);
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            font-size: 0.75rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            cursor: pointer;
-            min-width: 100px;
-            min-height: 44px;
-            flex-grow: 1;
         }
 
-        .action-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Contador de mods */
-        .mod-counter {
+        .info-box {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0, 0, 0, 0.8);
-            color: var(--neon-yellow);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            border: 2px solid var(--neon-yellow);
-            box-shadow: 0 0 10px var(--neon-yellow);
-            font-weight: bold;
-            transition: opacity 0.3s ease-in-out;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.92);
+            border: 2px solid #f5f500;
+            box-shadow: 0 0 16px #f5f500;
+            border-radius: 8px;
+            padding: 14px 16px 10px 16px;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            line-height: 1.9;
+            text-align: center;
+            z-index: 100;
+            width: 220px;
+            white-space: normal;
+            display: none;
         }
+        .info-box.visible { display: block; animation: fadeInUp 0.2s ease; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .info-close {
+            margin-top: 10px;
+            background: none;
+            border: 1px solid rgba(245,245,0,0.4);
+            color: #f5f500;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .info-close:hover { background: rgba(245,245,0,0.15); }
 
-        .mod-title {
-            animation: titleGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes titleGlow {
-            0%, 100% { text-shadow: 1px 1px 0 var(--blood-red), 0 0 5px var(--neon-yellow); }
-            50% { text-shadow: 1px 1px 0 var(--blood-red), 0 0 15px var(--neon-yellow); }
-        }
-        
-        /* Transición suave para info-panel */
-        .info-panel {
-            animation: panelEnter 0.5s ease-out;
-        }
-        
-        @keyframes panelEnter {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-
-
-        /* Animación de entrada suave */
-        .mod-enter {
-            animation: modEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes modEnter {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateX(0);
-            }
-        }
-        
-        /* Transición suave para personaje */
-        .character-enter {
-            animation: charEnter 0.5s ease-out;
-        }
-        
-        @keyframes charEnter {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .play-btn {
-            background-color: var(--blood-red);
-            color: black;
-            text-shadow: 1px 1px 0 var(--neon-yellow);
-        }
-
-        .play-btn:hover {
-            background-color: var(--dark-red);
-            color: white;
-            box-shadow: 0 0 15px var(--blood-red);
-            transform: translateY(-2px);
-        }
-
-        .play-btn:active {
-            transform: scale(0.95);
-        }
-
-        .menu-btn {
-            background-color: transparent;
-            color: var(--neon-yellow);
-        }
-
-        .menu-btn:hover {
-            background-color: rgba(245, 245, 0, 0.1);
-            box-shadow: 0 0 10px var(--neon-yellow);
-            transform: translateY(-2px);
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
+        /* ── Botón volver ── */
+        .back-btn {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            top: 16px;
+            left: 16px;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #e8547a;
+            color: #e8547a;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 8px 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 50;
+            transition: background 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: rgba(232,84,122,0.2);
+            box-shadow: 0 0 10px #e8547a;
+            color: #fff;
+        }
+
+        /* ── Botón JUGAR ── */
+        .play-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d10000;
+            border: 2px solid #f5f500;
+            color: #f5f500;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.6rem, 2vmin, 0.85rem);
+            padding: 12px 28px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 50;
+            box-shadow: 0 0 14px #d10000;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+            letter-spacing: 2px;
+        }
+        .play-btn:hover {
+            background: #ff2222;
+            box-shadow: 0 0 24px #ff2222;
+            transform: translateX(-50%) scale(1.06);
+        }
+        .play-btn:active {
+            transform: translateX(-50%) scale(0.96);
+        }
+
+        /* ── Transición de cambio ── */
+        .box-wrapper.switching .mod-art,
+        .box-wrapper.switching .mod-name-text {
+            opacity: 0;
+        }
+
+        /* ── Loading overlay ── */
+        .loading-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95);
             display: none;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 9999;
+            color: #d10000;
+            font-size: 1rem;
+            gap: 20px;
         }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid #333;
+            border-top-color: #d10000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .loading-text {
-            color: var(--blood-red);
-            text-shadow: 0 0 10px var(--neon-yellow);
-            margin-top: 15px;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            animation: pulse 1.5s infinite;
-        }
+        /* ── Responsive Android/móvil ── */
+        @media (max-width: 768px) {
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
+            /* Cajas full screen igual que PC */
+            .box-wrapper {
+                width: 100vw;
+                height: 56.25vw;
+                max-height: 100vh;
+                max-width: 177.78vh;
+            }
 
-        /* Efectos especiales */
-        .static-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://i.imgur.com/static-effect.gif');
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 999;
-        }
+            /* Artwork más pequeño y reposicionado */
+            .box-content {
+                left: 27%;
+                top: 11%;
+                width: 46%;
+                height: 78%;
+            }
 
-        /* Media queries para pantallas más grandes */
-        @media (min-width: 500px) {
-            .mod-image-container {
-                padding-bottom: 35%;
+            .mod-art {
+                width: 72%;
+                height: 30%;
             }
-            
-            .mod-title {
-                font-size: 0.95rem;
-            }
-            
-            .character-display {
-                width: 110px;
-                height: 110px;
-            }
-            
-            .action-btn {
-                font-size: 0.85rem;
-                min-width: 110px;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .mod-image-container {
-                padding-bottom: 40%;
-            }
-            
-            .mod-title {
-                font-size: 1.2rem;
-            }
-            
-            .character-display {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .action-btn {
-                font-size: 1rem;
-                min-width: 150px;
-            }
-            
-            .game-content {
-                flex-direction: row;
-                justify-content: space-around;
-                align-items: center;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                width: auto;
-            }
-        }
 
-        /* Ajustes para pantallas muy pequeñas */
-        @media (max-width: 400px) {
-            body {
-                padding: 8px;
+            /* BF más pequeño */
+            .bf-img {
+                width: clamp(70px, 18vw, 130px);
             }
-            
-            .main-container {
-                gap: 6px;
+
+            .bf-layer {
+                bottom: 30%;
             }
-            
-            .mod-image-container {
-                padding-bottom: 28%;
-                border: 2px solid var(--blood-red);
+
+            /* Flechas más pequeñas y pegadas a la caja */
+            .arrow-btn {
+                width: 56px;
+                height: 100px;
+                top: 12%;
             }
-            
-            .info-panel {
-                padding: 8px;
-                gap: 8px;
+
+            .arrow-btn.left  { left: 22%; }
+            .arrow-btn.right { right: 22%; }
+
+            /* Nombre del mod más pequeño */
+            .mod-name-text {
+                font-size: clamp(0.7rem, 4vw, 1rem);
             }
-            
-            .mod-navigation {
-                padding: 6px 8px;
+
+            .name-arrow {
+                border-top-width: 10px;
+                border-bottom-width: 10px;
             }
-            
-            .nav-btn {
-                width: 40px;
-                height: 40px;
-                min-height: 48px;
-                min-width: 48px;
-                font-size: 0.8rem;
+            .name-arrow.left  { border-right-width: 13px; }
+            .name-arrow.right { border-left-width:  13px; }
+
+            .mod-name-row {
+                bottom: 10%;
             }
-            
-            .mod-title {
-                font-size: 0.7rem;
-                margin: 0 6px;
+
+            /* Botón jugar más pequeño */
+            .play-btn {
+                font-size: 0.65rem;
+                padding: 10px 20px;
+                bottom: 3%;
             }
-            
-            .character-display {
-                width: 90px;
-                height: 90px;
-            }
-            
-            .character-label {
-                font-size: 0.6rem;
-            }
-            
-            .action-buttons {
-                gap: 6px;
-            }
-            
-            .action-btn {
+
+            /* Botón volver */
+            .back-btn {
+                font-size: 0.5rem;
                 padding: 6px 10px;
-                font-size: 0.7rem;
-                min-width: 90px;
-                min-height: 48px;
             }
-            
-            .action-btn i {
-                margin-right: 4px;
+        }
+
+        /* Pantallas muy pequeñas (< 400px) */
+        @media (max-width: 400px) {
+            .arrow-btn {
+                width: 40px;
+                height: 72px;
             }
+
+            .arrow-btn.left  { left: 18%; }
+            .arrow-btn.right { right: 18%; }
+
+            .bf-img { width: clamp(55px, 16vw, 100px); }
+
+            .mod-name-text { font-size: 0.6rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Efecto de estática sutil -->
-    <div class="static-effect"></div>
 
-    <div class="main-container">
-        <!-- Imagen del mod actual -->
-        <div class="mod-image-container">
-            <img id="modImage" class="mod-image" alt="Imagen del Mod">
-            <div class="glitch-overlay" id="glitchOverlay"></div>
+    <!-- Botón volver -->
+    <a href="index.html" class="back-btn">&#9664; MENÚ</a>
+
+    <div class="scene">
+        <!-- Caja central -->
+        <div class="box-wrapper" id="boxWrapper">
+            <!-- Flechas dentro del wrapper para que escalen con la caja -->
+            <button class="arrow-btn left" id="prevBtn" aria-label="Mod anterior">
+                <img src="Assets/StoryMode/Arrows/arrow left.png" id="arrowLeftImg" alt="Anterior">
+            </button>
+            <button class="arrow-btn right" id="nextBtn" aria-label="Siguiente mod">
+                <img src="Assets/StoryMode/Arrows/arrow right.png" id="arrowRightImg" alt="Siguiente">
+            </button>
+            <!-- Marco rojo (fondo) -->
+            <img src="Assets/StoryMode/redbox.png" class="red-box" alt="">
+            <!-- Marco gris (entre rojo y amarillo) -->
+            <img src="Assets/StoryMode/greybox.png" class="grey-box" alt="">
+
+            <!-- BF — delante del grey, detrás del yellow -->
+            <div class="bf-layer">
+                <img class="bf-img" src="Assets/StoryMode/Boyfriend.gif" alt="Boyfriend">
+            </div>
+
+            <!-- Marco amarillo (encima) -->
+            <img src="Assets/StoryMode/yellowbox.png" class="yellow-box" alt="">
+
+            <!-- Contenido (arte del mod, detrás de todo) -->
+            <div class="box-content">
+                <img id="modArt" class="mod-art" src="" alt="Mod art">
+                <!-- Estática encima del artwork -->
+                <div class="static-layer" id="staticLayer"></div>
+            </div>
         </div>
 
-        <!-- Panel de información unificado -->
-        <div class="info-panel">
-            <!-- Navegación entre mods -->
-            <div class="mod-navigation">
-                <button id="prevButton" class="nav-btn" aria-label="Mod anterior" title="Mod anterior">
-                    <i class="bi bi-arrow-left"></i>
-                </button>
-                
-                <div style="display: flex; align-items: center; flex-grow: 1; justify-content: center; overflow: hidden;">
-                    <div id="modTitle" class="mod-title" role="status" aria-live="polite">TOO SLOW</div>
-                </div>
-                
-                <button id="nextButton" class="nav-btn" aria-label="Siguiente mod" title="Siguiente mod">
-                    <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- Contenido del juego (personaje y botones) -->
-            <div class="game-content">
-                <!-- Sección del personaje -->
-                <div class="character-section">
-                    <div class="character-label">PERSONAJE</div>
-                    <div id="characterDisplay" class="character-display"></div>
-                </div>
-
-                <!-- Botones de acción -->
-                <div class="action-buttons">
-                    <button id="playButton" class="action-btn play-btn" aria-label="Jugar mod actual" title="Jugar">
-                        <i class="bi bi-play-fill me-2"></i> JUGAR
-                    </button>
-                    <a href="index.html" class="action-btn menu-btn" aria-label="Volver al menú principal" title="Menú">
-                        <i class="bi bi-house-door me-2"></i> MENÚ
-                    </a>
+        <!-- Nombre del mod — fuera de la caja, debajo -->
+        <div class="mod-name-row">
+            <span class="mod-name-text" id="modNameText">TOO SLOW</span>
+            <div class="info-wrap">
+                <button class="info-btn" id="infoBtn" aria-label="Info de dificultad">?</button>
+                <!-- Infobox aparece al lado del ? -->
+                <div class="info-box" id="infoBox">
+                    <p>Solo está disponible <span style="color:#f5f500">HARD</span>.<br>No se planean otras dificultades por el momento.</p>
+                    <button class="info-close" id="infoClose">✕</button>
                 </div>
             </div>
+        </div>
+        </div>
+
+        <!-- Flecha derecha -->
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="loading-text">CARGANDO...</p>
+    <!-- Botón jugar -->
+    <button class="play-btn" id="playBtn">&#9654; JUGAR</button>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>CARGANDO...</span>
     </div>
 
-    <!-- Audio elements -->
-    <audio id="bgMusic" src="sounds/storymodemenumusic.ogg" loop></audio>
-    <audio id="scrollSound" src="sounds/pauseScrollMenu.ogg"></audio>
+    <!-- Audio -->
+    <audio id="bgMusic"      src="sounds/storymodemenumusic.ogg" loop></audio>
+    <audio id="scrollSound"  src="sounds/pauseScrollMenu.ogg"></audio>
     <audio id="confirmSound" src="sounds/confirmMenu.ogg"></audio>
 
-    <!-- Bootstrap JS Bundle con Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="Assets/js/christmas-lite.js"></script>
     <script>
-        // Detectar móvil y Android
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        
-        // Vibración táctil para Android
-        function lightVibration() {
-            if (isAndroid && navigator.vibrate) {
-                navigator.vibrate(15);
-            }
-        }
-
-        // Detectar conexión lenta
-        if (isAndroid && 'connection' in navigator) {
-            const connection = navigator.connection;
-            if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-                document.documentElement.style.setProperty('--transition-time', '0.2s');
-            }
-        }
-
-        // Datos de los mods
+        // ── Datos de mods ──────────────────────────────────────────────
         const mods = [
             {
-                id: 'too-slow',
                 name: 'TOO SLOW',
-                image: 'images/Too_Slow_Artwork.png',
-                characterGif: 'images/Boyfriend.gif',
-                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt',
-                description: 'Enfrenta a Sonic.exe en esta batalla épica de ritmo donde la velocidad es clave.'
+                art:  'Assets/StoryMode/Artwork/too-slow.png',
+                url:  'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt'
             },
             {
-                id: 'you-cant-run',
                 name: "YOU CAN'T RUN",
-                image: 'images/You-cant-runfp.png',
-                characterGif: 'images/Boyfriend.gif',
-                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01k7js7tzxzn2h2wa71d6g423r/releases/01k7js7v00xg1p5pdq5xfn3aej',
-                description: 'Escapa del terror en esta frenética persecución musical llena de adrenalina.'
+                art:  'Assets/StoryMode/Artwork/you-cant-run.png',
+                url:  'https://funkymaker.kingamescreator.com/_app/levels/01k7js7tzxzn2h2wa71d6g423r/releases/01k7js7v00xg1p5pdq5xfn3aej'
             },
             {
-                id: 'triple-trouble',
                 name: 'TRIPLE TROUBLE',
-                image: 'images/Triple-troublefp.png',
-                characterGif: 'images/Boyfriend.gif',
-                playUrl: 'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt',
-                description: 'Enfrenta a los tres terrores en esta batalla triple de supervivencia.'
+                art:  'Assets/StoryMode/Artwork/triple-trouble.png',
+                url:  'https://funkymaker.kingamescreator.com/_app/levels/01jqz2mp28q272fq6aqshg8ms7/releases/01jqz2mp39age2fjkfwh4ahtpt'
             }
         ];
-        
-        function isValidUrl(url) {
-            try {
-                new URL(url);
-                return true;
-            } catch {
-                return false;
-            }
+
+        // ── DOM ────────────────────────────────────────────────────────
+        const modArt       = document.getElementById('modArt');
+        const modNameText  = document.getElementById('modNameText');
+        const prevBtn      = document.getElementById('prevBtn');
+        const nextBtn      = document.getElementById('nextBtn');
+        const playBtn      = document.getElementById('playBtn');
+        const boxWrapper   = document.getElementById('boxWrapper');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const scrollSound  = document.getElementById('scrollSound');
+        const confirmSound = document.getElementById('confirmSound');
+        const bgMusic      = document.getElementById('bgMusic');
+
+        const staticLayer = document.getElementById('staticLayer');
+
+        let current = 0;
+        let switching = false;
+
+        // Intensidad base de la estática
+        const STATIC_BASE = 0.25;
+        const STATIC_PEAK = 0.7;
+
+        function burstStatic() {
+            if (!staticLayer) return;
+            staticLayer.style.transition = 'opacity 0.08s ease';
+            staticLayer.style.opacity = STATIC_PEAK;
+            setTimeout(() => {
+                staticLayer.style.transition = 'opacity 1.2s ease';
+                staticLayer.style.opacity = STATIC_BASE;
+            }, 180);
         }
 
-        // Cache de imágenes precargadas
-        const imageCache = new Map();
-        
-        // Precargar imágenes críticas con manejo de errores
-        mods.forEach(mod => {
-            const img = new Image();
-            img.onerror = () => console.warn('Error cargando imagen: ' + mod.image);
-            img.src = mod.image;
-            imageCache.set(mod.id + '-main', img);
-            const gif = new Image();
-            gif.onerror = () => console.warn('Error cargando GIF: ' + mod.characterGif);
-            gif.src = mod.characterGif;
-            imageCache.set(mod.id + '-char', gif);
+        // ── Mostrar mod ────────────────────────────────────────────────
+        function showMod(index, direction) {
+            if (switching) return;
+            switching = true;
+
+            // Estática sube rápido para cubrir el cambio
+            burstStatic();
+            playSound(scrollSound);
+
+            // Quita fade — la estática cubre el swap, no hace falta
+            modArt.style.transition   = 'none';
+            modNameText.style.transition = 'none';
+
+            // Cambia la imagen en el peak de la estática (80ms)
+            setTimeout(() => {
+                const mod = mods[index];
+                modArt.src = mod.art;
+                modNameText.textContent = mod.name;
+                modArt.style.opacity      = '1';
+                modNameText.style.opacity = '1';
+                switching = false;
+            }, 80);
+        }
+
+        const arrowLeftImg  = document.getElementById('arrowLeftImg');
+        const arrowRightImg = document.getElementById('arrowRightImg');
+
+        function pressArrow(imgEl, pressedSrc, normalSrc) {
+            imgEl.src = pressedSrc;
+            setTimeout(() => { imgEl.src = normalSrc; }, 150);
+        }
+
+        // ── Navegación ─────────────────────────────────────────────────
+        prevBtn.addEventListener('click', () => {
+            current = (current - 1 + mods.length) % mods.length;
+            pressArrow(arrowLeftImg,
+                'Assets/StoryMode/Arrows/arrow push left.png',
+                'Assets/StoryMode/Arrows/arrow left.png');
+            showMod(current, 'left');
+            enableAudio();
         });
-        
-        // Precargar siguiente/anterior mod
-        function precacheAdjacentMods() {
-            const nextIdx = (currentModIndex + 1) % mods.length;
-            const prevIdx = (currentModIndex - 1 + mods.length) % mods.length;
-            
-            [nextIdx, prevIdx].forEach(idx => {
-                const mod = mods[idx];
-                if (!imageCache.has(mod.id + '-main-preload')) {
-                    const img = new Image();
-                    img.src = mod.image;
-                    imageCache.set(mod.id + '-main-preload', img);
-                }
-            });
-        }
 
-        // Variables de estado
-        let currentModIndex = 0;
-        let autoGlitchTimer;
-        const DOM = {
-            modImage: document.getElementById('modImage'),
-            characterDisplay: document.getElementById('characterDisplay'),
-            playButton: document.getElementById('playButton'),
-            prevButton: document.getElementById('prevButton'),
-            nextButton: document.getElementById('nextButton'),
-            modTitle: document.getElementById('modTitle'),
-            loadingOverlay: document.getElementById('loadingOverlay'),
-            glitchOverlay: document.getElementById('glitchOverlay')
-        };
+        nextBtn.addEventListener('click', () => {
+            current = (current + 1) % mods.length;
+            pressArrow(arrowRightImg,
+                'Assets/StoryMode/Arrows/arrow push right.png',
+                'Assets/StoryMode/Arrows/arrow right.png');
+            showMod(current, 'right');
+            enableAudio();
+        });
 
-        // Función para mostrar efecto glitch
-        function showGlitchEffect() {
-            DOM.glitchOverlay.style.opacity = '0.7';
-            setTimeout(() => {
-                DOM.glitchOverlay.style.opacity = '0';
-            }, 300);
-        }
-
-        // Glitch aleatorio automático
-        function startAutoGlitch() {
-            if (autoGlitchTimer) clearInterval(autoGlitchTimer);
-            autoGlitchTimer = setInterval(() => {
-                if (Math.random() < 0.3) {
-                    showGlitchEffect();
-                }
-            }, 12000);
-        }
-
-        // Función para actualizar la interfaz
-        function updateDisplay() {
-            const currentMod = mods[currentModIndex];
-            
-            // Fade out
-            DOM.modImage.style.opacity = '0';
-            DOM.characterDisplay.style.opacity = '0';
-            DOM.modTitle.style.opacity = '0';
-            
-            setTimeout(() => {
-                // Cambiar contenido
-                DOM.modImage.src = currentMod.image;
-                DOM.modImage.alt = currentMod.name;
-                DOM.modImage.onerror = () => {
-                    console.error('Error cargando imagen: ' + currentMod.image);
-                    DOM.modImage.style.opacity = '1';
-                };
-                DOM.modImage.onload = () => {
-                    DOM.modImage.style.opacity = '1';
-                };
-                DOM.modTitle.textContent = currentMod.name;
-                
-                // Lazy load personaje
-                DOM.characterDisplay.classList.add('loading');
-                const charImg = new Image();
-                charImg.onload = () => {
-                    DOM.characterDisplay.style.backgroundImage = 'url(' + currentMod.characterGif + ')';
-                    DOM.characterDisplay.classList.remove('loading');
-                    DOM.characterDisplay.style.opacity = '1';
-                };
-                charImg.onerror = () => {
-                    console.error('Error cargando GIF: ' + currentMod.characterGif);
-                    DOM.characterDisplay.classList.remove('loading');
-                    DOM.characterDisplay.style.opacity = '1';
-                };
-                charImg.src = currentMod.characterGif;
-                
-                // Fade in titulo
-                DOM.modTitle.style.opacity = '1';
-                
-                updateCounter();
-                showGlitchEffect();
-                lightVibration();
-                precacheAdjacentMods();
-            }, 150);
-            
-            // Reproducir sonido de scroll
-            const scrollSound = document.getElementById('scrollSound');
-            if (scrollSound) {
-                scrollSound.currentTime = 0;
-                scrollSound.play().catch(() => {});
-            }
-        }
-
-        function updateCounter() {
-            let counter = document.querySelector('.mod-counter');
-            if (!counter) {
-                counter = document.createElement('div');
-                counter.className = 'mod-counter';
-                counter.setAttribute('aria-label', `Mod ${currentModIndex + 1} de ${mods.length}`);
-                document.querySelector('.mod-image-container').appendChild(counter);
-            }
-            counter.textContent = `${currentModIndex + 1}/${mods.length}`;
-            counter.setAttribute('aria-label', `Mod ${currentModIndex + 1} de ${mods.length}`);
-        }
-
-        function updateDescription() {
-            // Función vacía - descripción eliminada
-        }
-
-        // Función para manejar el botón Jugar
-        function playMod() {
-            const currentMod = mods[currentModIndex];
-            
-            if (!isValidUrl(currentMod.playUrl)) {
-                alert('Este mod no está disponible en este momento.');
-                return;
-            }
-            
-            // Reproducir sonido de confirmación
-            const confirmSound = document.getElementById('confirmSound');
-            if (confirmSound) {
-                confirmSound.currentTime = 0;
-                confirmSound.play().catch(() => {});
-            }
-            
-            DOM.loadingOverlay.style.display = 'flex';
-            
-            setTimeout(() => {
-                window.location.href = currentMod.playUrl;
-            }, 1000);
-        }
-
-        // Swipe gestures para móvil
-        let touchStartX = 0;
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            
-            if (Math.abs(diff) > 30) {
-                if (diff > 0) {
-                    currentModIndex = (currentModIndex + 1) % mods.length;
-                } else {
-                    currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
-                }
-                if (navigator.vibrate) navigator.vibrate(50);
-                updateDisplay();
-                precacheAdjacentMods();
+        // Swipe táctil
+        let touchX = 0;
+        document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const diff = touchX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) { current = (current + 1) % mods.length; }
+                else          { current = (current - 1 + mods.length) % mods.length; }
+                showMod(current);
+                enableAudio();
             }
         }, { passive: true });
 
-        // Event Listeners
-        DOM.prevButton.addEventListener('click', () => {
-            currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
-            if (navigator.vibrate) navigator.vibrate(50);
-            updateDisplay();
-            enableAudio();
-            precacheAdjacentMods();
+        // Teclado
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft')  { current = (current - 1 + mods.length) % mods.length; showMod(current, 'left'); }
+            if (e.key === 'ArrowRight') { current = (current + 1) % mods.length; showMod(current, 'right'); }
+            if (e.key === 'Enter')      { launchMod(); }
         });
 
-        DOM.nextButton.addEventListener('click', () => {
-            currentModIndex = (currentModIndex + 1) % mods.length;
-            if (navigator.vibrate) navigator.vibrate(50);
-            updateDisplay();
-            enableAudio();
-            precacheAdjacentMods();
-        });
-
-        DOM.playButton.addEventListener('click', () => {
-            if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-            enableAudio();
-            playMod();
-        });
-
-        // Navegación con teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                currentModIndex = (currentModIndex - 1 + mods.length) % mods.length;
-                if (navigator.vibrate) navigator.vibrate(50);
-                updateDisplay();
-                precacheAdjacentMods();
-            }
-            if (e.key === 'ArrowRight') {
-                currentModIndex = (currentModIndex + 1) % mods.length;
-                if (navigator.vibrate) navigator.vibrate(50);
-                updateDisplay();
-                precacheAdjacentMods();
-            }
-            if (e.key === 'Enter') {
-                if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-                playMod();
-            }
-        });
-
-        // Inicialización de audio
-        function initAudio() {
-            const bgMusic = document.getElementById('bgMusic');
-            if (bgMusic) {
-                bgMusic.volume = 0.6;
-                bgMusic.play().catch(() => {});
-            }
+        // ── Jugar ──────────────────────────────────────────────────────
+        function launchMod() {
+            const url = mods[current].url;
+            if (!url) { alert('Este mod no está disponible.'); return; }
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            setTimeout(() => { window.location.href = url; }, 900);
         }
 
-        // Inicialización
-        updateDisplay();
-        startAutoGlitch();
-        
-        // Iniciar audio después de cualquier interacción del usuario
-        const enableAudio = () => {
-            initAudio();
-            document.removeEventListener('click', enableAudio);
+        playBtn.addEventListener('click', () => { enableAudio(); launchMod(); });
+
+        // ── Audio ──────────────────────────────────────────────────────
+        function playSound(el) {
+            if (!el) return;
+            el.currentTime = 0;
+            el.play().catch(() => {});
+        }
+
+        function enableAudio() {
+            bgMusic.volume = 0.6;
+            bgMusic.play().catch(() => {});
+            document.removeEventListener('click',      enableAudio);
             document.removeEventListener('touchstart', enableAudio);
-            document.removeEventListener('keydown', enableAudio);
-        };
-        
-        document.addEventListener('click', enableAudio);
-        document.addEventListener('touchstart', enableAudio);
-        document.addEventListener('keydown', enableAudio);
-        
-        if (isMobile) {
-            DOM.modImage.loading = 'lazy';
+            document.removeEventListener('keydown',    enableAudio);
         }
+
+        document.addEventListener('click',      enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+        document.addEventListener('keydown',    enableAudio);
+
+        // ── Init ───────────────────────────────────────────────────────
+        showMod(0);
+
+        // ── Infobox dificultad ─────────────────────────────────────────
+        const infoBtn   = document.getElementById('infoBtn');
+        const infoBox   = document.getElementById('infoBox');
+        const infoClose = document.getElementById('infoClose');
+
+        infoBtn.addEventListener('click', () => {
+            infoBox.classList.toggle('visible');
+        });
+        infoClose.addEventListener('click', () => {
+            infoBox.classList.remove('visible');
+        });
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (!infoBox.contains(e.target) && e.target !== infoBtn) {
+                infoBox.classList.remove('visible');
+            }
+        });
     </script>
 </body>
 </html>

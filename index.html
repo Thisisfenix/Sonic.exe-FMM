@@ -1590,17 +1590,28 @@
                 }
             }
 
-            // Iniciar música cuando el usuario interactúe
-            document.body.addEventListener('click', function audioInit() {
-                playBgMusic();
-                document.body.removeEventListener('click', audioInit);
-            }, { once: true });
+            // Iniciar música solo después de que la intro haya terminado
+            function initMusicAfterIntro() {
+                document.body.addEventListener('click', function audioInit() {
+                    playBgMusic();
+                    document.body.removeEventListener('click', audioInit);
+                }, { once: true });
 
-            // También iniciar con eventos táctiles
-            document.body.addEventListener('touchstart', function audioInitTouch() {
-                playBgMusic();
-                document.body.removeEventListener('touchstart', audioInitTouch);
-            }, { once: true });
+                // También iniciar con eventos táctiles
+                document.body.addEventListener('touchstart', function audioInitTouch() {
+                    playBgMusic();
+                    document.body.removeEventListener('touchstart', audioInitTouch);
+                }, { once: true });
+            }
+
+            // Si la intro está activa, esperar a que termine; si no, registrar de inmediato
+            if (document.getElementById('intro-overlay')) {
+                document.addEventListener('introComplete', function() {
+                    playBgMusic();
+                }, { once: true });
+            } else {
+                initMusicAfterIntro();
+            }
         });
 
 

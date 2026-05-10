@@ -261,7 +261,8 @@
                 setTimeout(() => {
                     overlay.remove();
                     style.remove();
-                    // Música del index desde cero
+                    // Notificar que la intro terminó y luego iniciar música del index
+                    document.dispatchEvent(new Event('introComplete'));
                     const bgMusic = document.getElementById('bgMusic');
                     if (bgMusic) {
                         bgMusic.currentTime = 0;

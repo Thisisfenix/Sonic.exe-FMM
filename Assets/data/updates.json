@@ -1,10 +1,27 @@
 {
-  "currentVersion": "v1.9.0",
+  "currentVersion": "v1.9.1",
   "updates": [
     {
-      "version": "v1.9.0",
+      "version": "v1.9.1",
+      "title": "REWORK DEL STORY MODE",
+      "date": "2026-05-10",
+      "sections": [
+        {
+          "title": "📖 STORY MODE",
+          "items": [
+            "🎨 **Nuevo look:** El Story Mode se rediseñó para parecerse más al juego.",
+            "🖼️ **Nuevos artworks:** Cada mod tiene su propio arte.",
+            "🎭 **Boyfriend:** El BF ahora aparece dentro de la caja.",
+            " **Estática:** Hay estática encima del artwork que se activa al cambiar de mod.",
+            "⬅️➡️ **Flechas nuevas:** Las flechas de navegación tienen su propio diseño.",
+            "❓ **Dificultad:** Solo está disponible HARD por el momento."
+          ]
+        }
+      ]
+    },
+    {
       "title": "INTRO Y ORGANIZACIÓN",
-      "date": "2025-01-27",
+      "date": "2025-05-08",
       "sections": [
         {
           "title": "🎬 INTRO DE LA PÁGINA",
@@ -29,7 +46,7 @@
     {
       "version": "v1.8.0",
       "title": "REGRESO DE POM Y MEJORAS GENERALES",
-      "date": "2025-01-26",
+      "date": "2026-04-26",
       "sections": [
         {
           "title": "👥 CAMBIOS EN EL EQUIPO",
