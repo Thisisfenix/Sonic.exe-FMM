@@ -77,6 +77,27 @@
             overflow: hidden;
         }
 
+        /* Firefox Android: simplificar 3D transforms */
+        @supports (-moz-appearance:none) {
+            @media (max-width: 768px) {
+                .carousel-container {
+                    perspective: none;
+                }
+                
+                .carousel-track {
+                    transform-style: flat;
+                }
+                
+                .carousel-item {
+                    transform-style: flat;
+                }
+                
+                .mod-logo-3d {
+                    transform-style: flat;
+                }
+            }
+        }
+
         .carousel-track {
             display: flex;
             align-items: center;
@@ -701,12 +722,13 @@
                 font-size: 0.7rem;
             }
             
+            /* Simplificar transformaciones 3D en móvil */
             .carousel-item.left-1 {
-                transform: translate(-50%, -50%) translateX(-350px) translateZ(-200px) scale(0.5) rotateY(45deg);
+                transform: translate(-50%, -50%) translateX(-300px) scale(0.55);
             }
             
             .carousel-item.right-1 {
-                transform: translate(-50%, -50%) translateX(350px) translateZ(-200px) scale(0.5) rotateY(-45deg);
+                transform: translate(-50%, -50%) translateX(300px) scale(0.55);
             }
             
             .carousel-item.left-2,
@@ -714,6 +736,7 @@
             .carousel-item.hidden {
                 opacity: 0;
                 pointer-events: none;
+                display: none;
             }
             
             .carousel-nav {
