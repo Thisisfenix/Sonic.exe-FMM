@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonic.exe Rerun - Freeplay</title>
+    <link rel="icon" type="image/png" href="../../../images/logo_sonic_puto_exe.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'NiseSegaSonic';
+            src: url('Assets/UI/Font/NiseSegaSonic.TTF') format('truetype');
+        }
+        @font-face {
+            font-family: 'NiseGenesis';
+            src: url('Assets/UI/Font/NiseGenesis.TTF') format('truetype');
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+            background: transparent;
+        }
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background: transparent;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes scrollBgUp {
+            0% { background-position: center 0; }
+            100% { background-position: center 100vh; }
+        }
+        .right-panel-bg.tint-red { filter: sepia(100%) saturate(300%) hue-rotate(-50deg); }
+        .right-panel-bg.tint-blue { filter: sepia(100%) saturate(300%) hue-rotate(180deg); }
+        .right-panel-bg.tint-green { filter: sepia(100%) saturate(300%) hue-rotate(80deg); }
+        .right-panel-bg.tint-purple { filter: sepia(100%) saturate(300%) hue-rotate(250deg); }
+        .container {
+            display: grid;
+            grid-template-columns: 64% 36%;
+            grid-template-rows: 1fr;
+            gap: 0;
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .divider {
+            position: absolute;
+            left: 64%;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-image: url('Assets/UI/divider.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-size: 0.6rem;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 200;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: rgba(255,0,0,0.2);
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .difficulty-selector {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 15;
+            transform: translateY(-40%);
+        }
+        .difficulty-label {
+            background: transparent;
+            color: #fff;
+            padding: 0;
+            border-radius: 0;
+            font-family: 'NiseGenesis', 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            text-align: center;
+            border: none;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .left-panel {
+            grid-row: 1;
+            grid-column: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            background-image: url('Assets/UI/grid.png');
+            background-size: 1px 1px;
+            background-repeat: repeat;
+            background-color: rgba(0,0,0,0.8);
+            padding: 40px;
+            border: none;
+            border-radius: 0;
+        }
+        .right-panel {
+            grid-row: 1;
+            grid-column: 2;
+            position: relative;
+            background: transparent;
+            padding: 20px;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .right-panel-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('Assets/UI/sonicsonic.png');
+            background-size: 100% auto;
+            background-repeat: repeat-y;
+            background-position: center 0;
+            z-index: 0;
+            transition: filter 0.5s;
+            animation: scrollBgUp 30s linear infinite;
+            pointer-events: none;
+        }
+        .difficulty-bar {
+            width: 80%;
+            max-width: 500px;
+            height: 70px;
+            background-image: url('Assets/UI/difficulty_bar2.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: -15px;
+            margin-top: -120px;
+            z-index: 12;
+            position: relative;
+        }
+        .cover-container {
+            position: relative;
+            width: 90%;
+            max-width: 580px;
+            aspect-ratio: 16/9;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            margin-bottom: 10px;
+        }
+        .cover-border {
+            position: absolute;
+            inset: 0;
+            background-image: url('Assets/UI/border_silverer.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .song-name {
+            color: #fff;
+            font-family: 'NiseSegaSonic', 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 3px 3px 0 #000;
+            padding: 5px 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .play-btn {
+            background: rgba(255, 0, 0, 0.9);
+            border: 3px solid #fff;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 15px 40px;
+            cursor: pointer;
+            text-align: center;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 4px 0 #000;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+        }
+        .play-btn:hover {
+            background: rgba(255, 50, 50, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #000;
+        }
+        .play-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000;
+        }
+        .version-buttons {
+            display: none;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .version-buttons.active {
+            display: flex;
+        }
+        .version-btn {
+            background: rgba(0, 100, 255, 0.9);
+            border: 3px solid #fff;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 12px 30px;
+            cursor: pointer;
+            text-align: center;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 4px 0 #000;
+            transition: all 0.2s;
+        }
+        .version-btn:hover {
+            background: rgba(50, 150, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #000;
+        }
+        .version-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000;
+        }
+        .stats {
+            color: #fff;
+            font-size: 1.1rem;
+            line-height: 2;
+            text-shadow: 2px 2px 0 #000;
+            text-align: center;
+            width: 80%;
+        }
+        .stage-canvas {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        #stageCanvas {
+            max-width: 100%;
+            max-height: 100%;
+            image-rendering: pixelated;
+            position: relative;
+            z-index: 2;
+        }
+        .nav-arrow {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .nav-arrow.up {
+            background-image: url('Assets/UI/arrow.png');
+            top: 30px;
+            right: 50%;
+            transform: translateX(50%);
+        }
+        .nav-arrow.down {
+            background-image: url('Assets/UI/arrow.png');
+            bottom: 30px;
+            right: 50%;
+            transform: translateX(50%) scaleY(-1);
+        }
+        .nav-arrow:hover {
+            opacity: 0.7;
+        }
+        .nav-arrow.up:hover {
+            transform: translateX(50%) scale(1.1);
+        }
+        .nav-arrow.down:hover {
+            transform: translateX(50%) scaleY(-1) scale(1.1);
+        }
+        .nav-arrow:active {
+        }
+        .nav-arrow.up:active {
+            transform: translateX(50%) scale(0.95);
+        }
+        .nav-arrow.down:active {
+            transform: translateX(50%) scaleY(-1) scale(0.95);
+        }
+        .placeholder-text {
+            color: #666;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 20px;
+        }
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: #ff0000;
+            font-size: 1rem;
+            gap: 20px;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #333;
+            border-top-color: #ff0000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+            .bg-pattern {
+                background-size: 200% auto;
+                animation: scrollBgUpMobile 30s linear infinite;
+            }
+            @keyframes scrollBgUpMobile {
+                0% { background-position: center 0; }
+                100% { background-position: center 100vh; }
+            }
+            .right-panel-bg {
+                background-size: 200% auto;
+            }
+            .container {
+                grid-template-columns: 60% 40%;
+                grid-template-rows: 1fr;
+            }
+            .divider { 
+                left: 60%;
+            }
+            .left-panel {
+                padding: 20px 10px;
+            }
+            .right-panel {
+                padding: 10px;
+            }
+            .difficulty-bar {
+                height: 45px;
+                width: 95%;
+                margin-top: -80px;
+            }
+            .difficulty-label { 
+                font-size: 0.7rem;
+            }
+            .cover-container {
+                width: 95%;
+            }
+            .song-name { 
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+            }
+            .play-btn {
+                font-size: 0.7rem;
+                padding: 10px 25px;
+            }
+            .stats { 
+                font-size: 0.75rem;
+            }
+            .back-btn {
+                font-size: 0.5rem;
+                padding: 8px 12px;
+            }
+            .nav-arrow {
+                width: 45px;
+                height: 45px;
+            }
+            .nav-arrow.up { top: 10px; }
+            .nav-arrow.down { bottom: 10px; }
+            #stageCanvas {
+                max-width: 90%;
+                max-height: 90%;
+            }
+        }
+        @media (max-width: 480px) {
+            .bg-pattern {
+                background-size: 250% auto;
+            }
+            .right-panel-bg {
+                background-size: 250% auto;
+            }
+            .container {
+                grid-template-columns: 55% 45%;
+            }
+            .divider { 
+                left: 55%;
+            }
+            .difficulty-bar {
+                height: 40px;
+                margin-top: -60px;
+            }
+            .difficulty-label { 
+                font-size: 0.6rem;
+            }
+            .song-name { 
+                font-size: 1.1rem;
+            }
+            .play-btn {
+                font-size: 0.65rem;
+                padding: 8px 20px;
+            }
+            .stats { 
+                font-size: 0.7rem;
+            }
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        @media (max-width: 360px) {
+            .bg-pattern {
+                background-size: 300% auto;
+            }
+            .right-panel-bg {
+                background-size: 300% auto;
+            }
+            .difficulty-bar {
+                height: 35px;
+                margin-top: -50px;
+            }
+            .difficulty-label { 
+                font-size: 0.55rem;
+            }
+            .song-name { 
+                font-size: 0.9rem;
+            }
+            .play-btn {
+                font-size: 0.6rem;
+                padding: 7px 18px;
+            }
+            .stats { 
+                font-size: 0.65rem;
+            }
+            .nav-arrow {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern" id="bgPattern"></div>
+    <a href="../../../freeplay.html" class="back-btn">◀ BACK</a>
+    
+    <div class="container">
+        <div class="divider"></div>
+        
+        <div class="left-panel">
+            <div class="difficulty-bar">
+                <div class="difficulty-selector">
+                    <div class="difficulty-label">NORMAL</div>
+                </div>
+            </div>
+            <div class="cover-container">
+                <img class="cover-image" id="coverImage" src="Assets/Covers/placeholder.png" alt="Song Cover">
+                <div class="cover-border"></div>
+            </div>
+            <div class="song-name" id="songName">TOO SLOW</div>
+            <button class="play-btn" id="playBtn">▶ PLAY</button>
+            <div class="version-buttons" id="versionButtons">
+                <button class="version-btn" id="oldVersionBtn">OLD</button>
+                <button class="version-btn" id="newVersionBtn">NEW</button>
+            </div>
+            <div class="stats">
+                <div>Time: <span id="time">2:34</span></div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="right-panel-bg"></div>
+            <div class="nav-arrow up" id="navUp"></div>
+            <div class="stage-canvas">
+                <canvas id="stageCanvas"></canvas>
+            </div>
+            <div class="nav-arrow down" id="navDown"></div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>LOADING...</span>
+    </div>
+
+    <audio id="scrollSound" src="../../../sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="confirmSound" src="../../../sounds/confirmMenu.ogg"></audio>
+    <audio id="bgMusic" src="Assets/Music/FPmenu.ogg" loop></audio>
+
+    <script src="../../../Assets/js/christmas-lite.js"></script>
+    <script>
+        // XML Sprite Atlas Reader and Animator
+        class SpriteAtlas {
+            constructor(xmlPath, imagePath) {
+                this.xmlPath = xmlPath;
+                this.imagePath = imagePath;
+                this.frames = [];
+                this.image = null;
+                this.loaded = false;
+            }
+
+            async load() {
+                try {
+                    const [xmlText, image] = await Promise.all([
+                        fetch(this.xmlPath).then(r => r.text()),
+                        this.loadImage(this.imagePath)
+                    ]);
+                    
+                    this.image = image;
+                    this.parseXML(xmlText);
+                    this.loaded = true;
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load sprite atlas:', error);
+                    return false;
+                }
+            }
+
+            loadImage(src) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            }
+
+            parseXML(xmlText) {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                const subTextures = xmlDoc.querySelectorAll('SubTexture');
+                
+                this.frames = Array.from(subTextures).map(st => ({
+                    name: st.getAttribute('name'),
+                    x: parseInt(st.getAttribute('x')),
+                    y: parseInt(st.getAttribute('y')),
+                    width: parseInt(st.getAttribute('width')),
+                    height: parseInt(st.getAttribute('height')),
+                    frameX: parseInt(st.getAttribute('frameX') || 0),
+                    frameY: parseInt(st.getAttribute('frameY') || 0),
+                    frameWidth: parseInt(st.getAttribute('frameWidth')),
+                    frameHeight: parseInt(st.getAttribute('frameHeight'))
+                }));
+            }
+
+            drawFrame(ctx, frameIndex, x, y, scale = 1) {
+                if (!this.loaded || !this.frames[frameIndex]) return;
+                
+                const frame = this.frames[frameIndex];
+                
+                // En FNF/Sparrow, frameX y frameY son negativos y representan el offset desde el borde del frameWidth/frameHeight
+                // El sprite se dibuja en su posición real dentro del frame completo
+                const offsetX = Math.abs(frame.frameX);
+                const offsetY = Math.abs(frame.frameY);
+                
+                ctx.drawImage(
+                    this.image,
+                    frame.x, frame.y, frame.width, frame.height,
+                    x + offsetX * scale, y + offsetY * scale, 
+                    frame.width * scale, frame.height * scale
+                );
+            }
+        }
+
+        // Songs from Sonic.exe Rerun freeplay
+        const songs = [
+            {
+                name: "REDOLLED",
+                cover: "Assets/Covers/redolled.png",
+                stage3D: "Assets/3D/redolledFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01jn9ph56pwf4kq7cxf22dayt7/releases/01jn9ph56s2bhyfgmdpknqr78j",
+                urlOld: "https://funkymaker.kingamescreator.com/_app/levels/01jn7e311yce4gtwt87yk0en8k/releases/01jn7e3121wn0fk0jhhe6bk3cv",
+                hasVersions: true,
+                stats: { time: "0:00" },
+                tint: "tint-blue"
+            },
+            {
+                name: "TOO SLOW",
+                cover: "Assets/Covers/too-slow.png",
+                stage3D: "Assets/3D/Too SlowFreeplay3D",
+                url: "https://drive.google.com/file/d/1-UBQRPKiKtQH2hvYp8Lpg_E7SpxFYmn0/view?usp=drivesdk",
+                stats: { time: "0:00" },
+                tint: "tint-red"
+            },
+            {
+                name: "TORMENT",
+                cover: "Assets/Covers/torment.png",
+                stage3D: "Assets/3D/TormentFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k5n5csrab0g91kvdyw9bfcjt/releases/01k5n5csrdsyn2vbwwqbyq8083",
+                stats: { time: "0:00" },
+                tint: "tint-red"
+            },
+            {
+                name: "TIME ATTACK",
+                cover: "Assets/Covers/time-attack.png",
+                stage3D: "Assets/3D/Time AttackFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k7jxcvqwc7zz8yepgcsrg2er/releases/01k7jxcvqyhpp54eqj6j7wtxc4",
+                stats: { time: "0:00" },
+                tint: "tint-purple"
+            },
+            {
+                name: "PARTY STREAMERS",
+                cover: "Assets/Covers/party-streamers.png",
+                stage3D: "Assets/3D/Party StreamersFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01jty134hcxw40np96z0h9wnwt/releases/01jty134hf25vbjb0eba46v634",
+                stats: { time: "0:00" },
+                tint: "tint-blue"
+            },
+            {
+                name: "REROY",
+                cover: "Assets/Covers/reroy.png",
+                stage3D: "Assets/3D/reroyFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01jtwbgz2t4hggqhrt8fetq2gx/releases/01jtwbgz2w37ddv48ep34qen4a",
+                stats: { time: "0:00" },
+                tint: "tint-blue"
+            },
+            {
+                name: "HIDE AND SEEK",
+                cover: "Assets/Covers/Hide And Seek.png",
+                stage3D: "Assets/3D/Hide And SeekFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k6rs6nznnc82pb6wh33z5653/releases/01k6rs6nzzfp1jn7y043ayma3w",
+                stats: { time: "0:00" },
+                tint: "tint-red"
+            },
+            {
+                name: "LAST CHANCE",
+                cover: "Assets/Covers/last-chance.png",
+                stage3D: "Assets/3D/Last ChanceFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k7drmv9em5b2tv8100xhcah8/releases/01k7drmv9hxd0rfp4jb8908zvr",
+                stats: { time: "0:00" },
+                tint: "tint-purple"
+            },
+            {
+                name: "ENTERPRISE",
+                cover: "Assets/Covers/enterprise.png",
+                stage3D: "Assets/3D/enterpriseFreeplay3D",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k6vh3zvg2ktsqpqkwrzt3ft8/releases/01k6vh3zvqpertk1fgjf511zj4",
+                urlOld: "https://funkymaker-app.kingamescreator.com/levels/01jecrqcr7kg7aycw6dnr03e40/releases/01jecrqdqv452pjkgj1y846dnp",
+                hasVersions: true,
+                stats: { time: "0:00" },
+                tint: "tint-purple"
+            },
+            {
+                name: "GOOGLE",
+                cover: "Assets/Covers/google.png",
+                stage3D: "Assets/3D/GoogleFreeplay3D",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jecty7nabtw8fhwcvwqssa2x/releases/01jecty8mw3xb3sw5f83ambkfz",
+                stats: { time: "0:00" },
+                tint: "tint-green"
+            },
+            {
+                name: "POWER ATTACK",
+                cover: "Assets/Covers/Powerjack.png",
+                stage3D: "Assets/3D/Top LoaderFreeplay3D",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01kb61gtxh3bmfwb2868c18b6s/releases/01kb61gtxk2wdsyzg74xhgqg2m",
+                stats: { time: "0:00" },
+                tint: "tint-green"
+            },
+            {
+                name: "TOP LOADER",
+                cover: "Assets/Covers/top-loader.png",
+                stage3D: "Assets/3D/Top LoaderFreeplay3D",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jfbpdkncvs8sycb794ameyqq/releases/01jfbpdkp4kzj3wsk7q7szdq2h",
+                stats: { time: "0:00" },
+                tint: "tint-green"
+            },
+            {
+                name: "THIRD PARTY",
+                cover: "Assets/Covers/third-party.png",
+                stage3D: "Assets/3D/Third PartyFreeplay3D",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jectg8twna716z19xr95eyeb/releases/01jectg9td9kk1fka2mra54bxb",
+                stats: { time: "0:00" },
+                tint: "tint-green"
+            }
+        ];
+
+        const songName = document.getElementById('songName');
+        const coverImage = document.getElementById('coverImage');
+        const canvas = document.getElementById('stageCanvas');
+        const ctx = canvas.getContext('2d');
+        const timeEl = document.getElementById('time');
+        const playBtn = document.getElementById('playBtn');
+        const versionButtons = document.getElementById('versionButtons');
+        const oldVersionBtn = document.getElementById('oldVersionBtn');
+        const newVersionBtn = document.getElementById('newVersionBtn');
+        const navUp = document.getElementById('navUp');
+        const navDown = document.getElementById('navDown');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const scrollSound = document.getElementById('scrollSound');
+        const confirmSound = document.getElementById('confirmSound');
+        const bgMusic = document.getElementById('bgMusic');
+        const rightPanelBg = document.querySelector('.right-panel-bg');
+        
+        let currentSong = 0;
+        let currentAtlas = null;
+        let currentFrame = 0;
+        let animationSpeed = 12; // FPS (reducido de 24 a 12)
+        let lastFrameTime = 0;
+
+        // Canvas size matches frameWidth/frameHeight from XML
+        canvas.width = 640;
+        canvas.height = 640;
+
+        function animate(timestamp) {
+            if (!currentAtlas || !currentAtlas.loaded) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const deltaTime = timestamp - lastFrameTime;
+            if (deltaTime > 1000 / animationSpeed) {
+                // Clear with transparent background
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw centered - the drawFrame handles the offset internally
+                currentAtlas.drawFrame(ctx, currentFrame, 0, 0, 1);
+                
+                currentFrame = (currentFrame + 1) % currentAtlas.frames.length;
+                lastFrameTime = timestamp;
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        async function loadStage(stage3DPath) {
+            const atlas = new SpriteAtlas(
+                `${stage3DPath}.xml`,
+                `${stage3DPath}.png`
+            );
+            
+            const loaded = await atlas.load();
+            if (loaded) {
+                currentAtlas = atlas;
+                currentFrame = 0;
+            }
+        }
+
+        async function renderSong() {
+            const song = songs[currentSong];
+            songName.textContent = song.name;
+            coverImage.src = song.cover;
+            timeEl.textContent = song.stats.time;
+            
+            // Show/hide version buttons
+            if (song.hasVersions) {
+                versionButtons.classList.add('active');
+                playBtn.style.display = 'none';
+            } else {
+                versionButtons.classList.remove('active');
+                playBtn.style.display = 'block';
+            }
+            
+            // Change background tint on right panel background (not the 3D)
+            rightPanelBg.className = 'right-panel-bg ' + (song.tint || '');
+            
+            await loadStage(song.stage3D);
+        }
+
+        function playSound(el) {
+            if (!el) return;
+            el.currentTime = 0;
+            el.play().catch(() => {});
+        }
+
+        function enableAudio() {
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(() => {});
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+        }
+
+        function navigatePrev() {
+            currentSong = (currentSong - 1 + songs.length) % songs.length;
+            renderSong();
+            playSound(scrollSound);
+        }
+
+        function navigateNext() {
+            currentSong = (currentSong + 1) % songs.length;
+            renderSong();
+            playSound(scrollSound);
+        }
+
+        navUp.addEventListener('click', navigatePrev);
+        navDown.addEventListener('click', navigateNext);
+        
+        playBtn.addEventListener('click', () => {
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            setTimeout(() => { window.location.href = songs[currentSong].url; }, 800);
+        });
+        
+        oldVersionBtn.addEventListener('click', () => {
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            setTimeout(() => { window.location.href = songs[currentSong].urlOld; }, 800);
+        });
+        
+        newVersionBtn.addEventListener('click', () => {
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            setTimeout(() => { window.location.href = songs[currentSong].url; }, 800);
+        });
+        
+        coverImage.addEventListener('click', () => {
+            const song = songs[currentSong];
+            if (song.hasVersions) return; // Don't auto-play if has versions
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            setTimeout(() => { window.location.href = song.url; }, 800);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') navigatePrev();
+            if (e.key === 'ArrowDown') navigateNext();
+            if (e.key === 'Enter') {
+                playSound(confirmSound);
+                loadingOverlay.classList.add('active');
+                setTimeout(() => { window.location.href = songs[currentSong].url; }, 800);
+            }
+        });
+
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+        
+        renderSong();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>

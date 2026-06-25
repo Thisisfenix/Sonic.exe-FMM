@@ -805,7 +805,7 @@
         function updateDisplay() {
             pgmDisplay.textContent = pgmValue.toString().padStart(2, '0');
             daDisplay.textContent = daValue.toString().padStart(2, '0');
-            preloadNearbyMedia();
+            // preloadNearbyMedia(); // Desactivado para ahorrar RAM
         }
 
         // Precargar medios cercanos
@@ -1703,7 +1703,7 @@
 
         // Inicialización
         updateDisplay();
-        preloadNearbyMedia();
+        // preloadNearbyMedia(); // Desactivado para ahorrar RAM en dispositivos con poca memoria
         updateHistoryPanel();
         setInterval(updateManiaTimer, 1000);
         updateManiaTimer();

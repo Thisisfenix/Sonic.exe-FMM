@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanon - Freeplay</title>
+    <link rel="icon" type="image/png" href="../../../images/logo_sonic_puto_exe.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Background dinámico */
+        .background {
+            position: fixed;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease;
+            z-index: 0;
+        }
+
+        /* Overlay oscuro */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1;
+        }
+
+        /* Contenedor de canciones (izquierda) */
+        .songs-container {
+            position: fixed;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 10;
+            height: 100vh;
+            padding: 50vh 0;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .songs-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            pointer-events: auto;
+            transition: transform 0.3s ease;
+        }
+
+        /* Items de canción */
+        .song-item {
+            color: rgba(255,255,255,0.4);
+            font-size: clamp(0.6rem, 1.5vw, 1.2rem);
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            padding: 5px 10px;
+            position: relative;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .song-item:hover {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .song-item.active {
+            color: #ffffff;
+            font-size: clamp(2rem, 5vw, 4rem);
+            text-shadow: 4px 4px 0 #000, 0 0 30px #ffff00, 0 0 50px #ffff00;
+            transform: translateX(15px);
+            padding: 10px 15px;
+            font-weight: bold;
+        }
+
+        .song-item.locked {
+            color: rgba(80,80,80,0.4);
+            cursor: not-allowed;
+        }
+
+        .song-item.locked::after {
+            content: " 🔒";
+            font-size: 0.6em;
+        }
+
+        /* Cover de la canción (derecha) */
+        .cover-container {
+            position: fixed;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .cover-image {
+            max-width: clamp(300px, 35vw, 500px);
+            max-height: 60vh;
+            width: auto;
+            height: auto;
+            border-radius: 12px;
+            border: 4px solid #fff;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3), 0 8px 40px rgba(0,0,0,0.5);
+            object-fit: contain;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Flechas móviles */
+        .mobile-arrows {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .arrow-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(0,0,0,0.9);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+
+        .arrow-btn:active {
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.9);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.8);
+        }
+
+        /* Botón PLAY para móvil */
+        .play-btn-mobile {
+            display: none;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            border: 5px solid #fff;
+            border-radius: 50%;
+            color: #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            box-shadow: 0 8px 25px rgba(0,255,0,0.5);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .play-btn-mobile:active {
+            background: linear-gradient(135deg, #00ff66, #00ee00);
+            transform: scale(0.95);
+            box-shadow: 0 4px 15px rgba(0,255,0,0.7);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Título del mod (abajo a la derecha) */
+        .mod-title {
+            position: fixed;
+            bottom: 60px;
+            right: 80px;
+            color: rgba(255,255,255,0.4);
+            font-size: clamp(0.9rem, 2vw, 1.8rem);
+            text-shadow: 3px 3px 0 #000;
+            letter-spacing: 3px;
+            z-index: 10;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        /* Botones */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 100;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: rgba(255,0,0,0.2);
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        /* Instrucciones */
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: clamp(0.4rem, 0.9vw, 0.65rem);
+            text-shadow: 2px 2px 0 #000;
+            text-align: center;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 16px;
+            border-radius: 4px;
+            z-index: 100;
+            line-height: 1.5;
+        }
+
+        /* Responsive - Móvil */
+        @media (max-width: 768px) {
+            .songs-container {
+                left: 15px;
+                max-height: 50vh;
+            }
+
+            .songs-wrapper {
+                gap: 3px;
+            }
+
+            .song-item {
+                font-size: clamp(0.45rem, 1.1vw, 0.8rem);
+                padding: 3px 6px;
+            }
+
+            .song-item.active {
+                font-size: clamp(1.3rem, 3.5vw, 2.5rem);
+                padding: 6px 10px;
+            }
+
+            .cover-container {
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                gap: 20px;
+            }
+
+            .cover-image {
+                max-width: clamp(180px, 45vw, 320px);
+                max-height: 40vh;
+                border: 3px solid #fff;
+            }
+
+            .mobile-arrows {
+                display: flex;
+            }
+
+            .play-btn-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mod-title {
+                bottom: 15px;
+                right: 15px;
+                font-size: clamp(0.6rem, 1.6vw, 1.1rem);
+            }
+
+            .instructions {
+                display: none;
+            }
+
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                font-size: 0.5rem;
+                padding: 8px 12px;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: #ff00ff;
+            font-size: 1rem;
+            gap: 20px;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #333;
+            border-top-color: #ff00ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Botón volver -->
+    <a href="../../../freeplay.html" class="back-btn">◀ BACK</a>
+
+    <!-- Background dinámico -->
+    <div class="background" id="background"></div>
+    <div class="overlay"></div>
+
+    <!-- Lista de canciones (izquierda) -->
+    <div class="songs-container">
+        <div class="songs-wrapper" id="songsContainer">
+            <!-- Las canciones se generan dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Cover de la canción (derecha) -->
+    <div class="cover-container">
+        <!-- Flecha arriba (móvil) -->
+        <div class="mobile-arrows">
+            <div class="arrow-btn arrow-up" id="arrowUp">▲</div>
+        </div>
+        
+        <img class="cover-image" id="coverImage" src="Assets/Covers/freeplayPort-1.png" alt="Song Cover">
+        
+        <!-- Botón PLAY (móvil) -->
+        <button class="play-btn-mobile" id="playBtnMobile">PLAY</button>
+        
+        <!-- Flecha abajo (móvil) -->
+        <div class="mobile-arrows">
+            <div class="arrow-btn arrow-down" id="arrowDown">▼</div>
+        </div>
+    </div>
+
+    <!-- Título del mod -->
+    <div class="mod-title">SINISTER THOUGHTS</div>
+
+    <!-- Instrucciones -->
+    <div class="instructions">
+        ↑↓ OR CLICK TO SELECT SONG • ENTER TO PLAY • ESC TO EXIT
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>LOADING...</span>
+    </div>
+
+    <!-- Audio -->
+    <audio id="scrollSound" src="../../../sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="confirmSound" src="../../../sounds/confirmMenu.ogg"></audio>
+    <audio id="bgMusic" src="Assets/Music/freakyMenu.ogg" loop></audio>
+
+    <script src="../../../Assets/js/christmas-lite.js"></script>
+    <script>
+        // ── DATOS DE CANCIONES ──────────────────────────────────────
+        const songs = [
+            {
+                name: "TOYING AROUND",
+                background: "Assets/Images/Preview/stage-1.png",
+                cover: "Assets/Covers/freeplayPort-1.png",
+                url: "https://drive.google.com/file/d/1Eukl3xrwIAEvmHSvJ2qIitJZuPMJTMoI/view?usp=drivesdk",
+                locked: false
+            },
+            {
+                name: "FANOMINAL",
+                background: "Assets/Images/Preview/stage-1.png",
+                cover: "Assets/Covers/freeplayPort-2.png",
+                url: "https://drive.google.com/file/d/1ExEG_AfFNZ4M72Sw6p3AlqAVWbW1YJfj/view?usp=drivesdk",
+                locked: false
+            },
+            {
+                name: "LOCKED",
+                background: "Assets/Images/Preview/stage-2.png",
+                cover: "Assets/Covers/freeplayPort-3.png",
+                url: null,
+                locked: true,
+                lockedMessage: "Gissel cuando vas a terminar la tercera cancion de fanon"
+            },
+            {
+                name: "BLOOD LUST",
+                background: "Assets/Images/Preview/stage-3.png",
+                cover: "Assets/Covers/freeplayPort-4.png",
+                url: "https://drive.google.com/file/d/1voq-ifWFXQaLTBGiQIgmdFTVKkLm1JyA/view?usp=drivesdk",
+                locked: false
+            },
+            {
+                name: "SPIRIT DANCE",
+                background: "Assets/Images/Preview/stage-4.png",
+                cover: "Assets/Covers/freeplayPort-5.png",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jed34xgsfnqeh8xsrwn7jtzr/releases/01jfbb8nx9g1zpqyn86j9vse0n",
+                locked: false
+            },
+            {
+                name: "GET SONKED",
+                background: "Assets/Images/Preview/stage-5.png",
+                cover: "Assets/Covers/freeplayPort-6.png",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01ktszgz7716ypz476yg2b9pnq/releases/01ktszgz7841pfs8sf5dm5a2r6",
+                locked: false
+            },
+            {
+                name: "SCRATCHIN",
+                background: "Assets/Images/Preview/stage-6.png",
+                cover: "Assets/Covers/freeplayPort-7.png",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jecxydk6r9ccdr1w7bfm1w4p/releases/01jecxyek2z3bht0hcgpr20rdy",
+                locked: false
+            },
+            {
+                name: "DANCE TO SUNSET",
+                background: "Assets/Images/Preview/stage-7.png",
+                cover: "Assets/Covers/freeplayPort-8.png",
+                coverLocked: "Assets/Covers/freeplayPort-8-locked.png",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01jvd9xme18et2scn7wv2h5d6m/releases/01jvd9xme5tr2j40mv3m0rcwy9",
+                locked: false
+            },
+            {
+                name: "SACRIFICE",
+                background: "Assets/Images/Preview/stage-8.png",
+                cover: "Assets/Covers/freeplayPort-9.png",
+                url: "https://drive.google.com/file/d/1T1V50197M8CLQUbaBNEakT0mODLuHH5m/view?usp=drivesdk",
+                locked: false
+            },
+            {
+                name: "TWISTED PUPPETRY",
+                background: "Assets/Images/Preview/stage-9.png",
+                cover: "Assets/Covers/freeplayPort-10.png",
+                url: "https://drive.google.com/file/d/1TlLlAJLDPUyBAdelxR-ZBCqDCwrMDOJg/view?usp=drivesdk",
+                locked: false
+            },
+            {
+                name: "SHIMMY TERROR",
+                background: "Assets/Images/Preview/stage-10.png",
+                cover: "Assets/Covers/freeplayPort-11.png",
+                coverLocked: "Assets/Covers/freeplayPort-11-locked.png",
+                url: "https://funkymaker-app.kingamescreator.com/levels/01k25w0nakc5sa3wh6npmvvxdt/releases/01ktfcn00rr5xwxmz82q5kpt0n",
+                locked: false
+            },
+            {
+                name: "ELEMENTS",
+                background: "Assets/Images/Preview/stage-11.png",
+                cover: "Assets/Covers/freeplayPort-12.png",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k11ybf9rcab0w8w1f4r6zhe5/releases/01k11ybfa6vfxj237q2rt9tj79",
+                locked: false
+            }
+        ];
+
+        // ── DOM ──────────────────────────────────────────────────────
+        const songsContainer = document.getElementById('songsContainer');
+        const backgroundEl = document.getElementById('background');
+        const coverImage = document.getElementById('coverImage');
+        const scrollSound = document.getElementById('scrollSound');
+        const confirmSound = document.getElementById('confirmSound');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const bgMusic = document.getElementById('bgMusic');
+
+        let currentIndex = 0;
+
+        // ── FUNCIONES ────────────────────────────────────────────────
+        function renderSongs() {
+            songsContainer.innerHTML = '';
+            songs.forEach((song, index) => {
+                const songItem = document.createElement('div');
+                songItem.className = 'song-item';
+                if (song.locked) {
+                    songItem.classList.add('locked');
+                }
+                if (index === currentIndex) songItem.classList.add('active');
+                songItem.textContent = song.name;
+                songItem.addEventListener('click', () => {
+                    if (!song.locked) {
+                        selectSong(index);
+                    } else {
+                        showLockedMessage(song);
+                    }
+                });
+                songsContainer.appendChild(songItem);
+            });
+        }
+
+        function showLockedMessage(song) {
+            if (song.lockedMessage) {
+                alert(song.lockedMessage);
+            } else {
+                alert('Esta canción está bloqueada.');
+            }
+            playSound(scrollSound);
+        }
+
+        function selectSong(index) {
+            currentIndex = index;
+            renderSongs();
+            updateBackground();
+            updateCover();
+            centerActiveSong();
+            playSound(scrollSound);
+        }
+
+        function centerActiveSong() {
+            const activeItem = document.querySelector('.song-item.active');
+            const wrapper = document.getElementById('songsContainer');
+            
+            if (activeItem && wrapper) {
+                // Calcular la posición del elemento activo
+                const songs = Array.from(wrapper.children);
+                const activeIndex = songs.indexOf(activeItem);
+                
+                // Calcular el offset total de los elementos anteriores
+                let offset = 0;
+                for (let i = 0; i < activeIndex; i++) {
+                    offset += songs[i].offsetHeight + 5; // 5px es el gap
+                }
+                
+                // Añadir la mitad de la altura del elemento activo para centrarlo
+                offset += activeItem.offsetHeight / 2;
+                
+                // Aplicar transform para mover el wrapper
+                wrapper.style.transform = `translateY(-${offset}px)`;
+            }
+        }
+
+        function updateBackground() {
+            const song = songs[currentIndex];
+            backgroundEl.style.backgroundImage = `url('${song.background}')`;
+        }
+
+        function updateCover() {
+            const song = songs[currentIndex];
+            
+            // Si tiene versión locked y está bloqueada, mostrar cover locked
+            let coverSrc;
+            if (song.locked && song.coverLocked) {
+                coverSrc = song.coverLocked;
+            } else {
+                coverSrc = song.cover;
+            }
+            
+            coverImage.style.animation = 'none';
+            setTimeout(() => {
+                coverImage.src = coverSrc;
+                coverImage.style.animation = 'fadeIn 0.4s ease';
+            }, 10);
+        }
+
+        function playSong() {
+            const song = songs[currentIndex];
+            
+            // Verificar si está bloqueada
+            if (song.locked) {
+                showLockedMessage(song);
+                return;
+            }
+            
+            if (!song.url) {
+                alert('Esta canción no está disponible.');
+                return;
+            }
+            
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            
+            setTimeout(() => {
+                window.location.href = song.url;
+            }, 800);
+        }
+
+        function playSound(el) {
+            if (!el) return;
+            el.currentTime = 0;
+            el.play().catch(() => {});
+        }
+
+        function enableAudio() {
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(() => {});
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+        }
+
+        // ── EVENT LISTENERS ──────────────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                let newIndex = currentIndex;
+                do {
+                    newIndex = (newIndex - 1 + songs.length) % songs.length;
+                } while (songs[newIndex].locked && newIndex !== currentIndex);
+                
+                if (!songs[newIndex].locked) {
+                    currentIndex = newIndex;
+                    selectSong(currentIndex);
+                }
+                enableAudio();
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                let newIndex = currentIndex;
+                do {
+                    newIndex = (newIndex + 1) % songs.length;
+                } while (songs[newIndex].locked && newIndex !== currentIndex);
+                
+                if (!songs[newIndex].locked) {
+                    currentIndex = newIndex;
+                    selectSong(currentIndex);
+                }
+                enableAudio();
+            }
+            if (e.key === 'Enter') {
+                playSong();
+                enableAudio();
+            }
+            if (e.key === 'Escape') {
+                window.location.href = '../../../freeplay.html';
+            }
+        });
+
+        // Audio
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+
+        // ── EVENT LISTENERS MÓVILES ──────────────────────────────────
+        const arrowUp = document.getElementById('arrowUp');
+        const arrowDown = document.getElementById('arrowDown');
+        const playBtnMobile = document.getElementById('playBtnMobile');
+
+        function navigateUp() {
+            let newIndex = currentIndex;
+            do {
+                newIndex = (newIndex - 1 + songs.length) % songs.length;
+            } while (songs[newIndex].locked && newIndex !== currentIndex);
+            
+            if (!songs[newIndex].locked) {
+                currentIndex = newIndex;
+                selectSong(currentIndex);
+            }
+        }
+
+        function navigateDown() {
+            let newIndex = currentIndex;
+            do {
+                newIndex = (newIndex + 1) % songs.length;
+            } while (songs[newIndex].locked && newIndex !== currentIndex);
+            
+            if (!songs[newIndex].locked) {
+                currentIndex = newIndex;
+                selectSong(currentIndex);
+            }
+        }
+
+        if (arrowUp) {
+            arrowUp.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                navigateUp();
+                enableAudio();
+            });
+            arrowUp.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateUp();
+                enableAudio();
+            });
+        }
+
+        if (arrowDown) {
+            arrowDown.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                navigateDown();
+                enableAudio();
+            });
+            arrowDown.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateDown();
+                enableAudio();
+            });
+        }
+
+        if (playBtnMobile) {
+            playBtnMobile.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                playSong();
+                enableAudio();
+            });
+            playBtnMobile.addEventListener('click', (e) => {
+                e.preventDefault();
+                playSong();
+                enableAudio();
+            });
+        }
+
+        // ── INIT ─────────────────────────────────────────────────────
+        renderSongs();
+        updateBackground();
+        updateCover();
+        
+        // Centrar la canción inicial después de renderizar
+        setTimeout(() => {
+            centerActiveSong();
+        }, 100);
+    </script>
+</body>
+</html>

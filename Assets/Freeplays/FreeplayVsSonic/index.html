@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vs Sonic - Data Select</title>
+    <link rel="icon" type="image/png" href="../../../images/logo_sonic_puto_exe.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            image-rendering: pixelated;
+            font-family: monospace;
+        }
+        
+        #canvas {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0ff;
+            color: #0ff;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            z-index: 100;
+            font-family: monospace;
+        }
+        .back-btn:hover { background: rgba(0, 255, 255, 0.2); }
+    </style>
+</head>
+<body>
+    <a href="../../../freeplay.html" class="back-btn">◀ BACK</a>
+    <canvas id="canvas"></canvas>
+    <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; font-family: monospace;">
+        LOADING...
+    </div>
+    
+    <script>
+        // Clase para parsear spritesheets XML tipo Sparrow
+        class SparrowAtlas {
+            constructor(imagePath, xmlPath) {
+                this.image = new Image();
+                this.image.src = imagePath;
+                this.frames = {};
+                this.loaded = false;
+                this.xmlLoaded = false;
+                this.imageLoaded = false;
+                
+                // Cargar XML
+                fetch(xmlPath)
+                    .then(response => response.text())
+                    .then(xmlText => {
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(xmlText, 'text/xml');
+                        const subtextures = xml.getElementsByTagName('SubTexture');
+                        
+                        for (let subtex of subtextures) {
+                            const name = subtex.getAttribute('name');
+                            this.frames[name] = {
+                                x: parseInt(subtex.getAttribute('x')),
+                                y: parseInt(subtex.getAttribute('y')),
+                                width: parseInt(subtex.getAttribute('width')),
+                                height: parseInt(subtex.getAttribute('height')),
+                                frameX: parseInt(subtex.getAttribute('frameX') || 0),
+                                frameY: parseInt(subtex.getAttribute('frameY') || 0),
+                                frameWidth: parseInt(subtex.getAttribute('frameWidth')),
+                                frameHeight: parseInt(subtex.getAttribute('frameHeight'))
+                            };
+                        }
+                        
+                        this.xmlLoaded = true;
+                        this.checkComplete();
+                    })
+                    .catch(err => {
+                        console.error(`Failed to load XML: ${xmlPath}`, err);
+                    });
+                
+                // Cargar imagen
+                this.image.onload = () => {
+                    this.imageLoaded = true;
+                    this.checkComplete();
+                };
+                
+                this.image.onerror = () => {
+                    console.error(`Failed to load image: ${imagePath}`);
+                };
+            }
+            
+            checkComplete() {
+                if (this.xmlLoaded && this.imageLoaded) {
+                    this.loaded = true;
+                }
+            }
+            
+            drawFrame(ctx, frameName, x, y, scale = 1) {
+                if (!this.loaded || !this.frames[frameName]) return;
+                
+                const frame = this.frames[frameName];
+                ctx.drawImage(
+                    this.image,
+                    frame.x, frame.y, frame.width, frame.height,
+                    x + frame.frameX * scale, y + frame.frameY * scale,
+                    frame.width * scale, frame.height * scale
+                );
+            }
+        }
+        
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Desactivar suavizado para mantener píxeles nítidos
+        ctx.imageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        
+        // Configuración del canvas
+        canvas.width = 1024;
+        canvas.height = 576;
+        
+        // Datos de las canciones
+        const songs = [
+            {
+                name: 'Thriller Gen',
+                icon: 'Thriller Gen.png',
+                title: 'Thriller Gen.png',
+                titleLegacy: 'Thriller Gen Legacy.png',
+                titleRemixed: 'Thriller Gen Remixed.png',
+                character: 'Rewrite',
+                comingSoon: false,
+                variants: {
+                    'Normal': 'https://funkymaker.kingamescreator.com/_app/levels/01jy7bd5qw01v6zt1f6pxqr99f/releases/01jy9qbg75hynk62gfjw66jzft',
+                    'Legacy': 'https://funkymaker.kingamescreator.com/_app/levels/01jycj26vnxgz332bkbpe14vx0/releases/01jycj26vrh7gm0n6ynnwz9rqe'
+                }
+            },
+            {
+                name: 'Trinity',
+                icon: 'Trinity.png',
+                title: 'Trinity.png',
+                titleLegacy: 'Trinity Legacy.png',
+                titleRemixed: 'Trinity Remixed.png',
+                character: 'Majin/2011X/Lord X/Rewrite',
+                comingSoon: false,
+                variants: {
+                    'Normal': 'https://funkymaker.kingamescreator.com/_app/levels/01k4hhspcwrc3g2zvw8f1xn3wf/releases/01k4hhspcy72wjx4fbs9je8prt'
+                }
+            },
+            {
+                name: 'Bikini Horrors',
+                icon: 'Bikini Horrors.png',
+                title: 'Bikini Horrors.png',
+                character: 'Patrick/SpongeBob',
+                comingSoon: true,
+                variants: {}
+            }
+        ];
+        
+        let currentSong = 0;
+        let selectedVariant = 'Normal';
+        let showingVariants = false; // Si está mostrando el menú de variantes
+        let selectedVariantIndex = 0; // Índice de la variante seleccionada en el menú
+        
+        // Spritesheets
+        let specialAtlas, staticAtlas, menuTitlesAtlas;
+        
+        // Imágenes simples
+        const images = {};
+        const imagesToLoad = [
+            'bg.png',
+            'clouds.png',
+            'file.png',
+            'boyfriend.png',
+            'arrows.png',
+            'selector.png',
+            'select.png'
+        ];
+        
+        // Sonidos
+        const sounds = {
+            bgMusic: new Audio('Assets/Sounds/freakyMenu.ogg'),
+            selectSong: new Audio('Assets/Sounds/selectSong.ogg')
+        };
+        
+        // Configurar música de fondo en loop
+        sounds.bgMusic.loop = true;
+        sounds.bgMusic.volume = 0.7;
+        
+        // Cargar iconos y títulos
+        songs.forEach(song => {
+            imagesToLoad.push(`icons/${song.icon}`);
+            imagesToLoad.push(`titles/${song.title}`);
+            if (song.titleLegacy) imagesToLoad.push(`titles/${song.titleLegacy}`);
+            if (song.titleRemixed) imagesToLoad.push(`titles/${song.titleRemixed}`);
+        });
+        
+        let loadedImages = 0;
+        let atlasesReady = {
+            special: false,
+            static: false,
+            menuTitles: false
+        };
+        
+        function checkAllLoaded() {
+            const allAtlasesReady = atlasesReady.special && atlasesReady.static && atlasesReady.menuTitles;
+            const allImagesLoaded = loadedImages === imagesToLoad.length;
+            
+            console.log(`Images: ${loadedImages}/${imagesToLoad.length}, Atlases: special=${atlasesReady.special}, static=${atlasesReady.static}, menuTitles=${atlasesReady.menuTitles}`);
+            
+            if (allAtlasesReady && allImagesLoaded) {
+                console.log('All assets loaded! Starting animation...');
+                document.getElementById('loading').style.display = 'none';
+                init();
+                animate();
+            }
+        }
+        
+        function loadImages() {
+            // Cargar atlases
+            specialAtlas = new SparrowAtlas('Assets/special.png', 'Assets/special.xml');
+            staticAtlas = new SparrowAtlas('Assets/static.png', 'Assets/static.xml');
+            menuTitlesAtlas = new SparrowAtlas('Assets/menuTitles.png', 'Assets/menuTitles.xml');
+            
+            // Verificar carga de atlases periódicamente
+            const atlasCheckInterval = setInterval(() => {
+                atlasesReady.special = specialAtlas.loaded;
+                atlasesReady.static = staticAtlas.loaded;
+                atlasesReady.menuTitles = menuTitlesAtlas.loaded;
+                
+                if (atlasesReady.special && atlasesReady.static && atlasesReady.menuTitles) {
+                    clearInterval(atlasCheckInterval);
+                    checkAllLoaded();
+                }
+            }, 100);
+            
+            // Cargar imágenes simples
+            imagesToLoad.forEach(src => {
+                const img = new Image();
+                img.src = `Assets/${src}`;
+                img.onload = () => {
+                    loadedImages++;
+                    checkAllLoaded();
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load: Assets/${src}`);
+                    loadedImages++;
+                    checkAllLoaded();
+                };
+                images[src] = img;
+            });
+        }
+        
+        // Variables de animación
+        let cloudsOffset = 0;
+        let arrowFrame = 0;
+        let arrowTimer = 0;
+        let specialFrame = 0;
+        let specialTimer = 0;
+        let specialOffsetX = 0; // Movimiento horizontal del pez
+        let specialHoldTimer = 0; // Tiempo que se queda en el frame final
+        let specialMaxHold = 200; // Frames que se queda antes de cambiar
+        let specialAnimating = false; // Si está en transición
+        let specialTargetFrame = 6; // Frame objetivo (0 o 6)
+        let staticFrame = 0;
+        let staticTimer = 0;
+        
+        function init() {
+            // Configurar teclas
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Iniciar música de fondo
+            sounds.bgMusic.play().catch(err => console.log('Audio autoplay blocked:', err));
+        }
+        
+        function handleKeyPress(e) {
+            if (showingVariants) {
+                // Navegación en el menú de variantes
+                const song = songs[currentSong];
+                const variants = Object.keys(song.variants);
+                
+                if (e.key === 'ArrowUp') {
+                    selectedVariantIndex = (selectedVariantIndex - 1 + variants.length) % variants.length;
+                } else if (e.key === 'ArrowDown') {
+                    selectedVariantIndex = (selectedVariantIndex + 1) % variants.length;
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    // Confirmar selección y reproducir sonido
+                    sounds.selectSong.currentTime = 0;
+                    sounds.selectSong.play();
+                    
+                    const variantName = variants[selectedVariantIndex];
+                    const url = song.variants[variantName];
+                    if (url) window.open(url, '_blank');
+                    showingVariants = false;
+                } else if (e.key === 'Escape') {
+                    // Cancelar
+                    showingVariants = false;
+                }
+            } else {
+                // Navegación normal entre canciones
+                if (e.key === 'ArrowLeft') {
+                    currentSong = (currentSong - 1 + songs.length) % songs.length;
+                } else if (e.key === 'ArrowRight') {
+                    currentSong = (currentSong + 1) % songs.length;
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    const song = songs[currentSong];
+                    const variants = Object.keys(song.variants);
+                    
+                    // Si es COMING SOON, no hacer nada
+                    if (song.comingSoon) {
+                        return;
+                    }
+                    
+                    if (variants.length > 1) {
+                        // Mostrar menú de variantes
+                        showingVariants = true;
+                        selectedVariantIndex = 0;
+                    } else {
+                        // Ir directamente a la canción y reproducir sonido
+                        sounds.selectSong.currentTime = 0;
+                        sounds.selectSong.play();
+                        
+                        const url = song.variants[variants[0]];
+                        if (url) window.open(url, '_blank');
+                    }
+                }
+            }
+        }
+        
+        function animate() {
+            // Limpiar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Renderizar elementos en orden
+            drawBackground();
+            drawClouds();
+            drawBackgroundFish();
+            drawDataSelectTitle();
+            drawSelectionBoxes();
+            
+            // Dibujar menú de variantes si está activo
+            if (showingVariants) {
+                drawVariantsMenu();
+            }
+            
+            // Actualizar animaciones
+            updateAnimations();
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function drawBackground() {
+            if (images['bg.png']) {
+                ctx.drawImage(images['bg.png'], 0, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        function drawClouds() {
+            if (images['clouds.png']) {
+                cloudsOffset -= 0.5;
+                if (cloudsOffset <= -canvas.width) cloudsOffset = 0;
+                ctx.drawImage(images['clouds.png'], cloudsOffset, 0, canvas.width, canvas.height);
+                ctx.drawImage(images['clouds.png'], cloudsOffset + canvas.width, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        function drawBackgroundFish() {
+            // Peces desactivados - sin animación de fondo
+        }
+        
+        function drawDataSelectTitle() {
+            if (menuTitlesAtlas && menuTitlesAtlas.loaded) {
+                // El frame real es 148px de ancho, escala 3 (más pequeño)
+                // Ancho visual: 148 * 3 = 444px
+                // Centrar en canvas de 1024px
+                const titleWidth = 148 * 3;
+                const centerX = (canvas.width - titleWidth) / 2;
+                // Compensar por el frameX negativo del sprite, bajado a y: 30
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                menuTitlesAtlas.drawFrame(ctx, 'dataSelect0000', centerX + 30 * 3, 30, 3);
+                ctx.restore();
+            }
+        }
+        
+        function drawSelectionBoxes() {
+            drawSelectionBox(80, 130, currentSong === 0);
+            drawSelectionBox(380, 130, currentSong === 1);
+            drawSelectionBox(680, 130, currentSong === 2);
+        }
+        
+        function updateAnimations() {
+            arrowTimer++;
+            if (arrowTimer > 10) {
+                arrowFrame = (arrowFrame + 1) % 2;
+                arrowTimer = 0;
+            }
+            
+            // Animación del static (más rápida) - solo 3 frames
+            staticTimer++;
+            if (staticTimer > 3) {
+                staticFrame = Math.floor(Math.random() * 3); // Solo 3 frames de static (0-2)
+                staticTimer = 0;
+            }
+            
+            // Animación del pez
+            if (specialAnimating) {
+                // Está en transición entre frames
+                specialTimer++;
+                
+                // Moverse durante la transición
+                if (specialTargetFrame === 6) {
+                    // Yendo hacia la derecha mientras anima
+                    specialOffsetX += 0.5;
+                } else {
+                    // Yendo hacia la izquierda mientras anima
+                    specialOffsetX -= 0.5;
+                }
+                
+                if (specialTimer > 8) {
+                    if (specialTargetFrame === 6) {
+                        // Animando hacia frame 6: 0→1→2→3→4→5→6
+                        specialFrame++;
+                        if (specialFrame >= 6) {
+                            specialFrame = 6;
+                            specialAnimating = false;
+                            specialHoldTimer = 0;
+                        }
+                    } else {
+                        // Animando hacia frame 0: 6→5→4→3→2→1→0
+                        specialFrame--;
+                        if (specialFrame <= 0) {
+                            specialFrame = 0;
+                            specialAnimating = false;
+                            specialHoldTimer = 0;
+                        }
+                    }
+                    specialTimer = 0;
+                }
+            } else {
+                // Está quieto en frame 0 o 6, moviéndose
+                specialHoldTimer++;
+                
+                if (specialFrame === 0) {
+                    // Frame 0: moverse a la izquierda
+                    specialOffsetX += 0.5;
+                } else {
+                    // Frame 6: moverse a la derecha
+                    specialOffsetX -= 0.5;
+                }
+                
+                // Después de X tiempo, iniciar transición
+                if (specialHoldTimer > specialMaxHold) {
+                    specialAnimating = true;
+                    specialTargetFrame = (specialFrame === 0) ? 6 : 0;
+                }
+            }
+        }
+        
+        function drawSelectionBox(x, y, isSelected) {
+            const songIndex = x === 80 ? 0 : (x === 380 ? 1 : 2);
+            const song = songs[songIndex];
+            
+            // Para Thriller Gen (primera caja), dibujar icono ANTES de los marcos
+            if (songIndex === 0) {
+                drawSongIcon(x, y, song);
+            }
+            
+            // Dibujar marco blanco SOLO si está seleccionado
+            if (isSelected) {
+                drawWhiteFrame(x, y);
+            }
+            
+            // Dibujar marco amarillo SIEMPRE
+            drawYellowFrame(x, y);
+            
+            // Para Trinity y Bikini Horrors, dibujar icono DESPUÉS de los marcos
+            if (songIndex === 1 || songIndex === 2) {
+                drawSongIcon(x, y, song);
+            }
+            
+            // Dibujar static ENCIMA del icono SOLO si NO está seleccionado
+            if (!isSelected) {
+                drawStatic(x, y);
+            }
+            
+            // Si es COMING SOON, mostrar panel
+            if (song.comingSoon) {
+                drawComingSoon(x, y);
+            } else {
+                if (isSelected) drawArrow(x, y);
+                drawSongTitle(x, y, song);
+                if (isSelected) drawBoyfriend(x, y);
+            }
+        }
+        
+        function drawWhiteFrame(x, y) {
+            // Marco blanco exterior SOLO cuando está seleccionado (select.png)
+            if (images['select.png']) {
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(images['select.png'], x - 5, y - 5, 320, 430);
+                ctx.restore();
+            }
+        }
+        
+        function drawYellowFrame(x, y) {
+            // Marco amarillo interno SIEMPRE visible (file.png)
+            if (images['file.png']) {
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(images['file.png'], x + 15, y + 15, 280, 390);
+                ctx.restore();
+            }
+        }
+        
+        function drawArrow(x, y) {
+            // Dibujar UNA flecha roja ARRIBA del icono (VERTICAL) - altura 200
+            if (images['arrows.png']) {
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(images['arrows.png'], x + 115, y - 10, 70, 200);
+                ctx.restore();
+            }
+        }
+        
+        function drawSongIcon(x, y, song) {
+            // Dibujar icono del personaje (SIN desactivar bilinear - no son pixeles)
+            const iconImg = images[`icons/${song.icon}`];
+            if (iconImg) {
+                // Ajustar tamaño y posición para que quepa en el cuadro superior
+                ctx.drawImage(iconImg, x + 29, y + 26, 235, 145);
+            }
+        }
+        
+        function drawSongTitle(x, y, song) {
+            // Dibujar título de la canción - un poco a la derecha
+            const titleImg = images[`titles/${song.title}`];
+            if (titleImg) {
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(titleImg, x + 70, y + 220, 160, 50);
+                ctx.restore();
+            }
+        }
+        
+        function drawStatic(x, y) {
+            // Dibujar static animado ENCIMA del icono cuando NO está seleccionado - aplastado verticalmente
+            if (staticAtlas && staticAtlas.loaded) {
+                const frameName = `static000${staticFrame}`;
+                if (staticAtlas.frames[frameName]) {
+                    const frame = staticAtlas.frames[frameName];
+                    ctx.save();
+                    ctx.imageSmoothingEnabled = false;
+                    // Escala diferente: ancho x3.1, alto x2.7 (un poquito más grande)
+                    const scaleX = 3.1;
+                    const scaleY = 2.7;
+                    ctx.drawImage(
+                        staticAtlas.image,
+                        frame.x, frame.y, frame.width, frame.height,
+                        x + 25 + frame.frameX * scaleX, 
+                        y + 20 + frame.frameY * scaleY,
+                        frame.width * scaleX, 
+                        frame.height * scaleY
+                    );
+                    ctx.restore();
+                }
+            }
+        }
+        
+        function drawBoyfriend(x, y) {
+            // Dibujar Boyfriend en la parte inferior - más pequeño y mejor posicionado
+            if (images['boyfriend.png']) {
+                // Guardar contexto para aplicar imageSmoothingEnabled solo a BF
+                ctx.save();
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(images['boyfriend.png'], x + 105, y + 285, 90, 100);
+                ctx.restore();
+            }
+        }
+        
+        function drawVariantsMenu() {
+            const song = songs[currentSong];
+            const variants = Object.keys(song.variants);
+            
+            // Fondo semi-transparente
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Título del menú
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#fff';
+            ctx.font = '32px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SELECT VERSION', canvas.width / 2, 150);
+            
+            // Listar variantes
+            variants.forEach((variant, index) => {
+                const y = 220 + index * 60;
+                
+                // Fondo de la opción
+                if (index === selectedVariantIndex) {
+                    ctx.fillStyle = '#ff0';
+                    ctx.fillRect(canvas.width / 2 - 200, y - 35, 400, 50);
+                    ctx.fillStyle = '#000';
+                } else {
+                    ctx.fillStyle = '#fff';
+                }
+                
+                ctx.font = '28px monospace';
+                ctx.fillText(variant, canvas.width / 2, y);
+            });
+            
+            // Instrucciones
+            ctx.fillStyle = '#aaa';
+            ctx.font = '16px monospace';
+            ctx.fillText('↑↓ Navigate | ENTER Select | ESC Cancel', canvas.width / 2, canvas.height - 50);
+            ctx.restore();
+        }
+        
+        function drawComingSoon(x, y) {
+            // Panel COMING SOON
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            
+            // Fondo oscuro semi-transparente
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(x + 25, y + 180, 240, 80);
+            
+            // Texto COMING SOON
+            ctx.fillStyle = '#ffff00';
+            ctx.font = 'bold 20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('COMING SOON', x + 145, y + 225);
+            
+            ctx.restore();
+        }
+        
+        // Iniciar carga
+        loadImages();
+    </script>
+</body>
+</html>

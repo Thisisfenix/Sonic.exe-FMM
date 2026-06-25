@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Frame Extractor</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #111;
+            color: #0ff;
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #222;
+            border: 2px solid #0ff;
+        }
+        button {
+            background: #0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0aa;
+        }
+        #output {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .frame-item {
+            background: #222;
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+        .frame-item canvas {
+            display: block;
+            margin: 5px auto;
+            border: 1px solid #0ff;
+            image-rendering: pixelated;
+        }
+        .frame-item p {
+            font-size: 10px;
+            margin: 5px 0;
+        }
+        .status {
+            padding: 10px;
+            background: #333;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Icon Frame Extractor</h1>
+    
+    <div class="controls">
+        <h3>Select Icon:</h3>
+        <button onclick="extractIcon('2torial')">Extract 2torial</button>
+        <button onclick="extractIcon('obituary')">Extract Obituary</button>
+        <br><br>
+        <button onclick="downloadAllAsZip()" style="background: #f0f;">Download All PNGs as ZIP</button>
+        <button onclick="clearOutput()">Clear</button>
+    </div>
+    
+    <div class="status" id="status">Ready. Click a button to extract frames.</div>
+    
+    <div id="output"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        class SparrowAtlas {
+            constructor(xmlPath, imagePath) {
+                this.xmlPath = xmlPath;
+                this.imagePath = imagePath;
+                this.frames = {};
+                this.image = null;
+                this.loaded = false;
+            }
+            
+            async load() {
+                try {
+                    const [xmlText, image] = await Promise.all([
+                        fetch(this.xmlPath).then(r => r.text()),
+                        this.loadImage(this.imagePath)
+                    ]);
+                    this.image = image;
+                    this.parseXML(xmlText);
+                    this.loaded = true;
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load:', error);
+                    return false;
+                }
+            }
+            
+            loadImage(src) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            }
+            
+            parseXML(xmlText) {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                const subTextures = xmlDoc.querySelectorAll('SubTexture');
+                subTextures.forEach(st => {
+                    const name = st.getAttribute('name');
+                    this.frames[name] = {
+                        x: parseInt(st.getAttribute('x')),
+                        y: parseInt(st.getAttribute('y')),
+                        width: parseInt(st.getAttribute('width')),
+                        height: parseInt(st.getAttribute('height')),
+                        frameX: parseInt(st.getAttribute('frameX') || 0),
+                        frameY: parseInt(st.getAttribute('frameY') || 0),
+                        frameWidth: parseInt(st.getAttribute('frameWidth') || st.getAttribute('width')),
+                        frameHeight: parseInt(st.getAttribute('frameHeight') || st.getAttribute('height')),
+                        rotated: st.getAttribute('rotated') === 'true'
+                    };
+                });
+            }
+            
+            extractFrame(frameName) {
+                if (!this.loaded || !this.frames[frameName]) return null;
+                const f = this.frames[frameName];
+                
+                // Crear canvas del tamaño del frame completo (con offsets)
+                const canvas = document.createElement('canvas');
+                canvas.width = f.frameWidth;
+                canvas.height = f.frameHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // Posición donde dibujar (aplicando offsets negativos)
+                const drawX = f.frameX;
+                const drawY = f.frameY;
+                
+                if (f.rotated) {
+                    ctx.save();
+                    ctx.translate(drawX, drawY + f.height);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.drawImage(this.image, f.x, f.y, f.width, f.height,
+                        0, 0, f.width, f.height);
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(this.image, f.x, f.y, f.width, f.height,
+                        drawX, drawY, f.width, f.height);
+                }
+                
+                return canvas;
+            }
+            
+            getAnimationFrames(prefix) {
+                const frames = [];
+                Object.keys(this.frames).forEach(name => {
+                    if (name.startsWith(prefix)) {
+                        frames.push(name);
+                    }
+                });
+                return frames.sort();
+            }
+        }
+        
+        let currentAtlas = null;
+        let currentIconName = '';
+        let extractedFrames = [];
+        
+        async function extractIcon(iconName) {
+            const status = document.getElementById('status');
+            status.textContent = `Loading ${iconName}...`;
+            
+            currentIconName = iconName;
+            currentAtlas = new SparrowAtlas(
+                `Assets/userinterface/desktop/songMenu/icons/${iconName}.xml`,
+                `Assets/userinterface/desktop/songMenu/icons/${iconName}.png`
+            );
+            
+            const loaded = await currentAtlas.load();
+            if (!loaded) {
+                status.textContent = `Failed to load ${iconName}`;
+                return;
+            }
+            
+            status.textContent = `Extracting frames from ${iconName}...`;
+            
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+            extractedFrames = [];
+            
+            // Extraer cada animación
+            const animations = ['Loop', 'Selection', 'SelectionLoop', 'Confirm'];
+            
+            for (const anim of animations) {
+                const animFrames = currentAtlas.getAnimationFrames(anim);
+                
+                if (animFrames.length === 0) continue;
+                
+                // Header para la animación
+                const header = document.createElement('div');
+                header.style.gridColumn = '1 / -1';
+                header.style.padding = '10px';
+                header.style.background = '#0ff';
+                header.style.color = '#000';
+                header.style.fontWeight = 'bold';
+                header.textContent = `${anim} (${animFrames.length} frames)`;
+                output.appendChild(header);
+                
+                // Extraer cada frame
+                animFrames.forEach((frameName, index) => {
+                    const canvas = currentAtlas.extractFrame(frameName);
+                    if (!canvas) return;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'frame-item';
+                    
+                    canvas.style.maxWidth = '100%';
+                    canvas.style.height = 'auto';
+                    
+                    const label = document.createElement('p');
+                    label.textContent = `${anim}_${String(index).padStart(4, '0')}`;
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.textContent = '⬇';
+                    downloadBtn.style.fontSize = '12px';
+                    downloadBtn.style.padding = '5px 10px';
+                    downloadBtn.onclick = () => downloadFrame(canvas, `${iconName}_${anim}_${String(index).padStart(4, '0')}.png`);
+                    
+                    item.appendChild(canvas);
+                    item.appendChild(label);
+                    item.appendChild(downloadBtn);
+                    output.appendChild(item);
+                    
+                    // Guardar para descarga en batch
+                    extractedFrames.push({
+                        canvas: canvas,
+                        name: `${iconName}_${anim}_${String(index).padStart(4, '0')}.png`
+                    });
+                });
+            }
+            
+            status.textContent = `✓ Extracted ${extractedFrames.length} frames from ${iconName}. You can now download individual frames or all as ZIP.`;
+        }
+        
+        function downloadFrame(canvas, filename) {
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        async function downloadAllAsZip() {
+            if (extractedFrames.length === 0) {
+                alert('No frames extracted yet. Click "Extract 2torial" or "Extract Obituary" first.');
+                return;
+            }
+            
+            const status = document.getElementById('status');
+            status.textContent = 'Creating ZIP file...';
+            
+            const zip = new JSZip();
+            
+            for (const frame of extractedFrames) {
+                const blob = await new Promise(resolve => frame.canvas.toBlob(resolve));
+                zip.file(frame.name, blob);
+            }
+            
+            status.textContent = 'Generating ZIP...';
+            const content = await zip.generateAsync({type: 'blob'});
+            
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentIconName}_frames.zip`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            status.textContent = `✓ Downloaded ${currentIconName}_frames.zip with ${extractedFrames.length} frames.`;
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+            extractedFrames = [];
+            document.getElementById('status').textContent = 'Cleared. Ready for new extraction.';
+        }
+    </script>
+</body>
+</html>

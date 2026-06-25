@@ -26,23 +26,27 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            overflow: hidden;
         }
 
         .container-fluid {
             padding: 2rem 1rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .title {
             color: var(--main-red);
             text-shadow: 0 0 15px var(--main-red);
             font-size: 2.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
 
         .back-button-container {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .btn {
@@ -63,99 +67,328 @@
             text-decoration: none;
         }
 
+        .carousel-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            perspective: 2000px;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            height: 700px;
+            transform-style: preserve-3d;
+        }
+
         .mods-grid {
+            display: none;
+        }
+
+        /* NUEVO: Item del carousel contiene logo y textos separados */
+        .carousel-item {
+            position: absolute;
+            left: 50%;
+            top: 50%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .mod-card {
-            background: rgba(0, 0, 0, 0.9);
-            border: 3px solid var(--main-red);
-            border-radius: 10px;
-            display: flex;
             align-items: center;
-            min-height: 100px;
-            transition: all 0.3s ease;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+        }
+
+        /* Logo giratorio en 3D */
+        .mod-logo-3d {
+            width: 300px;
+            height: 300px;
             position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .mod-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
-            border-color: #fff;
-        }
-
-        .mod-card.active {
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .mod-card-image {
-            width: 120px;
-            height: 80px;
+        .mod-logo-3d img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            background: rgba(0, 0, 0, 0.5);
-            flex-shrink: 0;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6));
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .mod-card-content {
-            padding: 15px;
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mod-info {
-            flex: 1;
-        }
-
-        .mod-card-title {
+        /* Nombre del mod flotante */
+        .mod-title-float {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
             color: var(--main-red);
-            font-size: 1rem;
-            margin-bottom: 5px;
-            text-shadow: var(--glow-effect);
+            font-size: 1.5rem;
+            text-shadow: 0 0 20px var(--main-red), 0 0 40px var(--main-red);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            pointer-events: none;
         }
 
-        .mod-card-info {
-            color: #ccc;
-            font-size: 0.7rem;
+        /* Contador flotante */
+        .mod-count-float {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
         }
 
-        .mod-stats {
-            text-align: right;
+        .count-number {
+            font-size: 3rem;
             color: #fff;
-            font-size: 0.8rem;
+            text-shadow: 0 0 30px var(--main-red), 0 0 60px var(--main-red);
+            font-weight: bold;
+            line-height: 1;
         }
 
+        .count-label {
+            font-size: 0.7rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        /* Badge de status */
         .status-badge {
             position: absolute;
-            top: 10px;
-            left: 130px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.6rem;
+            top: -20px;
+            right: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
             font-weight: bold;
             z-index: 3;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: rotate(15deg);
         }
 
         .status-badge.new {
             background: #00ff00;
             color: #000;
+            box-shadow: 0 0 20px #00ff00, 0 0 40px rgba(0, 255, 0, 0.5);
         }
 
         .status-badge.updated {
             background: #ffaa00;
             color: #000;
+            box-shadow: 0 0 20px #ffaa00, 0 0 40px rgba(255, 170, 0, 0.5);
         }
 
         .status-badge.popular {
             background: #ff00ff;
             color: #000;
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px rgba(255, 0, 255, 0.5);
+        }
+
+        /* POSICIONES DEL CAROUSEL */
+        .carousel-item.center {
+            z-index: 10;
+            transform: translate(-50%, -50%) translateX(0) translateZ(0) scale(1);
+        }
+
+        .carousel-item.center .mod-logo-3d {
+            animation: rotateY360 20s linear infinite;
+        }
+
+        @keyframes rotateY360 {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        .carousel-item.center .mod-logo-3d img {
+            filter: drop-shadow(0 0 40px rgba(255, 0, 0, 0.9)) drop-shadow(0 0 80px rgba(255, 0, 0, 0.6));
+        }
+
+        .carousel-item.center .mod-title-float {
+            opacity: 1;
+            top: -90px;
+        }
+
+        .carousel-item.center .mod-count-float {
+            opacity: 1;
+            bottom: -100px;
+        }
+
+        .carousel-item.center .status-badge {
+            opacity: 1;
+        }
+
+        /* Laterales izquierdos */
+        .carousel-item.left-1 {
+            z-index: 9;
+            transform: translate(-50%, -50%) translateX(-500px) translateZ(-300px) scale(0.6) rotateY(45deg);
+        }
+
+        .carousel-item.left-1 .mod-logo-3d img {
+            opacity: 0.5;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.3));
+        }
+
+        .carousel-item.left-2 {
+            z-index: 8;
+            transform: translate(-50%, -50%) translateX(-900px) translateZ(-600px) scale(0.4) rotateY(60deg);
+        }
+
+        .carousel-item.left-2 .mod-logo-3d img {
+            opacity: 0.3;
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.2));
+        }
+
+        /* Laterales derechos */
+        .carousel-item.right-1 {
+            z-index: 9;
+            transform: translate(-50%, -50%) translateX(500px) translateZ(-300px) scale(0.6) rotateY(-45deg);
+        }
+
+        .carousel-item.right-1 .mod-logo-3d img {
+            opacity: 0.5;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.3));
+        }
+
+        .carousel-item.right-2 {
+            z-index: 8;
+            transform: translate(-50%, -50%) translateX(900px) translateZ(-600px) scale(0.4) rotateY(-60deg);
+        }
+
+        .carousel-item.right-2 .mod-logo-3d img {
+            opacity: 0.3;
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.2));
+        }
+
+        /* Ocultos */
+        .carousel-item.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%) translateX(1500px) translateZ(-1000px) scale(0.2);
+        }
+
+        /* DEPRECATED: old card styles para compatibilidad */
+        .mod-card {
+            display: none;
+        }
+
+        .mod-card-image {
+            display: none;
+        }
+
+        .mod-card-content {
+            display: none;
+        }
+
+        .mod-info {
+            display: none;
+        }
+
+        .mod-card-title {
+            display: none;
+        }
+
+        .mod-card-info {
+            display: none;
+        }
+
+        .mod-stats {
+            display: none;
+        }
+        
+        .mod-stats-number {
+            display: none;
+        }
+        
+        .mod-stats-label {
+            display: none;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, 0.8);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(255, 50, 50, 1);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .carousel-nav.prev {
+            left: 50px;
+        }
+
+        .carousel-nav.next {
+            right: 50px;
+        }
+
+        .carousel-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid var(--main-red);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator-dot.active {
+            background: var(--main-red);
+            box-shadow: 0 0 15px var(--main-red);
+            transform: scale(1.3);
+        }
+
+        .indicator-dot:hover {
+            background: rgba(255, 0, 0, 0.6);
         }
 
         .split-view {
@@ -191,6 +424,8 @@
             border: 4px solid var(--main-red);
             padding: 20px;
             border-radius: 10px;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
         }
 
         .selected-mod-card {
@@ -429,23 +664,80 @@
                 font-size: 1.5rem;
             }
             
-            .mod-card {
-                flex-direction: column;
-                text-align: center;
+            .mods-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 10px;
             }
             
-            .mod-card-image {
-                width: 100%;
-                height: 100px;
+            .carousel-track {
+                height: 500px;
             }
             
-            .mod-card-content {
-                flex-direction: column;
+            .mod-logo-3d {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .carousel-item.center .mod-logo-3d {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .carousel-item.center .mod-title-float {
+                font-size: 1.2rem;
+                top: -80px;
+            }
+            
+            .carousel-item.center .mod-count-float {
+                bottom: -80px;
+            }
+            
+            .carousel-item.center .count-number {
+                font-size: 2.5rem;
+            }
+            
+            .carousel-item.center .count-label {
+                font-size: 0.7rem;
+            }
+            
+            .carousel-item.left-1 {
+                transform: translate(-50%, -50%) translateX(-350px) translateZ(-200px) scale(0.5) rotateY(45deg);
+            }
+            
+            .carousel-item.right-1 {
+                transform: translate(-50%, -50%) translateX(350px) translateZ(-200px) scale(0.5) rotateY(-45deg);
+            }
+            
+            .carousel-item.left-2,
+            .carousel-item.right-2,
+            .carousel-item.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            .carousel-nav {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .carousel-nav.prev {
+                left: 20px;
+            }
+            
+            .carousel-nav.next {
+                right: 20px;
+            }
+            
+            .carousel-indicator {
+                bottom: 15px;
                 gap: 10px;
             }
             
-            .status-badge {
-                left: 10px;
+            .indicator-dot {
+                width: 10px;
+                height: 10px;
             }
             
             .split-view {
@@ -474,7 +766,16 @@
             <a href="index.html" class="back-button btn btn-lg px-4" id="backBtn">Volver al menu</a>
         </div>
 
-        <div class="mods-grid" id="modsGrid">
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Las tarjetas se generarán dinámicamente -->
+            </div>
+            <div class="carousel-nav prev" id="carouselPrev">◀</div>
+            <div class="carousel-nav next" id="carouselNext">▶</div>
+            <div class="carousel-indicator" id="carouselIndicator"></div>
+        </div>
+
+        <div class="mods-grid" id="modsGrid" style="display: none;">
             <!-- Las tarjetas se generarán dinámicamente -->
         </div>
 
@@ -495,188 +796,53 @@
                         "image": "images/LogoV2.png",
                         "title": "SONIC.EXE",
                         "status": "updated",
-                        "levels": [
-                            {
-                                "name": "Milk",
-                                "title": "Sunky",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jsdf2p7ve5nwjekbxx4mc7be/releases/01jsdf2p7ymhte7r81vqcgttrk"
-                                }
-                            },
-                            {
-                                "name": "Fatality",
-                                "title": "Fatal Error",
-                                "layouts": {
-                                    "Jugar/Play": "https://www.dropbox.com/scl/fi/afssdxee8fvkfhp4kxn0p/Fatality.FNMM?rlkey=tv56dae5rp9arv83qt6fgv3z5&st=9okgbqlc&dl=0"
-                                }
-                            },
-                            {
-                                "name": "Cycles Encore",
-                                "title": "Lord X",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1VwACThhkjt6mKqB8Nru2IMda6bTi5yxG/view?usp=drivesdk"
-                                }
-                            }
-                        ]
+                        "levels": []
                     },
                     {
                         "id": "sonicRerunImg",
                         "image": "images/rerun_logo.png",
                         "title": "SONIC.EXE RERUN",
-                        "status": "new",
-                        "levels": [
-                            {
-                                "name": "Redolled",
-                                "render": "renders/redolled.png",
-                                "title": "Tails Doll",
-                                "layouts": {
-                                    "old": "https://funkymaker.kingamescreator.com/_app/levels/01jn7e311yce4gtwt87yk0en8k/releases/01jn7e3121wn0fk0jhhe6bk3cv",
-                                    "new": "https://funkymaker.kingamescreator.com/_app/levels/01jn9ph56pwf4kq7cxf22dayt7/releases/01jn9ph56s2bhyfgmdpknqr78j"
-                                }
-                            },
-                            {
-                                "name": "Too Slow Scrimbo mix",
-                                "render": "renders/scrimbo.png",
-                                "title": "Scrimbo",
-                                "layouts": {
-                                    "jugar/Play": "https://drive.google.com/file/d/1-UBQRPKiKtQH2hvYp8Lpg_E7SpxFYmn0/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "torment",
-                                "title": "Lord X",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k5n5csrab0g91kvdyw9bfcjt/releases/01k5n5csrdsyn2vbwwqbyq8083"
-                                }
-                            },
-                            {
-                                "name": "time attack",
-                                "title": "Sonic (Sonic.exe)",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k7jxcvqwc7zz8yepgcsrg2er/releases/01k7jxcvqyhpp54eqj6j7wtxc4"
-                                }
-                            }
-                        ]
+                        "status": "updated",
+                        "levels": []
                     },
                     {
                         "id": "sonicLegacyImg",
                         "image": "images/soniclegacy.gif",
                         "title": "SONIC LEGACY",
-                        "levels": [
-                            {
-                                "name": "2torial",
-                                "title": "Sonic The Hedgehog",
-                                "layouts": {
-                                    "vertical": "https://www.mediafire.com/file/wlzdh0jrrculjmr/2torial.FNMM/file",
-                                    "horizontal (coming soon)": ""
-                                }
-                            },
-                            {
-                                "name": "FREE 4 ME",
-                                "title": "Sonic the Hedgehog(2011X)",
-                                "layouts": {
-                                    "vertical": "https://drive.google.com/file/d/1FqsNAbV1d9T4oK_9uob2PjwqMvKfQBli/view?usp=drivesdk",
-                                    "horizontal": "https://funkymaker.kingamescreator.com/_app/levels/01jvgkrxhn0awxka17y2sh2wp8/releases/01jvgkrxhrb8k0zhvjzcmsrr5h"
-                                }
-                            }
-                        ]
+                        "levels": []
                     },
                     {
                         "id": "illegalInstructionImg",
                         "image": "images/NewIIUSTLogo.png",
                         "title": "ILLEGAL INSTRUCTION",
                         "status": "popular",
-                        "levels": [
-                            {
-                                "name": "breakout",
-                                "title": "Duke",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k11s7mage2d4cdr4nztky98j/releases/01k11s7mare0wgfc2t2rac9jf1"
-                                }
-                            },
-                            {
-                                "name": "soulless endeavor",
-                                "title": "Duke",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jed43291dt8b2rszb8f7zjfx/releases/01k12940kc4rayk0a3hkkkcdc0"
-                                }
-                            },
-                            {
-                                "name": "final frontier",
-                                "title": "Duke",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k13zww342n79qqpwj89jyxhv/releases/01k13zww37j1vmnsrftt589khe"
-                                }
-                            },
-                            {
-                                "name": "my horizon",
-                                "title": "Chaotix",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k16smr1xtx5zqh75mkkrtnh2/releases/01k16smr20v9tdf95qz841zhrt"
-                                }
-                            },
-                            {
-                                "name": "found you",
-                                "title": "Normal CD",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19d0t61tsjw5cyqfpd40zw4/releases/01k19d0t6akdymvd3zaax2hg9c"
-                                }
-                            },
-                            {
-                                "name": "malediction",
-                                "title": "Curse",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19drbdg6nh2jxevm8nx8a78/releases/01k19drbe6jkef00s6gbp1vnsc"
-                                }
-                            },
-                            {
-                                "name": "perdition",
-                                "title": "Apollyon",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k19tvrrmdaj2nggw3nfz2vwt/releases/01k19tvrs4v9xr7f79s405afjk"
-                                }
-                            },
-                            {
-                                "name": "Hog",
-                                "title": "Hog",
-                                "layouts": {
-                                    "COMING SOON": ""
-                                }
-                            },
-                            {
-                                "name": "endless forest mix",
-                                "title": "Majin",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1cg2qyt4wakykspfntm3hp3/releases/01k1cg2qyye0km71t905cdqwn5"
-                                }
-                            },
-                            {
-                                "name": "our horizon",
-                                "title": "Chaotix",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1cg2qyt4wakykspfntm3hp3/releases/01k1cg2qyye0km71t905cdqwn5"
-                                }
-                            },
-                            {
-                                "name": "color crash",
-                                "title": "Wechidna & Mighty",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k25tkccbdp53trdxq2k32vtx/releases/01k25tkccgbf2pz76rr1pnsvsy"
-                                }
-                            },
-                            {
-                                "name": "my horizon(wechidna)",
-                                "title": "Wechidna",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k1v7r7zbgajq5cz3nr4n6vxc/releases/01k1v7r7zjp2c6xskmvtd17wyc"
-                                }
-                            }
-                        ]
+                        "levels": []
                     },
                     {
-                        "id": "hitSingleImg",
-                        "image": "images/HitSingleTitle.png",
-                        "title": "HIT SINGLE",
+                        "id": "fanonHorrorsImg",
+                        "image": "images/VOBGameIcon.png",
+                        "title": "HORRORS UNKNOWN",
+                        "status": "updated",
+                        "levels": []
+                    },
+                    {
+                        "id": "rewriteImg",
+                        "image": "images/VsRewriteLogo.png",
+                        "title": "Vs Sonic",
+                        "levels": []
+                    },
+                    {
+                        "id": "bikiniHorrorsImg",
+                        "image": "images/BikiniHorrorsLogoUPCOMING.webp",
+                        "title": "BIKINI HORRORS",
+                        "status": "coming-soon",
+                        "levels": []
+                    },
+                    {
+                        "id": "ExtrasImg",
+                        "image": "images/extras-icon.png",
+                        "title": "Extras Songs",
+                        "status": "updated",
                         "levels": [
                             {
                                 "name": "Silly Billy",
@@ -698,151 +864,7 @@
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k2bgyp3zedxqtmkr960ztz0w/releases/01k2bgyp45tx4zs9m1f9j8mbb5"
                                 }
-                            }
-                        ]
-                    },
-                    {
-                        "id": "fanonHorrorsImg",
-                        "image": "images/VOBGameIcon.png",
-                        "title": "HORRORS UNKNOWN",
-                        "status": "popular",
-                        "levels": [
-                            {
-                                "name": "Scratchin",
-                                "title": "MDP",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jed34xgsfnqeh8xsrwn7jtzr/releases/01jfbb8nx9g1zpqyn86j9vse0n"
-                                }
                             },
-                            {
-                                "name": "Spirit Dance",
-                                "title": "Nantelle",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jecxydk6r9ccdr1w7bfm1w4p/releases/01jecxyek2z3bht0hcgpr20rdy"
-                                }
-                            },
-                            {
-                                "name": "Elements",
-                                "title": "Nantelle",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k11ybf9rcab0w8w1f4r6zhe5/releases/01k11ybfa6vfxj237q2rt9tj79"
-                                }
-                            },
-                            {
-                                "name": "Toying around ",
-                                "title": "Fanon",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1Eukl3xrwIAEvmHSvJ2qIitJZuPMJTMoI/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "Fanominal",
-                                "title": "Fanon",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1ExEG_AfFNZ4M72Sw6p3AlqAVWbW1YJfj/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "Blood lust",
-                                "title": "Fanon",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1voq-ifWFXQaLTBGiQIgmdFTVKkLm1JyA/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "Twisted Puppetry",
-                                "title": "Zoyo-sha",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1TlLlAJLDPUyBAdelxR-ZBCqDCwrMDOJg/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "sacrifice",
-                                "title": "Possessed Amy",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1T1V50197M8CLQUbaBNEakT0mODLuHH5m/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "Dance to sunset",
-                                "title": "Wacky",
-                                "layouts": {
-                                    "Jugar/Play": "https://drive.google.com/file/d/1T1V50197M8CLQUbaBNEakT0mODLuHH5m/view?usp=drivesdk"
-                                }
-                            },
-                            {
-                                "name": "Get Sonked",
-                                "title": "Sonk",
-                                "layouts": {
-                                    "Jugar/Play": "https://www.mediafire.com/file/122gkcv8g0szm8f/Get+sonked+(1).FNMM/file"
-                                }
-                            },
-                            {
-                                "name": "Shimmy Terror",
-                                "title": "Asset",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k25w0nakc5sa3wh6npmvvxdt/releases/01k25w0nath7jb2mrzdqycj212"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "id": "rewriteImg",
-                        "image": "images/VsRewriteLogo.png",
-                        "title": "Vs Sonic",
-                        "levels": [
-                            {
-                                "name": "Thriller gen",
-                                "title": "Rewrite",
-                                "layouts": {
-                                    "Funky maker": "https://funkymaker.kingamescreator.com/_app/levels/01jy7bd5qw01v6zt1f6pxqr99f/releases/01jy9qbg75hynk62gfjw66jzft",
-                                    "OG": "https://funkymaker.kingamescreator.com/_app/levels/01jycj26vnxgz332bkbpe14vx0/releases/01jycj26vrh7gm0n6ynnwz9rqe"
-                                }
-                            },
-                            {
-                                "name": "Trinity Encore",
-                                "title": "Majin/2011X/Lord X/Rewrite",
-                                "layouts": {
-                                    "Play/Jugar": "https://funkymaker.kingamescreator.com/_app/levels/01k4hhspcwrc3g2zvw8f1xn3wf/releases/01k4hhspcy72wjx4fbs9je8prt"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "id": "spiritOfHellImg",
-                        "image": "images/SpiritOfHell.gif",
-                        "title": "SPIRIT OF HELL",
-                        "levels": [
-                            {
-                                "name": "KindAndFair",
-                                "title": "Sonic? (Exeller)",
-                                "render": "",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k3pd4w6yptktvd00bq72hppb/releases/01k4wahcf78axa8fdj355634tz"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "id": "executableManiaImg",
-                        "image": "images/EXEmaniaNewlogo.png",
-                        "title": "EXECUTABLE MANIA",
-                        "status": "new",
-                        "levels": [
-                            {
-                                "name": "Aftersh0ck",
-                                "title": "Kn0ckback",
-                                "layouts": {
-                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jx5v0xezepas8ga6x3r7rn1e/releases/01jx5v0xf9m6wv9knrf14gjxnk"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "id": "ExtrasImg",
-                        "image": "images/extras-icon.png",
-                        "title": "Extras Songs",
-                        "levels": [
                             {
                                 "name": "vessel",
                                 "title": "Lord X",
@@ -900,6 +922,34 @@
                                 }
                             },
                             {
+                                "name": "Come Out to Play",
+                                "title": "Sonic.exe",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jmxm7v9mv8yhz4d2sch9ar1f/releases/01jmxm7v9sy8e887k4vs66sbpx"
+                                }
+                            },
+                            {
+                                "name": "Deathbed",
+                                "title": "NMI",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jnvk1nhpbs5xpzcmfz14dey2/releases/01jpecn526t35sa3y19fba1kg7"
+                                }
+                            },
+                            {
+                                "name": "Genesis",
+                                "title": "NMI",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jpkvh9x8qjx4d4axa5kx97fc/releases/01jpkvh9xctvz0hz3aswx2rm9f"
+                                }
+                            },
+                            {
+                                "name": "Sloppy Toppy",
+                                "title": "NMI",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jrxv21f4rvgjx2dfp30mgj67/releases/01jrxv21f82z26e9qdykp2k3dm"
+                                }
+                            },
+                            {
                                 "name": "Death Meal",
                                 "title": "???",
                                 "layouts": {
@@ -912,6 +962,20 @@
                                 "layouts": {
                                     "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01kacg4jrpp45c6q8n94tfwra1/releases/01kacg4jrsa5djy0g28dg00pes"
                                 }
+                            },
+                            {
+                                "name": "KindAndFair",
+                                "title": "Sonic? (Exeller)",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01k3pd4w6yptktvd00bq72hppb/releases/01k4wahcf78axa8fdj355634tz"
+                                }
+                            },
+                            {
+                                "name": "Aftersh0ck",
+                                "title": "Kn0ckback",
+                                "layouts": {
+                                    "Jugar/Play": "https://funkymaker.kingamescreator.com/_app/levels/01jx5v0xezepas8ga6x3r7rn1e/releases/01jx5v0xf9m6wv9knrf14gjxnk"
+                                }
                             }
                         ]
                     }
@@ -921,6 +985,17 @@
             const modsGrid = document.getElementById('modsGrid');
             const levelCatalogContainer = document.getElementById('levelCatalogContainer');
             let selectedModIndex = -1;
+            
+            // Sonidos
+            const scrollSound = new Audio('sounds/pauseScrollMenu.ogg');
+            const confirmSound = new Audio('sounds/confirmMenu.ogg');
+            
+            function playSound(audio) {
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => {});
+                }
+            }
 
             // Sistema de badges vistos
             function getViewedBadges() {
@@ -1065,84 +1140,222 @@
                 return levelItem;
             }
 
+            // Configuración centralizada de mods especiales
+            const SPECIAL_MODS_CONFIG = {
+                songsCountFiles: {
+                    'sonicExeImg': 'Assets/Freeplays/FreeplaySonicExe/songs-count.json',
+                    'sonicRerunImg': 'Assets/Freeplays/FreeplayRerun/songs-count.json',
+                    'sonicLegacyImg': 'Assets/Freeplays/FreeplaySonicLegacy/songs-count.json',
+                    'illegalInstructionImg': 'Assets/Freeplays/freeplayillegalinstruction/songs-count.json',
+                    'fanonHorrorsImg': 'Assets/Freeplays/freeplayFanon/songs-count.json',
+                    'rewriteImg': 'Assets/Freeplays/FreeplayVsSonic/songs-count.json'
+                },
+                redirects: {
+                    'sonicExeImg': 'Assets/Freeplays/FreeplaySonicExe/index.html',
+                    'sonicRerunImg': 'Assets/Freeplays/FreeplayRerun/index.html',
+                    'sonicLegacyImg': 'Assets/Freeplays/FreeplaySonicLegacy/index.html',
+                    'illegalInstructionImg': 'Assets/Freeplays/freeplayillegalinstruction/index.html',
+                    'fanonHorrorsImg': 'Assets/Freeplays/freeplayFanon/index.html',
+                    'rewriteImg': 'Assets/Freeplays/FreeplayVsSonic/index.html'
+                }
+            };
 
-
-            function createModCards() {
-                modsGrid.innerHTML = '';
-                modsData.mods.forEach((mod, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'mod-card';
-                    card.dataset.index = index;
-                    card.style.animationDelay = `${index * 0.1}s`;
+            // Función centralizada para manejar redirecciones de mods especiales
+            function handleModRedirect(mod, card = null, e = null) {
+                if (SPECIAL_MODS_CONFIG.redirects[mod.id]) {
+                    if (card && e) createRipple(e, card);
+                    if (card) card.classList.add('card-clicked');
+                    playSound(confirmSound);
+                    const loadingSpinner = document.getElementById('loadingSpinner');
+                    if (loadingSpinner) loadingSpinner.style.display = 'flex';
                     
-                    const songCount = mod.levels.length;
-                    const availableSongs = mod.levels.filter(level => 
-                        Object.values(level.layouts).some(url => url && url.trim() !== '')
-                    ).length;
+                    setTimeout(() => {
+                        window.location.href = SPECIAL_MODS_CONFIG.redirects[mod.id];
+                    }, 400);
+                    return true;
+                }
+                return false;
+            }
+
+            // Función para cargar el conteo de canciones de un mod
+            async function loadSongCount(mod) {
+                let songCount = mod.levels.length;
+                let availableSongs = mod.levels.filter(level => 
+                    Object.values(level.layouts).some(url => url && url.trim() !== '')
+                ).length;
+                
+                if (SPECIAL_MODS_CONFIG.songsCountFiles[mod.id]) {
+                    try {
+                        const response = await fetch(SPECIAL_MODS_CONFIG.songsCountFiles[mod.id]);
+                        if (response.ok) {
+                            const data = await response.json();
+                            songCount = data.totalSongs;
+                            availableSongs = data.availableSongs;
+                        }
+                    } catch (error) {
+                        console.log('Could not load song count for', mod.id);
+                    }
+                }
+                
+                return { songCount, availableSongs };
+            }
+
+
+            // ══════════════════════════════════════════════════════════════
+            // CÓDIGO LEGACY - createModCards() NO SE USA
+            // El freeplay ahora usa solo el sistema de carrusel 3D
+            // Este código se mantiene comentado por si se necesita en el futuro
+            // ══════════════════════════════════════════════════════════════
+            /*
+            function createModCards() {
+                // ... CÓDIGO REMOVIDO ...
+                // Esta función no se llama desde ningún lugar
+                // Solo se usa createCarousel() en la inicialización
+            }
+            */
+
+            // ══════════════════════════════════════════════════════════════
+            // CAROUSEL 3D SYSTEM
+            // ══════════════════════════════════════════════════════════════
+            let currentCarouselIndex = 0;
+            const carouselTrack = document.getElementById('carouselTrack');
+            const carouselPrev = document.getElementById('carouselPrev');
+            const carouselNext = document.getElementById('carouselNext');
+            const carouselIndicator = document.getElementById('carouselIndicator');
+            
+            async function createCarousel() {
+                carouselTrack.innerHTML = '';
+                carouselIndicator.innerHTML = '';
+                
+                for (let i = 0; i < modsData.mods.length; i++) {
+                    const mod = modsData.mods[i];
+                    
+                    // Cargar conteo de canciones
+                    const { songCount, availableSongs } = await loadSongCount(mod);
+                    
+                    // Crear item del carousel con logo 3D y textos flotantes
+                    const item = document.createElement('div');
+                    item.className = 'carousel-item';
+                    item.dataset.index = i;
                     
                     const showBadge = mod.status && !isBadgeViewed(mod.id);
                     const statusBadge = showBadge ? `<div class="status-badge ${mod.status}">${mod.status.toUpperCase()}</div>` : '';
                     
-                    card.innerHTML = `
-                        <img class="mod-card-image" src="${mod.image}" alt="${mod.title}">
+                    item.innerHTML = `
                         ${statusBadge}
-                        <div class="mod-card-content">
-                            <div class="mod-info">
-                                <div class="mod-card-title">${mod.title}</div>
-                                <div class="mod-card-info">${songCount} total levels</div>
-                            </div>
-                            <div class="mod-stats">
-                                <div>${availableSongs} songs</div>
-                                <div style="font-size: 0.6rem; color: #999;">disponibles</div>
-                            </div>
+                        <div class="mod-title-float">${mod.title}</div>
+                        <div class="mod-logo-3d">
+                            <img src="${mod.image}" alt="${mod.title}">
+                        </div>
+                        <div class="mod-count-float">
+                            <div class="count-number">${availableSongs}</div>
+                            <div class="count-label">Songs Available</div>
                         </div>
                     `;
                     
-                    card.addEventListener('click', (e) => {
-                        // Efecto ripple
-                        createRipple(e, card);
-                        
-                        // Animación de click
-                        card.classList.add('card-clicked');
-                        setTimeout(() => card.classList.remove('card-clicked'), 400);
-                        
-                        // Ocultar badge si existe
-                        const badge = card.querySelector('.status-badge');
-                        if (badge && !isBadgeViewed(mod.id)) {
-                            badge.classList.add('fade-out');
-                            markBadgeAsViewed(mod.id);
-                            setTimeout(() => badge.remove(), 300);
-                        }
-                        
-                        // Remover clase active de todas las tarjetas
-                        document.querySelectorAll('.mod-card').forEach(c => c.classList.remove('active'));
-                        // Agregar clase active a la tarjeta seleccionada
-                        card.classList.add('active');
-                        selectedModIndex = index;
-                        showModLevels(index);
-                    });
+                    item.addEventListener('click', () => handleCarouselClick(mod, i));
+                    carouselTrack.appendChild(item);
                     
-                    modsGrid.appendChild(card);
-                    
-                    // Activar animación de aparición
-                    requestAnimationFrame(() => {
-                        card.classList.add('animate-in');
-                    });
-                });
+                    // Crear indicador
+                    const dot = document.createElement('div');
+                    dot.className = 'indicator-dot';
+                    dot.addEventListener('click', () => goToSlide(i));
+                    carouselIndicator.appendChild(dot);
+                }
                 
-                // Precargar primeras 2 imágenes inmediatamente
-                modsData.mods.slice(0, 2).forEach(mod => {
-                    if (mod.image) {
-                        const img = new Image();
-                        img.src = mod.image;
+                updateCarouselPositions();
+            }
+            
+            function updateCarouselPositions() {
+                const items = carouselTrack.querySelectorAll('.carousel-item');
+                const dots = carouselIndicator.querySelectorAll('.indicator-dot');
+                const total = items.length;
+                
+                items.forEach((item, index) => {
+                    item.className = 'carousel-item';
+                    const diff = index - currentCarouselIndex;
+                    
+                    if (diff === 0) {
+                        item.classList.add('center');
+                    } else if (diff === 1 || diff === -(total - 1)) {
+                        item.classList.add('right-1');
+                    } else if (diff === 2 || diff === -(total - 2)) {
+                        item.classList.add('right-2');
+                    } else if (diff === -1 || diff === total - 1) {
+                        item.classList.add('left-1');
+                    } else if (diff === -2 || diff === total - 2) {
+                        item.classList.add('left-2');
+                    } else {
+                        item.classList.add('hidden');
                     }
                 });
+                
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentCarouselIndex);
+                });
             }
+            
+            function goToSlide(index) {
+                currentCarouselIndex = index;
+                updateCarouselPositions();
+                playSound(scrollSound);
+            }
+            
+            function nextSlide() {
+                currentCarouselIndex = (currentCarouselIndex + 1) % modsData.mods.length;
+                updateCarouselPositions();
+                playSound(scrollSound);
+            }
+            
+            function prevSlide() {
+                currentCarouselIndex = (currentCarouselIndex - 1 + modsData.mods.length) % modsData.mods.length;
+                updateCarouselPositions();
+                playSound(scrollSound);
+            }
+            
+            function handleCarouselClick(mod, index) {
+                if (index !== currentCarouselIndex) {
+                    goToSlide(index);
+                    return;
+                }
+                
+                // Verificar si es COMING SOON
+                if (mod.status === 'coming-soon') {
+                    showComingSoonModal(mod);
+                    playSound(confirmSound);
+                    return;
+                }
+                
+                // Verificar si es un mod con freeplay especial
+                if (handleModRedirect(mod)) {
+                    return;
+                }
+                
+                // Para mods sin freeplay propio, mostrar lista de canciones
+                selectedModIndex = index;
+                showModLevels(index);
+                playSound(confirmSound);
+            }
+            
+            carouselPrev.addEventListener('click', prevSlide);
+            carouselNext.addEventListener('click', nextSlide);
+            
+            // Navegación con teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
             
             function showModLevels(index) {
                 const selectedCard = document.querySelector(`[data-index="${index}"]`);
                 
                 if (selectedCard) {
+                    // Ocultar carrusel
+                    const carouselContainer = document.getElementById('carouselContainer');
+                    if (carouselContainer) {
+                        carouselContainer.style.display = 'none';
+                    }
+                    
                     modsGrid.classList.add('hiding');
                     
                     setTimeout(() => {
@@ -1270,6 +1483,12 @@
                         // Limpiar contenedor de niveles
                         levelCatalogContainer.innerHTML = '';
                         levelCatalogContainer.style.display = 'none';
+                        
+                        // Restaurar vista del carrusel
+                        const carouselContainer = document.getElementById('carouselContainer');
+                        if (carouselContainer) {
+                            carouselContainer.style.display = 'flex';
+                        }
                         
                         // Restaurar vista de grid con animación
                         modsGrid.style.display = 'flex';
@@ -1499,9 +1718,116 @@
 
             // Inicialización
             detectDeviceCapabilities();
-            createModCards();
+            createCarousel();
             hideLoadingSpinner();
             loadFromURL();
+            
+            // Función para mostrar modal COMING SOON
+            function showComingSoonModal(mod) {
+                // Crear modal
+                const modal = document.createElement('div');
+                modal.id = 'comingSoonModal';
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                `;
+                
+                const modalContent = document.createElement('div');
+                modalContent.style.cssText = `
+                    background: #000;
+                    border: 4px solid #ff0000;
+                    border-radius: 10px;
+                    padding: 40px;
+                    text-align: center;
+                    max-width: 500px;
+                    box-shadow: 0 0 50px rgba(255, 0, 0, 0.8);
+                    animation: scaleIn 0.3s ease;
+                `;
+                
+                modalContent.innerHTML = `
+                    <h2 style="color: #ff0000; font-size: 2rem; margin-bottom: 20px; text-shadow: 0 0 20px #ff0000;">
+                        ${mod.title}
+                    </h2>
+                    <div style="font-size: 3rem; margin: 30px 0; color: #ffff00; text-shadow: 0 0 30px #ffff00;">
+                        🚧 COMING SOON 🚧
+                    </div>
+                    <p style="color: #fff; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.6;">
+                        Este mod está en desarrollo.<br>
+                        ¡Mantente atento para futuras actualizaciones!
+                    </p>
+                    <button id="closeComingSoonBtn" style="
+                        background: #ff0000;
+                        color: #000;
+                        border: none;
+                        padding: 15px 40px;
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.8rem;
+                        cursor: pointer;
+                        border-radius: 5px;
+                        transition: all 0.3s;
+                    ">
+                        CERRAR
+                    </button>
+                `;
+                
+                modal.appendChild(modalContent);
+                document.body.appendChild(modal);
+                
+                // Cerrar modal
+                const closeBtn = document.getElementById('closeComingSoonBtn');
+                closeBtn.addEventListener('click', () => {
+                    modal.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => modal.remove(), 300);
+                });
+                
+                // Cerrar con ESC
+                const handleEsc = (e) => {
+                    if (e.key === 'Escape') {
+                        modal.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => modal.remove(), 300);
+                        document.removeEventListener('keydown', handleEsc);
+                    }
+                };
+                document.addEventListener('keydown', handleEsc);
+                
+                // Cerrar al hacer click fuera
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => modal.remove(), 300);
+                    }
+                });
+                
+                // Añadir animaciones CSS
+                if (!document.getElementById('modalAnimations')) {
+                    const style = document.createElement('style');
+                    style.id = 'modalAnimations';
+                    style.textContent = `
+                        @keyframes fadeIn {
+                            from { opacity: 0; }
+                            to { opacity: 1; }
+                        }
+                        @keyframes fadeOut {
+                            from { opacity: 1; }
+                            to { opacity: 0; }
+                        }
+                        @keyframes scaleIn {
+                            from { transform: scale(0.8); opacity: 0; }
+                            to { transform: scale(1); opacity: 1; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
         });
     </script>
 </body>

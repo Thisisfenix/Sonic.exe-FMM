@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonic Legacy - Freeplay</title>
+    <link rel="icon" type="image/png" href="../../../images/logo_sonic_puto_exe.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        body.desktop {
+            cursor: none;
+        }
+        .canvas-container {
+            position: absolute;
+            left: 50%;
+            bottom: -300px;
+            transform: translateX(-50%);
+        }
+        #mainCanvas {
+            image-rendering: pixelated;
+            display: block;
+            width: 1057.2px;
+            height: 1105.2px;
+        }
+        .icon {
+            position: absolute;
+            image-rendering: pixelated;
+            pointer-events: auto;
+            z-index: 1;
+            display: block;
+            visibility: visible;
+            object-fit: fill !important;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+        .icon img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: fill !important;
+        }
+        #cursorCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            image-rendering: pixelated;
+            display: none;
+        }
+        body.desktop #cursorCanvas {
+            display: block;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0ff;
+            color: #0ff;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            z-index: 100;
+            font-family: monospace;
+        }
+        .back-btn:hover { background: rgba(0, 255, 255, 0.2); }
+        
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: monospace;
+            color: #0ff;
+        }
+        #loadingScreen.hidden {
+            display: none;
+        }
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #0ff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .loading-progress {
+            font-size: 0.9rem;
+            color: #0aa;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">LOADING SONIC LEGACY</div>
+        <div class="loading-progress" id="loadingProgress">0%</div>
+    </div>
+    <a href="../../../freeplay.html" class="back-btn">◀ BACK</a>
+    <div class="canvas-container">
+        <canvas id="mainCanvas"></canvas>
+        <img id="icon1" class="icon" src="" alt="">
+        <img id="icon2" class="icon" src="" alt="">
+    </div>
+    <canvas id="cursorCanvas"></canvas>
+    <audio id="bgMusic" src="Assets/Music/freakyMenu-desk.ogg" loop></audio>
+    <audio id="scrollSound" src="../../../sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="selectSound" src="../../../sounds/confirmMenu.ogg"></audio>
+    <audio id="monitorClickSound" src="Assets/Sounds/monitorClick.ogg"></audio>
+    <audio id="loadingSound" src="Assets/Sounds/windowsXP.ogg"></audio>
+    <audio id="sound2torial" src="Assets/Sounds/2torial.ogg"></audio>
+    <audio id="soundObituary" src="Assets/Sounds/obituary.ogg"></audio>
+    <script src="../../../Assets/js/christmas-lite.js"></script>
+    <script>
+        // Debug: Verificar posición del contenedor
+        window.addEventListener('load', () => {
+            const container = document.querySelector('.canvas-container');
+            console.log('Container computed style:', window.getComputedStyle(container));
+            console.log('Container position:', container.getBoundingClientRect());
+        });
+        class IconAnimator {
+            constructor(basePath, imgElement, iconName) {
+                this.basePath = basePath;
+                this.imgElement = imgElement;
+                this.currentState = 'loop';
+                this.loaded = false;
+                this.iconName = iconName;
+                this.lockedWidth = null;  // Tamaño que se bloquea con el primer GIF
+                this.lockedHeight = null;
+                this.originalLeft = null;  // Posición original para restaurar
+                this.originalTop = null;
+                this.selectStartTime = null;  // Tiempo cuando empieza select
+                this.gifSizes = {};  // Almacenar tamaños naturales de cada GIF
+                
+                // Mapeo de nombres de archivo específico por icono
+                this.fileMap = {
+                    '2torial': {
+                        'loop': 'loop.gif',
+                        'select': 'selection.gif',
+                        'selectloop': 'Selectionloop.gif',
+                        'confirm': 'Confirm.gif'
+                    },
+                    'obituary': {
+                        'loop': 'Loop.gif',
+                        'select': 'select.gif',
+                        'selectloop': 'selectloop.gif',
+                        'confirm': 'Confirm.gif'
+                    }
+                };
+            }
+            
+            async load() {
+                try {
+                    // Primero cargar el loop para obtener su tamaño REAL
+                    const loopFilename = this.fileMap[this.iconName]['loop'];
+                    const loopImg = await this.preloadGif(`${this.basePath}/${loopFilename}`);
+                    
+                    // BLOQUEAR el tamaño basado en el GIF de loop, aplicando escala
+                    const scale = this.iconName === '2torial' ? 0.85 : 0.8;
+                    this.lockedWidth = loopImg.naturalWidth * scale;
+                    this.lockedHeight = loopImg.naturalHeight * scale;
+                    
+                    // Guardar tamaño natural del loop como referencia
+                    this.gifSizes['loop'] = { 
+                        width: loopImg.naturalWidth, 
+                        height: loopImg.naturalHeight 
+                    };
+                    
+                    console.log(`🔒 Locked size for ${this.iconName}: ${this.lockedWidth}x${this.lockedHeight} (scale: ${scale})`);
+                    
+                    // Aplicar el tamaño bloqueado al elemento
+                    this.applyLockedSize();
+                    
+                    // Precargar los demás GIFs y guardar sus tamaños
+                    const files = Object.values(this.fileMap[this.iconName]);
+                    const uniqueFiles = [...new Set(files)];
+                    
+                    for (const file of uniqueFiles) {
+                        if (file === loopFilename) continue; // Ya lo cargamos
+                        
+                        let loaded = false;
+                        let attempts = 0;
+                        const maxAttempts = 3;
+                        
+                        while (!loaded && attempts < maxAttempts) {
+                            try {
+                                const img = await this.preloadGif(`${this.basePath}/${file}`);
+                                
+                                // Guardar tamaño natural del GIF
+                                const stateName = Object.keys(this.fileMap[this.iconName]).find(
+                                    key => this.fileMap[this.iconName][key] === file
+                                );
+                                if (stateName) {
+                                    this.gifSizes[stateName] = {
+                                        width: img.naturalWidth,
+                                        height: img.naturalHeight
+                                    };
+                                }
+                                
+                                loaded = true;
+                            } catch (error) {
+                                attempts++;
+                                console.warn(`Retry ${attempts}/${maxAttempts} loading ${file}`);
+                                await new Promise(resolve => setTimeout(resolve, 200));
+                            }
+                        }
+                        
+                        if (!loaded) {
+                            console.error(`Failed to load ${file} after ${maxAttempts} attempts`);
+                        }
+                    }
+                    
+                    // Mostrar el loop por defecto
+                    this.setState('loop');
+                    this.loaded = true;
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load icon:', error);
+                    return false;
+                }
+            }
+            
+            applyLockedSize() {
+                if (!this.lockedWidth || !this.lockedHeight) {
+                    console.error('Cannot apply locked size: not initialized');
+                    return;
+                }
+                
+                // Aplicar cada propiedad individualmente con setProperty para forzar !important
+                const style = this.imgElement.style;
+                
+                // Restaurar posición original si existe
+                if (this.originalLeft !== null && this.originalTop !== null) {
+                    style.setProperty('left', this.originalLeft + 'px', 'important');
+                    style.setProperty('top', this.originalTop + 'px', 'important');
+                }
+                
+                style.setProperty('width', this.lockedWidth + 'px', 'important');
+                style.setProperty('height', this.lockedHeight + 'px', 'important');
+                style.setProperty('min-width', this.lockedWidth + 'px', 'important');
+                style.setProperty('max-width', this.lockedWidth + 'px', 'important');
+                style.setProperty('min-height', this.lockedHeight + 'px', 'important');
+                style.setProperty('max-height', this.lockedHeight + 'px', 'important');
+                style.setProperty('object-fit', 'fill', 'important');
+                style.setProperty('display', 'block', 'important');
+                style.setProperty('visibility', 'visible', 'important');
+                style.setProperty('position', 'absolute', 'important');
+                style.setProperty('image-rendering', 'pixelated', 'important');
+                style.setProperty('pointer-events', 'auto', 'important');
+                style.setProperty('z-index', '1', 'important');
+                
+                console.log(`📏 Applied size to ${this.iconName}: ${this.lockedWidth}x${this.lockedHeight}, actual: ${this.imgElement.offsetWidth}x${this.imgElement.offsetHeight}`);
+            }
+            
+            preloadGif(src) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        console.log('✓ Loaded:', src, `(${img.naturalWidth}x${img.naturalHeight})`);
+                        resolve(img);
+                    };
+                    img.onerror = (e) => {
+                        console.error('✗ Failed to load:', src, e);
+                        reject(e);
+                    };
+                    img.src = src;
+                });
+            }
+            
+            setState(state) {
+                if (this.currentState === state) return;
+                this.currentState = state;
+                
+                // Si cambia a select, marcar el tiempo
+                if (state === 'select') {
+                    this.selectStartTime = Date.now();
+                } else {
+                    this.selectStartTime = null;
+                }
+                
+                // Obtener el nombre de archivo correcto
+                const filename = this.fileMap[this.iconName][state];
+                if (!filename) {
+                    console.error(`No filename mapped for state: ${state} on icon: ${this.iconName}`);
+                    return;
+                }
+                
+                const fullPath = `${this.basePath}/${filename}`;
+                console.log(`Setting icon ${this.iconName} to state ${state}: ${fullPath}`);
+                
+                // Crear una imagen temporal para verificar el tamaño natural del GIF
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    console.log(`  ↳ Natural size of ${filename}: ${tempImg.naturalWidth}x${tempImg.naturalHeight}`);
+                };
+                tempImg.src = fullPath;
+                
+                this.imgElement.src = fullPath + '?t=' + Date.now();
+                
+                // Sin auto-scale, usar escalas manuales fijas
+                const style = this.imgElement.style;
+                let scale = 1.0;
+                
+                // Escalas manuales por estado
+                if (state === 'loop') {
+                    scale = 1.0;
+                } else if (state === 'select') {
+                    scale = 1.0;
+                } else if (state === 'selectloop') {
+                    scale = 1.0;
+                } else if (state === 'confirm') {
+                    scale = 1.3;
+                }
+                
+                // SIEMPRE mantener el tamaño base y la posición original
+                style.setProperty('left', this.originalLeft + 'px', 'important');
+                style.setProperty('top', this.originalTop + 'px', 'important');
+                style.setProperty('width', this.lockedWidth + 'px', 'important');
+                style.setProperty('height', this.lockedHeight + 'px', 'important');
+                style.setProperty('min-width', this.lockedWidth + 'px', 'important');
+                style.setProperty('max-width', this.lockedWidth + 'px', 'important');
+                style.setProperty('min-height', this.lockedHeight + 'px', 'important');
+                style.setProperty('max-height', this.lockedHeight + 'px', 'important');
+                
+                // Usar transform para escalar desde el centro
+                style.setProperty('transform', `scale(${scale})`, 'important');
+                style.setProperty('transform-origin', 'center center', 'important');
+                
+                style.setProperty('object-fit', 'contain', 'important'); // Cambiar a contain para mantener proporciones
+                style.setProperty('display', 'block', 'important');
+                style.setProperty('visibility', 'visible', 'important');
+                style.setProperty('position', 'absolute', 'important');
+                style.setProperty('image-rendering', 'pixelated', 'important');
+                style.setProperty('pointer-events', 'auto', 'important');
+                style.setProperty('z-index', '1', 'important');
+                
+                // Mostrar coordenadas y tamaño en consola
+                console.log(`📍 ${this.iconName} ${state}: pos(${this.originalLeft}, ${this.originalTop}), size(${this.lockedWidth}x${this.lockedHeight}), scale(${scale})`);
+                if (this.gifSizes[state]) {
+                    const gif = this.gifSizes[state];
+                    console.log(`   ↳ GIF natural size: ${gif.width}x${gif.height}`);
+                }
+            }
+            
+            update() {
+                // Verificar si debe cambiar de select a selectloop
+                if (this.currentState === 'select' && this.selectStartTime) {
+                    const elapsed = Date.now() - this.selectStartTime;
+                    // Cambiar a selectloop después de ~500ms (duración aproximada del GIF de select)
+                    if (elapsed > 500) {
+                        this.setState('selectloop');
+                    }
+                }
+            }
+            
+            setPosition(x, y) {
+                // Guardar la posición original
+                this.originalLeft = x;
+                this.originalTop = y;
+                this.imgElement.style.left = x + 'px';
+                this.imgElement.style.top = y + 'px';
+            }
+        }
+
+        class SparrowAtlas {
+            constructor(xmlPath, imagePath) {
+                this.xmlPath = xmlPath;
+                this.imagePath = imagePath;
+                this.frames = {};
+                this.image = null;
+                this.loaded = false;
+            }
+            async load() {
+                try {
+                    const [xmlText, image] = await Promise.all([
+                        fetch(this.xmlPath).then(r => r.text()),
+                        this.loadImage(this.imagePath)
+                    ]);
+                    this.image = image;
+                    this.parseXML(xmlText);
+                    this.loaded = true;
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load:', error);
+                    return false;
+                }
+            }
+            loadImage(src) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            }
+            parseXML(xmlText) {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                const subTextures = xmlDoc.querySelectorAll('SubTexture');
+                subTextures.forEach(st => {
+                    const name = st.getAttribute('name');
+                    this.frames[name] = {
+                        x: parseInt(st.getAttribute('x')),
+                        y: parseInt(st.getAttribute('y')),
+                        width: parseInt(st.getAttribute('width')),
+                        height: parseInt(st.getAttribute('height')),
+                        frameX: parseInt(st.getAttribute('frameX') || 0),
+                        frameY: parseInt(st.getAttribute('frameY') || 0),
+                        frameWidth: parseInt(st.getAttribute('frameWidth') || st.getAttribute('width')),
+                        frameHeight: parseInt(st.getAttribute('frameHeight') || st.getAttribute('height')),
+                        rotated: st.getAttribute('rotated') === 'true'
+                    };
+                });
+            }
+            drawFrame(ctx, frameName, x, y, scale = 1) {
+                if (!this.loaded || !this.frames[frameName]) return;
+                const f = this.frames[frameName];
+                
+                const drawX = x + (f.frameX * scale);
+                const drawY = y + (f.frameY * scale);
+                
+                if (f.rotated) {
+                    ctx.save();
+                    ctx.translate(drawX, drawY + f.height * scale);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.drawImage(this.image, f.x, f.y, f.width, f.height,
+                        0, 0, f.width * scale, f.height * scale);
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(this.image, f.x, f.y, f.width, f.height,
+                        drawX, drawY, f.width * scale, f.height * scale);
+                }
+            }
+        }
+
+        const songs = [
+            { 
+                name: "2torial", 
+                banner: "2torial", 
+                title: "Sonic The Hedgehog",
+                layouts: {
+                    "vertical": "https://www.mediafire.com/file/wlzdh0jrrculjmr/2torial.FNMM/file",
+                    "horizontal (coming soon)": ""
+                }
+            },
+            { 
+                name: "FREE 4 ME", 
+                banner: "obituary", 
+                title: "Sonic the Hedgehog(2011X)",
+                layouts: {
+                    "vertical": "https://drive.google.com/file/d/1FqsNAbV1d9T4oK_9uob2PjwqMvKfQBli/view?usp=drivesdk",
+                    "horizontal": "https://funkymaker.kingamescreator.com/_app/levels/01jvgkrxhn0awxka17y2sh2wp8/releases/01jvgkrxhrb8k0zhvjzcmsrr5h"
+                }
+            }
+        ];
+        
+        let monitorAtlas, bannersAtlas, cursorAtlas, bfAtlas;
+        let icon2torial, iconObituary;
+        let currentSong = 0;
+        let currentMonitorFrame = 0;
+        let currentBFFrame = 0;
+        let targetBFFrame = 0; // Frame objetivo basado en posición del mouse
+        let bfCurrentAnimation = 'idle'; // 'idle', 'up', 'down'
+        let lastMouseY = 0;
+        let lastFrameTime = 0;
+        const animationSpeed = 12;
+        const monitorScale = 1.2;
+        let blankImage = null;
+        let bfCenterX = 0;
+        let bfCenterY = 0;
+        
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const cursorCanvas = document.getElementById('cursorCanvas');
+        const cursorCtx = cursorCanvas.getContext('2d');
+        const bgMusic = document.getElementById('bgMusic');
+        const scrollSound = document.getElementById('scrollSound');
+        const selectSound = document.getElementById('selectSound');
+        const monitorClickSound = document.getElementById('monitorClickSound');
+        const loadingSound = document.getElementById('loadingSound');
+        const sound2torial = document.getElementById('sound2torial');
+        const soundObituary = document.getElementById('soundObituary');
+        
+        const icon1Img = document.getElementById('icon1');
+        const icon2Img = document.getElementById('icon2');
+        
+        let icon1Bounds = { x: 0, y: 0, width: 0, height: 0 };
+        let icon2Bounds = { x: 0, y: 0, width: 0, height: 0 };
+        
+        let mouseX = 0, mouseY = 0;
+        let cursorState = 'idle';
+        let cursorFrame = 0;
+        let lastCursorFrameTime = 0;
+        let isDesktop = false;
+        
+        let hoveredIcon = null;
+        let clickedIcon = null;
+        
+        const loadingProgress = document.getElementById('loadingProgress');
+        const loadingScreen = document.getElementById('loadingScreen');
+        let totalAssets = 0;
+        let loadedAssets = 0;
+        
+        function updateLoadingProgress() {
+            const percentage = Math.round((loadedAssets / totalAssets) * 100);
+            loadingProgress.textContent = `${percentage}%`;
+        }
+        
+        function hideLoadingScreen() {
+            loadingScreen.classList.add('hidden');
+        }
+        
+        async function init() {
+            totalAssets = 7; // 2 atlas + 2 iconos + blank + cursor + 1 extra
+            loadedAssets = 0;
+            
+            // Reproducir sonido de carga
+            playSound(loadingSound);
+            
+            isDesktop = window.matchMedia('(pointer: fine)').matches;
+            if (isDesktop) {
+                document.body.classList.add('desktop');
+            }
+            
+            monitorAtlas = new SparrowAtlas(
+                'Assets/userinterface/desktop/bgLayers.xml',
+                'Assets/userinterface/desktop/bgLayers.png'
+            );
+            bannersAtlas = new SparrowAtlas(
+                'Assets/userinterface/desktop/songMenu/banners.xml',
+                'Assets/userinterface/desktop/songMenu/banners.png'
+            );
+            bfAtlas = new SparrowAtlas(
+                'Assets/userinterface/desktop/songMenu/bf.xml',
+                'Assets/userinterface/desktop/songMenu/bf.png'
+            );
+            
+            // Cargar iconos como elementos IMG (para que los GIFs se animen)
+            // El tamaño se determinará automáticamente del GIF de loop
+            icon2torial = new IconAnimator('Assets/Icons/2torial', icon1Img, '2torial');
+            iconObituary = new IconAnimator('Assets/Icons/Obituary', icon2Img, 'obituary');
+            
+            const loadBlankImage = () => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedAssets++;
+                        updateLoadingProgress();
+                        resolve(img);
+                    };
+                    img.onerror = reject;
+                    img.src = 'Assets/userinterface/desktop/songMenu/blank.png';
+                });
+            };
+            
+            try {
+                if (isDesktop) {
+                    cursorAtlas = new SparrowAtlas(
+                        'Assets/userinterface/cursor.xml',
+                        'Assets/userinterface/cursor.png'
+                    );
+                    
+                    await monitorAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await bannersAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await bfAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await icon2torial.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await iconObituary.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    blankImage = await loadBlankImage();
+                    
+                    await cursorAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                } else {
+                    await monitorAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await bannersAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await bfAtlas.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await icon2torial.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    await iconObituary.load();
+                    loadedAssets++;
+                    updateLoadingProgress();
+                    
+                    blankImage = await loadBlankImage();
+                }
+                
+                const monitorFrame = monitorAtlas.frames['monitorOn instance 10000'];
+                if (monitorFrame) {
+                    canvas.width = monitorFrame.frameWidth * monitorScale;
+                    canvas.height = monitorFrame.frameHeight * monitorScale;
+                }
+                
+                if (isDesktop) {
+                    cursorCanvas.width = window.innerWidth;
+                    cursorCanvas.height = window.innerHeight;
+                }
+                
+                // Ocultar pantalla de carga
+                hideLoadingScreen();
+                
+                requestAnimationFrame(animate);
+                updateIconPositions(); // Posicionar los iconos inicialmente
+                
+                document.addEventListener('keydown', handleKeys);
+                document.addEventListener('click', enableAudio, { once: true });
+                
+                if (isDesktop) {
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('click', handleIconClick);
+                    window.addEventListener('resize', handleResize);
+                }
+            } catch (error) {
+                console.error('Error loading assets:', error);
+                loadingProgress.textContent = 'ERROR LOADING';
+                loadingProgress.style.color = '#f00';
+            }
+        }
+        
+        function animate(timestamp) {
+            const deltaTime = timestamp - lastFrameTime;
+            if (deltaTime > 1000 / animationSpeed) {
+                render();
+                currentMonitorFrame = (currentMonitorFrame + 1) % 2;
+                
+                // Transición suave de BF hacia el frame objetivo
+                if (currentBFFrame < targetBFFrame) {
+                    currentBFFrame++; // Avanzar un frame
+                } else if (currentBFFrame > targetBFFrame) {
+                    currentBFFrame--; // Retroceder un frame
+                }
+                // Si currentBFFrame === targetBFFrame, se queda quieto
+                
+                lastFrameTime = timestamp;
+            }
+            
+            // Actualizar iconos (para transición select → selectloop)
+            if (icon2torial) icon2torial.update();
+            if (iconObituary) iconObituary.update();
+            
+            if (isDesktop) {
+                renderCursor();
+                
+                const cursorDeltaTime = timestamp - lastCursorFrameTime;
+                if (cursorDeltaTime > 1000 / 12 && cursorState === 'waiting') {
+                    cursorFrame = (cursorFrame + 1) % 8;
+                    lastCursorFrameTime = timestamp;
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const song = songs[currentSong];
+            const frameName = song.banner + '0000';
+            if (bannersAtlas.frames[frameName]) {
+                const frame = bannersAtlas.frames[frameName];
+                const x = 80 * monitorScale;
+                const y = 75 * monitorScale;
+                
+                // Obtener el tamaño del banner de 2torial como referencia
+                const refFrame = bannersAtlas.frames['2torial0000'];
+                const targetWidth = refFrame.frameWidth;
+                const targetHeight = refFrame.frameHeight;
+                
+                // Calcular escala para que obituary tenga el mismo tamaño que 2torial
+                const scaleX = targetWidth / frame.frameWidth;
+                const scaleY = targetHeight / frame.frameHeight;
+                const uniformScale = Math.min(scaleX, scaleY); // Mantener proporciones
+                
+                bannersAtlas.drawFrame(ctx, frameName, x, y, uniformScale);
+                
+                const blankX = x + 120;
+                const blankY = y + frame.frameHeight * uniformScale - 45;
+                const blankScale = 0.85;
+                
+                // Dibujar blank primero (fondo)
+                if (blankImage) {
+                    ctx.drawImage(blankImage, blankX, blankY, blankImage.width * blankScale, blankImage.height * blankScale);
+                    
+                    // Guardar posición del centro de BF para seguimiento del mouse
+                    // BF está dibujado en blankX + 254
+                    const bfWidth = 112 * 0.85; // ~95px
+                    const bfHeight = 192 * 0.85; // ~163px
+                    // Ajustar el centro para que coincida con el centro visual en pantalla
+                    bfCenterX = blankX + 254 - 100; // Mover el centro 100px a la izquierda
+                    bfCenterY = blankY + 62 + (bfHeight / 2);
+                    
+                    console.log(`BF Center calculado: X=${bfCenterX.toFixed(0)}, Y=${bfCenterY.toFixed(0)} (blankX=${blankX.toFixed(0)})`);
+                }
+                
+                // Dibujar BF encima del blank (sigue al mouse horizontalmente sin resetear)
+                if (bfAtlas && bfAtlas.loaded) {
+                    let bfFrameName = 'idle0000';
+                    
+                    // Calcular frame objetivo basado en posición horizontal del mouse
+                    if (isDesktop && bfCenterX > 0) {
+                        const rect = canvas.getBoundingClientRect();
+                        const canvasMouseX = mouseX - rect.left;
+                        const deltaX = canvasMouseX - bfCenterX;
+                        
+                        // Debug: mostrar valores en consola
+                        console.log(`Mouse: ${canvasMouseX.toFixed(0)}, BF Center: ${bfCenterX.toFixed(0)}, Delta: ${deltaX.toFixed(0)}, Anim: ${bfCurrentAnimation}, Frame: ${currentBFFrame}`);
+                        
+                        if (deltaX < -20) {
+                            // Mouse a la izquierda - usar frames "up"
+                            bfCurrentAnimation = 'up';
+                            const distance = Math.abs(deltaX);
+                            targetBFFrame = Math.min(8, Math.floor((distance - 20) / 50));
+                        } else if (deltaX > 20) {
+                            // Mouse a la derecha - usar frames "down"
+                            bfCurrentAnimation = 'down';
+                            const distance = Math.abs(deltaX);
+                            targetBFFrame = Math.min(5, Math.floor((distance - 20) / 50));
+                        } else {
+                            // Mouse en el centro - volver a idle gradualmente
+                            bfCurrentAnimation = 'idle';
+                            targetBFFrame = 0;
+                        }
+                    }
+                    
+                    // Mostrar el frame actual
+                    if (bfCurrentAnimation === 'up') {
+                        // Asegurar que currentBFFrame esté en el rango de up (0-8)
+                        if (currentBFFrame > 8) currentBFFrame = 8;
+                        bfFrameName = `up000${currentBFFrame}`;
+                    } else if (bfCurrentAnimation === 'down') {
+                        // Asegurar que currentBFFrame esté en el rango de down (0-5)
+                        if (currentBFFrame > 5) currentBFFrame = 5;
+                        bfFrameName = `down000${currentBFFrame}`;
+                    } else {
+                        // Idle
+                        bfFrameName = 'idle0000';
+                    }
+                    
+                    bfAtlas.drawFrame(ctx, bfFrameName, blankX + 254, blankY + 62, 0.85);
+                }
+            }
+            
+            const monitorFrameName = currentMonitorFrame === 0 
+                ? 'monitorOn instance 10000' 
+                : 'monitorOn instance 10001';
+            
+            ctx.save();
+            ctx.scale(monitorScale, monitorScale);
+            monitorAtlas.drawFrame(ctx, monitorFrameName, 0, 0, 1);
+            ctx.restore();
+            
+            updateIconPositions();
+        }
+        
+        function updateIconPositions() {
+            const song = songs[currentSong];
+            const frameName = song.banner + '0000';
+            if (!bannersAtlas.frames[frameName]) return;
+            
+            // Usar siempre la posición base del banner de 2torial para calcular posiciones fijas
+            const refFrame = bannersAtlas.frames['2torial0000'];
+            const x = 80 * monitorScale;
+            const y = 75 * monitorScale;
+            const blankX = x + 120;
+            const blankY = y + refFrame.frameHeight - 45; // SIEMPRE usar el alto de 2torial
+            
+            // Icon 1 (2torial) - usar tamaño bloqueado
+            const icon1X = blankX - 50;
+            const icon1Y = blankY + 35;
+            if (icon2torial && icon2torial.lockedWidth) {
+                icon1Bounds = { x: icon1X, y: icon1Y, width: icon2torial.lockedWidth, height: icon2torial.lockedHeight };
+                icon2torial.setPosition(icon1X, icon1Y);
+            }
+            
+            // Icon 2 (Obituary) - usar tamaño bloqueado
+            const icon2X = blankX + 15;
+            const icon2Y = blankY + 25;
+            if (iconObituary && iconObituary.lockedWidth) {
+                icon2Bounds = { x: icon2X, y: icon2Y, width: iconObituary.lockedWidth, height: iconObituary.lockedHeight };
+                iconObituary.setPosition(icon2X, icon2Y);
+            }
+        }
+        
+        function handleKeys(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                currentSong = (currentSong - 1 + songs.length) % songs.length;
+                render();
+                playSound(scrollSound);
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                currentSong = (currentSong + 1) % songs.length;
+                render();
+                playSound(scrollSound);
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                playSong();
+            }
+        }
+        
+        function playSong() {
+            playSound(selectSound);
+            const url = songs[currentSong].url;
+            if (url) setTimeout(() => window.open(url, '_blank'), 300);
+        }
+        
+        function playSound(sound) {
+            if (!sound) return;
+            sound.currentTime = 0;
+            sound.play().catch(() => {});
+        }
+        
+        function enableAudio() {
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(() => {});
+        }
+        
+        function handleMouseMove(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            checkIconHover();
+        }
+        
+        function checkIconHover() {
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = mouseX - rect.left;
+            const canvasY = mouseY - rect.top;
+            
+            const oldHovered = hoveredIcon;
+            hoveredIcon = null;
+            
+            // Detectar hover con un pequeño margen para evitar bugs
+            const margin = 5;
+            
+            if (canvasX >= icon1Bounds.x - margin && canvasX <= icon1Bounds.x + icon1Bounds.width + margin &&
+                canvasY >= icon1Bounds.y - margin && canvasY <= icon1Bounds.y + icon1Bounds.height + margin) {
+                hoveredIcon = 1;
+                cursorState = 'hand';
+                currentSong = 0; // Cambiar a banner de 2torial
+            } else if (canvasX >= icon2Bounds.x - margin && canvasX <= icon2Bounds.x + icon2Bounds.width + margin &&
+                       canvasY >= icon2Bounds.y - margin && canvasY <= icon2Bounds.y + icon2Bounds.height + margin) {
+                hoveredIcon = 2;
+                cursorState = 'hand';
+                currentSong = 1; // Cambiar a banner de obituary
+            } else {
+                cursorState = 'idle';
+                currentSong = 0; // Volver a 2torial por defecto
+            }
+            
+            // Solo cambiar animación si el hover cambió
+            if (oldHovered !== hoveredIcon) {
+                // Resetear ambos iconos a loop primero
+                if (oldHovered === 1) {
+                    icon2torial.setState('loop');
+                } else if (oldHovered === 2) {
+                    iconObituary.setState('loop');
+                }
+                
+                // Luego activar el nuevo hover
+                if (hoveredIcon === 1) {
+                    icon2torial.setState('select');
+                } else if (hoveredIcon === 2) {
+                    iconObituary.setState('select');
+                }
+            }
+        }
+        
+        function handleIconClick() {
+            if (hoveredIcon === 1) {
+                icon2torial.setState('confirm');
+                clickedIcon = 1;
+                playSound(monitorClickSound);
+                playSound(sound2torial);
+                setTimeout(() => {
+                    showLayoutOptions(songs[0]);
+                }, 1000);
+            } else if (hoveredIcon === 2) {
+                iconObituary.setState('confirm');
+                clickedIcon = 2;
+                playSound(monitorClickSound);
+                playSound(soundObituary);
+                setTimeout(() => {
+                    showLayoutOptions(songs[1]);
+                }, 1000);
+            }
+        }
+        
+        function showLayoutOptions(song) {
+            const layouts = song.layouts;
+            const layoutKeys = Object.keys(layouts).filter(key => layouts[key]); // Solo mostrar layouts con URL
+            
+            if (layoutKeys.length === 0) {
+                alert('No hay layouts disponibles para esta canción.');
+                return;
+            }
+            
+            if (layoutKeys.length === 1) {
+                // Si solo hay un layout disponible, abrir directamente
+                const url = layouts[layoutKeys[0]];
+                if (url) window.open(url, '_blank');
+                return;
+            }
+            
+            // Mostrar modal con opciones
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                font-family: monospace;
+            `;
+            
+            const title = document.createElement('h2');
+            title.textContent = `${song.name} - ${song.title}`;
+            title.style.cssText = `
+                color: #0ff;
+                margin-bottom: 30px;
+                font-size: 1.5rem;
+            `;
+            modal.appendChild(title);
+            
+            const subtitle = document.createElement('p');
+            subtitle.textContent = 'Selecciona un layout:';
+            subtitle.style.cssText = `
+                color: #fff;
+                margin-bottom: 20px;
+                font-size: 1rem;
+            `;
+            modal.appendChild(subtitle);
+            
+            layoutKeys.forEach(layoutName => {
+                const button = document.createElement('button');
+                button.textContent = layoutName.toUpperCase();
+                button.style.cssText = `
+                    background: rgba(0, 255, 255, 0.2);
+                    border: 2px solid #0ff;
+                    color: #0ff;
+                    padding: 15px 40px;
+                    margin: 10px;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    font-family: monospace;
+                    transition: all 0.3s;
+                `;
+                button.onmouseover = () => {
+                    button.style.background = 'rgba(0, 255, 255, 0.5)';
+                    button.style.transform = 'scale(1.1)';
+                };
+                button.onmouseout = () => {
+                    button.style.background = 'rgba(0, 255, 255, 0.2)';
+                    button.style.transform = 'scale(1)';
+                };
+                button.onclick = () => {
+                    const url = layouts[layoutName];
+                    if (url) window.open(url, '_blank');
+                    document.body.removeChild(modal);
+                };
+                modal.appendChild(button);
+            });
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'CERRAR';
+            closeButton.style.cssText = `
+                background: rgba(255, 0, 0, 0.2);
+                border: 2px solid #f00;
+                color: #f00;
+                padding: 10px 30px;
+                margin-top: 20px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: monospace;
+                transition: all 0.3s;
+            `;
+            closeButton.onmouseover = () => {
+                closeButton.style.background = 'rgba(255, 0, 0, 0.5)';
+            };
+            closeButton.onmouseout = () => {
+                closeButton.style.background = 'rgba(255, 0, 0, 0.2)';
+            };
+            closeButton.onclick = () => {
+                document.body.removeChild(modal);
+            };
+            modal.appendChild(closeButton);
+            
+            document.body.appendChild(modal);
+        }
+        
+        function handleResize() {
+            cursorCanvas.width = window.innerWidth;
+            cursorCanvas.height = window.innerHeight;
+        }
+        
+        function renderCursor() {
+            if (!isDesktop || !cursorAtlas || !cursorAtlas.loaded) return;
+            
+            cursorCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+            
+            let frameName = 'idle0000';
+            if (cursorState === 'idle') {
+                frameName = 'idle0000';
+            } else if (cursorState === 'hand') {
+                frameName = 'hand0000';
+            } else if (cursorState === 'waiting') {
+                frameName = `waiting000${cursorFrame}`;
+            }
+            
+            if (cursorAtlas.frames[frameName]) {
+                cursorAtlas.drawFrame(cursorCtx, frameName, mouseX, mouseY, 1);
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>

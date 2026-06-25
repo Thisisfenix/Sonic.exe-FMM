@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Illegal Instruction - Freeplay</title>
+    <link rel="icon" type="image/png" href="../../../images/logo_sonic_puto_exe.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            image-rendering: pixelated;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Contenedor con aspect ratio 16:9 con letterbox */
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Contenedor interno con aspect ratio 16:9 fijo */
+        .game-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 177.78vh; /* 16:9 - si la altura es el límite */
+            max-height: 56.25vw; /* 16:9 - si el ancho es el límite */
+            background: #000;
+        }
+        
+        /* En fullscreen, adaptarse al aspect ratio de la pantalla */
+        .game-container:fullscreen .game-inner,
+        .game-container:-webkit-full-screen .game-inner,
+        .game-container:-moz-full-screen .game-inner,
+        .game-container:-ms-fullscreen .game-inner {
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+
+        /* Contenedor de fondo estático que llena todo el game-container */
+        .bg-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-layer {
+            height: 100%;
+            width: auto;
+            display: block;
+            transform-origin: center;
+        }
+        
+        /* En fullscreen, estirar solo horizontalmente como plastilina */
+        .game-container:fullscreen .bg-layer,
+        .game-container:-webkit-full-screen .bg-layer,
+        .game-container:-moz-full-screen .bg-layer,
+        .game-container:-ms-fullscreen .bg-layer {
+            height: 100%;
+            width: auto;
+        }
+
+        /* Contenedor principal de arcade */
+        .arcade-screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        /* Pantalla superior - INFO */
+        .top-screen {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            z-index: 5;
+        }
+        
+        /* Contenedor de título y song */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            width: 100%;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .header-info > .cascade-text,
+        .header-info > .score-text {
+            flex: 0 0 auto;
+            z-index: 2;
+        }
+        
+        /* Logo y preview centrados */
+        .logo-preview-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+            width: 368px;
+            max-width: 22vw;
+        }
+
+        .cascade-text {
+            color: #ff0000;
+            font-size: clamp(0.8rem, 2.5vw, 1.8rem);
+            text-shadow: 3px 3px 0 #000;
+            letter-spacing: 3px;
+            text-align: left;
+            font-weight: bold;
+            margin-left: -30px;
+        }
+
+        .score-text {
+            color: #ff0000;
+            font-size: clamp(0.8rem, 2.5vw, 1.8rem);
+            text-shadow: 3px 3px 0 #000;
+            letter-spacing: 2px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .highscore-badge {
+            background: linear-gradient(135deg, #ff6600, #ffaa00);
+            border: 3px solid #ffff00;
+            border-radius: 50px;
+            padding: 6px 16px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .highscore-text {
+            color: #000;
+            font-size: clamp(0.4rem, 0.9vw, 0.7rem);
+            font-weight: bold;
+        }
+
+        .attraction-title {
+            color: #ffaa00;
+            font-size: clamp(0.5rem, 1.5vw, 1rem);
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* Preview de la canción (arcade screen) */
+        .song-preview {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            aspect-ratio: 16/9;
+            margin: 0 auto 10px;
+            background: #000;
+            border: 3px solid #00ffff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .song-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+
+        /* Personajes laterales en pantalla arcade */
+        .character {
+            position: absolute;
+            top: 22%;
+            width: clamp(70px, 10vw, 120px);
+            height: auto;
+            image-rendering: pixelated;
+            animation: characterIdle 1s ease-in-out infinite alternate;
+            z-index: 6;
+        }
+
+        .character.left {
+            left: 6%;
+        }
+
+        .character.right {
+            right: 6%;
+        }
+
+        @keyframes characterIdle {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        /* Box de información de canción */
+        .info-box {
+            background: rgba(100, 80, 0, 0.95);
+            border: 4px solid #ffaa00;
+            border-radius: 8px;
+            padding: 12px 20px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .song-info {
+            text-align: left;
+            width: 100%;
+        }
+
+        .song-name {
+            color: #ffff00;
+            font-size: clamp(0.8rem, 2.2vw, 2rem);
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .song-artist {
+            color: #fff;
+            font-size: clamp(0.45rem, 1.2vw, 0.9rem);
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* BF JUGABLE en el suelo */
+        .bf-character {
+            position: absolute;
+            bottom: 15%;
+            left: 20%;
+            width: clamp(90px, 14vw, 160px);
+            height: clamp(90px, 14vw, 160px);
+            object-fit: contain;
+            image-rendering: pixelated;
+            z-index: 10;
+        }
+
+        /* Instrucciones abajo */
+        .instructions {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: clamp(0.35rem, 0.8vw, 0.6rem);
+            text-shadow: 2px 2px 0 #000;
+            text-align: center;
+            background: rgba(0,0,0,0.8);
+            padding: 6px 12px;
+            border-radius: 4px;
+            z-index: 5;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        /* Score en esquina superior derecha - REMOVIDO */
+
+        /* Botón volver */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 100;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: rgba(255,0,0,0.2);
+            box-shadow: 0 0 10px #ff0000;
+        }
+        
+        /* Botón fullscreen */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 100;
+            transition: all 0.2s;
+        }
+        .fullscreen-btn:hover {
+            background: rgba(0,255,0,0.2);
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Controles móviles - Gamepad estilo Sonic */
+        .mobile-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: none;
+            gap: 0;
+            align-items: flex-end;
+            justify-content: space-between;
+            z-index: 50;
+            padding: 0 30px;
+        }
+
+        /* D-Pad circular estilo Sonic */
+        .dpad {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(30,30,30,0.95) 0%, rgba(0,0,0,0.9) 100%);
+            border-radius: 50%;
+            border: 4px solid #444;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 -4px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dpad-inner {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0;
+        }
+
+        .dpad-btn {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 2px solid #555;
+            color: #00d4ff;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s;
+            touch-action: none;
+            text-shadow: 0 0 8px #00d4ff;
+            font-weight: bold;
+        }
+
+        .dpad-btn:active {
+            background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
+            color: #000;
+            text-shadow: 0 0 10px #00ffff;
+            transform: scale(0.9);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .dpad-up { 
+            grid-column: 2; 
+            grid-row: 1; 
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        .dpad-left { 
+            grid-column: 1; 
+            grid-row: 2; 
+            border-radius: 8px 0 0 8px;
+            border-right: none;
+        }
+        
+        .dpad-center { 
+            grid-column: 2; 
+            grid-row: 2; 
+            background: radial-gradient(circle, #444 0%, #222 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            color: #666;
+            font-size: 1rem;
+            border: 2px solid #333;
+        }
+        
+        .dpad-right { 
+            grid-column: 3; 
+            grid-row: 2; 
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
+        
+        .dpad-down { 
+            grid-column: 2; 
+            grid-row: 3; 
+            border-radius: 0 0 8px 8px;
+            border-top: none;
+        }
+
+        /* Contenedor de botones de acción */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Botón JUMP estilo Sonic (amarillo/dorado) */
+        .jump-btn {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, #ffdd44 0%, #ffaa00 100%);
+            border: 6px solid #ffee88;
+            border-radius: 50%;
+            color: #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 #cc8800, 0 8px 20px rgba(255,170,0,0.4);
+            touch-action: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .jump-btn:active {
+            background: radial-gradient(circle, #ffee66 0%, #ffcc22 100%);
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #cc8800, 0 4px 10px rgba(255,170,0,0.6);
+        }
+
+        /* Botón SELECT estilo Sonic (rojo) */
+        .action-btn {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, #ff4444 0%, #cc0000 100%);
+            border: 6px solid #ff8888;
+            border-radius: 50%;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 #880000, 0 8px 20px rgba(255,0,0,0.4);
+            touch-action: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+
+        .action-btn:active {
+            background: radial-gradient(circle, #ff6666 0%, #ff2222 100%);
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #880000, 0 4px 10px rgba(255,0,0,0.6);
+        }
+
+        /* Mostrar controles en móvil */
+        @media (max-width: 768px), (hover: none) {
+            .mobile-controls {
+                display: flex;
+            }
+            .instructions {
+                display: none;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: #ff0000;
+            font-size: 1rem;
+            gap: 20px;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #333;
+            border-top-color: #ff0000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-screen { 
+                width: 95%;
+            }
+            
+            .cascade-text {
+                font-size: clamp(0.6rem, 2vw, 0.9rem);
+                letter-spacing: 2px;
+                margin-left: 0;
+            }
+            
+            .score-text {
+                font-size: clamp(0.6rem, 2vw, 0.9rem);
+            }
+            
+            .song-preview {
+                max-width: 100%;
+            }
+            
+            .bf-character { 
+                width: clamp(70px, 18vw, 120px);
+                height: clamp(70px, 18vw, 120px);
+            }
+            
+            .back-btn, .fullscreen-btn {
+                font-size: 0.5rem;
+                padding: 8px 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .top-screen {
+                width: 98%;
+            }
+            
+            .header-info {
+                gap: 10px;
+            }
+            
+            .cascade-text {
+                font-size: clamp(0.5rem, 1.8vw, 0.8rem);
+                letter-spacing: 1px;
+                margin-left: 0;
+            }
+            
+            .score-text {
+                font-size: clamp(0.5rem, 1.8vw, 0.8rem);
+            }
+            
+            .song-preview {
+                border: 2px solid #00ffff;
+            }
+            
+            .bf-character {
+                width: clamp(60px, 16vw, 100px);
+                height: clamp(60px, 16vw, 100px);
+            }
+            
+            .character {
+                width: clamp(50px, 8vw, 80px);
+            }
+            
+            .back-btn, .fullscreen-btn {
+                font-size: 0.45rem;
+                padding: 6px 10px;
+            }
+            
+            /* Ajustar controles móviles para pantallas pequeñas */
+            .mobile-controls {
+                padding: 0 15px;
+            }
+            
+            .dpad {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .dpad-inner {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .dpad-btn {
+                font-size: 1.5rem;
+            }
+            
+            .jump-btn, .action-btn {
+                width: 75px;
+                height: 75px;
+                font-size: 0.6rem;
+            }
+            
+            .jump-btn {
+                box-shadow: 0 5px 0 #cc8800, 0 6px 15px rgba(255,170,0,0.4);
+            }
+            
+            .action-btn {
+                box-shadow: 0 5px 0 #880000, 0 6px 15px rgba(255,0,0,0.4);
+            }
+            
+            .action-buttons {
+                gap: 10px;
+            }
+        }
+        
+        /* Pantallas muy pequeñas */
+        @media (max-width: 360px) {
+            .dpad {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .dpad-inner {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .dpad-btn {
+                font-size: 1.3rem;
+            }
+            
+            .jump-btn, .action-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 0.5rem;
+            }
+            
+            .bf-character {
+                width: clamp(50px, 15vw, 85px);
+                height: clamp(50px, 15vw, 85px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón volver -->
+    <a href="../../../freeplay.html" class="back-btn">◀ BACK</a>
+    
+    <!-- Botón fullscreen -->
+    <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
+
+    <!-- Contenedor con aspect ratio 16:9 -->
+    <div class="game-container">
+        <div class="game-inner">
+        <!-- Fondo estático -->
+        <div class="bg-wrapper">
+            <img class="bg-layer" src="Assets/Images/Frame.png" alt="Arcade Frame">
+        </div>
+
+        <!-- Pantalla arcade -->
+        <div class="arcade-screen" id="arcadeScreen">
+        <!-- Pantalla superior -->
+        <div class="top-screen">
+            <!-- Título y Song Number -->
+            <div class="header-info">
+                <div class="cascade-text" id="songNameTop">BREAKOUT</div>
+                <div class="score-text">SONG: <span id="currentIndex">1</span></div>
+            </div>
+            
+            <!-- Logo y Preview centrados -->
+            <div class="logo-preview-container">
+                <img src="Assets/Images/logo.png" alt="Attraction Information" style="width: 100%; height: auto; image-rendering: pixelated;">
+                
+                <!-- Preview de arcade -->
+                <div class="song-preview" id="songPreview" style="width: 100%;">
+                    <!-- Aquí irían los previews animados si los tienes -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Personajes laterales -->
+        <img class="character left" id="charLeft" src="Assets/Characters/duke-left.png" alt="Character" onerror="this.style.display='none'">
+        <img class="character right" id="charRight" src="Assets/Characters/bf-right.png" alt="Boyfriend" onerror="this.style.display='none'">
+
+        <!-- BF jugable en el suelo -->
+        <img class="bf-character" id="bfCharacter" src="Assets/BoyfriendPlayable/IIFreeplayBFIdle.webp" alt="Boyfriend">
+
+        <!-- Instrucciones PC -->
+        <div class="instructions">
+            A / D TO CHANGE SONG • ← → ARROWS TO MOVE • SPACE TO JUMP<br>
+            ENTER TO SELECT • M TO SWITCH MUSIC • F11 FULLSCREEN • ESC TO EXIT
+        </div>
+    </div>
+    <!-- Fin del game-container -->
+    </div>
+    </div>
+
+    <!-- Controles móviles -->
+    <div class="mobile-controls">
+        <!-- D-Pad estilo Sonic -->
+        <div class="dpad">
+            <div class="dpad-inner">
+                <div></div>
+                <div class="dpad-btn dpad-up" id="btnUp">▲</div>
+                <div></div>
+                <div class="dpad-btn dpad-left" id="btnLeft">◀</div>
+                <div class="dpad-center">●</div>
+                <div class="dpad-btn dpad-right" id="btnRight">▶</div>
+                <div></div>
+                <div class="dpad-btn dpad-down" id="btnDown">▼</div>
+                <div></div>
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button class="jump-btn" id="btnJump">JUMP</button>
+            <button class="action-btn" id="btnSelect">SELECT</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>LOADING...</span>
+    </div>
+
+    <!-- Audio -->
+    <audio id="scrollSound" src="../../../sounds/pauseScrollMenu.ogg"></audio>
+    <audio id="confirmSound" src="../../../sounds/confirmMenu.ogg"></audio>
+    <audio id="bgMusic1" src="Assets/Music/freeplayTheme.ogg" loop></audio>
+    <audio id="bgMusic2" src="Assets/Music/freeplayThemeDuccly.ogg" loop></audio>
+
+    <script src="../../../Assets/js/christmas-lite.js"></script>
+    <script>
+        // ── DATOS DE CANCIONES ──────────────────────────────────────
+        const songs = [
+            {
+                name: "BREAKOUT",
+                artist: "Duke",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k11s7mage2d4cdr4nztky98j/releases/01k11s7mare0wgfc2t2rac9jf1",
+                logo: "Assets/LOGOS/breakout.png"
+            },
+            {
+                name: "SOULLESS ENDEAVOR",
+                artist: "Duke",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01jed43291dt8b2rszb8f7zjfx/releases/01k12940kc4rayk0a3hkkkcdc0",
+                logo: "Assets/LOGOS/soulless-endeavors.png"
+            },
+            {
+                name: "FINAL FRONTIER",
+                artist: "Duke",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k13zww342n79qqpwj89jyxhv/releases/01k13zww37j1vmnsrftt589khe",
+                logo: "Assets/LOGOS/final-frontier.png"
+            },
+            {
+                name: "MY HORIZON",
+                artist: "Chaotix",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k16smr1xtx5zqh75mkkrtnh2/releases/01k16smr20v9tdf95qz841zhrt",
+                logo: "Assets/LOGOS/my-horizon.png"
+            },
+            {
+                name: "FOUND YOU",
+                artist: "Normal CD",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k19d0t61tsjw5cyqfpd40zw4/releases/01k19d0t6akdymvd3zaax2hg9c",
+                logo: "Assets/LOGOS/found-you.png"
+            },
+            {
+                name: "MALEDICTION",
+                artist: "Curse",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k19drbdg6nh2jxevm8nx8a78/releases/01k19drbe6jkef00s6gbp1vnsc",
+                logo: "Assets/LOGOS/malediction.png"
+            },
+            {
+                name: "PERDITION",
+                artist: "Apollyon",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k19tvrrmdaj2nggw3nfz2vwt/releases/01k19tvrs4v9xr7f79s405afjk",
+                logo: "Assets/LOGOS/PlaceholderFreePlay.webp"
+            },
+            {
+                name: "ENDLESS FOREST MIX",
+                artist: "Majin",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k1e239625x9cpgez4xtvvc7r/releases/01k1e23965bycpsbsfd2qx477m",
+                logo: "Assets/LOGOS/EndlessFreePlay29.webp"
+            },
+            {
+                name: "OUR HORIZON",
+                artist: "Chaotix",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k1cg2qyt4wakykspfntm3hp3/releases/01k1cg2qyye0km71t905cdqwn5",
+                logo: "Assets/LOGOS/Our-horizonFreePlay.webp"
+            },
+            {
+                name: "COLOR CRASH",
+                artist: "Wechidna & Mighty",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k25tkccbdp53trdxq2k32vtx/releases/01k25tkccgbf2pz76rr1pnsvsy",
+                logo: "Assets/LOGOS/IIColorCrashFPportrait.webp"
+            },
+            {
+                name: "MY HORIZON (WECHIDNA)",
+                artist: "Wechidna",
+                url: "https://funkymaker.kingamescreator.com/_app/levels/01k1v7r7zbgajq5cz3nr4n6vxc/releases/01k1v7r7zjp2c6xskmvtd17wyc",
+                logo: "Assets/LOGOS/PlaceholderFreePlay.webp"
+            }
+        ];
+
+        // ── DOM ──────────────────────────────────────────────────────
+        const songNameTop = document.getElementById('songNameTop');
+        const currentIndexEl = document.getElementById('currentIndex');
+        const bfCharacter = document.getElementById('bfCharacter');
+        const scrollSound = document.getElementById('scrollSound');
+        const confirmSound = document.getElementById('confirmSound');
+        const bgMusic1 = document.getElementById('bgMusic1');
+        const bgMusic2 = document.getElementById('bgMusic2');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        let currentMusicIndex = 0;
+        const bgMusicTracks = [bgMusic1, bgMusic2];
+        let currentBgMusic = bgMusicTracks[0];
+        
+        // Botones móviles
+        const btnUp = document.getElementById('btnUp');
+        const btnDown = document.getElementById('btnDown');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnJump = document.getElementById('btnJump');
+        const btnSelect = document.getElementById('btnSelect');
+
+        let currentIndex = 0;
+        let bfState = 'idle'; // idle, walk, run, jump
+        let isMovingLeft = false;
+        let isMovingRight = false;
+        let velocity = 0;
+        let lastTapTime = 0;
+        const DOUBLE_TAP_DELAY = 300; // ms
+        
+        // Variables de salto más alto
+        let isJumping = false;
+        let jumpVelocity = 0;
+        let bfBottomPos = 15; // posición bottom en %
+        const GRAVITY = 0.13; // Gravedad más suave
+        const JUMP_FORCE = -4.5; // Salto más bajo
+        const MAX_SPEED = 0.8; // Velocidad máxima
+        const ACCELERATION = 0.004; // Aceleración gradual
+        const FRICTION = 0.88; // Fricción media (más derrape que antes)
+
+        // Sprites
+        const sprites = {
+            idle: 'Assets/BoyfriendPlayable/IIFreeplayBFIdle.webp',
+            walk: 'Assets/BoyfriendPlayable/IIFreeplayBFWalk.webp',
+            run: 'Assets/BoyfriendPlayable/IIFreeplayBFRun.webp',
+            jump: 'Assets/BoyfriendPlayable/IIFreeplayBFJump.webp'
+        };
+
+        // ── FUNCIONES BF ─────────────────────────────────────────────
+        function updateBFSprite(state) {
+            if (bfState !== state) {
+                bfState = state;
+                bfCharacter.src = sprites[state];
+            }
+        }
+
+        function jump() {
+            if (!isJumping) {
+                isJumping = true;
+                jumpVelocity = JUMP_FORCE;
+                playSound(scrollSound);
+            }
+        }
+
+        function updateBFPosition() {
+            // Movimiento horizontal con aceleración gradual
+            if (isMovingLeft) {
+                velocity = Math.max(velocity - ACCELERATION, -MAX_SPEED);
+                bfCharacter.style.transform = `scaleX(-1)`;
+            } else if (isMovingRight) {
+                velocity = Math.min(velocity + ACCELERATION, MAX_SPEED);
+                bfCharacter.style.transform = `scaleX(1)`;
+            } else {
+                // Fricción balanceada (derrapa un poco)
+                velocity *= FRICTION;
+                // Detener completamente si es muy lento
+                if (Math.abs(velocity) < 0.005) {
+                    velocity = 0;
+                }
+            }
+
+            // Actualizar posición horizontal - con margen de seguridad en ambos lados
+            const currentLeft = parseFloat(bfCharacter.style.left) || 20;
+            const bfWidth = bfCharacter.offsetWidth;
+            const containerWidth = document.querySelector('.game-inner').offsetWidth;
+            
+            // Calcular límites dinámicos con márgenes iguales a ambos lados
+            const marginPercent = 2; // 2% de margen en cada lado
+            const minLeft = marginPercent;
+            const maxLeft = ((containerWidth - bfWidth) / containerWidth) * 100 - marginPercent;
+            
+            const newLeft = Math.max(minLeft, Math.min(maxLeft, currentLeft + velocity));
+            bfCharacter.style.left = newLeft + '%';
+
+            // Física de salto más alto
+            if (isJumping) {
+                jumpVelocity += GRAVITY;
+                bfBottomPos -= jumpVelocity;
+                
+                // Colisión con el suelo
+                if (bfBottomPos <= 15) {
+                    bfBottomPos = 15;
+                    isJumping = false;
+                    jumpVelocity = 0;
+                }
+                
+                bfCharacter.style.bottom = bfBottomPos + '%';
+            }
+
+            // Actualizar sprite según velocidad
+            const absVelocity = Math.abs(velocity);
+            if (isJumping) {
+                updateBFSprite('jump');
+            } else if (absVelocity > 0.5) {
+                updateBFSprite('run');
+            } else if (absVelocity > 0.08) {
+                updateBFSprite('walk');
+            } else {
+                updateBFSprite('idle');
+            }
+
+            requestAnimationFrame(updateBFPosition);
+        }
+
+        // ── FUNCIONES CANCIONES ──────────────────────────────────────
+        function showSong(index) {
+            const song = songs[index];
+            songNameTop.textContent = song.name;
+            currentIndexEl.textContent = index + 1;
+            
+            // Actualizar logo en el preview box
+            const songPreview = document.getElementById('songPreview');
+            if (song.logo) {
+                songPreview.innerHTML = `<img src="${song.logo}" alt="${song.name} Logo" style="width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated;">`;
+            } else {
+                songPreview.innerHTML = ''; // Vacío si no hay logo
+            }
+            
+            songNameTop.style.animation = 'none';
+            setTimeout(() => {
+                songNameTop.style.animation = 'pulse 0.5s ease';
+            }, 10);
+            
+            playSound(scrollSound);
+        }
+
+        function navigate(direction) {
+            currentIndex = (currentIndex + direction + songs.length) % songs.length;
+            showSong(currentIndex);
+        }
+
+        function playSong() {
+            const song = songs[currentIndex];
+            if (!song.url) {
+                alert('Esta canción no está disponible.');
+                return;
+            }
+            
+            playSound(confirmSound);
+            loadingOverlay.classList.add('active');
+            
+            setTimeout(() => {
+                window.location.href = song.url;
+            }, 800);
+        }
+
+        function playSound(el) {
+            if (!el) return;
+            el.currentTime = 0;
+            el.play().catch(() => {});
+        }
+
+        function enableAudio() {
+            currentBgMusic.volume = 0.5;
+            currentBgMusic.play().catch(() => {});
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+        }
+        
+        function switchMusic() {
+            // Guardar tiempo actual para sincronización
+            const currentTime = currentBgMusic.currentTime;
+            
+            // Detener música actual
+            currentBgMusic.pause();
+            currentBgMusic.currentTime = 0;
+            
+            // Cambiar a la siguiente música
+            currentMusicIndex = (currentMusicIndex + 1) % bgMusicTracks.length;
+            currentBgMusic = bgMusicTracks[currentMusicIndex];
+            
+            // Reproducir nueva música
+            currentBgMusic.volume = 0.5;
+            currentBgMusic.currentTime = 0;
+            currentBgMusic.play().catch(() => {});
+            
+            playSound(scrollSound);
+        }
+
+        // ── EVENT LISTENERS PC ───────────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            // A/D para cambiar canciones
+            if (e.key === 'a' || e.key === 'A') {
+                navigate(-1);
+                enableAudio();
+            }
+            if (e.key === 'd' || e.key === 'D') {
+                navigate(1);
+                enableAudio();
+            }
+            
+            // Flechas para mover BF
+            if (e.key === 'ArrowLeft') {
+                isMovingLeft = true;
+                enableAudio();
+            }
+            if (e.key === 'ArrowRight') {
+                isMovingRight = true;
+                enableAudio();
+            }
+            
+            // Space para saltar
+            if (e.key === ' ') {
+                e.preventDefault();
+                jump();
+                enableAudio();
+            }
+            
+            // Enter para seleccionar
+            if (e.key === 'Enter') {
+                playSong();
+                enableAudio();
+            }
+            
+            // M para cambiar música de fondo
+            if (e.key === 'm' || e.key === 'M') {
+                switchMusic();
+            }
+            
+            // F11 para fullscreen
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+            
+            // ESC para salir
+            if (e.key === 'Escape') {
+                // Si está en fullscreen, salir del fullscreen
+                if (document.fullscreenElement || document.webkitFullscreenElement || 
+                    document.mozFullScreenElement || document.msFullscreenElement) {
+                    toggleFullscreen();
+                } else {
+                    // Si no está en fullscreen, volver al freeplay
+                    window.location.href = '../../../freeplay.html';
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') {
+                isMovingLeft = false;
+            }
+            if (e.key === 'ArrowRight') {
+                isMovingRight = false;
+            }
+        });
+
+        // ── EVENT LISTENERS MÓVIL ────────────────────────────────────
+        // D-Pad arriba (cambiar canción anterior)
+        btnUp.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            navigate(-1);
+            enableAudio();
+        });
+        
+        // D-Pad abajo (cambiar canción siguiente)
+        btnDown.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            navigate(1);
+            enableAudio();
+        });
+        
+        // D-Pad izquierda (mover BF)
+        btnLeft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isMovingLeft = true;
+            enableAudio();
+        });
+        btnLeft.addEventListener('touchend', () => {
+            isMovingLeft = false;
+        });
+
+        // D-Pad derecha (mover BF)
+        btnRight.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isMovingRight = true;
+            enableAudio();
+        });
+        btnRight.addEventListener('touchend', () => {
+            isMovingRight = false;
+        });
+
+        // Botón JUMP
+        btnJump.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+            enableAudio();
+        });
+
+        // Botón SELECT (doble tap para confirmar)
+        btnSelect.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const currentTime = Date.now();
+            if (currentTime - lastTapTime < DOUBLE_TAP_DELAY) {
+                // Doble tap detectado
+                playSong();
+            } else {
+                // Primer tap - visual feedback
+                btnSelect.style.background = 'radial-gradient(circle, #ff6666 0%, #ff2222 100%)';
+                btnSelect.textContent = 'TAP AGAIN';
+                setTimeout(() => {
+                    btnSelect.style.background = '';
+                    btnSelect.textContent = 'SELECT';
+                }, DOUBLE_TAP_DELAY);
+            }
+            lastTapTime = currentTime;
+            enableAudio();
+        });
+
+        // Audio
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+
+        // ── INIT ─────────────────────────────────────────────────────
+        showSong(0);
+        updateBFPosition();
+        
+        // ── STRETCH BACKGROUND HORIZONTALLY ──────────────────────────
+        function stretchBackground() {
+            const bgLayer = document.querySelector('.bg-layer');
+            const container = document.querySelector('.game-inner');
+            
+            if (!bgLayer || !container) return;
+            
+            // Obtener dimensiones naturales de la imagen
+            const img = new Image();
+            img.src = bgLayer.src;
+            
+            img.onload = function() {
+                const naturalWidth = this.naturalWidth;
+                const naturalHeight = this.naturalHeight;
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                
+                // Calcular el scale necesario para llenar el ancho
+                const heightScale = containerHeight / naturalHeight;
+                const widthAfterHeightScale = naturalWidth * heightScale;
+                const scaleX = containerWidth / widthAfterHeightScale;
+                
+                // Aplicar solo el scaleX (estiramiento horizontal como plastilina)
+                bgLayer.style.transform = `scaleX(${scaleX})`;
+            };
+            
+            // Si la imagen ya está cargada
+            if (bgLayer.complete) {
+                const naturalWidth = bgLayer.naturalWidth;
+                const naturalHeight = bgLayer.naturalHeight;
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                
+                const heightScale = containerHeight / naturalHeight;
+                const widthAfterHeightScale = naturalWidth * heightScale;
+                const scaleX = containerWidth / widthAfterHeightScale;
+                
+                bgLayer.style.transform = `scaleX(${scaleX})`;
+            }
+        }
+        
+        // Ejecutar al cargar y al cambiar tamaño
+        stretchBackground();
+        window.addEventListener('resize', stretchBackground);
+        
+        // También al entrar/salir de fullscreen
+        document.addEventListener('fullscreenchange', stretchBackground);
+        document.addEventListener('webkitfullscreenchange', stretchBackground);
+        document.addEventListener('mozfullscreenchange', stretchBackground);
+        document.addEventListener('msfullscreenchange', stretchBackground);
+        
+        // ── FULLSCREEN ───────────────────────────────────────────────
+        function toggleFullscreen() {
+            const container = document.querySelector('.game-container');
+            
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && !document.msFullscreenElement) {
+                // Entrar a fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            } else {
+                // Salir de fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+        
+        // Actualizar texto del botón al cambiar fullscreen
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+        
+        function updateFullscreenButton() {
+            const btn = document.getElementById('fullscreenBtn');
+            if (document.fullscreenElement || document.webkitFullscreenElement || 
+                document.mozFullScreenElement || document.msFullscreenElement) {
+                btn.textContent = '⛶ EXIT FULLSCREEN';
+            } else {
+                btn.textContent = '⛶ FULLSCREEN';
+            }
+        }
+    </script>
+</body>
+</html>

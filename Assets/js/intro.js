@@ -1,6 +1,6 @@
 (() => {
     const STORAGE_KEY = 'sonicExeLastVisit';
-    const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+    const COOLDOWN_MS = 2 * 60 * 60 * 1000; // 2 horas
 
     const now = Date.now();
     const last = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
