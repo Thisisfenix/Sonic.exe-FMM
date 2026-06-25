@@ -9,28 +9,26 @@
         {
           "title": "🎮 NUEVO: FREEPLAY VS SONIC (REWRITE)",
           "items": [
-            "🎨 **Estilo Sonic CD DATA SELECT:** Diseño inspirado en el menú clásico de Sonic CD.",
-            "🖼️ **2 canciones disponibles:** Thriller Gen (Normal/Legacy) y Trinity.",
-            "⚡ **Marco amarillo y blanco:** Marcos decorativos que aparecen al seleccionar.",
-            "🎯 **Flechas verticales:** Flechas rojas alargadas aparecen en la canción seleccionada.",
-            "👾 **BF animado:** Boyfriend aparece abajo cuando seleccionas una canción.",
-            "📺 **Estática animada:** Las canciones no seleccionadas tienen efecto de estática encima.",
-            "🎵 **Música de fondo:** freakyMenu.ogg suena en loop automáticamente.",
-            "🔊 **Sonido de selección:** Se reproduce selectSong.ogg al confirmar.",
-            "🎭 **Selección de variantes:** Thriller Gen muestra un menú para elegir entre Normal y Legacy.",
-            "☁️ **Nubes animadas:** Fondo con nubes que se mueven horizontalmente.",
-            "✨ **Título DATA SELECT:** Texto pixelado centrado con el estilo de Sonic CD.",
-            "🎨 **Sprites sin blur:** Todos los elementos pixelados se ven nítidos sin difuminado.",
-            "⌨️ **Navegación con teclado:** Flechas para moverse, Enter para confirmar, ESC para cancelar."
+            "🎨 **Menú estilo Sonic CD:** Diseño parecido al juego original de Sonic CD.",
+            "🖼️ **2 canciones:** Thriller Gen (con 2 versiones para elegir) y Trinity.",
+            "⚡ **Marcos decorativos:** Los cuadros de las canciones tienen marcos amarillos y blancos.",
+            "🎯 **Flechas grandes:** Aparecen flechas rojas en la canción que selecciones.",
+            "👾 **Boyfriend animado:** BF aparece debajo de la canción seleccionada.",
+            "📺 **Efecto de estática:** Las canciones que NO están seleccionadas tienen estática encima.",
+            "🎵 **Música de fondo:** Suena música automáticamente mientras navegas.",
+            "🔊 **Sonidos:** Cada vez que confirmas una canción suena un efecto especial.",
+            "☁️ **Nubes en movimiento:** El fondo tiene nubes que se mueven de lado a lado.",
+            "✨ **Título pixelado:** El texto de DATA SELECT se ve como en el juego original.",
+            "⌨️ **Control con teclado:** Puedes usar las flechas y Enter para navegar."
           ]
         },
         {
           "title": "🆕 NUEVO: BIKINI HORRORS (PRÓXIMAMENTE)",
           "items": [
-            "🚧 **Coming Soon:** Bikini Horrors agregado al freeplay principal como placeholder.",
-            "💡 **Modal informativo:** Al seleccionarlo aparece un mensaje de \"COMING SOON\".",
-            "🎨 **Logo animado:** Tiene su propio logo en formato webp.",
-            "⏳ **En desarrollo:** El mod estará disponible en futuras actualizaciones."
+            "🚧 **Próximamente:** Bikini Horrors está en el freeplay pero aún no se puede jugar.",
+            "💡 **Mensaje especial:** Si lo seleccionas, aparece un mensaje diciendo que está en desarrollo.",
+            "🎨 **Tiene su logo:** Ya puedes ver el logo del mod en el menú.",
+            "⏳ **En camino:** El mod estará listo en futuras actualizaciones."
           ]
         },
         {
@@ -82,68 +80,68 @@
         {
           "title": "💻 NUEVO: FREEPLAY SONIC LEGACY",
           "items": [
-            "🖥️ **Estilo escritorio:** Diseño que simula un escritorio de computadora retro.",
-            "📺 **Monitor interactivo:** Un monitor grande en el centro que muestra los iconos de las canciones.",
-            "🎨 **Iconos GIF animados:** Cada canción tiene 4 animaciones: loop (espera), select (al pasar el mouse), selectloop (mientras está seleccionado), y confirm (al hacer click).",
-            "🎯 **2 niveles disponibles:** 2torial (Sonic The Hedgehog) y FREE 4 ME (Sonic the Hedgehog 2011X).",
-            "🖱️ **Cursor personalizado:** Cursor especial que cambia según lo que estés haciendo (idle, hand, waiting).",
-            "🎵 **Sonidos interactivos:** Música de fondo, sonidos al hacer click, y música especial para cada nivel.",
-            "🎭 **Boyfriend animado:** BF aparece en el centro y sigue el movimiento del mouse mirando izquierda o derecha.",
-            "🖼️ **Banners dinámicos:** Al pasar el mouse sobre un icono, aparece su banner correspondiente.",
-            "⏳ **Pantalla de carga:** Pantalla con barra de progreso mientras se cargan todos los GIFs.",
-            "🔗 **Múltiples versiones:** Cada nivel puede tener versión vertical y horizontal para elegir.",
-            "💾 **Sistema de selección:** Al hacer click, aparece un menú elegante para elegir entre las versiones disponibles.",
-            "📱 **Solo escritorio:** Diseñado exclusivamente para computadoras, sin cursor personalizado en móviles."
+            "🖥️ **Escritorio retro:** Parece un escritorio de computadora antigua.",
+            "📺 **Monitor grande:** Todo se ve dentro de un monitor en el centro.",
+            "🎨 **Iconos animados:** Cada canción tiene su icono que se mueve al pasar el mouse.",
+            "🎯 **2 canciones:** 2torial (Sonic 1) y FREE 4 ME (Sonic 2011X).",
+            "🖱️ **Cursor especial:** El cursor cambia de forma según lo que hagas.",
+            "🎵 **Sonidos:** Música de fondo y efectos al hacer click.",
+            "🎭 **Boyfriend te sigue:** BF aparece en el centro y mira hacia donde mueves el mouse.",
+            "🖼️ **Banners:** Al pasar el mouse sobre un icono, aparece su imagen grande.",
+            "⏳ **Pantalla de carga:** Barra de carga mientras se prepara todo.",
+            "🔗 **Varias versiones:** Algunas canciones tienen versión vertical y horizontal.",
+            "💾 **Menú de selección:** Al hacer click, eliges qué versión quieres jugar.",
+            "📱 **Solo en PC:** Este freeplay está hecho para computadoras."
           ]
         },
         {
           "title": "🎮 REDISEÑO COMPLETO: GALERÍA 3D DE MODS",
           "items": [
-            "🎠 **Galería giratoria:** El freeplay principal ahora es una galería 3D circular donde los mods giran.",
-            "🔄 **Logos que giran:** Los logos de los mods giran constantemente como si flotaran.",
-            "✨ **Textos flotantes:** El nombre del mod flota arriba y el número de canciones abajo, solo en el mod del centro.",
-            "🏷️ **Etiquetas con brillo:** Las etiquetas NUEVO/ACTUALIZADO/POPULAR ahora brillan más y están rotadas.",
-            "🌟 **Efecto de profundidad:** Los mods se ven en 3D con diferentes distancias, como una galería real.",
-            "↔️ **Mods a los lados:** Puedes ver los mods anteriores y siguientes a los lados, más pequeños y rotados.",
-            "👆 **Navegación fácil:** Toca los mods de los lados para moverte, toca el del centro para entrar.",
-            "⌨️ **Control con teclado:** Usa las flechas izquierda y derecha para cambiar de mod.",
-            "🎯 **Puntos indicadores:** Abajo hay puntos que muestran en qué mod estás.",
-            "🔘 **Botones grandes:** Los botones de anterior y siguiente son más grandes y brillan al pasar el mouse.",
-            "📱 **Perfecto en celular:** En móvil se adapta mostrando logos más pequeños y menos mods a los lados.",
-            "🔊 **Sonidos:** Suena al moverte entre mods y al seleccionar uno.",
-            "💫 **Movimiento suave:** Todo se mueve de forma fluida y sin saltos.",
-            "⭐ **Mod central destacado:** El mod del centro es más grande y tiene una sombra roja brillante.",
-            "⚡ **Siempre centrado:** Todo está perfectamente centrado en la pantalla.",
-            "🌈 **Efectos visuales:** Los logos tienen sombras y los de los lados se ven más transparentes."
+            "🎠 **Galería circular:** Los mods aparecen en un círculo que puedes girar.",
+            "🔄 **Logos girando:** Los logos de los mods giran como si flotaran.",
+            "✨ **Textos animados:** El nombre del mod aparece arriba y el número de canciones abajo.",
+            "🏷️ **Etiquetas brillantes:** Las etiquetas NUEVO/ACTUALIZADO/POPULAR brillan más.",
+            "🌟 **Vista 3D:** Los mods se ven en 3D con diferentes tamaños según su distancia.",
+            "↔️ **Mods a los lados:** Puedes ver los mods anteriores y siguientes más pequeños.",
+            "👆 **Fácil de usar:** Toca los mods de los lados para moverte, toca el del centro para entrar.",
+            "⌨️ **Teclado:** Usa las flechas del teclado para cambiar de mod.",
+            "🎯 **Puntos abajo:** Los puntos de abajo muestran en qué mod estás.",
+            "🔘 **Botones grandes:** Los botones de anterior y siguiente son más grandes.",
+            "📱 **Funciona en celular:** En móvil se adapta al tamaño de la pantalla.",
+            "🔊 **Sonidos:** Suena al moverte y al seleccionar un mod.",
+            "💫 **Animaciones suaves:** Todo se mueve sin saltos.",
+            "⭐ **Mod central:** El mod del centro es más grande y tiene sombra roja.",
+            "⚡ **Centrado perfecto:** Todo está perfectamente alineado en la pantalla."
           ]
         },
         {
           "title": "📊 CONTADOR DE CANCIONES AUTOMÁTICO",
           "items": [
-            "🔢 **Cuenta sola las canciones:** El contador se actualiza automáticamente sin hacer nada.",
-            "🎯 **5 mods listos:** Sonic.exe (7 canciones), Rerun (13 canciones), Sonic Legacy (2 canciones), Illegal Instruction (11 canciones), Fanon (11 canciones).",
-            "⚡ **Sin editar números:** Ya no tienes que escribir la cantidad de canciones a mano.",
-            "📈 **Muestra cuántas hay:** Siempre ves cuántas canciones hay disponibles.",
-            "🔄 **Actualización automática:** Si agregas canciones nuevas, el número cambia solo."
+            "🔢 **Se actualiza solo:** El contador se actualiza automáticamente.",
+            "🎯 **5 mods listos:** Sonic.exe (8 canciones), Rerun (13 canciones), Sonic Legacy (2 canciones), Illegal Instruction (11 canciones), Fanon (11 canciones).",
+            "⚡ **No hay que editar nada:** Ya no tienes que cambiar los números a mano.",
+            "📈 **Siempre actualizado:** Siempre ves cuántas canciones hay disponibles.",
+            "🔄 **Funciona automático:** Si se agregan canciones, el número cambia solo."
           ]
         },
         {
           "title": "🗂️ REORGANIZACIÓN DE CONTENIDO",
           "items": [
-            "🎵 **Extras expandido:** KindAndFair y Aftersh0ck movidos a Extras (16 canciones totales).",
+            "🎵 **Extras más grande:** Se agregaron más canciones a Extras (19 canciones totales).",
             "❌ **Spirit of Hell eliminado:** Su canción ahora está en Extras.",
             "❌ **Executable Mania eliminado:** Su canción ahora está en Extras.",
-            "🎯 **Mods principales:** Solo quedan los mods con contenido significativo.",
-            "📁 **Mejor organización:** Carousel más limpio con 8 mods en lugar de 10."
+            "❌ **Hit Single eliminado:** Sus canciones ahora están en Extras.",
+            "🎯 **Más limpio:** Solo quedan los mods principales.",
+            "📁 **Mejor orden:** El menú está más organizado y limpio."
           ]
         },
         {
           "title": "🔄 ACTUALIZACIÓN: FREEPLAY FANON",
           "items": [
-            "🔗 **Get Sonked mejorado:** El link de la canción ahora lleva a la versión nueva.",
-            "🐛 **Limpieza de código:** Borramos partes repetidas para que funcione más rápido.",
-            "🎵 **Música de fondo:** Ahora suena música automáticamente a la mitad del volumen.",
-            "✨ **Carga más rápido:** Todo funciona más suave y veloz que antes."
+            "🔗 **Get Sonked mejorado:** La canción ahora tiene el link correcto.",
+            "🐛 **Código limpio:** Se borró código repetido para que cargue más rápido.",
+            "🎵 **Música de fondo:** Ahora suena música automáticamente.",
+            "✨ **Más rápido:** Todo funciona más suave y veloz."
           ]
         },
         {
@@ -169,22 +167,22 @@
         {
           "title": "📝 MEJORAS TÉCNICAS EN FREEPLAY",
           "items": [
-            "🗑️ **Limpieza:** Borramos código viejo que ya no servía para nada.",
-            "🎯 **Mejor orden:** Acomodamos mejor cómo aparecen los mods en la galería.",
-            "📊 **Números más grandes:** Los contadores de canciones se ven más claros.",
-            "🔄 **Movimiento suave:** Todo se desliza más rápido y sin trabarse.",
-            "📱 **Mejor en celular:** Arreglamos los tamaños para que se vea perfecto en móviles.",
-            "⚙️ **Carga más rápido:** La página abre más rápido y funciona mejor.",
-            "🎨 **Etiquetas bonitas:** Las etiquetas de NUEVO/ACTUALIZADO están mejor colocadas y se ven mejor."
+            "🗑️ **Código limpio:** Se borró código viejo que no servía.",
+            "🎯 **Mejor orden:** Los mods están mejor acomodados en la galería.",
+            "📊 **Números grandes:** Los contadores de canciones se ven más claros.",
+            "🔄 **Movimiento suave:** Todo se mueve más rápido y sin trabarse.",
+            "📱 **Mejor en celular:** Los tamaños se ajustan perfecto en móviles.",
+            "⚙️ **Carga más rápido:** La página abre más rápido.",
+            "🎨 **Etiquetas bonitas:** Las etiquetas NUEVO/ACTUALIZADO se ven mejor."
           ]
         },
         {
           "title": "🔧 ARREGLOS Y OPTIMIZACIONES",
           "items": [
-            "🎵 **Música del intro:** La música del menú ya no se activa durante el video de intro.",
-            "📱 **Click y toque:** El bug estaba en cualquier interacción, ahora solo se activa después del intro.",
-            "⚡ **Sound Test optimizado:** El Sound Test ahora carga más rápido y funciona mejor.",
-            "🎮 **Mejor rendimiento:** Se mejoraron los tiempos de carga en varias secciones."
+            "🎵 **Música del intro:** La música del menú ya no suena durante el video de intro.",
+            "📱 **Interacciones:** Ahora solo se activa después del intro.",
+            "⚡ **Sound Test:** Carga más rápido y funciona mejor.",
+            "🎮 **Mejor rendimiento:** Todo carga más rápido."
           ]
         }
       ]

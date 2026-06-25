@@ -32,8 +32,9 @@
 
         /* ── Flecha lateral ── */
         .arrow-btn {
-            position: absolute;
-            top: 15%;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
             width: 96px;
             height: 170px;
             cursor: pointer;
@@ -53,12 +54,12 @@
             filter: drop-shadow(0 0 6px #e8547a);
         }
 
-        .arrow-btn.left  { left: 26%; top: 15%; transform: none; }
-        .arrow-btn.right { right: 27.5%; top: 15%; transform: none; }
+        .arrow-btn.left  { left: 15%; }
+        .arrow-btn.right { right: 15%; }
 
         .arrow-btn:hover img  { filter: drop-shadow(0 0 14px #ff80a0) brightness(1.3); }
-        .arrow-btn.left:active  { transform: scale(0.9); }
-        .arrow-btn.right:active { transform: scale(0.9); }
+        .arrow-btn.left:active  { transform: translateY(-50%) scale(0.9); }
+        .arrow-btn.right:active { transform: translateY(-50%) scale(0.9); }
 
         /* ── Contenedor de la caja ── */
         .box-wrapper {
@@ -352,89 +353,140 @@
         /* ── Responsive Android/móvil ── */
         @media (max-width: 768px) {
 
-            /* Cajas full screen igual que PC */
+            /* Cajas MÁS GRANDES en móvil para que se vean mejor */
             .box-wrapper {
-                width: 100vw;
-                height: 56.25vw;
-                max-height: 100vh;
-                max-width: 177.78vh;
+                width: 140vw;
+                height: calc(140vw * 0.5625);
+                max-height: 140vh;
+                max-width: calc(140vh * 1.7778);
             }
 
-            /* Artwork más pequeño y reposicionado */
+            /* Artwork proporcional */
             .box-content {
-                left: 27%;
-                top: 11%;
-                width: 46%;
+                left: 29.5%;
+                top: 12%;
+                width: 40%;
                 height: 78%;
             }
 
             .mod-art {
-                width: 72%;
-                height: 30%;
+                width: 68%;
+                height: 32%;
             }
 
-            /* BF más pequeño */
+            /* Estática del mismo tamaño que el artwork */
+            .static-layer {
+                width: 68%;
+                height: 32%;
+            }
+
+            /* BF mismo tamaño proporcional */
             .bf-img {
-                width: clamp(70px, 18vw, 130px);
+                width: clamp(80px, 14vw, 180px);
             }
 
             .bf-layer {
-                bottom: 30%;
+                bottom: 33.5%;
             }
 
-            /* Flechas más pequeñas y pegadas a la caja */
+            /* Flechas fijas, no escalan con el wrapper */
             .arrow-btn {
-                width: 56px;
-                height: 100px;
-                top: 12%;
+                width: 80px;
+                height: 142px;
             }
 
-            .arrow-btn.left  { left: 22%; }
-            .arrow-btn.right { right: 22%; }
+            .arrow-btn.left  { left: 8%; }
+            .arrow-btn.right { right: 8%; }
 
-            /* Nombre del mod más pequeño */
+            /* Nombre del mod escalado */
             .mod-name-text {
-                font-size: clamp(0.7rem, 4vw, 1rem);
+                font-size: clamp(0.9rem, 3.5vw, 1.5rem);
+                letter-spacing: 2px;
             }
 
             .name-arrow {
-                border-top-width: 10px;
-                border-bottom-width: 10px;
+                border-top-width: 14px;
+                border-bottom-width: 14px;
             }
-            .name-arrow.left  { border-right-width: 13px; }
-            .name-arrow.right { border-left-width:  13px; }
+            .name-arrow.left  { border-right-width: 18px; }
+            .name-arrow.right { border-left-width:  18px; }
 
             .mod-name-row {
-                bottom: 10%;
+                bottom: 13.5%;
+                gap: 12px;
             }
 
-            /* Botón jugar más pequeño */
+            /* Botón ? escalado */
+            .info-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+
+            .info-box {
+                width: 240px;
+                font-size: 0.58rem;
+                padding: 14px 16px 12px 16px;
+            }
+
+            /* Botón jugar escalado */
             .play-btn {
-                font-size: 0.65rem;
-                padding: 10px 20px;
-                bottom: 3%;
+                font-size: clamp(0.7rem, 2.5vmin, 0.9rem);
+                padding: 12px 28px;
+                bottom: 24px;
             }
 
             /* Botón volver */
             .back-btn {
-                font-size: 0.5rem;
-                padding: 6px 10px;
+                font-size: 0.6rem;
+                padding: 8px 14px;
+                top: 16px;
+                left: 16px;
             }
         }
 
         /* Pantallas muy pequeñas (< 400px) */
         @media (max-width: 400px) {
-            .arrow-btn {
-                width: 40px;
-                height: 72px;
+            /* Cajas un poco más grandes */
+            .box-wrapper {
+                width: 130vw;
+                height: calc(130vw * 0.5625);
+                max-height: 130vh;
+                max-width: calc(130vh * 1.7778);
             }
 
-            .arrow-btn.left  { left: 18%; }
-            .arrow-btn.right { right: 18%; }
+            .arrow-btn {
+                width: 66px;
+                height: 117px;
+            }
 
-            .bf-img { width: clamp(55px, 16vw, 100px); }
+            .arrow-btn.left  { left: 5%; }
+            .arrow-btn.right { right: 5%; }
 
-            .mod-name-text { font-size: 0.6rem; }
+            .bf-img { width: clamp(70px, 14vw, 150px); }
+
+            .mod-name-text { 
+                font-size: 0.75rem;
+                letter-spacing: 2px;
+            }
+
+            .name-arrow {
+                border-top-width: 12px;
+                border-bottom-width: 12px;
+            }
+            .name-arrow.left  { border-right-width: 16px; }
+            .name-arrow.right { border-left-width:  16px; }
+
+            .info-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.65rem;
+            }
+
+            .play-btn {
+                font-size: 0.65rem;
+                padding: 10px 24px;
+            }
         }
     </style>
 </head>
@@ -444,15 +496,16 @@
     <a href="index.html" class="back-btn">&#9664; MENÚ</a>
 
     <div class="scene">
+        <!-- Flechas fuera del wrapper para que no escalen -->
+        <button class="arrow-btn left" id="prevBtn" aria-label="Mod anterior">
+            <img src="Assets/StoryMode/Arrows/arrow left.png" id="arrowLeftImg" alt="Anterior">
+        </button>
+        <button class="arrow-btn right" id="nextBtn" aria-label="Siguiente mod">
+            <img src="Assets/StoryMode/Arrows/arrow right.png" id="arrowRightImg" alt="Siguiente">
+        </button>
+
         <!-- Caja central -->
         <div class="box-wrapper" id="boxWrapper">
-            <!-- Flechas dentro del wrapper para que escalen con la caja -->
-            <button class="arrow-btn left" id="prevBtn" aria-label="Mod anterior">
-                <img src="Assets/StoryMode/Arrows/arrow left.png" id="arrowLeftImg" alt="Anterior">
-            </button>
-            <button class="arrow-btn right" id="nextBtn" aria-label="Siguiente mod">
-                <img src="Assets/StoryMode/Arrows/arrow right.png" id="arrowRightImg" alt="Siguiente">
-            </button>
             <!-- Marco rojo (fondo) -->
             <img src="Assets/StoryMode/redbox.png" class="red-box" alt="">
             <!-- Marco gris (entre rojo y amarillo) -->
