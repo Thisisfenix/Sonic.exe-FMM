@@ -1,6 +1,37 @@
 {
-  "currentVersion": "v2.0.0",
+  "currentVersion": "v2.0.1",
   "updates": [
+    {
+      "version": "v2.0.1",
+      "title": "PARCHE 2.0.1",
+      "date": "2026-08-06",
+      "sections": [
+        {
+          "title": "👥 NUEVOS COLABORADORES",
+          "items": [
+            "✨ **Yrik** - Colaborador #011.",
+            "✨ **Exelsior** - Colaborador #012.",
+            "✨ **Uda** - Colaborador #013.",
+            "⭐ **Wilber** - Promovido a Director 3."
+          ]
+        },
+        {
+          "title": "🎵 NUEVAS CANCIONES",
+          "items": [
+            "🦔 **Sonic.exe Freeplay:** Round A Bout (Needlemouse).",
+            "🎪 **Extras Songs:** 8 canciones nuevas añadidas:",
+            "  • Exeneric (Lord X)",
+            "  • Cycles Encore (Honkish Mix) - Lord X",
+            "  • Cycles Encore (7Shots) - Lord X",
+            "  • NO MORE (NMI)",
+            "  • Obituary Hole (Miku vs 2011X)",
+            "  • Horror Showdown (Sonic vs Mario)",
+            "  • Club Penguin Shutdown (2017X vs Ollie)",
+            "  • Upside Down (Rewrite)"
+          ]
+        }
+      ]
+    },
     {
       "version": "v2.0.0",
       "title": "GRAN ACTUALIZACIÓN: REDISEÑOS Y NUEVO FREEPLAY",
