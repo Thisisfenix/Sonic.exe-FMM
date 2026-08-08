@@ -1,6 +1,39 @@
 {
-  "currentVersion": "v2.0.1",
+  "currentVersion": "v2.0.2",
   "updates": [
+    {
+      "version": "v2.0.2",
+      "title": "PARCHE 2.0.2 - EXTRAS RENOVADO",
+      "date": "2026-08-06",
+      "sections": [
+        {
+          "title": "🎨 EXTRAS COMPLETAMENTE RENOVADO",
+          "items": [
+            "✨ **Lucide Icons** - Todos los iconos ahora usan Lucide en vez de Font Awesome.",
+            "🎵 **Visualizador arreglado** - Las barras de audio ya no se quedan congeladas al pausar.",
+            "🔊 **Control de volumen mejorado** - Ya no se buguea al arrastrar o hacer click.",
+            "🖼️ **Nueva imagen** - Añadida imagen 62: *le rechaza el nivel*.",
+            "🎨 **Iconos actualizados** - Todos los emojis reemplazados por iconos modernos.",
+            "⚡ **Mejor rendimiento** - Animaciones más suaves y sin bugs."
+          ]
+        },
+        {
+          "title": "👥 CAMBIOS EN EL EQUIPO",
+          "items": [
+            "🎉 **Jarret de vuelta** - Movido de ex-colaboradores a Colaborador #014.",
+            "📝 **Equipo actualizado** - Ahora hay 14 colaboradores activos."
+          ]
+        },
+        {
+          "title": "🔧 ARREGLOS TÉCNICOS",
+          "items": [
+            "🐛 **Bug del volumen arreglado** - El slider de volumen ya no salta ni se congela.",
+            "🎵 **Visualizador de audio** - Las barras bajan suavemente cuando pausas.",
+            "🖱️ **Click mejorado** - El volumen no se dispara al hacer click."
+          ]
+        }
+      ]
+    },
     {
       "version": "v2.0.1",
       "title": "PARCHE 2.0.1",

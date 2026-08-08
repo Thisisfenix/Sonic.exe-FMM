@@ -1452,10 +1452,18 @@
         <div class="player-header">
             <div class="player-title glitch-effect">SONIC.EXE MEDIA PLAYER</div>
             <div class="player-controls">
-                <button class="player-btn" id="backBtn" title="Volver al Menú">←</button>
-                <button class="player-btn" id="theaterBtn" title="Modo Teatro">🎭</button>
-                <button class="player-btn" id="fullscreenBtn" title="Pantalla Completa">⛶</button>
-                <button class="player-btn" id="closeBtn">✕</button>
+                <button class="player-btn" id="backBtn" title="Volver al Menú">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <button class="player-btn" id="theaterBtn" title="Modo Teatro">
+                    <i data-lucide="presentation"></i>
+                </button>
+                <button class="player-btn" id="fullscreenBtn" title="Pantalla Completa">
+                    <i data-lucide="maximize"></i>
+                </button>
+                <button class="player-btn" id="closeBtn">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
         </div>
 
@@ -1472,7 +1480,9 @@
             <div class="playlist-overlay" id="playlistOverlay" role="dialog" aria-label="Lista de reproducción">
                 <div class="playlist-header">
                     <div>CREEPYPASTA VIDEOS</div>
-                    <div class="playlist-close" id="playlistClose" role="button" aria-label="Cerrar lista de reproducción" tabindex="0">✕</div>
+                    <div class="playlist-close" id="playlistClose" role="button" aria-label="Cerrar lista de reproducción" tabindex="0">
+                        <i data-lucide="x"></i>
+                    </div>
                 </div>
                 <div id="playlistItemsContainer" role="list"></div>
             </div>
@@ -1496,7 +1506,7 @@
             <div class="main-controls">
                 <div class="left-controls">
                     <button class="control-btn" id="volumeBtn" aria-label="Silenciar/Activar sonido">
-                        <i class="fas fa-volume-up"></i>
+                        <i data-lucide="volume-2"></i>
                     </button>
                     <div class="volume-slider" id="volumeSlider" role="slider" aria-label="Control de volumen" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" tabindex="0">
                         <div class="volume-filled" id="volumeFilled"></div>
@@ -1505,26 +1515,38 @@
                 </div>
 
                 <div class="center-controls">
-                    <button class="control-btn" id="seek-10" title="-10s" aria-label="Retroceder 10 segundos">⏪</button>
+                    <button class="control-btn" id="seek-10" title="-10s" aria-label="Retroceder 10 segundos">
+                        <i data-lucide="rewind"></i>
+                    </button>
                     <button class="control-btn" id="prevBtn" aria-label="Medio anterior">
-                        <i class="fas fa-step-backward"></i>
+                        <i data-lucide="skip-back"></i>
                     </button>
                     <button class="control-btn play-btn" id="playBtn" aria-label="Reproducir/Pausar">
-                        <i class="fas fa-play"></i>
+                        <i data-lucide="play"></i>
                     </button>
                     <button class="control-btn" id="nextBtn" aria-label="Siguiente medio">
-                        <i class="fas fa-step-forward"></i>
+                        <i data-lucide="skip-forward"></i>
                     </button>
-                    <button class="control-btn" id="seek+10" title="+10s" aria-label="Avanzar 10 segundos">⏩</button>
+                    <button class="control-btn" id="seek+10" title="+10s" aria-label="Avanzar 10 segundos">
+                        <i data-lucide="fast-forward"></i>
+                    </button>
                 </div>
 
                 <div class="right-controls">
-                    <button class="control-btn" id="loopBtn" title="Bucle" aria-label="Activar/Desactivar bucle" aria-pressed="false">🔁</button>
-                    <button class="control-btn" id="shuffleBtn" title="Aleatorio" aria-label="Activar/Desactivar aleatorio" aria-pressed="false">🔀</button>
-                    <button class="control-btn" id="favoriteBtn" title="Favorito" aria-label="Agregar/Quitar de favoritos" aria-pressed="false">♥</button>
-                    <button class="control-btn" id="favoritesListBtn" title="Ver Favoritos" aria-label="Mostrar lista de favoritos">📜</button>
+                    <button class="control-btn" id="loopBtn" title="Bucle" aria-label="Activar/Desactivar bucle" aria-pressed="false">
+                        <i data-lucide="repeat"></i>
+                    </button>
+                    <button class="control-btn" id="shuffleBtn" title="Aleatorio" aria-label="Activar/Desactivar aleatorio" aria-pressed="false">
+                        <i data-lucide="shuffle"></i>
+                    </button>
+                    <button class="control-btn" id="favoriteBtn" title="Favorito" aria-label="Agregar/Quitar de favoritos" aria-pressed="false">
+                        <i data-lucide="heart"></i>
+                    </button>
+                    <button class="control-btn" id="favoritesListBtn" title="Ver Favoritos" aria-label="Mostrar lista de favoritos">
+                        <i data-lucide="scroll-text"></i>
+                    </button>
                     <button class="control-btn" id="playlistBtn" aria-label="Mostrar/Ocultar lista de reproducción">
-                        <i class="fas fa-list"></i>
+                        <i data-lucide="list"></i>
                     </button>
                 </div>
             </div>
@@ -1533,7 +1555,7 @@
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="Assets/js/christmas-lite.js"></script>
 
     <script>
@@ -1558,7 +1580,6 @@
                 { src: 'Assets/media/9.mp4', title: 'Samy poniendose a chambear', type: 'video' },
                 { src: 'Assets/media/10.jpg', title: 'broo el mejor byrthday', type: 'image' },
                 { src: 'Assets/media/11.jpg', title: 'Vamo al baño', type: 'image' },
-                { src: 'Assets/media/12.jpg', title: 'Vamo al baño old', type: 'image' },
                 { src: 'Assets/media/13.png', title: 'Como tegusta eh?', type: 'image' },
                 { src: 'Assets/media/14.png', title: 'Mango Mango', type: 'image' },
                 { src: 'Assets/media/15.mp4', title: 'eh nothing...', type: 'video' },
@@ -1595,7 +1616,6 @@
                 { src: 'Assets/media/46.mp4', title: 'Turbo: Keys', type: 'video' },
                 { src: 'Assets/media/47.png', title: 'Pero 0_0', type: 'image' },
                 { src: 'Assets/media/48.jpg', title: 'Tu nivel ascooo', type: 'image' },
-                { src: 'Assets/media/49.jpg', title: 'Sonic.exe old page', type: 'image' },
                 { src: 'Assets/media/50.png', title: 'Del odio al amor ft Hailroberto', type: 'image' },
                 { src: 'Assets/media/51.jpg', title: 'Ya se murio', type: 'image' },
                 { src: 'Assets/media/52.jpg', title: '._.Tocame', type: 'image' },
@@ -1608,7 +1628,8 @@
                 { src: 'Assets/media/59.jpg', title: 'simp de gf tenia que ser (comentario de samylol)', type: 'image' },
                 { src: 'Assets/media/60.jpg', title: 'Fuera de mi cerro', type: 'image' },
                 { src: 'Assets/media/61.jpg', title: 'Bwa :3', type: 'image' },
-                { src: 'Assets/media/67.png', title: '🏆 MEME OF THE YEAR 🏆', type: 'image', goty: true }
+                { src: 'Assets/media/62.jpg', title: '*le rechaza el nivel*', type: 'image' },
+                { src: 'Assets/media/67.png', title: 'MEME OF THE YEAR', type: 'image', goty: true }
             ];
             // Elementos del DOM
             const mediaElement = document.getElementById('mediaElement');
@@ -1680,7 +1701,8 @@
                     if (item.type === 'video') {
                         const placeholder = document.createElement('div');
                         placeholder.className = 'lazy-placeholder';
-                        placeholder.innerHTML = '📹';
+                        placeholder.innerHTML = '<i data-lucide="video" style="width: 48px; height: 48px;"></i>';
+                        lucide.createIcons();
                         placeholder.dataset.src = item.src;
                         placeholder.dataset.type = 'video';
                         placeholder.setAttribute('aria-hidden', 'true');
@@ -1690,7 +1712,8 @@
                     } else {
                         const placeholder = document.createElement('div');
                         placeholder.className = 'lazy-placeholder';
-                        placeholder.innerHTML = '🖼️';
+                        placeholder.innerHTML = '<i data-lucide="image" style="width: 48px; height: 48px;"></i>';
+                        lucide.createIcons();
                         placeholder.dataset.src = item.src;
                         placeholder.dataset.type = 'image';
                         placeholder.setAttribute('aria-hidden', 'true');
@@ -1790,7 +1813,8 @@
                     }, { once: true });
 
                     video.addEventListener('error', () => {
-                        placeholder.innerHTML = '❌';
+                        placeholder.innerHTML = '<i data-lucide="alert-circle" style="width: 48px; height: 48px;"></i>';
+                        lucide.createIcons();
                         placeholder.style.color = '#ff6b6b';
                     }, { once: true });
                 } else {
@@ -1809,7 +1833,8 @@
                     };
 
                     img.onerror = () => {
-                        placeholder.innerHTML = '❌';
+                        placeholder.innerHTML = '<i data-lucide="alert-circle" style="width: 48px; height: 48px;"></i>';
+                        lucide.createIcons();
                         placeholder.style.color = '#ff6b6b';
                     };
 
@@ -1829,13 +1854,35 @@
 
             // Actualizar visualizador
             function updateVisualizer() {
-                if (!analyser || !dataArray || audioVisualizer.style.display === 'none' || !isPlaying) {
+                if (!analyser || !dataArray || audioVisualizer.style.display === 'none') {
+                    if (visualizerAnimationId) {
+                        cancelAnimationFrame(visualizerAnimationId);
+                        visualizerAnimationId = null;
+                        // Reset bars to minimum height
+                        const bars = audioVisualizer.querySelectorAll('.audio-bar');
+                        bars.forEach(bar => {
+                            bar.style.height = '2px';
+                        });
+                    }
+                    return;
+                }
+                
+                if (!isPlaying) {
                     if (visualizerAnimationId) {
                         cancelAnimationFrame(visualizerAnimationId);
                         visualizerAnimationId = null;
                     }
+                    // Animate bars down when paused
+                    const bars = audioVisualizer.querySelectorAll('.audio-bar');
+                    bars.forEach(bar => {
+                        const currentHeight = parseFloat(bar.style.height) || 2;
+                        if (currentHeight > 2) {
+                            bar.style.height = Math.max(2, currentHeight * 0.9) + 'px';
+                        }
+                    });
                     return;
                 }
+                
                 try {
                     analyser.getByteFrequencyData(dataArray);
                     const bars = audioVisualizer.querySelectorAll('.audio-bar');
@@ -2098,7 +2145,8 @@
 
                         const badge = document.createElement('div');
                         badge.className = 'goty-badge';
-                        badge.textContent = '🏆 MEME OF THE YEAR 🏆';
+                        badge.innerHTML = '<i data-lucide="trophy" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> MEME OF THE YEAR <i data-lucide="trophy" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-left: 5px;"></i>';
+                        lucide.createIcons();
                         wrapper.appendChild(badge);
 
                         // Botón modo epiléptico
@@ -2107,12 +2155,14 @@
                         badge.classList.add('safe-mode');
                         const epilepsyBtn = document.createElement('button');
                         epilepsyBtn.className = 'goty-epilepsy-btn';
-                        epilepsyBtn.textContent = '✨ Activar efectos';
+                        epilepsyBtn.innerHTML = '<i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Activar efectos';
+                        lucide.createIcons();
                         epilepsyBtn.addEventListener('click', () => {
                             safeMode = !safeMode;
                             mediaElement.classList.toggle('safe-mode', safeMode);
                             badge.classList.toggle('safe-mode', safeMode);
-                            epilepsyBtn.textContent = safeMode ? '✨ Activar efectos' : '⚠️ Modo sin efectos';
+                            epilepsyBtn.innerHTML = safeMode ? '<i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Activar efectos' : '<i data-lucide="alert-triangle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Modo sin efectos';
+                            lucide.createIcons();
                         });
                         wrapper.appendChild(epilepsyBtn);
                     } else {
@@ -2196,6 +2246,20 @@
                 }
                 isPlaying = false;
                 updatePlayButton();
+                // Animate bars down when paused
+                const bars = audioVisualizer.querySelectorAll('.audio-bar');
+                let downInterval = setInterval(() => {
+                    let allDown = true;
+                    bars.forEach(bar => {
+                        const currentHeight = parseFloat(bar.style.height) || 2;
+                        if (currentHeight > 2) {
+                            bar.style.height = Math.max(2, currentHeight - 2) + 'px';
+                            allDown = false;
+                        }
+                    });
+                    if (allDown) clearInterval(downInterval);
+                }, 16);
+                
                 if (visualizerAnimationId) {
                     cancelAnimationFrame(visualizerAnimationId);
                     visualizerAnimationId = null;
@@ -2264,13 +2328,16 @@
                 volumeSlider.setAttribute('aria-valuenow', Math.round(percent));
 
                 if (mediaElement.volume === 0) {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    volumeBtn.innerHTML = '<i data-lucide="volume-x"></i>';
+                    lucide.createIcons();
                     volumeBtn.setAttribute('aria-label', 'Activar sonido');
                 } else if (mediaElement.volume < 0.5) {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+                    volumeBtn.innerHTML = '<i data-lucide="volume-1"></i>';
+                    lucide.createIcons();
                     volumeBtn.setAttribute('aria-label', 'Silenciar');
                 } else {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    volumeBtn.innerHTML = '<i data-lucide="volume-2"></i>';
+                    lucide.createIcons();
                     volumeBtn.setAttribute('aria-label', 'Silenciar');
                 }
             }
@@ -2280,11 +2347,13 @@
                 const media = mediaItems[currentMediaIndex];
 
                 if (media.type === 'video') {
-                    playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+                    playBtn.innerHTML = isPlaying ? '<i data-lucide="pause"></i>' : '<i data-lucide="play"></i>';
+                    lucide.createIcons();
                     playBtn.setAttribute('aria-label', isPlaying ? 'Pausar' : 'Reproducir');
                     playBtn.style.opacity = '1';
                 } else {
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playBtn.innerHTML = '<i data-lucide="play"></i>';
+                    lucide.createIcons();
                     playBtn.setAttribute('aria-label', 'Reproducir');
                     playBtn.style.opacity = '0.5';
                 }
@@ -2438,13 +2507,18 @@
             });
 
             volumeSlider.addEventListener('click', (e) => {
-                const percent = e.offsetX / volumeSlider.offsetWidth;
-                mediaElement.volume = percent;
-                updateVolume();
+                if (!isVolumeDragging) {
+                    const percent = e.offsetX / volumeSlider.offsetWidth;
+                    mediaElement.volume = Math.max(0, Math.min(1, percent));
+                    updateVolume();
+                }
             });
 
-            volumeSlider.addEventListener('mousedown', () => {
+            volumeSlider.addEventListener('mousedown', (e) => {
                 isVolumeDragging = true;
+                const percent = e.offsetX / volumeSlider.offsetWidth;
+                mediaElement.volume = Math.max(0, Math.min(1, percent));
+                updateVolume();
             });
 
             playlistBtn.addEventListener('click', () => {
@@ -2632,6 +2706,9 @@
                 }
             });
         });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
     </script>
 </body>
 
