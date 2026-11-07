@@ -56,7 +56,22 @@ class ChristmasEffects {
             }, duration * 1000);
         };
         
+        this.createSnowflake = createSnowflake;
         this.snowflakeInterval = setInterval(createSnowflake, 300);
+    }
+
+    // Pausar la creación de copos (p. ej. cuando la pestaña está oculta)
+    pause() {
+        if (this.snowflakeInterval) {
+            clearInterval(this.snowflakeInterval);
+            this.snowflakeInterval = null;
+        }
+    }
+
+    // Reanudar la creación de copos si estamos en diciembre
+    resume() {
+        if (!this.isDecember || !this.createSnowflake || this.snowflakeInterval) return;
+        this.snowflakeInterval = setInterval(this.createSnowflake, 300);
     }
 
     addChristmasLights() {

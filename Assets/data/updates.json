@@ -1,6 +1,45 @@
 {
-  "currentVersion": "v2.0.2",
+  "currentVersion": "v2.0.3",
   "updates": [
+    {
+      "version": "v2.0.3",
+      "title": "PARCHE 2.0.3 - MÁS CANCIONES ESPERADAS",
+      "date": "2026-11-07",
+      "sections": [
+        {
+          "title": "🎵 NUEVAS CANCIONES EN FREEPLAY",
+          "items": [
+            "🦔 **Sonic.exe Freeplay:** Añadida **Cycles** (Lord X).",
+            "💿 **Sonic.exe Rerun Freeplay:** Añadidas **Twisted** y **Sonic Kills You And You Die** con sus escenarios 3D.",
+            "🎪 **Extras Songs:** ¡15 canciones nuevas que estaban esperando!:",
+            "  • Genesis (NMI)",
+            "  • Loathing",
+            "  • Kawaii (NMI)",
+            "  • A dance With Death (Sonic.exe)",
+            "  • Infinity (Majin Sonic)",
+            "  • Bait",
+            "  • Expurgated Miku mix (Miku, Mario & Sonic)",
+            "  • Only me",
+            "  • Smoke and mirrors (Scrimbo)",
+            "  • Stockpile",
+            "  • Tick Tock",
+            "  • No Strings",
+            "  • Toetality (2017X vs Tails)",
+            "  • Eternal v2",
+            "  • Dekishi"
+          ]
+        },
+        {
+          "title": "⚡ MEJORAS DE RENDIMIENTO Y ARREGLOS",
+          "items": [
+            "🎬 **Intro arreglada:** El GIF de salida al presionar Start ahora se reproduce una sola vez sin repetirse en bucle.",
+            "🔋 **Ahorro de recursos:** El carrusel de noticias y los efectos se pausan automáticamente cuando cambias de pestaña.",
+            "🚀 **Carga más rápida:** Optimizadas las descargas de audios y fuentes en el menú principal.",
+            "🖼️ **Imágenes corregidas:** Arregladas rutas de imágenes en Extras (#62), Encore (Boyfriend) y Freeplay."
+          ]
+        }
+      ]
+    },
     {
       "version": "v2.0.2",
       "title": "PARCHE 2.0.2 - EXTRAS RENOVADO",

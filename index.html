@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú - Sonic.exe</title>
     <link rel="icon" type="image/png" href="images/logo_sonic_puto_exe.png">
+    <!-- Preconnect: abre conexiones con los CDNs antes para cargar fuentes/iconos más rápido -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="Assets/css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
@@ -1453,13 +1457,12 @@
     </div>
 
     <audio id="bgMusic" src="./sounds/MainMenuMusic.ogg" loop></audio>
-    <audio id="christmasMusic" src="./sounds/christmas.ogg" loop></audio>
+    <!-- preload="none": solo se descargan cuando se usan (navidad / minijuego) -->
+    <audio id="christmasMusic" src="./sounds/christmas.ogg" loop preload="none"></audio>
     <audio id="selectSound" src="./sounds/confirmMenu.ogg"></audio>
-    <audio id="hoverSound" src="./sounds/hoverMenu.ogg"></audio>
-    <audio id="crashSound" src="./sounds/crash.mp3"></audio>
+    <audio id="crashSound" src="./sounds/crash.mp3" preload="none"></audio>
 
     <!-- Scripts -->
-    <script src="Assets/js/bootstrap.bundle.min.js"></script>
     <script src="Assets/js/achievements.js"></script>
     <script src="Assets/js/christmas.js"></script>
     <script>
@@ -1547,7 +1550,7 @@
 
             // Iniciar auto-avance de noticias
             function startAutoNews() {
-                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                stopAutoNews();
                 window.autoNewsTimer = setInterval(() => {
                     goToNews(currentNewsIndex + 1);
                 }, newsIntervalTime); // Usar intervalo dinámico
@@ -1555,9 +1558,29 @@
 
             // Reiniciar auto-avance
             function restartAutoNews() {
-                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                stopAutoNews();
                 startAutoNews();
             }
+
+            // Detener auto-avance (deja el timer en null para saber si estaba activo)
+            function stopAutoNews() {
+                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                window.autoNewsTimer = null;
+            }
+
+            // Pausar carrusel y nieve cuando la pestaña no está visible (ahorra CPU/batería)
+            let newsWasRunning = false;
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    newsWasRunning = !!window.autoNewsTimer;
+                    stopAutoNews();
+                    if (window.christmasEffects) window.christmasEffects.pause();
+                } else {
+                    if (newsWasRunning && !window.isNavigating) startAutoNews();
+                    newsWasRunning = false;
+                    if (window.christmasEffects) window.christmasEffects.resume();
+                }
+            });
 
             // Configurar eventos para los controles del carrusel
             if (prevNewsBtn && nextNewsBtn) {
@@ -1617,7 +1640,7 @@
                 window.isNavigating = true;
 
                 // Detener el carrusel de noticias
-                if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                stopAutoNews();
 
                 // Activar pantalla oscura
                 screenDarken.classList.add('active');
@@ -1672,7 +1695,7 @@
                     }, 400);
                 } else {
                     // Si se está cerrando, pausar el carrusel
-                    if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                    stopAutoNews();
                 }
 
                 // Reproducir sonido solo si está disponible
@@ -1794,7 +1817,7 @@
                     updateBtn.style.opacity = '0.5';
 
                     // Pausar el carrusel de noticias
-                    if (window.autoNewsTimer) clearInterval(window.autoNewsTimer);
+                    stopAutoNews();
                 };
 
                 updateBtn.addEventListener('mousedown', handleUpdateClick);

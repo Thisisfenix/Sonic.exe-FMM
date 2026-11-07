@@ -114,8 +114,7 @@
                 <img id="intro-bg-gif"   src="Assets/Gifs/ezgif.com-animated-gif-maker (2).gif" alt="">
                 <img id="intro-logo"     src="Assets/logo.png" alt="Logo">
                 <img id="intro-main-gif" src="Assets/Gifs/ezgif.com-animated-gif-maker.gif" alt="">
-                <video id="intro-exit-gif" src="Assets/Gifs/ezgif.com-animated-gif-maker (1).gif"
-                       muted playsinline preload="auto"></video>
+                <img id="intro-exit-gif" alt="">
             </div>
         `;
         document.body.appendChild(overlay);
@@ -129,6 +128,49 @@
 
         let phase = 'video';
         let menuMusic = null;
+
+        // --- GIF de salida: debe reproducirse UNA sola vez ---
+        // El archivo viene con loop infinito, así que medimos su duración real
+        // leyendo los delays de cada frame y lo ocultamos al terminar el primer ciclo.
+        const EXIT_GIF_SRC = 'Assets/Gifs/ezgif.com-animated-gif-maker (1).gif';
+        let exitGifDuration = 1920; // valor medido (24 frames); se recalcula abajo
+        let exitGifUrl = EXIT_GIF_SRC;
+
+        const getGifDuration = (buf) => {
+            const b = new Uint8Array(buf);
+            let p = 13, total = 0;
+            if (b[10] & 0x80) p += 3 * (1 << ((b[10] & 7) + 1));
+            const skipSubBlocks = () => { while (p < b.length && b[p] !== 0) p += b[p] + 1; p++; };
+            while (p < b.length) {
+                const type = b[p++];
+                if (type === 0x21) {            // Extensión
+                    const label = b[p++];
+                    if (label === 0xF9) {       // Graphic Control: delay del frame
+                        let d = (b[p + 2] | (b[p + 3] << 8)) * 10;
+                        if (d <= 10) d = 100;   // los navegadores suben delays muy cortos a 100ms
+                        total += d;
+                    }
+                    skipSubBlocks();
+                } else if (type === 0x2C) {     // Imagen
+                    const flags = b[p + 8];
+                    p += 9;
+                    if (flags & 0x80) p += 3 * (1 << ((flags & 7) + 1));
+                    p++;                        // LZW min code size
+                    skipSubBlocks();
+                } else break;                   // 0x3B = fin
+            }
+            return total;
+        };
+
+        // Precargar el GIF en memoria (blob) para poder iniciarlo desde el frame 0
+        fetch(EXIT_GIF_SRC)
+            .then(r => r.ok ? r.arrayBuffer() : Promise.reject())
+            .then(buf => {
+                const d = getGifDuration(buf);
+                if (d > 0) exitGifDuration = d;
+                exitGifUrl = URL.createObjectURL(new Blob([buf], { type: 'image/gif' }));
+            })
+            .catch(() => { new Image().src = EXIT_GIF_SRC; }); // fallback: precarga normal
 
         // En iOS el autoplay con audio requiere interacción del usuario
         // Mostramos un tap-to-start si el video no arranca solo
@@ -219,11 +261,17 @@
             click.play().catch(() => {});
             laugh.play().catch(() => {});
 
-            // Cambiar gif principal por video de salida (una sola reproducción)
+            // Cambiar gif principal por el gif de salida
+            // (es un GIF, por eso va en <img>: un <video> no puede reproducir GIFs)
             mainGif.style.display = 'none';
+            exitGif.src = exitGifUrl;           // asignar src ahora => arranca desde el frame 0
             exitGif.style.display = 'block';
             exitGif.style.opacity = '1';
-            exitGif.play().catch(() => {});
+
+            // Ocultarlo al terminar su primer ciclo para que no se repita en bucle
+            setTimeout(() => {
+                exitGif.style.display = 'none';
+            }, exitGifDuration);
 
             // Pequeño delay para que el video sea visible antes del fade out
             setTimeout(() => {
@@ -261,6 +309,7 @@
                 setTimeout(() => {
                     overlay.remove();
                     style.remove();
+                    if (exitGifUrl.startsWith('blob:')) URL.revokeObjectURL(exitGifUrl); // liberar memoria
                     // Notificar que la intro terminó y luego iniciar música del index
                     document.dispatchEvent(new Event('introComplete'));
                     const bgMusic = document.getElementById('bgMusic');
@@ -274,9 +323,14 @@
 
         overlay.addEventListener('click',     handleInteraction);
         overlay.addEventListener('touchstart', handleInteraction, { passive: true });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') handleInteraction();
-        }, { once: true });
+        // Teclado: Enter/Espacio. No usamos { once: true } porque cualquier otra
+        // tecla consumiría el listener; se quita solo cuando la intro avanza.
+        const handleKey = (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            handleInteraction();
+            if (phase === 'exiting') document.removeEventListener('keydown', handleKey);
+        };
+        document.addEventListener('keydown', handleKey);
     };
 
     if (document.body) {
